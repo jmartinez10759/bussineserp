@@ -3,7 +3,7 @@ var url_update   = "cotizacion/update";
 var url_edit     = "cotizacion/edit";
 var url_destroy  = "cotizacion/destroy";
 var url_all      = "cotizacion/all";
-var redireccion  = "configuracion/cotizacion";
+var redireccion  = "ventas/cotizacion";
 
 new Vue({
   el: "#vue-cotizacion",
@@ -111,3 +111,5 @@ new Vue({
 
 
 });
+
+jQuery('#modal_dialog').css('width', '75%');

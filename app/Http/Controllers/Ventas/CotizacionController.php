@@ -6,6 +6,8 @@
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Ventas\SysCotizacionModel;
+    use App\Model\Administracion\Configuracion\SysUsersModel;
+
 
     class CotizacionController extends MasterController
     {
@@ -23,13 +25,18 @@
         *@return void
         */
         public function index(){
+            $users    = SysUsersModel::with(['roles' => function($query){
+      return $query->where(['sys_users_roles.id_rol' => 2]);
+    },"empresas"])->where('id','=',Session::get('id'))->where(['estatus' => 1])->get();
+            #debuger($users);
+            
             if( Session::get("permisos")["GET"] ){
               return view("errors.error");
             }
             
             $data = [
-                "page_title" 	        => ""
-                ,"title"  		        => ""
+                "page_title" 	        => "Ventas"
+                ,"title"  		        => "Cotizaciones"
                 ,"data_table"  		    => ""
             ];
             return self::_load_view( "ventas.cotizacion",$data );

@@ -861,6 +861,40 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
     
     
+
+
+Route::get('/ventas/cotizacion', [
+        'uses' => 'Ventas\CotizacionController@index'
+        ,'as' => 'ventas.cotizacion'
+    ]);
+
+    Route::get('/unidadesmedidas/all', [
+        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@all'
+        ,'as' => 'unidadesmedidas.all'
+    ]);
+
+    Route::post('/unidadesmedidas/register', [
+        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@store'
+        ,'as' => 'unidadesmedidas.register'
+    ]);
+
+    Route::get('/unidadesmedidas/edit', [
+        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@show'
+        ,'as' => 'unidadesmedidas.edit'
+    ]);
+
+    Route::put('/unidadesmedidas/update', [
+        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@update'
+        ,'as' => 'unidadesmedidas.update'
+    ]);
+
+    Route::delete('/unidadesmedidas/destroy', [
+        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@destroy'
+        ,'as' => 'unidadesmedidas.destroy'
+    ]);
+    
+
+
 ################################## DEVELOPMENT MODULOS ################################
 
         Route::get('/atencion/llamadas', [
