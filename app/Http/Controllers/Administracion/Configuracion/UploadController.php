@@ -43,6 +43,8 @@ use App\Model\Administracion\Configuracion\SysMonedasModel;
 use App\Model\Almacenes\SysAlmacenesModel;
 use App\Model\Administracion\Configuracion\SysTiposComprobantesModel;
 use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
+use App\Model\Ventas\SysCotizacionModel;
+
 
 
 
@@ -149,6 +151,9 @@ class UploadController extends MasterController
             break;
                case "Unidadesmedidas": 
                 $this->_tabla_model = new SysUnidadesMedidasModel; 
+            break;
+               case "Cotizacion": 
+                $this->_tabla_model = new SysCotizacionModel; 
             break;
 
 
