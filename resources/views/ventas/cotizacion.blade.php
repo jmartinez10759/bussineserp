@@ -13,7 +13,7 @@
 								</div>
 								
 								<div class="col-md-2">
-									<select class="form-control" id="id_vendedor" onchange="load(1);">
+									<select class="form-control" id="id_vendedor" onchange="load(1);" {{$permisos}} >
 										<option value="">Vendedor</option>
 										<option value="1">Joaquin Alvarado</option>
 										<option value="2">Obed Gomez Alvarado</option>
@@ -342,7 +342,7 @@
 										</ul>
 									</div>
 								</td>				
-<!-- 								<td class="text-right">
+								<!-- <td class="text-right">
 									<a href="editar_factura.php?id_factura=4780" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
 									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4780');"><i class="glyphicon glyphicon-download"></i></a> 
 									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2508')"><i class="glyphicon glyphicon-trash"></i> </a>
@@ -363,4 +363,103 @@
 @stop
 @push('scripts')
 <script type="text/javascript" src="{{asset('js/ventas/build_cotizacion.js')}}"></script>
+<script>
+	$(document).ready(function(){
+  $.ajax({
+    type: 'POST',
+    url: '/crm/ventas/empresas',
+    headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+   	}
+  })
+  .done(function(listas_rep){
+  	//console.log(listas_rep);return;
+  	var listar ="<option value='0'>Selecionar una opción</option>";
+  	for (var i = 0; i < listas_rep.result.length; i++) {
+  		listar+="<option value='"+listas_rep.result[i].id+"'>"+listas_rep.result[i].razon_social+"</option>";
+  	}
+    $('#sys_idCliente').html(listar)
+  })
+  .fail(function(){
+    toastr.error('Hubo un errror al cargar los datos')
+  })
+
+  $('#sys_idCliente').on('change', function(){
+    var id = $('#sys_idCliente').val()
+    console.log(id);
+    $.ajax({
+      type: 'POST',
+      url: '/crm/ventas/contacto',
+      data: {'id': id},
+      headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+   	}
+    })
+    .done(function(listas_rep){
+      $('#contacto').html(listas_rep)
+    })
+    .fail(function(){
+      toastr.error('Hubo un errror al cargar datos contactos')
+    })
+  })
+
+})
+
+
+
+function display_contactos(){
+	var id_clientes = jQuery('#cmb_clientes').val();
+	alert(id_clientes);
+	var url = domain('ventas/contacto');
+	var fields = {id : id_clientes};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+          	var select_contactos = response.data.result;
+          	jQuery('#div_contacto').html(select_contactos.combo_contactos);
+              
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+
+}
+
+function parser_data(){
+	var id_contacto = jQuery('#cmb_contactos').val();
+	var url = domain('ventas/contactos');
+	var fields = {id : id_contacto};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+              	jQuery('#tel1').val(response.data.result.telefono);
+              	jQuery('#email_contact').val(response.data.result.correo);
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
 @endpush

@@ -55,8 +55,14 @@ class SysEmpresasModel extends Model
       return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_empresas_sucursales','id_empresa','id_contacto');
   }
 
-    public function productos(){
+  public function productos(){
         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel', 'sys_planes_productos', 'id_empresa', 'id_producto');
-    }
+  }
+
+  public function clientes(){
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel', 'sys_planes_productos', 'id_empresa', 'id_producto');
+  }
+
+
 
 }

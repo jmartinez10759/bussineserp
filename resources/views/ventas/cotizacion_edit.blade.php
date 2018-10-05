@@ -29,16 +29,20 @@
                             <div class="form-group row">
                               <label for="nombre_cliente" class="col-md-2 control-label">Selecciona el cliente:</label>
                               <div class="col-md-3">
-                                  <input type="text" class="form-control input-sm ui-autocomplete-input" id="nombre_cliente" placeholder="Ingresa el nombre del cliente" required="" autocomplete="off">
-                                  <input id="id_cliente" type="hidden"> 
-                             </div>
+                                  <!-- <input type="text" class="form-control input-sm ui-autocomplete-input" id="nombre_cliente" placeholder="Ingresa el nombre del cliente" required="" autocomplete="off">
+                                  <input id="id_cliente" type="hidden">  -->
+                                 <!--  <select name="cliente" id="sys_idCliente" class="form-control input-sm" required="required"></select>
+ -->                             
+                                    {!! $clientes !!}
+                              </div>
                               
                               
-                              <label for="atencion" class="col-md-1 control-label">Atención:</label>
+                              <label for="contacto" class="col-md-1 control-label">Contacto:</label>
                                 <div class="col-md-2">
-                                    <select class="form-control input-sm" id="atencion" name="atencion">
+                                    <div id="div_contacto"></div>
+                                    <!-- <select class="form-control input-sm" id="contacto" name="contacto">
                                         <option value="">Selecciona</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                                 
                               
@@ -52,7 +56,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="empresa" class="col-md-2 control-label">Empresa:</label>
+                                <label for="empresa" class="col-md-2 control-label">RFC empresa:</label>
                                 <div class="col-md-3">
                                     <input type="text" class="form-control input-sm" id="empresa" placeholder="" readonly="">
                                 </div>
@@ -60,14 +64,14 @@
                                 <div class="col-md-2">
                                     <input type="text" class="form-control input-sm" id="tel2" placeholder="" readonly="">
                                 </div>
-                                <label for="email" class="col-md-1 control-label">Email:</label>
+                                <label for="email" class="col-md-1 control-label">Correo:</label>
                                 <div class="col-md-3">
                                     <input type="email" class="form-control input-sm" id="email" placeholder="" readonly="">
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="condiciones" class="col-md-2 control-label">Condiciones de pago:</label>
+                                <label for="condiciones" class="col-md-2 control-label">Forma de pago:</label>
                                 <div class="col-md-3">
                                     <select class="form-control input-sm" id="condiciones" required="">
                                         <option value="">Selecciona condiciones de pago</option>
@@ -78,7 +82,7 @@
                                         <option value="Crédito 90 días">Crédito 90 días</option>
                                     </select>
                                 </div>
-                                <label for="validez" class="col-md-1 control-label">Validez:</label>
+                                <label for="validez" class="col-md-1 control-label">Método de pago:</label>
                                 <div class="col-md-2">
                                     <select class="form-control input-sm" id="validez" required="">
                                         <option value="">Selecciona validez de oferta</option>
@@ -89,10 +93,10 @@
                                         <option value="60 días">60 días</option>
                                     </select>
                                 </div>
-                                <label for="entrega" class="col-md-1 control-label">Tiempo:</label>
+<!--                                 <label for="entrega" class="col-md-1 control-label">Tiempo:</label>
                                 <div class="col-md-3">
                                     <input type="text" class="form-control input-sm" id="entrega" placeholder="Tiempo de entrega" value="Inmediato">
-                                </div>
+                                </div> -->
                             </div>
 
                             <div class="form-group row">
@@ -185,7 +189,7 @@
                                         <td class="text-right" id="subtotal" style="background-color:#eee">  </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right" colspan="4">IVA (16)% </td>
+                                        <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
                                         <td class="text-right" id="iva" style="background-color:#eee"> </td>
                                     </tr>
                                     <tr>
