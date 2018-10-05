@@ -139,13 +139,14 @@
                             </div>
                             
                             <div class="form-group row">
-                                <div class="pull-right col-sm-3">
-                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
-                                     <span class="glyphicon glyphicon-plus"></span> Agregar productos
-                                    </button>
-                                    <button type="submit" class="btn btn-default">
+                                <div class="pull-right col-sm-2">
+                                    <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
+                                     <span class="glyphicon glyphicon-plus"></span> Agregar Conceptos
+                                    </button> -->
+                                    <button type="button" class="btn btn-info add" title="Agregar Producto"  href="#modal_conceptos" id="add_concepto"><i class="fa fa-plus-circle"></i> Agregar conceptos</button>
+                                    <!-- <button type="submit" class="btn btn-default">
                                       <span class="glyphicon glyphicon-print"></span> Imprimir
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
 
@@ -212,3 +213,63 @@
         </div>
 
 </div>
+
+
+
+
+
+<div id="modal_conceptos" style="display:none;">
+        <h3>Agregar Conceptos</h3>
+            <hr>
+        <div class="modal-body">
+
+            <form class="form-horizontal" >
+
+               <!--  <div class="form-group">
+                    <label class="control-label col-sm-3" for="">Codigo</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" placeholder="" v-model="conceptos.codigo" id="codigo_concepto">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="">Cantidad</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="cantidad_concepto" class="form-control" placeholder="" v-model="conceptos.cantidad" v-on:blur="total_concepto()">
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="">Precio Unitario</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="precio_concepto" class="form-control" placeholder="$" v-model="conceptos.precio" v-on:blur="total_concepto()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="">Descripción</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" v-model="conceptos.descripcion" id="descripcion_concepto"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="">Total</label>
+                    <div class="col-sm-9">
+                        <input type="text"  class="form-control" placeholder="$" v-model="conceptos.total" disabled id="total_concepto">
+                    </div>
+                </div> -->
+
+         </form>
+
+
+        </div>
+        <div class="modal-footer">
+            <div class="pull-right">
+                <button type="button" class="btn btn-success" ><i class="fa fa-save"></i> Agregar</button>
+            </div>
+        </div>
+
+
+    </div>
