@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class SysRolMenuModel extends Model
 {
     protected $table = "sys_rol_menu";
-    #protected $primaryKey = 'id_rol';
     public $fillable = [
     	 'id_rol'
         ,'id_users'

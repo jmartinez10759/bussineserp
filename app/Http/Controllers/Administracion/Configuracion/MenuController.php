@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
+use App\Model\Administracion\Configuracion\SysEmpresasModel;
+use App\Model\Administracion\Configuracion\SysUsersModel;
 
 class MenuController extends MasterController
 {
@@ -20,11 +23,23 @@ class MenuController extends MasterController
    *@access public
    *@return void
    */
-   public static function index(){
+   public function index(){
 
-         $response = self::$_tabla_model::orderBy('tipo','desc')->get();
+      // if (Session::get('id_rol') != 1) {
+      //     $response = SysMenuModel::orderBy('tipo','desc')->get();
+      // }else{
+      // }
+        $usuarios = SysUsersModel::with(['menus' => function ($query) {
+          $where = [
+            'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
+          ];
+          return $query->where($where)->orderBy('orden', 'asc')->get();
+        }])->where(['id' => Session::get('id')])->get();
+        $response = [];
+        foreach ($usuarios as $menu) {
+            $response = $menu->menus;
+        }
          $registros = [];
-         #debuger($permiso_class_destroy);
          $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
          foreach ($response as $respuesta) {
            $id['id'] = $respuesta->id;
@@ -37,7 +52,6 @@ class MenuController extends MasterController
              ,$respuesta->link
              ,$respuesta->tipo
              ,$respuesta->icon
-             //,$respuesta->created_at
              ,$respuesta->orden
              ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
              ,$editar
@@ -52,7 +66,6 @@ class MenuController extends MasterController
            ,'Url'
            ,'Tipo'
            ,'Icono'
-           //,'Fecha Creación'
            ,'Orden'
            ,'Estatus'
            ,''

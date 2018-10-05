@@ -140,23 +140,23 @@ class UsuariosController extends MasterController
        ]);
 
       $data = [
-         'page_title' 	      => "Configuracion"
-         ,'title'  		        => "Usuarios"
-         ,'subtitle' 	        => "Creacion Usuarios"
-         ,'data_table'  	    =>  data_table($table)
-         ,'select_roles'  	  =>  $roles
-         ,'select_empresas'  	=>  $empresas
+         'page_title' 	            => "Configuracion"
+         ,'title'  		            => "Usuarios"
+         ,'subtitle' 	            => "Creacion Usuarios"
+         ,'data_table'  	        =>  data_table($table)
+         ,'select_roles'  	        =>  $roles
+         ,'select_empresas'  	    =>  $empresas
          ,'select_empresas_edit'  	=>  $empresas_edit
-         ,'select_roles_edit' =>  $roles_edit
-         ,'titulo_modal'      => "Agregar Usuario"
-         ,'titulo_modal_edit' => "Actualizar Usuario"
-         ,'campo_1' 		      => 'Nombre Completo'
-         ,'campo_2' 		      => 'Correo'
-         ,'campo_3' 		      => 'Contraseña'
-         ,'campo_4' 		      => 'Tipo de Rol'
-         ,'campo_5' 		      => 'Estatus'
-         ,'campo_6' 		      => 'Empresas'
-         ,'campo_7' 		      => 'Sucursales'
+         ,'select_roles_edit'       =>  $roles_edit
+         ,'titulo_modal'            => "Agregar Usuario"
+         ,'titulo_modal_edit'       => "Actualizar Usuario"
+         ,'campo_1' 		        => 'Nombre Completo'
+         ,'campo_2' 		        => 'Correo'
+         ,'campo_3' 		        => 'Contraseña'
+         ,'campo_4' 		        => 'Tipo de Rol'
+         ,'campo_5' 		        => 'Estatus'
+         ,'campo_6' 		        => 'Empresas'
+         ,'campo_7' 		        => 'Sucursales'
        ];
 
       return self::_load_view( 'administracion.configuracion.usuarios',$data );

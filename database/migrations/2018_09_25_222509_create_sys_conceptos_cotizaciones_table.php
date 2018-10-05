@@ -15,11 +15,11 @@ class CreateSysConceptosCotizacionesTable extends Migration
     {
         Schema::create('sys_conceptos_cotizaciones', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('concepto')->nullable();
+            $table->integer('id_producto');
+            $table->integer('id_plan');
             $table->bigInteger('cantidad')->default(1);
-            $table->double('precio',4)->default(0.0000);;
+            $table->double('precio',4)->default(0.0000);
             $table->double('total',4)->default(0.0000);
-            $table->boolean('estatus')->default(1);
             $table->timestamps();
         });
     }

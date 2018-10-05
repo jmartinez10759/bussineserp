@@ -24,11 +24,11 @@ class SysEmpresasModel extends Model
   ];
 
   public function menus(){
-    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysMenuModel','sys_rol_menu','id_empresa','id_menu');
+    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysMenuModel','sys_rol_menu','id_empresa','id_menu')->withPivot('estatus');
   }
 
   public function sucursales(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');;
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
   }
 
   public function roles(){
