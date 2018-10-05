@@ -314,6 +314,7 @@ abstract class MasterController extends Controller
 		$excel 		  = (isset(Session::get('permisos')['EXL']) )? Session::get('permisos')['EXL']: true;
 		$modal 		  = (isset(Session::get('permisos')['AGR']) )? Session::get('permisos')['AGR']: true;
 		$notify       = (isset(Session::get('permisos')['NTF']) )? Session::get('permisos')['NTF']: true;
+		$permisos     = (isset(Session::get('permisos')['PER']) )? Session::get('permisos')['PER']: true;
 
 		$parse['eliminar']  		= (!$eliminar)? 		"style=display:block;" : "style=display:none;";
 		$parse['insertar']  		= (!$insertar)? 		"style=display:block;" : "style=display:none;";
@@ -324,6 +325,7 @@ abstract class MasterController extends Controller
 		$parse['excel'] 			= (!$excel)? 			"style=display:block;" : "style=display:none;";
 		$parse['modal'] 			= (!$modal)? 			"style=display:block;" : "style=display:none;";
 		$parse['notify'] 			= (!$notify)? 			"style=display:block;" : "style=display:none;";
+		$parse['permisos'] 			= (!$permisos)? 		"style=display:block;" : "style=display:none;";
 
 		$parse['upload_files'] 	= (!$upload_files)? "style=display:block;" : "style=display:none;";
 

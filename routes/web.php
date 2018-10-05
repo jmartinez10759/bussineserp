@@ -560,9 +560,19 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProductosController@store'
         ,'as'       => 'productos.register'
     ]);
+
+    Route::post('/productos/register_permisos', [
+        'uses'      => 'Administracion\Configuracion\ProductosController@register_permisos'
+        ,'as'       => 'productos.register_permisos'
+    ]);
+    
     
     Route::get('/productos/edit', [
         'uses'      => 'Administracion\Configuracion\ProductosController@show'
+        ,'as'       => 'productos.edit'
+    ]);
+    Route::get('/productos/display_sucursales', [
+        'uses'      => 'Administracion\Configuracion\ProductosController@display_sucursales'
         ,'as'       => 'productos.edit'
     ]);
     

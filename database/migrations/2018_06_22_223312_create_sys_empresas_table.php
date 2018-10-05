@@ -25,6 +25,7 @@ class CreateSysEmpresasTable extends Migration
             $table->integer('id_estado')->nullable();
             $table->string('giro_comercial')->nullable();
             $table->string('telefono')->nullable();
+            $table->string('iva')->default(16);
             $table->mediumText('logo')->nullable();
             $table->boolean('estatus')->default(1);
             $table->timestamps();            
