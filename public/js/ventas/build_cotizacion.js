@@ -113,3 +113,4 @@ new Vue({
 });
 
 jQuery('#modal_dialog').css('width', '75%');
+jQuery('.add').fancybox();
