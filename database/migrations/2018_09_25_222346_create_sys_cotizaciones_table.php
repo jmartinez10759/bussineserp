@@ -19,7 +19,9 @@ class CreateSysCotizacionesTable extends Migration
             $table->mediumText('descripcion')->nullable();
             $table->integer('id_moneda')->default(1);
             $table->integer('id_contacto')->default(1);
-            $table->string('condiciones_pago')->nullable();
+            $table->string('id_cliente')->default(1);
+            $table->string('id_forma_pago')->default(1);
+            $table->string('id_metodo_pago')->default(1);
             $table->integer('id_estatus')->default(1);
             $table->timestamps();
         });

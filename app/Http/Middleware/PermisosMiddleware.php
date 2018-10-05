@@ -12,6 +12,7 @@ use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use App\Model\Administracion\Configuracion\SysSesionesModel;
 use App\Model\Administracion\Configuracion\SysAccionesModel;
 use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
+use App\Model\Administracion\Configuracion\SysEmpresasModel;
 
 class PermisosMiddleware
 {
@@ -28,6 +29,9 @@ class PermisosMiddleware
       $where = [substr(parse_domain()->uri,1)];
       $permisos_menus = [];
       $menu = SysMenuModel::select('id')->whereIn('link', $where)->get();
+      $empresas = SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get();
+      $iva = ( isset($empresas[0]->iva) )? $empresas[0]->iva : 16;
+      #debuger($iva);
       #se realiza la consulta para obtener el permiso.
       $where = [
           'id_users'      => Session::get('id')
@@ -48,7 +52,6 @@ class PermisosMiddleware
       $j = 0;
       foreach ($acciones_all as $clave) {
           $claves[] = $clave->clave_corta;
-          #$permisos_menus['permisos'][$claves[$i]] = 'disabled = "disabled"';
           $permisos_menus['permisos'][$claves[$i]] = true;
           $i++;
       }
@@ -60,6 +63,7 @@ class PermisosMiddleware
           }
         }
       }
+      Session::put(['iva' => $iva]);
       Session::put($permisos_menus);
       #se debe crear un metodo para crear esta parte
       $users = SysUsersModel::where(['id' => Session::get('id')])->get();

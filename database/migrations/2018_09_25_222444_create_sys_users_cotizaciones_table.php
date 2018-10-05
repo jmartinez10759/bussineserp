@@ -18,7 +18,7 @@ class CreateSysUsersCotizacionesTable extends Migration
             $table->integer('id_rol')->nullable();
             $table->integer('id_empresa')->nullable();
             $table->integer('id_sucursal')->nullable();
-            $table->integer('id_modulo')->nullable();
+            $table->integer('id_menu')->nullable();
             $table->integer('id_cotizacion')->nullable();
             $table->integer('id_concepto')->nullable();
             $table->integer('id_producto')->nullable();

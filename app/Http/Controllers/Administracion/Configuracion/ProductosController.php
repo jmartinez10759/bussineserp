@@ -27,7 +27,7 @@
         *@return void
         */
         public function index(){
-            
+            #debuger(Session::all());
             if( Session::get('permisos')['GET'] ){
                 return view('errors.error');
             }
