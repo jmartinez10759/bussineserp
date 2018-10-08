@@ -913,6 +913,11 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'ventas.contacto'
     ]);
 
+    Route::get('/ventas/productos', [
+        'uses' => 'Ventas\CotizacionController@getProducto'
+        ,'as' => 'ventas.productos'
+    ]);
+
 
 ################################## DEVELOPMENT MODULOS ################################
 

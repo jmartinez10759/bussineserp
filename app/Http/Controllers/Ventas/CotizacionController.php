@@ -9,6 +9,10 @@
     use App\Model\Administracion\Configuracion\SysClientesModel;
     use App\Model\Administracion\Configuracion\SysUsersModel;
     use App\Model\Administracion\Configuracion\SysContactosModel;
+    use App\Model\Administracion\Configuracion\SysFormasPagosModel;
+    use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
+    use App\Model\Administracion\Configuracion\SysMonedasModel;
+    use App\Model\Administracion\Configuracion\SysProductosModel;
 
 
 
@@ -39,9 +43,50 @@
                  ,'text'      => 'razon_social rfc_receptor'
                  ,'name'      => 'cmb_clientes'
                  ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'leyenda'   => 'Seleccione Opción'
                  ,'attr'      => 'data-live-search="true" '
                  ,'event'     => 'display_contactos()'                
+           ]);
+
+            $formas_pagos = dropdown([
+                 'data'       => SysFormasPagosModel::where(['estatus' => 1 ])->orderby('descripcion', 'asc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'descripcion'
+                 ,'name'      => 'cmb_formas_pagos'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '              
+           ]);
+
+            $metodos_pagos = dropdown([
+                 'data'       => SysMetodosPagosModel::where(['estatus' => 1 ])->orderby('id', 'desc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'descripcion'
+                 ,'name'      => 'cmb_metodos_pagos'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true" '               
+           ]); 
+
+            $monedas = dropdown([
+                 'data'       => SysMonedasModel::where(['estatus' => 1 ])->orderby('descripcion', 'asc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'descripcion'
+                 ,'name'      => 'cmb_monedas'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '                
+           ]);
+
+            $productos = dropdown([
+                 'data'       => SysProductosModel::where(['estatus' => 1 ])->whereIn('id',['94','95','96','97'])->orderby('descripcion', 'asc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_productos'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '   
+                 ,'event'     => 'display_productos()'               
            ]);
             /*$response = SysClientesModel::with(['contactos'])
                 ->where(['estatus' => 1,'id' => $request->input('id')])
@@ -58,6 +103,10 @@
                 ,"data_table"           => ""
                 ,'iva'                  => Session::get('iva')
                 ,'clientes'             => $clientes
+                ,'formas_pagos'         => $formas_pagos
+                ,'metodos_pagos'        => $metodos_pagos
+                ,'monedas'              => $monedas
+                ,'productos'            => $productos
             ];
             return self::_load_view( "ventas.cotizacion",$data );
         }
@@ -234,6 +283,39 @@
                 ];
                 #$response = SysClientesModel::all();
             return $this->_message_success( 201, $data , self::$message_success );
+            } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
+            }
+
+        }
+
+          public function getProducto( Request $request ){
+
+            try {
+                #debuger($request->input('id'));
+                $response = SysProductosModel::where(['estatus' => 1,'id' => $request->input('id')])
+                ->orderby('id','asc')
+                ->get();
+              
+                /*$contact = dropdown([
+                     'data'       => $contactos
+                     ,'value'     => 'id'
+                     ,'text'      => 'nombre_completo'
+                     ,'name'      => 'cmb_contactos'
+                     ,'class'     => 'form-control'
+                     ,'leyenda'   => 'Seleccione Opcion'
+                     ,'attr'      => 'data-live-search="true" '
+                     ,'event'      => 'parser_data()'
+               ]);
+                $data = [
+                    'combo_contactos' => $contact
+                    ,'rfc' => isset($response[0])? $response[0]->rfc_receptor:""
+                    ,'telefono' => isset($response[0])? $response[0]:""
+                    ,'correo' => isset($response[0])? $response[0]: ""
+                ];*/
+                #$response = SysClientesModel::all();
+            return $this->_message_success( 201, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );

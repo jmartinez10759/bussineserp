@@ -364,7 +364,7 @@
 @push('scripts')
 <script type="text/javascript" src="{{asset('js/ventas/build_cotizacion.js')}}"></script>
 <script>
-	$(document).ready(function(){
+/*	$(document).ready(function(){
   $.ajax({
     type: 'POST',
     url: '/crm/ventas/empresas',
@@ -403,20 +403,26 @@
     })
   })
 
-})
-
+})*/
 
 
 function display_contactos(){
 	var id_clientes = jQuery('#cmb_clientes').val();
-	alert(id_clientes);
 	var url = domain('ventas/contacto');
 	var fields = {id : id_clientes};
 	var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           	var select_contactos = response.data.result;
+          	//console.log(response.data.result.correo);
           	jQuery('#div_contacto').html(select_contactos.combo_contactos);
-              
+
+			$('#div_contacto').on('change', function() {
+			  	jQuery('#tel1').val('');
+              	jQuery('#email_contact').val('');
+			});
+            jQuery('#rfc_empresa').val(response.data.result.correo.rfc_receptor);
+            jQuery('#nombre_comercial').val(response.data.result.correo.nombre_comercial);
+            jQuery('#tel2').val(response.data.result.correo.telefono);
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -436,6 +442,30 @@ function parser_data(){
           promise.then( response => {
               	jQuery('#tel1').val(response.data.result.telefono);
               	jQuery('#email_contact').val(response.data.result.correo);
+          		$('#cmb_clientes').on('change', function() {
+				  	jQuery('#tel1').val('');
+	              	jQuery('#email_contact').val('');
+				});
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+}
+
+function display_productos(){
+	var id_clientes = jQuery('#cmb_productos').val();
+	var url = domain('ventas/productos');
+	var fields = {id : id_clientes};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+          	var select_productos = response.data.result;
+          	console.log(response.data.result.total);
+            jQuery('#precio_concepto').val(response.data.result.total);
+            jQuery('#descripcion').val(response.data.result.descripcion);
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -445,14 +475,7 @@ function parser_data(){
               toastr.error( error.response.data.message , expired );
           });
 
-
-
 }
-
-
-
-
-
 
 
 
