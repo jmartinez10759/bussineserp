@@ -43,7 +43,7 @@
                 $id['id'] = $respuesta->id;
                 $editar   = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit');
                 $borrar   = build_acciones_usuario($id,'v-destroy_register','Borrar','btn btn-danger','fa fa-trash','title="Borrar" '.$eliminar);
-                $asing_product   = build_acciones_usuario($id,'v-asignar_producto','Asignar Producto','btn btn-info','fa fa-trash','title="Borrar" '.$permisos);
+                $asing_product   = build_acciones_usuario($id,'v-asignar_producto','Asignar Producto','btn btn-info','fa fa-cart-plus','title="Borrar" '.$permisos);
                 /*     $permiso = dropdown([
                         'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
                         ,'value'     => 'id'
@@ -99,7 +99,6 @@
 
             try {
 
-
             $unidades = dropdown([
                      'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
                      ,'value'     => 'id'
@@ -140,9 +139,8 @@
         public function show( Request $request ){
 
             try {
-
-
-            return $this->_message_success( 201, $response , self::$message_success );
+                $response = $this->_tabla_model::with(['unidades'])->where(['id' => $request->id])->get();
+            return $this->_message_success( 201, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -200,8 +198,16 @@
             $error = null;
             DB::beginTransaction();
             try {
-
-
+                $registros = [];
+                $keys = ['created_at','updated_at','unidades'];
+                foreach ($request->all() as $key => $value) {
+                    if( !in_array($key,$keys)){
+                        $registros[$key] = strtoupper($value);
+                    }
+                }
+                #debuger($registros);
+                $this->_tabla_model::where(['id' => $request->id])->update($registros);
+                $response = $this->_tabla_model::where(['id' => $request->id])->get();
             DB::commit();
             $success = true;
             } catch (\Exception $e) {

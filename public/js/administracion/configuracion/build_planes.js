@@ -63,11 +63,19 @@ new Vue({
     }
     ,update_register(){
         var url = domain( url_update );
-        var fields = {};
+        this.update.descripcion = jQuery('#descripcion_edit').val();
+        this.update.id_unidadmedida  = jQuery('#cmb_unidades_edit').val();
+        var fields = this.update;
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
           
-              toastr.success( response.data.message , title );
+              $.fancybox.close({
+                   'type': 'inline',
+                   'src': "#modal_edit_register",
+                   'buttons': ['share', 'close']
+               });
+              toastr.info( response.data.message , title );
+              //redirect( domain( redireccion ));
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -84,8 +92,16 @@ new Vue({
         var fields = {id : id };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
-              toastr.success( response.data.message , title );
+              //toastr.success( response.data.message , title );
+              this.update = response.data.result;
+              jQuery('#descripcion_edit').val(response.data.result.descripcion);
+              jQuery('#cmb_unidades_edit').val(response.data.result.id_unidadmedida);
+              jQuery('#cmb_categorias_edit').val(response.data.result.id_categoria);
+              $.fancybox.open({
+                  'type': 'inline',
+                  'src': "#modal_edit_register",
+                  'buttons': ['share', 'close']
+              });
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -112,7 +128,6 @@ new Vue({
                     return;
                 }
               toastr.error( error.response.data.message , expired );
-              redirect();
           });
       },"warning",true,["SI","NO"]);   
     }

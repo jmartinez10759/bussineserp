@@ -9,6 +9,7 @@ class SysPlanesModel extends Model
     public $table = "sys_planes";
     public $fillable = [
         'id'
+        ,'id_unidadmedida'
         ,'clave_unidad'
         ,'clave_producto_servicio'
         ,'codigo'

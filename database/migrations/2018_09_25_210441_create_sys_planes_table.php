@@ -15,6 +15,7 @@ class CreateSysPlanesTable extends Migration
     {
         Schema::create('sys_planes', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('id_unidadmedida')->default(1);
             $table->string('clave_unidad')->nullable();
             $table->string('clave_producto_servicio')->nullable();
             $table->string('codigo')->nullable();
