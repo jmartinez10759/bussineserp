@@ -31,8 +31,8 @@ class EmpresasController extends MasterController
         if( Session::get('permisos')['GET'] ){
           return view('errors.error');
         }
-           $response = $this->_tabla_model::with(['contactos'])->get();
-        #debuger($response);
+           $response = ( Session::get('id_rol') == 1 )? $this->_tabla_model::with(['contactos'])->get():$this->_consulta_employes(new SysUsersModel);
+           #debuger($response);        
            $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->get();
            $registros = [];
            $registros_sucursales = [];
@@ -179,14 +179,6 @@ class EmpresasController extends MasterController
             return $this->_message_success( 201, $response , self::$message_success );
             }
             return $this->show_error(6, $error, self::$message_error );
-/*
-        
-        debuger($request->all());
-        $response_store = $this->_tabla_model::create([$request->all()], self::$_tabla_model );
-        if ($response_store) {
-          return message( true,$response_store[0],self::$message_success );
-        }
-        return message( false,[],self::$message_error );*/
 
      }
  /**
@@ -270,13 +262,6 @@ class EmpresasController extends MasterController
         return $this->_message_success( 201, $success , self::$message_success );
         }
         return $this->show_error(6, $error, self::$message_error );
-        
-       /*$where = ['id' => $request->id];
-       $response_update = self::$_model::update_model($where, $request->all(), self::$_tabla_model );
-       if ($response_update) {
-         return message( true,$response_update[0],self::$message_success );
-       }
-       return message( false,[],self::$message_error );*/
 
      }
  /**

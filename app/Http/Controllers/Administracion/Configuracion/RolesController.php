@@ -26,25 +26,10 @@ class RolesController extends MasterController
            if( Session::get('permisos')['GET'] ){
               return view('errors.error');
            }
-           $response = self::$_tabla_model::where(['estatus' => 1]);
-           if( Session::get('id_rol') != 1 ){
-             $data = $response->with(['empresas' => function( $query ){
-                return $query->where(['id' => Session::get('id_empresa')]);
-             }])->get();
-             #debuger($data);
-             $response = [];
-             foreach ($data as $respuesta) {
-                if( count($respuesta->empresas) > 0 ){
-                    $response[] = $respuesta;
-                }
-             }
-           }else{
-             $response = $response->get();
-           }
-           #debuger($response);
-           $registros = [];
-           $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
-           foreach ($response as $respuesta) {
+         $response = (Session::get('id_rol') == 1 )? self::$_tabla_model::get() : $this->_consulta( self::$_tabla_model );
+         $registros = [];
+         $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
+         foreach ($response as $respuesta) {
              $id['id'] = $respuesta->id;
              $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit');
              $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash','title="Borrar" '.$eliminar);
@@ -57,25 +42,24 @@ class RolesController extends MasterController
                ,$borrar
              ];
            }
-
            $titulos = [ 'id','Nombre Rol','Clave Corta','Estatus','',''];
            $table = [
              'titulos' 		      => $titulos
-             ,'registros' 	    => $registros
-             ,'id' 			        => "datatable"
-             ,'class'           => "fixed_header"
+             ,'registros' 	      => $registros
+             ,'id' 			      => "datatable"
+             ,'class'             => "fixed_header"
            ];
 
            $data = [
-             'page_title' 	     => "Configuracion"
-             ,'title'  		       => "Roles"
-             ,'subtitle' 	       => "Creacion de Roles"
-             ,'data_table'  	   =>  data_table($table)
-             ,'titulo_modal'     => "Registro de Roles"
-             ,'titulo_modal_edit'=> "Actualacion de Roles"
-             ,'campo_1' 		     => 'Nombre Rol'
-             ,'campo_2' 		     => 'Clave Corta'
-             ,'campo_3' 		     => 'Estatus'
+             'page_title' 	            => "Configuracion"
+             ,'title'  		            => "Roles"
+             ,'subtitle' 	            => "Creacion de Roles"
+             ,'data_table'  	        =>  data_table($table)
+             ,'titulo_modal'            => "Registro de Roles"
+             ,'titulo_modal_edit'       => "Actualacion de Roles"
+             ,'campo_1' 		        => 'Nombre Rol'
+             ,'campo_2' 		        => 'Clave Corta'
+             ,'campo_3' 		        => 'Estatus'
            ];
             #debuger($data);
          return self::_load_view( 'administracion.configuracion.roles', $data );

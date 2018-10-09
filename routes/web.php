@@ -421,7 +421,17 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\PlanesController@update'
         ,'as'       => 'planes.update'
     ]);
-
+    
+    Route::get('/planes/asing_producto', [
+        'uses'      => 'Administracion\Configuracion\PlanesController@asignar'
+        ,'as'       => 'planes.asing_producto'
+    ]);
+    
+    Route::post('/planes/asing_insert', [
+        'uses'      => 'Administracion\Configuracion\PlanesController@asignar_insert'
+        ,'as'       => 'planes.asing_insert'
+    ]);
+    
     ######################### MODULO DE MONEDAS ##################################
     
     Route::get('/configuracion/monedas', [

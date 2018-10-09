@@ -272,5 +272,64 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
+/**
+ * Metodo para borrar el registro
+ * @access public
+ * @param Request $request [Description]
+ * @return void
+ */  
+        
+   public function asignar( Request $request ){
+            try {
+             $response = $this->_tabla_model::with(['productos'])->where(['id' => $request->id])->get();
+            return $this->_message_success( 201, $response[0] , self::$message_success );
+            } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
+            }
 
     }
+/**
+ * Metodo para borrar el registro
+ * @access public
+ * @param Request $request [Description]
+ * @return void
+ */  
+        
+   public function asignar_insert( Request $request ){
+           
+       $error = null;
+        DB::beginTransaction();
+        try {
+            
+            #SysPlanesProductosModel::where(['id_plan' => $response->id_plan])->delete();
+            for($i = 0; $i < count($request->matrix); $i++){
+                $matrices = explode('|',$request->matrix[$i]);
+                $id_producto = $matrices[0];
+                debuger($id_producto);
+                $data = [
+                     'id_empresa'     => Session::get('id_empresa')
+                    ,'id_sucursal'    => Session::get('id_sucursal')
+                    ,'id_plan'        => $response->id_plan
+                    ,'id_producto'    => $id_producto
+                ];
+                SysPlanesProductosModel::create($data);
+            }
+        DB::commit();
+        $success = true;
+        } catch (\Exception $e) {
+        $success = false;
+        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+        DB::rollback();
+        }
+
+        if ($success) {
+        return $this->_message_success( 201, $response , self::$message_success );
+        }
+        return $this->show_error(6, $error, self::$message_error );
+
+    }
+        
+        
+        
+}

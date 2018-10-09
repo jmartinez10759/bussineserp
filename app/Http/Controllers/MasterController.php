@@ -640,10 +640,10 @@ abstract class MasterController extends Controller
 
   			 if ($logout) {
   				 $data_logout = [
-  					 'conect'        => 0
-  			     ,'disconect'    => 1
-  					 ,'updated_at'   => timestamp()
-  					 ,'time_conected' => time_fechas( $fecha_inicio ,timestamp() )
+  					    'conect'        => 0
+  			           ,'disconect'     => 1
+  					   ,'updated_at'    => timestamp()
+  					   ,'time_conected' => time_fechas( $fecha_inicio ,timestamp() )
   				 ];
   				 SysSesionesModel::where( $where )->update($data_logout);
 
@@ -832,13 +832,13 @@ abstract class MasterController extends Controller
   		return false;
 
   	}
-	/**
-	 * Metodo para realizar los reportes de las facturas.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-		public static function reporte_general( $filtros = [] ){
+/**
+ * Metodo para realizar los reportes de las facturas.
+ * @access public
+ * @param Request $request [Description]
+ * @return void
+ */
+    public static function reporte_general( $filtros = [] ){
                     
              $fecha_actual = date('Y-m-d');
              $fecha_actual = explode('-',$fecha_actual);
@@ -950,7 +950,28 @@ abstract class MasterController extends Controller
         return $request;
         
     }
-
+/**
+ * Metodo para obtener los registros de los productos por empresa.
+ * @access public
+ * @param Request $request [Description]
+ * @return void
+ */
+    protected function _consulta_employes( $table_model ){
+        
+        $response = $table_model::with(['empresas' => function( $query ){
+            if(Session::get('id_rol') != 1){
+                return $query->where([ 'sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa') ]);
+            }
+            }])->where(['id' => Session::get('id')])->orderby('id','desc')->get();
+            $request = [];
+            foreach($response as $respuesta){
+                if( count($respuesta->empresas) > 0 ){
+                    $request = $respuesta->empresas;
+                }
+            }
+        return $request;
+        
+    }
 
 
 }
