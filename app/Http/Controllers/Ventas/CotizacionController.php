@@ -13,6 +13,8 @@
     use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
     use App\Model\Administracion\Configuracion\SysMonedasModel;
     use App\Model\Administracion\Configuracion\SysProductosModel;
+    use App\Model\Administracion\Configuracion\SysPlanesModel;
+    use App\Model\Administracion\Configuracion\SysEstatusModel;
 
 
 
@@ -79,7 +81,7 @@
            ]);
 
             $productos = dropdown([
-                 'data'       => SysProductosModel::where(['estatus' => 1 ])->whereIn('id',['94','95','96','97'])->orderby('descripcion', 'asc')->get()
+                 'data'       => $this->_consulta(new SysProductosModel)
                  ,'value'     => 'id'
                  ,'text'      => 'nombre'
                  ,'name'      => 'cmb_productos'
@@ -87,6 +89,27 @@
                  ,'leyenda'   => 'Seleccione Opción'
                  ,'attr'      => 'data-live-search="true" '   
                  ,'event'     => 'display_productos()'               
+           ]);
+
+            $planes = dropdown([
+                 'data'       => $this->_consulta(new SysPlanesModel) 
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_planes'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '   
+                 ,'event'     => 'display_planes()'               
+           ]);
+            /*where(['estatus' => 1 ])->whereIn('id',['94','95','96','97'])->orderby('descripcion', 'asc')->get()*/
+            $estatus = dropdown([
+                 'data'       => SysEstatusModel::where(['estatus' => 1 ])->orderby('nombre', 'asc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_estatus'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '                
            ]);
             /*$response = SysClientesModel::with(['contactos'])
                 ->where(['estatus' => 1,'id' => $request->input('id')])
@@ -107,6 +130,8 @@
                 ,'metodos_pagos'        => $metodos_pagos
                 ,'monedas'              => $monedas
                 ,'productos'            => $productos
+                ,'planes'               => $planes
+                ,'estatus'              => $estatus
             ];
             return self::_load_view( "ventas.cotizacion",$data );
         }
@@ -157,6 +182,33 @@
             $error = null;
             DB::beginTransaction();
             try {
+                //debuger($request->cotizacion['id_cliente']);
+                $cotizaciones = [
+                    'codigo'         => isset($request->cotizacion['codigo'])?$request->cotizacion['codigo']:null
+                    ,'descripcion'   => isset($request->cotizacion['descripcion'])?$request->cotizacion['descripcion']:0
+                    ,'id_cliente'    => isset($request->cotizacion['id_cliente'])?$request->cotizacion['id_cliente']:111
+                    ,'id_moneda'     => isset($request->cotizacion['id_moneda'])?$request->cotizacion['id_moneda']:0
+                    ,'id_contacto'   => isset($request->cotizacion['id_contacto'])?$request->cotizacion['id_contacto']:0
+                    ,'id_metodo_pago'=> isset($request->cotizacion['id_metodo_pago'])?$request->cotizacion['id_metodo_pago']:0
+                    ,'id_forma_pago' => isset($request->cotizacion['id_forma_pago'])?$request->cotizacion['id_forma_pago']:0
+                    ,'id_estatus'    => isset($request->cotizacion['id_estatus'])?$request->cotizacion['id_estatus']:0
+                ];
+                //debuger($cotizaciones);
+
+                $datos = SysCotizacionModel::create($cotizaciones);
+                $id_user=$datos->id;
+
+                if ($datos == true){
+                    debuger(session::all('id'));
+                    $datos = [
+                    'id_producto'   => isset($request->conceptos['id_producto'])?$request->conceptos['id_producto']:0
+                    ,'id_plan'      => isset($request->conceptos['id_plan'])?$request->conceptos['id_plan']:0
+                    ,'catidad'      => isset($request->conceptos['cantidad'])?$request->conceptos['cantidad']:null
+                    ,'precio'       => isset($request->conceptos['precio'])?$request->conceptos['precio']:null
+                    ,'total'        => isset($request->conceptos['total'])?$request->conceptos['total']:null
+                ];
+
+                }
 
 
             DB::commit();
@@ -168,7 +220,7 @@
             }
 
             if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 201, $datos , self::$message_success );
             }
             return $this->show_error(6, $error, self::$message_error );
 
@@ -298,23 +350,22 @@
                 ->orderby('id','asc')
                 ->get();
               
-                /*$contact = dropdown([
-                     'data'       => $contactos
-                     ,'value'     => 'id'
-                     ,'text'      => 'nombre_completo'
-                     ,'name'      => 'cmb_contactos'
-                     ,'class'     => 'form-control'
-                     ,'leyenda'   => 'Seleccione Opcion'
-                     ,'attr'      => 'data-live-search="true" '
-                     ,'event'      => 'parser_data()'
-               ]);
-                $data = [
-                    'combo_contactos' => $contact
-                    ,'rfc' => isset($response[0])? $response[0]->rfc_receptor:""
-                    ,'telefono' => isset($response[0])? $response[0]:""
-                    ,'correo' => isset($response[0])? $response[0]: ""
-                ];*/
-                #$response = SysClientesModel::all();
+            return $this->_message_success( 201, $response[0] , self::$message_success );
+            } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
+            }
+
+        }
+
+        public function get_planes( Request $request ){
+
+            try {
+                #debuger($request->input('id'));
+                $response = SysPlanesModel::where(['estatus' => 1,'id' => $request->input('id')])
+                ->orderby('id','asc')
+                ->get();
+              
             return $this->_message_success( 201, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();

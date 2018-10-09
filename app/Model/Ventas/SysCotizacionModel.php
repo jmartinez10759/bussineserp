@@ -11,6 +11,7 @@ class SysCotizacionModel extends Model
       		'id'
       		,'codigo'
       		,'descripcion'
+                  ,'id_cliente'
       		,'id_moneda'
       		,'id_contacto'
       		,'condiciones_pago'

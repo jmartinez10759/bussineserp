@@ -16,6 +16,8 @@ new Vue({
     update: {},
     edit: {},
     fields: {},
+    clients: {},
+    products: {},
 
   },
   mixins : [mixins],
@@ -38,7 +40,26 @@ new Vue({
     }
     ,insert_register(){
         var url = domain( url_insert );
-        var fields = {};
+        var fields = {
+            'cotizacion': {
+                'codigo'        : 'cot-1121'
+               ,'descripcion'   : jQuery('#observaciones').val()
+               ,'id_moneda'     : jQuery('#cmb_monedas').val()
+               ,'id_contacto'   : jQuery('#cmb_contactos').val()
+               ,'id_metodo_pago': jQuery('#cmb_metodos_pagos').val()
+               ,'id_forma_pago' : jQuery('#cmb_formas_pagos').val()
+               ,'id_estatus'    : jQuery('#cmb_estatus').val()
+               ,'id_cliente'    : jQuery('#cmb_clientes').val()
+            },
+            'conceptos': {
+                 'id_producto'  : jQuery('#cmb_productos').val()
+                ,'id_plan'      : jQuery('#cmb_planes').val()
+                ,'cantidad'     : jQuery('#cantidad_concepto').val()
+                ,'precio'       : jQuery('#precio_concepto').val()
+                ,'total'        : jQuery('#total_concepto').val()
+            }
+        };
+        console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
           

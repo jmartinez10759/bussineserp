@@ -82,6 +82,12 @@
                                     {!! $metodos_pagos !!}
                                 </div>
 
+                                <label for="validez" class="col-md-1 control-label">Estatus:</label>
+                                <div class="col-md-3">
+
+                                    {!! $estatus !!}
+                                </div>
+
                             </div>
 
                             <div class="form-group row">
@@ -130,15 +136,7 @@
                                         <td class="text-right">4.50</td>
                                         <td class="text-right">13.50</td>
                                         <td class="text-center"><a href="#" onclick="eliminar('17353')"><i class="glyphicon glyphicon-trash"></i></a></td>
-                                    </tr>       
-                                    <tr>
-                                        <td class="text-center">999910</td>
-                                        <td class="text-center">1</td>
-                                        <td>Test motherboard</td>
-                                        <td class="text-right">150.00</td>
-                                        <td class="text-right">150.00</td>
-                                        <td class="text-center"><a href="#" onclick="eliminar('17352')"><i class="glyphicon glyphicon-trash"></i></a></td>
-                                    </tr>       
+                                    </tr>            
                                     <tr>
                                         <td class="text-right" colspan="4" >SUBTOTAL </td>
                                         <td class="text-right" id="subtotal" style="background-color:#eee">  </td>
@@ -184,24 +182,24 @@
 
             <form class="form-horizontal" >
 
-                                            <div class="form-group">
-                                <label for="condiciones" class="col-sm-3 control-label">Productos:</label>
-                                <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="condiciones" class="col-sm-3 control-label">Productos:</label>
+                    <div class="col-sm-3">
                
-                                    {!! $productos !!}
-                                </div>
-                                <label for="validez" class="col-sm-3 control-label">Planes:</label>
-                                <div class="col-sm-3">
+                        {!! $productos !!}
+                    </div>
+                    <label for="validez" class="col-sm-3 control-label">Planes:</label>
+                    <div class="col-sm-3">
 
-                                    {!! $metodos_pagos !!}
-                                </div>
+                        {!! $planes !!}
+                    </div>
 
-                            </div>
+                </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Cantidad</label>
                     <div class="col-sm-9">
-                        <input type="text" id="cantidad_concepto" class="form-control" placeholder="" >
+                        <input type="number" id="cantidad_concepto" class="form-control" placeholder="" onkeyup="calcular_suma()">
                     </div>
                 </div>
 
@@ -209,14 +207,14 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Precio Unitario</label>
                     <div class="col-sm-9">
-                        <input type="text" id="precio_concepto" class="form-control" placeholder="$">
+                        <input type="text" id="precio_concepto" class="form-control" disabled placeholder="$" onkeyup="calcular_suma()" >
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Descripción</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control" id="descripcion"></textarea>
+                        <textarea class="form-control" id="descripcion" rows="5"></textarea>
                     </div>
                 </div>
 
@@ -233,7 +231,7 @@
         </div>
         <div class="modal-footer">
             <div class="pull-right">
-                <button type="button" class="btn btn-success" ><i class="fa fa-save"></i> Agregar</button>
+                <button type="button" class="btn btn-success" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Agregar</button>
             </div>
         </div>
 

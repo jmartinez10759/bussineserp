@@ -73,7 +73,7 @@
 								<td class="text-right">184.76</td>
 								<td class="text-right"> 
 									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 											Acciones
 											<span class="caret"></span>
 										</button>
@@ -92,263 +92,7 @@
 								</td> -->
 
 							</tr>
-							<tr>
-								<td data-toggle="modal" data-target="#modal-detail-factura">2516</td>
-								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 123<br><i class='glyphicon glyphicon-envelope'></i>  123@123">12345</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right"> 
-									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Acciones
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
-										</ul>
-									</div>
-								</td>				
-<!-- 								<td class="text-right">
-									<a href="editar_factura.php?id_factura=4791" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
-									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4791');"><i class="glyphicon glyphicon-download"></i></a> 
-									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2516')"><i class="glyphicon glyphicon-trash"></i> </a>
-								</td> -->
 
-							</tr>
-
-							<tr>
-								<td data-toggle="modal" data-target="#modal-detail-factura">2516</td>
-								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 123<br><i class='glyphicon glyphicon-envelope'></i>  123@123">12345</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right"> 
-									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Acciones
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
-										</ul>
-									</div>
-								</td>				
-<!-- 								<td class="text-right">
-									<a href="editar_factura.php?id_factura=4791" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
-									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4791');"><i class="glyphicon glyphicon-download"></i></a> 
-									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2516')"><i class="glyphicon glyphicon-trash"></i> </a>
-								</td> -->
-
-							</tr>
-
-							<tr>
-								<td data-toggle="modal" data-target="#modal-detail-factura">2516</td>
-								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 123<br><i class='glyphicon glyphicon-envelope'></i>  123@123">12345</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right"> 
-									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Acciones
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
-										</ul>
-									</div>
-								</td>				
-<!-- 								<td class="text-right">
-									<a href="editar_factura.php?id_factura=4791" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
-									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4791');"><i class="glyphicon glyphicon-download"></i></a> 
-									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2516')"><i class="glyphicon glyphicon-trash"></i> </a>
-								</td> -->
-
-							</tr>
-
-							<tr>
-								<td data-toggle="modal" data-target="#modal-detail-factura">2516</td>
-								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 123<br><i class='glyphicon glyphicon-envelope'></i>  123@123">12345</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right"> 
-									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Acciones
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
-										</ul>
-									</div>
-								</td>				
-<!-- 								<td class="text-right">
-									<a href="editar_factura.php?id_factura=4791" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
-									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4791');"><i class="glyphicon glyphicon-download"></i></a> 
-									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2516')"><i class="glyphicon glyphicon-trash"></i> </a>
-								</td> -->
-
-							</tr>
-
-							<tr>
-								<td data-toggle="modal" data-target="#modal-detail-factura">2516</td>
-								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 123<br><i class='glyphicon glyphicon-envelope'></i>  123@123">12345</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right"> 
-									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Acciones
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
-										</ul>
-									</div>
-								</td>				
-<!-- 								<td class="text-right">
-									<a href="editar_factura.php?id_factura=4791" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
-									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4791');"><i class="glyphicon glyphicon-download"></i></a> 
-									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2516')"><i class="glyphicon glyphicon-trash"></i> </a>
-								</td> -->
-
-							</tr>
-
-							<tr>
-								<td data-toggle="modal" data-target="#modal-detail-factura">2516</td>
-								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 123<br><i class='glyphicon glyphicon-envelope'></i>  123@123">12345</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right"> 
-									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Acciones
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
-										</ul>
-									</div>
-								</td>				
-<!-- 								<td class="text-right">
-									<a href="editar_factura.php?id_factura=4791" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
-									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4791');"><i class="glyphicon glyphicon-download"></i></a> 
-									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2516')"><i class="glyphicon glyphicon-trash"></i> </a>
-								</td> -->
-
-							</tr>
-
-
-
-
-							<tr>
-								<td>2509</td>
-								<td>31/07/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 0990998372<br><i class='glyphicon glyphicon-envelope'></i>  daniel.cajas@hotmail.com">Daniel Cajas</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right"> 
-									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Acciones
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
-										</ul>
-									</div>
-								</td>					
-<!-- 								<td class="text-right">
-									<a href="editar_factura.php?id_factura=4781" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
-									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4781');"><i class="glyphicon glyphicon-download"></i></a> 
-									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2509')"><i class="glyphicon glyphicon-trash"></i> </a>
-								</td> -->
-
-							</tr>
-							<tr>
-								<td>2508</td>
-								<td>30/07/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 5555555<br><i class='glyphicon glyphicon-envelope'></i>  ejemplo@gmail.com">ROBERTO SERPA LANDAVERRY</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right"> 
-									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Acciones
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a style="cursor: pointer;" onclick="alert(1);" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
-										</ul>
-									</div>
-								</td>				
-								<!-- <td class="text-right">
-									<a href="editar_factura.php?id_factura=4780" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
-									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4780');"><i class="glyphicon glyphicon-download"></i></a> 
-									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2508')"><i class="glyphicon glyphicon-trash"></i> </a>
-								</td> -->
-
-							</tr>
 							<!--<tr>
 								<td colspan="12"><span class="pull-right"><ul class="pagination pagination-large"><li class="disabled"><span><a>‹ Ant.</a></span></li><li class="active"><a>1</a></li><li><a href="javascript:void(0);" onclick="load(2)">2</a></li><li><a href="javascript:void(0);" onclick="load(3)">3</a></li><li><a href="javascript:void(0);" onclick="load(4)">4</a></li><li><a href="javascript:void(0);" onclick="load(5)">5</a></li><li><a>...</a></li><li><a href="javascript:void(0);" onclick="load(225)">225</a></li><li><span><a href="javascript:void(0);" onclick="load(2)">Sig. ›</a></span></li></ul></span></td>
 							</tr>-->
@@ -463,7 +207,6 @@ function display_productos(){
 	var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           	var select_productos = response.data.result;
-          	console.log(response.data.result.total);
             jQuery('#precio_concepto').val(response.data.result.total);
             jQuery('#descripcion').val(response.data.result.descripcion);
           }).catch( error => {
@@ -477,12 +220,44 @@ function display_productos(){
 
 }
 
+function display_planes(){
+	var id_planes = jQuery('#cmb_planes').val();
+	var url = domain('ventas/planes');
+	var fields = {id : id_planes};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+          	//var select_productos = response.data.result;
+            jQuery('#precio_concepto').val(response.data.result.total);
+            jQuery('#descripcion').val(response.data.result.descripcion);
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
 
+}
 
+function calcular_suma(){
+	var cantidad = jQuery('#cantidad_concepto').val();
+	if(cantidad == '') cantidad = 0;
 
+	var precio_unitario = jQuery('#precio_concepto').val();
+	if (precio_unitario == '') {
+		precio_unitario = 0;
+	} else {
+			jQuery('#cmb_productos').on('change', function() {
+				jQuery('#cantidad_concepto').val('');
+              	jQuery('#total_concepto').val('');
+			});	
+	}
 
+	var total = parseInt(cantidad) * parseFloat(precio_unitario);
+	jQuery('#total_concepto').val(total);
 
-
+}
 
 </script>
 @endpush

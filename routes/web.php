@@ -883,9 +883,9 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'unidadesmedidas.all'
     ]);
 
-    Route::post('/unidadesmedidas/register', [
-        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@store'
-        ,'as' => 'unidadesmedidas.register'
+    Route::post('/cotizacion/register', [
+        'uses' => 'Ventas\CotizacionController@store'
+        ,'as' => 'cotizacion.register'
     ]);
 
     Route::get('/unidadesmedidas/edit', [
@@ -916,6 +916,11 @@ Route::get('/ventas/cotizacion', [
     Route::get('/ventas/productos', [
         'uses' => 'Ventas\CotizacionController@getProducto'
         ,'as' => 'ventas.productos'
+    ]);
+
+    Route::get('/ventas/planes', [
+        'uses' => 'Ventas\CotizacionController@get_planes'
+        ,'as' => 'ventas.planes'
     ]);
 
 
