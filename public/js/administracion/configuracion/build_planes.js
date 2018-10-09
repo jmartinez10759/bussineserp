@@ -5,6 +5,7 @@ var url_destroy  = "planes/destroy";
 var url_all      = "planes/all";
 var redireccion  = "configuracion/planes";
 var url_productos  = "planes/asing_producto";
+var url_asign_insert  = "planes/asing_insert";
 
 new Vue({
   el: "#vue-planes",
@@ -21,6 +22,7 @@ new Vue({
     update: {},
     edit: {},
     fields: {},
+    asignar: {},
 
   },
   mixins : [mixins],
@@ -145,19 +147,73 @@ new Vue({
         this.update.total = parseFloat(parseFloat(subtotal) + parseFloat(impuesto)).toFixed(2);
         console.log(this.update.total);
     }
-    
-      
+    ,save_asign_producto(){
+        this.asignar.id_plan = jQuery('#id_plan').val();
+        var matrix = [];
+        var i = 0;
+        jQuery('#datatable_productos input[type="checkbox"]').each(function () {
+            if (jQuery(this).is(':checked') == true) {
+                var id = jQuery(this).attr('id');
+                matrix[i] = `${id}|${jQuery(this).is(':checked')}`;
+                i++;
+            }
+        });
+        this.asignar.matrix = matrix;
+        var url = domain(url_asign_insert);
+        var fields = this.asignar;
+         var promise = MasterController.method_master(url,fields,"post");
+          promise.then( response => {
+          
+              toastr.success( response.data.message , title );
+              
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+              
+          });
+        
     }
+      
+  }
 
 
 });
 
 
 function asignar_producto( id ){
-  $.fancybox.open({
-      'type': 'inline',
-      'src': "#modal_asing_producto",
-      'buttons': ['share', 'close']
-  });
+    var url = domain( url_productos);
+    var fields = {id : id };
+    var promise = MasterController.method_master(url,fields,"get");
+      promise.then( response => {
+           jQuery('#id_plan').val(id);
+          $.fancybox.open({
+              'type': 'inline',
+              'src': "#modal_asing_producto",
+              'buttons': ['share', 'close']
+          });
+          if(response.data.result.productos.length > 0){
+              for (var i = 0; i < response.data.result.productos.length; i++) {
+                    console.log(response.data.result.productos[i].id);
+                    jQuery('#'+response.data.result.productos[i].id).prop('checked', true);
+              };
+          }
+            
+          
+      }).catch( error => {
+          if( error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+            }
+          toastr.error( error.response.data.message , expired );
+
+      });
+
+    
+    
 
 }

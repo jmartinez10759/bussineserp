@@ -322,7 +322,8 @@
             <div class="modal-header">
                 <h3> Listado de Productos</h3>
             </div>
-            <div class="modal-body">    
+            <div class="modal-body">   
+               <input type="text" id="id_plan" />
                 {!! $data_table_producto !!}
             </div>
             <div class="modal-footer">

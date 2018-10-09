@@ -174,12 +174,7 @@ new Vue({
             });
             for (var i = 0; i < this.sucursales.sucursales.length; i++) {
                 console.log(this.sucursales.sucursales[i].id_sucursal);
-                //jQuery(`#sucursal_empresa #${this.sucursales.sucursales[i].id_sucursal}`).prop('checked', true);
-                jQuery('#2').prop('checked', true);
-                // if (response.data.result[i].estatus == 1) {
-                // } else {
-                //     jQuery(`#actions_${response.data.result[i].id_accion}`).prop('checked', false);
-                // }
+                jQuery('#'+this.sucursales.sucursales[i].id_sucursal).prop('checked', true);
             };
         }).catch(error => {
             if (error.response.status == 419) {
