@@ -22,10 +22,10 @@ class SysPlanesModel extends Model
     ];
     
     public function productos(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel','sys_planes_productos','id_producto','id_plan');
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel','sys_planes_productos','id_plan','id_producto');
     }
     public function empresas(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_planes_productos','id_empresa','id_plan');
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_planes_productos','id_plan','id_empresa');
     }
     public function unidades(){
       return $this->hasOne('App\Model\Administracion\Configuracion\SysUnidadesMedidasModel', 'id', 'id_unidadmedida');

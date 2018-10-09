@@ -42,7 +42,7 @@
                                             <div class="form-group ">
                                                 <label for="product_code" class="col-sm-2 control-label">Clave</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="clave" v-model="insert.clave_unidad">
+                                                    <input type="text" class="form-control" id="clave" v-model="insert.clave_unidad" readonly>
                                                 </div>
                                                 <label for="model" class="col-sm-2 control-label">Código</label>
                                                 <div class="col-sm-4">
@@ -202,7 +202,7 @@
                                             <div class="form-group ">
                                                 <label for="product_code" class="col-sm-2 control-label">Clave</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="clave_edit" v-model="update.clave_unidad">
+                                                    <input type="text" class="form-control" id="clave_edit" v-model="update.clave_unidad" readonly>
                                                 </div>
                                                 <label for="model" class="col-sm-2 control-label">Código</label>
                                                 <div class="col-sm-4">
@@ -311,3 +311,29 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+<div class="" id="modal_asing_producto" style="display:none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Listado de Productos</h3>
+            </div>
+            <div class="modal-body">    
+                {!! $data_table_producto !!}
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-primary" v-on:click.prevent="save_asign_producto()"><i class="fa fa-save"></i> Registrar </button> 
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

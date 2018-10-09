@@ -928,8 +928,28 @@ abstract class MasterController extends Controller
                      return $response;
 
 		 }
-
-
+/**
+ * Metodo para obtener los registros de los productos por empresa.
+ * @access public
+ * @param Request $request [Description]
+ * @return void
+ */
+    protected function _consulta( $table_model ){
+        
+        $response = $table_model::with(['empresas' => function( $query ){
+            if(Session::get('id_rol') != 1){
+                return $query->where([ 'sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa') ]);
+            }
+            }])->orderby('id','desc')->get();
+            $request = [];
+            foreach($response as $respuesta){
+                if( count($respuesta->empresas) > 0 ){
+                    $request[] = $respuesta;
+                }
+            }
+        return $request;
+        
+    }
 
 
 

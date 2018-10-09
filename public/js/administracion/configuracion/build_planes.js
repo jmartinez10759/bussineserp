@@ -4,6 +4,7 @@ var url_edit     = "planes/edit";
 var url_destroy  = "planes/destroy";
 var url_all      = "planes/all";
 var redireccion  = "configuracion/planes";
+var url_productos  = "planes/asing_producto";
 
 new Vue({
   el: "#vue-planes",
@@ -14,7 +15,6 @@ new Vue({
     datos: [],
     insert: {
         estatus: 1,
-        clave_unidad: "E48",
         total: 0,
         stock: 0
     },
@@ -131,23 +131,33 @@ new Vue({
           });
       },"warning",true,["SI","NO"]);   
     }
-     ,total_concepto() {
+    ,total_concepto() {
              var iva = (this.insert.iva) ? this.insert.iva : 0;
              var subtotal = (this.insert.subtotal) ? this.insert.subtotal : 0;
              var impuesto = parseFloat(subtotal * iva / 100);
              this.insert.total = parseFloat(parseFloat(subtotal) + parseFloat(impuesto)).toFixed(2);
              console.log(this.insert.total);
-         },
-    total_concepto_edit() {
+         }
+    ,total_concepto_edit() {
         var iva = (this.update.iva) ? this.update.iva : 0;
         var subtotal = (this.update.subtotal) ? this.update.subtotal : 0;
         var impuesto = parseFloat(subtotal * iva / 100);
         this.update.total = parseFloat(parseFloat(subtotal) + parseFloat(impuesto)).toFixed(2);
         console.log(this.update.total);
-    },
+    }
     
-    
-  }
+      
+    }
 
 
 });
+
+
+function asignar_producto( id ){
+  $.fancybox.open({
+      'type': 'inline',
+      'src': "#modal_asing_producto",
+      'buttons': ['share', 'close']
+  });
+
+}

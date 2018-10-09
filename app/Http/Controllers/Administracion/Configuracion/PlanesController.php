@@ -6,8 +6,10 @@
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysPlanesModel;
+    use App\Model\Administracion\Configuracion\SysProductosModel;
     use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
     use App\Model\Administracion\Configuracion\SysPlanesProductosModel;
+    use App\Model\Administracion\Configuracion\SysClientesModel;
 
     class PlanesController extends MasterController
     {
@@ -29,21 +31,20 @@
             if( Session::get('permisos')['GET'] ){
                 return view('errors.error');
             }
-            $response = $this->_tabla_model::orderby('id','desc')->get();
-            if( Session::get('id_rol') != 1 ){
-                $data = $response->with(['empresas' => function($query){
-                    return $query->where(['estatus' => 1, 'id' => Session::get('id_empresa')]);
-                }])->get();
-            }
-            
+            #$cliente = $this->_consulta( new SysClientesModel);
+            #debuger( count($cliente) );
+            $response = (Session::get('id_rol') == 1 )? $this->_tabla_model::get() : $this->_consulta($this->_tabla_model);
+            $productos = ( Session::get('id_rol') == 1 )? SysProductosModel::orderby('id','desc')->get() : $this->_consulta( new SysProductosModel );
+            #debuger($productos);
             $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
             $permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
             $registros = [];
+            $producto = [];
             foreach ($response as $respuesta) {
                 $id['id'] = $respuesta->id;
                 $editar   = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit');
                 $borrar   = build_acciones_usuario($id,'v-destroy_register','Borrar','btn btn-danger','fa fa-trash','title="Borrar" '.$eliminar);
-                $asing_product   = build_acciones_usuario($id,'v-asignar_producto','Asignar Producto','btn btn-info','fa fa-cart-plus','title="Borrar" '.$permisos);
+                $asing_product   = build_acciones_usuario($id,'asignar_producto','Asignar Producto','btn btn-info','fa fa-cart-plus','title="Borrar" ');
                 /*     $permiso = dropdown([
                         'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
                         ,'value'     => 'id'
@@ -73,6 +74,20 @@
                 }
 
             }
+            
+            foreach ($productos as $respuesta) {
+                $id['id'] = $respuesta->id;
+                $checkbox = build_actions_icons($id,'id_producto= "'.$respuesta->id.'" ');
+                $producto[] = [
+                    $respuesta->clave_unidad
+                    ,$respuesta->nombre
+                    , format_currency($respuesta->subtotal,2)
+                    , format_currency($respuesta->total,2)                   
+                    ,$checkbox
+                ];
+
+            }
+            $titulos_producto = ['Clave','Producto', 'SubTotal','Total'];
             $titulos = ['Código','Unidad de Medida','Clave','Producto', 'SubTotal','Total','Estatus','','','','',''];
             $table = [
                 'titulos' 		   => $titulos
@@ -80,12 +95,18 @@
                 ,'id' 			   => "datatable"
                 ,'class'           => "fixed_header"
             ];
-
+            $table_producto = [
+                'titulos' 		   => $titulos_producto
+                ,'registros' 	   => $producto
+                ,'id' 			   => "datatable_productos"
+                ,'class'           => "fixed_header"
+            ];
 
             $data = [
                 "page_title" 	        => "Configuración"
                 ,"title"  		        => "Planes"
                 ,"data_table"  		    => data_table($table)
+                ,"data_table_producto"  => data_table($table_producto)
             ];
             return self::_load_view( "administracion.configuracion.planes",$data );
         }
@@ -107,6 +128,7 @@
                      ,'class'     => 'form-control'
                      ,'leyenda'   => 'Seleccione Opcion'
                      ,'attr'      => 'data-live-search="true" '
+                     ,'event'     => 'parse_clave()'
                ]);
 
             $unidades_edit = dropdown([
@@ -117,6 +139,7 @@
                      ,'class'     => 'form-control'
                      ,'leyenda'   => 'Seleccione Opcion'
                      ,'attr'      => 'data-live-search="true" '
+                     ,'event'     => 'parse_clave_edit()'
                ]);
                  $data = [
                    'unidades'         => $unidades,

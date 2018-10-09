@@ -40,9 +40,9 @@
             },'unidades' => function($query){
                 return $query->where(['estatus' => 1])->get();
             }, 'empresas' => function( $query ){
-                if(Session::get('id_rol') != 1){
-                    return $query->where([ 'estatus' => 1, 'id' => Session::get('id_empresa') ]);
-                }
+            if(Session::get('id_rol') != 1){
+                return $query->where([ 'estatus' => 1, 'id' => Session::get('id_empresa') ]);
+            }
             }])->orderby('id','desc')->get();
             #debuger($response);
             $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
