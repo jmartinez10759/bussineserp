@@ -32,7 +32,7 @@
 
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs">
-                                        <li class="active"><a href="#details" data-toggle="tab" ar*ia-expanded="false">Detalles del Plan</a></li>
+                                        <li class="active"><a href="#details" data-toggle="tab" aria-expanded="false">Detalles del Plan</a></li>
                                     </ul>
                                     <div class="tab-content">
                                         <div id="resultados_ajax"></div>
@@ -71,13 +71,13 @@
                                                 <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
 
                                                 <div class="col-sm-4">
-                                                    
+                                                    <div v-html="fields.unidades"></div>
                                                 </div>
 
-                                                <label for="categoria" class="col-sm-2 control-label">Categoría</label>
+                                                <!-- <label for="categoria" class="col-sm-2 control-label">Categoría</label>
                                                 <div class="col-sm-4">
-                                                    
-                                                </div>
+                                                    <div v-html="fields.categorias"></div>
+                                                </div> -->
 
                                             </div>
 

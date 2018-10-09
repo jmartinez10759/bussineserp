@@ -6,6 +6,8 @@
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysPlanesModel;
+    use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
+    use App\Model\Administracion\Configuracion\SysPlanesProductosModel;
 
     class PlanesController extends MasterController
     {
@@ -42,21 +44,20 @@
                 $editar   = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit');
                 $borrar   = build_acciones_usuario($id,'v-destroy_register','Borrar','btn btn-danger','fa fa-trash','title="Borrar" '.$eliminar);
                 $asing_product   = build_acciones_usuario($id,'v-asignar_producto','Asignar Producto','btn btn-info','fa fa-trash','title="Borrar" '.$permisos);
-                $permiso = dropdown([
-                     'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
-                     ,'value'     => 'id'
-                     ,'text'      => 'nombre_comercial'
-                     ,'name'      => 'cmb_empresas_'. $respuesta->id
-                     ,'class'     => 'form-control'
-                     ,'selected'  => isset($respuesta->empresas[0] )? $respuesta->empresas[0]->id : 0
-                     ,'leyenda'   => 'Seleccione Opcion'
-                     ,'attr'      => 'data-live-search="true" '. $permisos
-                     ,'event'     => 'display_sucursales('. $respuesta->id .')'
-                ]);
+                /*     $permiso = dropdown([
+                        'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
+                        ,'value'     => 'id'
+                        ,'text'      => 'nombre_comercial'
+                        ,'name'      => 'cmb_empresas_'. $respuesta->id
+                        ,'class'     => 'form-control'
+                        ,'selected'  => isset($respuesta->empresas[0] )? $respuesta->empresas[0]->id : 0
+                        ,'leyenda'   => 'Seleccione Opcion'
+                        ,'attr'      => 'data-live-search="true" '. $permisos
+                        ,'event'     => 'display_sucursales('. $respuesta->id .')'
+                    ]); */
                 if( count($respuesta->empresas) > 0 || Session::get('id_rol') == 1){
                     $registros[] = [
                          $respuesta->codigo
-                        ,isset($respuesta->categoria->nombre)? $respuesta->categoria->nombre :""
                         ,isset($respuesta->unidades->nombre)? $respuesta->unidades->nombre :""
                         ,$respuesta->clave_unidad
                         ,$respuesta->nombre
@@ -65,7 +66,7 @@
                         ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
                         ,$editar
                         ,$asing_product
-                        ,$permiso
+                        #,$permiso
                         ,$borrar
                     ];
 
@@ -99,7 +100,31 @@
             try {
 
 
-              return $this->_message_success( 201, $response , self::$message_success );
+            $unidades = dropdown([
+                     'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
+                     ,'value'     => 'id'
+                     ,'text'      => 'clave nombre'
+                     ,'name'      => 'cmb_unidades'
+                     ,'class'     => 'form-control'
+                     ,'leyenda'   => 'Seleccione Opcion'
+                     ,'attr'      => 'data-live-search="true" '
+               ]);
+
+            $unidades_edit = dropdown([
+                     'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
+                     ,'value'     => 'id'
+                     ,'text'      => 'clave nombre'
+                     ,'name'      => 'cmb_unidades_edit'
+                     ,'class'     => 'form-control'
+                     ,'leyenda'   => 'Seleccione Opcion'
+                     ,'attr'      => 'data-live-search="true" '
+               ]);
+                 $data = [
+                   'unidades'         => $unidades,
+                   'unidades_edit'    => $unidades_edit
+              ];
+
+              return $this->_message_success( 201, $data , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -135,7 +160,19 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                #debuger($request->all());
+                $registros = [];
+                foreach ($request->all() as $key => $value) {
+                    $registros[$key] = strtoupper($value);
+                }
+                $response = $this->_tabla_model::create( $registros );
+                $data = [
+                    'id_empresa'      => Session::get('id_empresa')
+                    ,'id_sucursal'    => Session::get('id_sucursal')
+                    ,'id_plan'        => $response->id
+                    ,'id_producto'    => 0
+                ];
+                SysPlanesProductosModel::create($data);
 
             DB::commit();
             $success = true;
