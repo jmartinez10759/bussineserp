@@ -1,3 +1,10 @@
+var url_insert    = "menus/register";
+var url_update    = "menus/update";
+var url_edit      = "menus/edit";
+var url_destroy   = "menus/destroy";
+var url_all       = "menus/all";
+var redireccion   = "configuracion/menus";
+
 new Vue ({
   el: "#vue_menus",
   created: function () {
@@ -42,42 +49,61 @@ new Vue ({
 
       }
       ,insert: function(){
-          console.log(this.newKeep);
-          var url     = domain('menus/register');
-          var refresh = domain('configuracion/menus');
-          this.insert_general(url,refresh,function(response){
-              jQuery('#modal_add_register').modal('hide');
-              redirect('menus');
-          },function(){});
+          var url = domain(url_insert);
+          var fields = this.newKeep;
+          var promise = MasterController.method_master(url, fields, "post");
+          promise.then(response => {
+            toastr.success(response.data.message, title);
+            redirect(domain(redireccion));
+          }).catch(error => {
+            if (error.response.status == 419) {
+              toastr.error(session_expired);
+              redirect(domain("/"));
+              return;
+            }
+            toastr.error(error.response.data.message, expired);
+
+          });
       }
       ,destroy: function( id ){
-          var url = domain(`menus/destroy/${id}`);
-          //var refresh = domain('cv/show');
-          axios.get( url, csrf_token ).then(response => {
-            if (response.data.success == true) {
-              redirect('menus');
-            }else{
-               toastr.error('¡No se elimino correctamente el registro!','¡Ocurrio un error.!'); //mensaje
-            }
-          }).catch(error => {
-              toastr.error( error, expired );
-          });
+          var url = domain(url_destroy);
+          var fields = {id: id};
+          buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", function () {
+            var promise = MasterController.method_master(url, fields, "delete");
+            promise.then(response => {
+              toastr.info(response.data.message, title);
+              redirect(domain(redireccion));
+            }).catch(error => {
+              if (error.response.status == 419) {
+                toastr.error(session_expired);
+                redirect(domain("/"));
+                return;
+              }
+              toastr.error(error.response.data.message, expired);
+            });
+          }, "warning", true, ["SI", "NO"]);
+
       }
       ,update: function(){
-          var url     = domain('menus/update');
-          //var refresh = domain('configuracion/menus');
-          axios.post( url,this.fillKeep, csrf_token ).then(response => {
-            if (response.data.success == true) {
-              redirect('menus');
-            }else{
-               toastr.error('¡No se Actualizo correctamente el registro!','¡Ocurrio un error.!'); //mensaje
-            }
-          }).catch(error => {
-              toastr.error( error, expired );
-          });
+        var url = domain(url_update);
+        var fields = this.fillKeep;
+        var promise = MasterController.method_master(url, fields, "put");
+        promise.then(response => {
+          toastr.info(response.data.message, title);
+          redirect(domain(redireccion));
+        }).catch(error => {
+          if (error.response.status == 419) {
+            toastr.error(session_expired);
+            redirect(domain("/"));
+            return;
+          }
+          toastr.error(error.response.data.message, expired);
+          
+        });
+
       }
       ,editar: function( keep ){
-          var url = domain('menus/edit');
+          var url = domain(url_edit );
           var fields = {'id' : keep};
           axios.get( url, { params: fields }, csrf_token ).then(response => {
               if( response.data.success == true ){

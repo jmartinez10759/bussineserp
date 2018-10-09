@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysRolesModel;
+use App\Model\Administracion\Configuracion\SysUsersRolesModel;
 
 class RolesController extends MasterController
 {
@@ -20,11 +22,26 @@ class RolesController extends MasterController
      *@access public
      *@return void
      */
-     public static function index(){
+     public function index(){
            if( Session::get('permisos')['GET'] ){
               return view('errors.error');
            }
-           $response = self::$_tabla_model::get();
+           $response = self::$_tabla_model::where(['estatus' => 1]);
+           if( Session::get('id_rol') != 1 ){
+             $data = $response->with(['empresas' => function( $query ){
+                return $query->where(['id' => Session::get('id_empresa')]);
+             }])->get();
+             #debuger($data);
+             $response = [];
+             foreach ($data as $respuesta) {
+                if( count($respuesta->empresas) > 0 ){
+                    $response[] = $respuesta;
+                }
+             }
+           }else{
+             $response = $response->get();
+           }
+           #debuger($response);
            $registros = [];
            $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
            foreach ($response as $respuesta) {
@@ -43,10 +60,10 @@ class RolesController extends MasterController
 
            $titulos = [ 'id','Nombre Rol','Clave Corta','Estatus','',''];
            $table = [
-             'titulos' 		   => $titulos
-             ,'registros' 	   => $registros
-             ,'id' 			   => "datatable"
-             ,'class'          => "fixed_header"
+             'titulos' 		      => $titulos
+             ,'registros' 	    => $registros
+             ,'id' 			        => "datatable"
+             ,'class'           => "fixed_header"
            ];
 
            $data = [
@@ -70,13 +87,34 @@ class RolesController extends MasterController
       *@param Request $request [Description]
       *@return void
       */
-     public static function store( Request $request){
+     public function store( Request $request){
+        #debuger($request->all());
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $response = SysRolesModel::create( $request->all() );
+            if( Session::get('id_rol') != 1 ){
+                $data = [
+                  'id_users'      => 0 
+                  ,'id_rol'       => $response->id
+                  ,'id_empresa'   => Session::get('id_empresa')
+                  ,'id_sucursal'  => Session::get('id_sucursal')
+                ];
+                SysUsersRolesModel::create($data);
+            }
 
-        $response_store = self::$_model::create_model([$request->all()], self::$_tabla_model );
-        if ($response_store) {
-          return message( true,$response_store[0],self::$message_success );
+          DB::commit();
+          $success = true;
+        } catch (\Exception $e) {
+          $success = false;
+          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+          DB::rollback();
         }
-        return message( false,[],self::$message_error );
+
+        if ($success) {
+          return $this->_message_success(201, $response, self::$message_success);
+        }
+        return $this->show_error(6, $error, self::$message_error);
 
      }
      /**
@@ -85,13 +123,14 @@ class RolesController extends MasterController
       *@param Request $request [Description]
       *@return void
       */
-     public static function show( Request $request ){
-        $where = ['id' => $request->id];
-        $response_show =self::$_model::show_model([],$where, self::$_tabla_model );
-        if ($response_show) {
-          return message( true,$response_show[0],self::$message_success );
+     public function show( Request $request ){
+        try {
+            $response = SysRolesModel::with('empresas')->where(['estatus' => 1, 'id' => $request->id ])->get();
+          return $this->_message_success(201, $response[0], self::$message_success);
+        } catch (\Exception $e) {
+          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+          return $this->show_error(6, $error, self::$message_error);
         }
-        return message( false,[],self::$message_error );
 
      }
      /**
@@ -100,13 +139,32 @@ class RolesController extends MasterController
       *@param Request $request [Description]
       *@return void
       */
-     public static function update( Request $request){
-       $where = ['id' => $request->id];
-       $response_update = self::$_model::update_model($where, $request->all(), self::$_tabla_model );
-       if ($response_update) {
-         return message( true,$response_update[0],self::$message_success );
-       }
-       return message( false,[],self::$message_error );
+     public function update( Request $request){
+        
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $data = [];
+            foreach ( $request->all() as $key => $value ) {
+                if ( !in_array($key,['empresas'])) {
+                    $data[$key] = $value;
+                }
+            }
+            #debuger($data);
+           SysRolesModel::where(['estatus' => 1, 'id' => $request->id])->update($data);
+            $response = SysRolesModel::where(['id' => $request->id])->get();
+          DB::commit();
+          $success = true;
+        } catch (\Exception $e) {
+          $success = false;
+          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+          DB::rollback();
+        }
+
+        if ($success) {
+          return $this->_message_success(201, $response, self::$message_success);
+        }
+        return $this->show_error(6, $error, self::$message_error);
 
      }
      /**
@@ -115,13 +173,25 @@ class RolesController extends MasterController
       *@param $id [Description]
       *@return void
       */
-     public static function destroy( Request $request ){
-        $where = ['id' => $request->id_rol];
-        $response_destroy = self::$_model::delete_model( $where, self::$_tabla_model );
-        if (!$response_destroy) {
-          return message( true,$response_destroy,self::$message_success );
+     public function destroy( Request $request ){
+
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $response = SysRolesModel::where(['id' => $request->id_rol ])->delete();
+            SysUsersRolesModel::where(['id_rol' => $request->id_rol])->delete();
+          DB::commit();
+          $success = true;
+        } catch (\Exception $e) {
+          $success = false;
+          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+          DB::rollback();
         }
-        return message( false,$response_destroy,self::$message_error );
+
+        if ($success) {
+          return $this->_message_success(201, $response, self::$message_success);
+        }
+        return $this->show_error(6, $error, self::$message_error);
 
      }
 

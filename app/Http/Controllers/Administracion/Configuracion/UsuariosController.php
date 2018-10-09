@@ -17,8 +17,8 @@ use App\Model\Administracion\Configuracion\SysUsersRolesModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
-use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
 use App\Model\Administracion\Facturacion\SysFacturacionModel;
+use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
 use App\Model\Administracion\Facturacion\SysParcialidadesFechasModel;
 use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
 
@@ -43,11 +43,21 @@ class UsuariosController extends MasterController
         },'roles' => function( $query ){
           return $query->groupBy('sys_users_roles.id_users','sys_users_roles.id_rol');
         },'details','bitacora']);
+
         if( Session::get('id_rol') == 1){
             $response = $response->orderBy('id','DESC')->get();
         }else{
-            $response = $response->where('id','!=', Session::get('id'))->where('id','!=', 1)->orderBy('id','DESC')->get();
+            $data = $response->with(['empresas' => function($query){
+                return $query->where(['id' => Session::get('id_empresa')]);
+            }])->where('id','!=', Session::get('id'))->where('id','!=', 1)->orderBy('id','DESC')->get();
+            $response = [];
+            foreach ($data as $respuesta) {
+                if(count($respuesta->empresas) > 0){
+                    $response[] = $respuesta;
+                }
+            }
         }
+        #debuger(count($response));
       $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
       $asignar_permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false)? 'style="display:block" ': 'style="display:none" ';
 

@@ -23,6 +23,8 @@ class SysPlanesModel extends Model
     public function productos(){
         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel','sys_planes_productos','id_producto','id_plan');
     }
-
+    public function empresas(){
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_planes_productos','id_empresa','id_plan');
+    }
     
 }

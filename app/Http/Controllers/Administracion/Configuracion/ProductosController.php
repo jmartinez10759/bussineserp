@@ -52,7 +52,6 @@
                 $id['id'] = $respuesta->id;
                 $editar   = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit');
                 $borrar   = build_acciones_usuario($id,'v-destroy_register','Borrar','btn btn-danger','fa fa-trash','title="Borrar" '.$eliminar);
-                #$permiso  = build_acciones_usuario($id, 'v-permisos','Permisos','btn btn-info', 'fa fa-gears','title="Asignar Empresa" '.$permisos);
                 $permiso = dropdown([
                      'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
                      ,'value'     => 'id'

@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
+use App\Model\Administracion\Configuracion\SysEmpresasModel;
+use App\Model\Administracion\Configuracion\SysRolMenuModel;
 
 class MenuController extends MasterController
 {
@@ -25,16 +26,12 @@ class MenuController extends MasterController
    */
    public function index(){
 
-      // if (Session::get('id_rol') != 1) {
-      //     $response = SysMenuModel::orderBy('tipo','desc')->get();
-      // }else{
-      // }
-        $usuarios = SysUsersModel::with(['menus' => function ($query) {
+      $usuarios = SysUsersModel::with(['menus' => function ($query) {
           $where = [
             'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
           ];
           return $query->where($where)->orderBy('orden', 'asc')->get();
-        }])->where(['id' => Session::get('id')])->get();
+      }])->where(['id' => Session::get('id')])->get();
         $response = [];
         foreach ($usuarios as $menu) {
             $response = $menu->menus;
@@ -116,12 +113,47 @@ class MenuController extends MasterController
    *@param Request $request [Description]
    *@return void
    */
-   public static function store( Request $request ){
-        $response_insert = self::$_model::create_model([$request->all()], self::$_tabla_model );
-        if($response_insert){
-            return message(true,$response_insert[0],self::$message_success);
-        }
-        return message(false,[],self::$message_error);
+   public function store( Request $request ){
+     
+      $error = null;
+      DB::beginTransaction();
+      try {
+        $response = SysMenuModel::create( $request->all() );
+        $data = [
+            'id_rol'  => Session::get('id_rol')
+            ,'id_users'  => Session::get('id')
+              ,'id_empresa'  => Session::get('id_empresa')
+              ,'id_sucursal'  => Session::get('id_sucursal')
+                ,'id_menu'        => $response->id
+                ,'id_permiso'       => 5
+                  ,'estatus'            => 1
+        ];
+        $data_admin = [
+            'id_rol'  => 1
+            ,'id_users'  => 1
+              ,'id_empresa'  => 0
+              ,'id_sucursal'   => 0
+                ,'id_menu'        => $response->id
+                ,'id_permiso'       => 5
+                  ,'estatus'            => 1
+        ];
+
+        SysRolMenuModel::create($data);
+        SysRolMenuModel::create($data_admin);
+
+        DB::commit();
+        $success = true;
+      } catch (\Exception $e) {
+        $success = false;
+        $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+        DB::rollback();
+      }
+
+      if ($success) {
+        return $this->_message_success(201, $response, self::$message_success);
+      }
+      return $this->show_error(6, $error, self::$message_error);
+
    }
 
    /**
@@ -130,13 +162,25 @@ class MenuController extends MasterController
     *@param  $id [Description]
     *@return void
     */
-    public static function destroy( $id ){
+    public function destroy( Request $request ){
 
-        $response_destroy = self::$_model::delete_model(['id' => $id],self::$_tabla_model );
-        if( !$response_destroy ){
-          return message(true,[],self::$message_success);
-        }
-        return message(false,$response_destroy,self::$message_error);
+      $error = null;
+      DB::beginTransaction();
+      try {
+          $response = SysMenuModel::where(['id' => $request->id])->delete();
+            SysRolMenuModel::where(['id_menu' => $request->id])->delete();
+        DB::commit();
+        $success = true;
+      } catch (\Exception $e) {
+        $success = false;
+        $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+        DB::rollback();
+      }
+
+      if ($success) {
+        return $this->_message_success(201, $response, self::$message_success);
+      }
+      return $this->show_error(6, $error, self::$message_error);
 
     }
     /**
@@ -145,13 +189,15 @@ class MenuController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function show( Request $request ){
-
-        $response = self::$_model::show_model([],['id' => $request->id],self::$_tabla_model );
-        if($response){
-          return message(true,$response[0],self::$message_success);
-        }
-        return message(false,[],self::$message_error);
+    public function show( Request $request ){
+      
+      try {
+        $response = SysMenuModel::where(['id' => $request->id])->get();        
+        return $this->_message_success(201, $response[0], self::$message_success);
+      } catch (\Exception $e) {
+        $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+        return $this->show_error(6, $error, self::$message_error);
+      }
 
     }
     /**
@@ -160,13 +206,24 @@ class MenuController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function update( Request $request){
-        $where = ['id' => $request->id];
-        $response = self::$_model::update_model($where,$request->all(), self::$_tabla_model );
-        if ($response) {
-          return message(true,$response[0],self::$message_success);
-        }
-        return message(false,[],self::$message_error);
+    public function update( Request $request){
+      $error = null;
+      DB::beginTransaction();
+      try {
+        SysMenuModel::where(['id' => $request->id])->update($request->all());
+          $response = SysMenuModel::where(['id' => $request->id])->get();
+        DB::commit();
+        $success = true;
+      } catch (\Exception $e) {
+        $success = false;
+        $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+        DB::rollback();
+      }
+
+      if ($success) {
+        return $this->_message_success(201, $response, self::$message_success);
+      }
+      return $this->show_error(6, $error, self::$message_error);
 
     }
     /**

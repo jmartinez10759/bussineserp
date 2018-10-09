@@ -31,7 +31,7 @@ abstract class MasterController extends Controller
   public static $_domain = "";
   protected $tipo = "application/json";
   public $_http;
-  protected static $_titulo = "Buro Laboral México - CRM";
+  protected static $_titulo = "Buro Laboral Mexico - CRM";
   protected static $_desarrollo = "";
   protected static $_link_desarrollo = "";
   public    static $_model;

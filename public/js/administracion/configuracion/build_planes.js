@@ -51,7 +51,7 @@ new Vue({
                     return;
                 }
               toastr.error( error.response.data.message , expired );
-              redirect();
+              
           });
     }
     ,update_register(){
@@ -108,6 +108,9 @@ new Vue({
               redirect();
           });
       },"warning",true,["SI","NO"]);   
+    }
+    , total_concepto(){
+        alert();
     }
     
     

@@ -178,7 +178,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'menus.register'
     ]);
 
-    Route::get('/menus/destroy/{id}', [
+    Route::delete('/menus/destroy', [
         'uses'      => 'Administracion\Configuracion\MenuController@destroy'
         ,'as'       => 'menus.destroy'
     ]);
@@ -188,7 +188,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'menus.show'
     ]);
 
-    Route::post('/menus/update', [
+    Route::put('/menus/update', [
         'uses'      => 'Administracion\Configuracion\MenuController@update'
         ,'as'       => 'menus.update'
     ]);

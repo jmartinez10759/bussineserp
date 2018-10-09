@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SysPlanesProductosModel extends Model
 {
-    
       public $table = "sys_planes_productos";
       public $fillable = [
             'id_empresa'

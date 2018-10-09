@@ -13,4 +13,17 @@ class SysAccionesModel extends Model
         ,'descripcion'
         ,'estatus'
     ];
+
+
+    public function usuarios()
+    {
+        return $this->belongsToMany(SysUsersModel::class, 'sys_users_permisos', 'id_accion', 'id_users')->withPivot(['estatus']);
+    }
+    public function empresas()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class, 'sys_users_permisos', 'id_acciones', 'id_empresa')->withPivot(['estatus']);
+    }
+
+
+
 }
