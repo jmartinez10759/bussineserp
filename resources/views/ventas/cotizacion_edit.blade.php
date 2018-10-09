@@ -29,16 +29,20 @@
                             <div class="form-group row">
                               <label for="nombre_cliente" class="col-md-2 control-label">Selecciona el cliente:</label>
                               <div class="col-md-3">
-                                  <input type="text" class="form-control input-sm ui-autocomplete-input" id="nombre_cliente" placeholder="Ingresa el nombre del cliente" required="" autocomplete="off">
-                                  <input id="id_cliente" type="hidden"> 
-                             </div>
+                                  <!-- <input type="text" class="form-control input-sm ui-autocomplete-input" id="nombre_cliente" placeholder="Ingresa el nombre del cliente" required="" autocomplete="off">
+                                  <input id="id_cliente" type="hidden">  -->
+                                 <!--  <select name="cliente" id="sys_idCliente" class="form-control input-sm" required="required"></select>
+ -->                             
+                                    {!! $clientes !!}
+                              </div>
                               
                               
-                              <label for="atencion" class="col-md-1 control-label">Atención:</label>
+                              <label for="contacto" class="col-md-1 control-label">Contacto:</label>
                                 <div class="col-md-2">
-                                    <select class="form-control input-sm" id="atencion" name="atencion">
+                                    <div id="div_contacto"></div>
+                                    <!-- <select class="form-control input-sm" id="contacto" name="contacto">
                                         <option value="">Selecciona</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                                 
                               
@@ -52,88 +56,43 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="empresa" class="col-md-2 control-label">Empresa:</label>
+                                <label for="empresa" class="col-md-2 control-label">RFC empresa:</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control input-sm" id="empresa" placeholder="" readonly="">
+                                    <input type="text" class="form-control input-sm" id="rfc_empresa" placeholder="" readonly="">
                                 </div>
-                                <label for="tel2" class="col-md-1 control-label">Teléfono:</label>
+                                <label for="tel2" class="col-md-1 control-label">Nombre comercial:</label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control input-sm" id="nombre_comercial" placeholder="" readonly="">
+                                </div>
+                                <label for="email" class="col-md-1 control-label">Teléfono:</label>
                                 <div class="col-md-2">
-                                    <input type="text" class="form-control input-sm" id="tel2" placeholder="" readonly="">
-                                </div>
-                                <label for="email" class="col-md-1 control-label">Email:</label>
-                                <div class="col-md-3">
-                                    <input type="email" class="form-control input-sm" id="email" placeholder="" readonly="">
+                                    <input type="email" class="form-control input-sm" id="tel2" placeholder="" readonly="">
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="condiciones" class="col-md-2 control-label">Condiciones de pago:</label>
+                                <label for="condiciones" class="col-md-2 control-label">Forma de pago:</label>
                                 <div class="col-md-3">
-                                    <select class="form-control input-sm" id="condiciones" required="">
-                                        <option value="">Selecciona condiciones de pago</option>
-                                        <option value="Contado" selected="">Contado</option>
-                                        <option value="Crédito 30 días">Crédito 30 días</option>
-                                        <option value="Crédito 45 días">Crédito 45 días</option>
-                                        <option value="Crédito 60 días">Crédito 60 días</option>
-                                        <option value="Crédito 90 días">Crédito 90 días</option>
-                                    </select>
+
+                                    {!! $formas_pagos !!}
                                 </div>
-                                <label for="validez" class="col-md-1 control-label">Validez:</label>
+                                <label for="validez" class="col-md-1 control-label">Método de pago:</label>
                                 <div class="col-md-2">
-                                    <select class="form-control input-sm" id="validez" required="">
-                                        <option value="">Selecciona validez de oferta</option>
-                                        <option value="5 días">5 días</option>
-                                        <option value="10 días">10 días</option>
-                                        <option value="15 días" selected="">15 días</option>
-                                        <option value="30 días">30 días</option>
-                                        <option value="60 días">60 días</option>
-                                    </select>
+
+                                    {!! $metodos_pagos !!}
                                 </div>
-                                <label for="entrega" class="col-md-1 control-label">Tiempo:</label>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control input-sm" id="entrega" placeholder="Tiempo de entrega" value="Inmediato">
-                                </div>
+
                             </div>
 
                             <div class="form-group row">
                                 <label for="condiciones" class="col-md-2 control-label">Descripción:</label>
                                 <div class="col-md-6">
-                                    <textarea class="form-control" id="observaciones" ></textarea>
+                                    <textarea class="form-control" id="observaciones" name="observaciones"></textarea>
                                 </div>
                                 
                                 <label for="moneda" class="col-md-1 control-label">Moneda:</label>
                                 <div class="col-md-3">
-                                    <select name="moneda" id="moneda" class="form-control input-sm" onchange="update_cotizacion(7,this.value);">
-                                        <option value="1">Dolares</option>
-                                            <option value="3">Guaranies</option>
-                                            <option value="5">Bolivar Soberano</option>
-                                            <option value="13">Colon CR</option>
-                                            <option value="14">Quetzal</option>
-                                            <option value="17">Pesos Mexicanos</option>
-                                            <option value="18">Pesos Chilenos</option>
-                                            <option value="19">Nuevos Soles</option>
-                                            <option value="21">Peso colombiano</option>
-                                            <option value="22">Pesos Argentinos</option>
-                                            <option value="23">Bolivianos</option>
-                                            <option value="24">Peso Chileno</option>
-                                            <option value="25">ttvrthf</option>
-                                            <option value="26">rcfdy</option>
-                                            <option value="27">JZFpxz26</option>
-                                            <option value="28">Jame</option>
-                                            <option value="29">Pesos Dominicanos</option>
-                                            <option value="30">aaaa</option>
-                                            <option value="31">Dolar</option>
-                                            <option value="32">Peso Chileno</option>
-                                            <option value="33">Lempira</option>
-                                            <option value="34">PESOS</option>
-                                            <option value="35">Quetzal</option>
-                                            <option value="36">Soles</option>
-                                            <option value="37">Metical</option>
-                                            <option value="38">antonio</option>
-                                            <option value="39">Sol</option>
-                                            <option value="40">Sol</option>
-                                            <option value="41">Bitcoin</option>
-                                    </select>
+                                    {!! $monedas !!}
                                 </div>
                                 
                             </div>
@@ -185,7 +144,7 @@
                                         <td class="text-right" id="subtotal" style="background-color:#eee">  </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right" colspan="4">IVA (16)% </td>
+                                        <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
                                         <td class="text-right" id="iva" style="background-color:#eee"> </td>
                                     </tr>
                                     <tr>
@@ -225,17 +184,24 @@
 
             <form class="form-horizontal" >
 
-               <!--  <div class="form-group">
-                    <label class="control-label col-sm-3" for="">Codigo</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" placeholder="" v-model="conceptos.codigo" id="codigo_concepto">
-                    </div>
-                </div>
+                                            <div class="form-group">
+                                <label for="condiciones" class="col-sm-3 control-label">Productos:</label>
+                                <div class="col-sm-3">
+               
+                                    {!! $productos !!}
+                                </div>
+                                <label for="validez" class="col-sm-3 control-label">Planes:</label>
+                                <div class="col-sm-3">
+
+                                    {!! $metodos_pagos !!}
+                                </div>
+
+                            </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Cantidad</label>
                     <div class="col-sm-9">
-                        <input type="text" id="cantidad_concepto" class="form-control" placeholder="" v-model="conceptos.cantidad" v-on:blur="total_concepto()">
+                        <input type="text" id="cantidad_concepto" class="form-control" placeholder="" >
                     </div>
                 </div>
 
@@ -243,23 +209,23 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Precio Unitario</label>
                     <div class="col-sm-9">
-                        <input type="text" id="precio_concepto" class="form-control" placeholder="$" v-model="conceptos.precio" v-on:blur="total_concepto()">
+                        <input type="text" id="precio_concepto" class="form-control" placeholder="$">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Descripción</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control" v-model="conceptos.descripcion" id="descripcion_concepto"></textarea>
+                        <textarea class="form-control" id="descripcion"></textarea>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Total</label>
                     <div class="col-sm-9">
-                        <input type="text"  class="form-control" placeholder="$" v-model="conceptos.total" disabled id="total_concepto">
+                        <input type="text"  class="form-control" placeholder="$"  disabled id="total_concepto">
                     </div>
-                </div> -->
+                </div>
 
          </form>
 

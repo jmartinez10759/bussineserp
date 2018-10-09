@@ -31,7 +31,7 @@ class SysClientesModel extends Model
     }
 
     public function usuarios(){
-        return $this->belongsToMany('App\Model\Administracion\Facturacion\SysUsersModel','sys_users_facturacion','id_cliente','id_users');
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_facturacion','id_cliente','id_users');
     }
     
     public function estados(){
@@ -40,6 +40,11 @@ class SysClientesModel extends Model
     
     public function contactos(){
       return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_empresas_sucursales','id_clientes','id_contacto');
-  }
+    }
+
+    public function empresas(){
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_empresas_sucursales','id_empresa','id_clientes');
+    }
+
 
 }

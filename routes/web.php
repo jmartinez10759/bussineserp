@@ -903,6 +903,20 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'unidadesmedidas.destroy'
     ]);
     
+    Route::get('/ventas/contactos', [
+        'uses' => 'Ventas\CotizacionController@getbycontactos'
+        ,'as' => 'ventas.contactos'
+    ]);
+
+    Route::get('/ventas/contacto', [
+        'uses' => 'Ventas\CotizacionController@getContacto'
+        ,'as' => 'ventas.contacto'
+    ]);
+
+    Route::get('/ventas/productos', [
+        'uses' => 'Ventas\CotizacionController@getProducto'
+        ,'as' => 'ventas.productos'
+    ]);
 
 
 ################################## DEVELOPMENT MODULOS ################################
