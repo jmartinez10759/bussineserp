@@ -231,6 +231,8 @@
         </div>
         <div class="modal-footer">
             <div class="pull-right">
+                <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                        
                 <button type="button" class="btn btn-success" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Agregar</button>
             </div>
         </div>

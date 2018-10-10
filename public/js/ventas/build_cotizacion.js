@@ -62,7 +62,10 @@ new Vue({
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
-          
+              
+              buildSweetAlertOptions("¡Registro agregado!", "¿Deseas seguir agregando registros?", function(){
+               jQuery('#modal_conceptos').close();
+          }, 'success', true,['NO','SI'] );
               toastr.success( response.data.message , title );
               
           }).catch( error => {

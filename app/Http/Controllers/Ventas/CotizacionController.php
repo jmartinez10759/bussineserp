@@ -202,7 +202,7 @@
                     $conceptos_cotizaciones = [
                     'id_producto'   => isset($request->conceptos['id_producto'])?$request->conceptos['id_producto']:0
                     ,'id_plan'      => isset($request->conceptos['id_plan'])?$request->conceptos['id_plan']:0
-                    ,'catidad'      => isset($request->conceptos['cantidad'])?$request->conceptos['cantidad']:null
+                    ,'cantidad'      => isset($request->conceptos['cantidad'])?$request->conceptos['cantidad']:null
                     ,'precio'       => isset($request->conceptos['precio'])?$request->conceptos['precio']:null
                     ,'total'        => isset($request->conceptos['total'])?$request->conceptos['total']:null
                 ];
