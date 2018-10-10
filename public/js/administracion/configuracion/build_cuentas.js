@@ -51,7 +51,6 @@ new Vue({
                     return;
                 }
               toastr.error( error.response.data.message , expired );
-              redirect();
           });
     }
     ,update_register(){
@@ -69,7 +68,6 @@ new Vue({
                     return;
                 }
               toastr.error( error.response.data.message , expired );
-              redirect();
           });
     }
     ,edit_register( id ){
@@ -86,8 +84,7 @@ new Vue({
                     redirect(domain("/"));
                     return;
                 }
-              toastr.error( error.response.data.message , expired );
-              redirect();
+              toastr.error( error.response.data.message , expired );              
           });
         
     }
@@ -105,7 +102,6 @@ new Vue({
                     return;
                 }
               toastr.error( error.response.data.message , expired );
-              redirect();
           });
       },"warning",true,["SI","NO"]);   
     }

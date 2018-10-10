@@ -10,6 +10,7 @@
     use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
     use App\Model\Administracion\Configuracion\SysPlanesProductosModel;
     use App\Model\Administracion\Configuracion\SysClientesModel;
+    use App\Model\Administracion\Configuracion\SysEmpresasModel;
 
     class PlanesController extends MasterController
     {
@@ -31,9 +32,7 @@
             if( Session::get('permisos')['GET'] ){
                 return view('errors.error');
             }
-            #$cliente = $this->_consulta( new SysClientesModel);
-            #debuger( count($cliente) );
-            $response = (Session::get('id_rol') == 1 )? $this->_tabla_model::get() : $this->_consulta($this->_tabla_model);
+            $response = (Session::get('id_rol') == 1 )? $this->_tabla_model::orderby('id','desc')->get() : $this->_consulta($this->_tabla_model);
             $productos = ( Session::get('id_rol') == 1 )? SysProductosModel::orderby('id','desc')->get() : $this->_consulta( new SysProductosModel );
             #debuger($productos);
             $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
@@ -45,17 +44,17 @@
                 $editar   = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit');
                 $borrar   = build_acciones_usuario($id,'v-destroy_register','Borrar','btn btn-danger','fa fa-trash','title="Borrar" '.$eliminar);
                 $asing_product   = build_acciones_usuario($id,'asignar_producto','Asignar Producto','btn btn-info','fa fa-cart-plus','title="Borrar" ');
-                /*     $permiso = dropdown([
-                        'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
-                        ,'value'     => 'id'
-                        ,'text'      => 'nombre_comercial'
-                        ,'name'      => 'cmb_empresas_'. $respuesta->id
-                        ,'class'     => 'form-control'
-                        ,'selected'  => isset($respuesta->empresas[0] )? $respuesta->empresas[0]->id : 0
-                        ,'leyenda'   => 'Seleccione Opcion'
-                        ,'attr'      => 'data-live-search="true" '. $permisos
-                        ,'event'     => 'display_sucursales('. $respuesta->id .')'
-                    ]); */
+                 $assign_employes = dropdown([
+                    'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
+                    ,'value'     => 'id'
+                    ,'text'      => 'nombre_comercial'
+                    ,'name'      => 'cmb_empresas_'. $respuesta->id
+                    ,'class'     => 'form-control'
+                    ,'selected'  => isset($respuesta->empresas[0] )? $respuesta->empresas[0]->id : 0
+                    ,'leyenda'   => 'Seleccione Opcion'
+                    ,'attr'      => 'data-live-search="true" '. $permisos
+                    ,'event'     => 'display_sucursales('. $respuesta->id .')'
+                ]); 
                 if( count($respuesta->empresas) > 0 || Session::get('id_rol') == 1){
                     $registros[] = [
                          $respuesta->codigo
@@ -67,8 +66,8 @@
                         ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
                         ,$editar
                         ,$asing_product
-                        #,$permiso
                         ,$borrar
+                        ,$assign_employes
                     ];
 
                 }
@@ -88,7 +87,7 @@
 
             }
             $titulos_producto = ['Clave','Producto', 'SubTotal','Total'];
-            $titulos = ['Código','Unidad de Medida','Clave','Producto', 'SubTotal','Total','Estatus','','','','',''];
+            $titulos = ['Código','Unidad de Medida','Clave','Producto', 'SubTotal','Total','Estatus','','','','','',''];
             $table = [
                 'titulos' 		   => $titulos
                 ,'registros' 	   => $registros
@@ -256,8 +255,8 @@
             $error = null;
             DB::beginTransaction();
             try {
-
-
+                $response = $this->_tabla_model::where(['id' => $request->id])->delete();
+                SysPlanesProductosModel::where( ['id_plan' => $request->id ] )->delete();
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -272,14 +271,13 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
-/**
- * Metodo para borrar el registro
- * @access public
- * @param Request $request [Description]
- * @return void
- */  
-        
-   public function asignar( Request $request ){
+        /**
+         * Metodo para borrar el registro
+         * @access public
+         * @param Request $request [Description]
+         * @return void
+         */   
+        public function asignar( Request $request ){
             try {
              $response = $this->_tabla_model::with(['productos'])->where(['id' => $request->id])->get();
             return $this->_message_success( 201, $response[0] , self::$message_success );
@@ -288,51 +286,153 @@
             return $this->show_error(6, $error, self::$message_error );
             }
 
-    }
-/**
- * Metodo para borrar el registro
- * @access public
- * @param Request $request [Description]
- * @return void
- */  
+        }
+        /**
+         * Metodo para borrar el registro
+         * @access public
+         * @param Request $request [Description]
+         * @return void
+         */  
+        public function asignar_insert( Request $request ){
+
+               $error = null;
+                DB::beginTransaction();
+                try {
+                    $planes = SysPlanesModel::with(['empresas','sucursales'])->where(['id'=> $request->id_plan])->get();
+                    $where = [
+                         'id_empresa'     => (Session::get('id_rol') == 1 && isset($planes[0]->empresas[0]) )? $planes[0]->empresas[0]->id : Session::get('id_empresa')
+                        ,'id_sucursal'    => ( Session::get('id_rol') == 1 && isset($planes[0]->sucursales[0])  )? $planes[0]->sucursales[0]->id:Session::get('id_sucursal')
+                        ,'id_plan'        => $request->id_plan
+                    ];
+                    SysPlanesProductosModel::where( $where )->delete();
+                    for($i = 0; $i < count($request->matrix); $i++){
+                        $matrices = explode('|',$request->matrix[$i]);
+                        $id_producto = $matrices[0];
+                        $productos = SysProductosModel::with(['empresas','sucursales'])->where(['id' => $id_producto])->get();
+                        #debuger($productos[0]->empresas[0]->id);
+                        $data = [
+                             'id_empresa'     => (Session::get('id_rol') == 1 && isset($productos[0]->empresas[0]) )? $productos[0]->empresas[0]->id : Session::get('id_empresa')
+                            ,'id_sucursal'    => ( Session::get('id_rol') == 1 && isset($productos[0]->sucursales[0])  )? $productos[0]->sucursales[0]->id:Session::get('id_sucursal')
+                            ,'id_plan'        => $request->id_plan
+                            ,'id_producto'    => $id_producto
+                        ];
+                        $response[] = SysPlanesProductosModel::create($data);
+                    }
+                DB::commit();
+                $success = true;
+                } catch (\Exception $e) {
+                $success = false;
+                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+                DB::rollback();
+                }
+
+                if ($success) {
+                return $this->_message_success( 201, $response , self::$message_success );
+                }
+                return $this->show_error(6, $error, self::$message_error );
+
+        }
+             /**
+         * Metodo para borrar el registro
+         * @access public
+         * @param Request $request [Description]
+         * @return void
+         */
+        public function display_sucursales( Request $request ){
+            try {
+                #$sucursales = [];
+                $response = SysEmpresasModel::with(['sucursales' => function($query){
+                    return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->get();
+                }])->where(['id' => $request->id_empresa])->get();
+                $sucursales = SysPlanesProductosModel::select('id_sucursal')->where($request->all())->get();
+                #se crea la tabla 
+                $registros = [];
+                foreach ($response[0]->sucursales as $respuesta) {
+                    $id['id'] = 'sucursal_'.$respuesta->id;
+                    $icon = build_actions_icons($id, 'id_sucursal="' . $respuesta->id . '" ','sucursal');
+                    $registros[] = [
+                        $respuesta->codigo
+                        ,$respuesta->sucursal
+                        ,$respuesta->direccion
+                        ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
+                        ,$icon
+                    ];
+                }
+
+                $titulos = [ 'Codigo','Sucursal','Direccion', 'Estatus',''];
+                $table = [
+                    'titulos' 		   => $titulos
+                    ,'registros' 	   => $registros
+                    ,'id' 			   => "sucursales"
+                    #,'class'           => "fixed_header"
+                ];
+                $data = [
+                    'tabla_sucursales' => data_table($table)
+                    ,'sucursales'   => $sucursales
+                ];
+                return $this->_message_success(201, $data, self::$message_success);
+            } catch (\Exception $e) {
+                $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+                return $this->show_error(6, $error, self::$message_error);
+            }
+
         
-   public function asignar_insert( Request $request ){
-           
-       $error = null;
+        }
+        /**
+     * Metodo para insertar los permisos de los productos
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function register_permisos(Request $request){
+
+        $error = null;
         DB::beginTransaction();
         try {
-            $where = [
-                 'id_empresa'     => Session::get('id_empresa')
-                ,'id_sucursal'    => Session::get('id_sucursal')
-                ,'id_plan'        => $request->id_plan
-            ];
-            SysPlanesProductosModel::where( $where )->delete();
-            for($i = 0; $i < count($request->matrix); $i++){
-                $matrices = explode('|',$request->matrix[$i]);
-                $id_producto = $matrices[0];
+            #debuger($request->all());
+            $response_producto = SysPlanesProductosModel::where([
+                'id_empresa'   => Session::get('id_empresa')
+                ,'id_sucursal' => Session::get('id_sucursal')
+                ] )->get();
+            if( count($response_producto) > 0){
+                SysPlanesProductosModel::where([
+                    'id_empresa'   => Session::get('id_empresa')
+                    ,'id_sucursal' => Session::get('id_sucursal')
+                ])->delete();
+            }
+            SysPlanesProductosModel::where([
+                 #'id_empresa'   => $request->id_empresa
+                'id_plan'    => $request->id_plan 
+                ])->delete();
+            $response = [];
+            for ($i=0; $i < count($request->matrix) ; $i++) { 
+                $matrices = explode('|', $request->matrix[$i] );
+                $id_sucursal = $matrices[0];
+                #se realiza una consulta si existe un registro.
                 $data = [
-                     'id_empresa'     => Session::get('id_empresa')
-                    ,'id_sucursal'    => Session::get('id_sucursal')
+                    'id_empresa'      => $request->id_empresa
+                    ,'id_sucursal'    => $id_sucursal
                     ,'id_plan'        => $request->id_plan
-                    ,'id_producto'    => $id_producto
+                    ,'id_producto'    => 0
                 ];
                 $response[] = SysPlanesProductosModel::create($data);
             }
-        DB::commit();
-        $success = true;
+
+            DB::commit();
+            $success = true;
         } catch (\Exception $e) {
-        $success = false;
-        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-        DB::rollback();
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
         }
 
         if ($success) {
-        return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success(201, $response, self::$message_success);
         }
-        return $this->show_error(6, $error, self::$message_error );
+        return $this->show_error(6, $error, self::$message_error);
+
 
     }
-        
-        
+
         
 }

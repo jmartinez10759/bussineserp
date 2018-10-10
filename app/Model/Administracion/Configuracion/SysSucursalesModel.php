@@ -38,12 +38,17 @@ class SysSucursalesModel extends Model
       return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_roles','id_sucursal','id_users');
   }
   
-    public function estados(){
-        return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel','id_estado','id');
-    }
+  public function estados(){
+    return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel','id_estado','id');
+  }
+  
+  public function productos(){
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel', 'sys_planes_productos', 'id_sucursal', 'id_producto');
+  }
 
-
-
+ public function planes(){
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysPlanesModel', 'sys_planes_productos', 'id_sucursal', 'id_plan');
+  }
 
 
 }

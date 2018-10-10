@@ -44,6 +44,10 @@ use App\Model\Almacenes\SysAlmacenesModel;
 use App\Model\Administracion\Configuracion\SysTiposComprobantesModel;
 use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
 use App\Model\Ventas\SysCotizacionModel;
+use App\Model\Admnistracion\Configuracion\SysCuentasModel;
+use App\Model\Administracion\Configuracion\SysCuentasModel;
+
+
 
 
 
@@ -154,6 +158,12 @@ class UploadController extends MasterController
             break;
                case "Cotizacion": 
                 $this->_tabla_model = new SysCotizacionModel; 
+            break;
+               case "Cuentas": 
+                $this->_tabla_model = new SysCuentasModel; 
+            break;
+               case "Cuentas": 
+                $this->_tabla_model = new SysCuentasModel; 
             break;
 
 

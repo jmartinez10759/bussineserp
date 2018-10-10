@@ -27,6 +27,11 @@ class SysPlanesModel extends Model
     public function empresas(){
         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_planes_productos','id_plan','id_empresa');
     }
+    
+    public function sucursales(){
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_planes_productos','id_plan','id_sucursal');
+    }
+    
     public function unidades(){
       return $this->hasOne('App\Model\Administracion\Configuracion\SysUnidadesMedidasModel', 'id', 'id_unidadmedida');
     }

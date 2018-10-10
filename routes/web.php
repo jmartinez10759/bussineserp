@@ -432,6 +432,16 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'planes.asing_insert'
     ]);
     
+    Route::get('/planes/display_sucursales', [
+        'uses'      => 'Administracion\Configuracion\PlanesController@display_sucursales'
+        ,'as'       => 'planes.display_sucursales'
+    ]);
+    
+    Route::post('/planes/register_permisos', [
+        'uses'      => 'Administracion\Configuracion\PlanesController@register_permisos'
+        ,'as'       => 'planes.register_permisos'
+    ]);
+    
     ######################### MODULO DE MONEDAS ##################################
     
     Route::get('/configuracion/monedas', [
@@ -880,7 +890,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as' => 'unidadesmedidas.destroy'
     ]);
     
-    
+##################################### COTIZACIONES #########################################    
 
 
 Route::get('/ventas/cotizacion', [
@@ -924,7 +934,7 @@ Route::get('/ventas/cotizacion', [
     ]);
 
     Route::get('/ventas/productos', [
-        'uses' => 'Ventas\CotizacionController@getProducto'
+        'uses' => 'Ventas\CotizacionController@get_productos'
         ,'as' => 'ventas.productos'
     ]);
 

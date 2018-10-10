@@ -6,6 +6,7 @@ var url_all      = "productos/all";
 var redireccion  = "configuracion/productos";
 var url_display         = "productos/display_sucursales";
 var url_insert_permisos = "productos/register_permisos";
+var url_unidades = 'unidadesmedidas/edit';
 
 new Vue({
   el: "#vue-productos",
@@ -15,7 +16,7 @@ new Vue({
   data: {
     datos: [],
     insert: {
-        clave_unidad: "E48"
+        clave_unidad: ""
         ,subtotal: 0
         ,iva    : 0 
         ,total  : 0
@@ -54,6 +55,7 @@ new Vue({
         this.insert.id_unidadmedida = jQuery('#cmb_unidades').val();
         this.insert.id_categoria = jQuery('#cmb_categorias').val();
         this.insert.descripcion = jQuery('#descripcion').val();
+        this.insert.clave_unidad  = jQuery('#clave').val();
         var url = domain( url_insert );
         var fields = this.insert;
         var promise = MasterController.method_master(url,fields,"post");
@@ -79,6 +81,7 @@ new Vue({
         this.update.id_unidadmedida = jQuery('#cmb_unidades_edit').val();
         this.update.id_categoria = jQuery('#cmb_categorias_edit').val();
         this.update.descripcion = jQuery('#descripcion_edit').val();
+        this.update.clave_unidad  = jQuery('#clave_edit').val();
         var url = domain( url_update );
         var fields = this.update;
         var promise = MasterController.method_master(url,fields,"put");
@@ -225,11 +228,6 @@ new Vue({
     }
 
 
-
-
-
-
-    
   }
 
 
@@ -270,6 +268,43 @@ new Vue({
 
      });
  }
+function parse_clave(){
+   var url = domain( url_unidades );
+    var fields = {id : jQuery('#cmb_unidades').val() };
+    var promise = MasterController.method_master(url,fields,"get");
+      promise.then( response => {
+          var clave = response.data.result.clave
+          jQuery('#clave').val(clave);
+      }).catch( error => {
+          if( error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+            }
+          toastr.error( error.response.data.message , expired );
+
+      });
+    
+}
+
+function parse_clave_edit(){
+    var url = domain( url_unidades );
+    var fields = {id : jQuery('#cmb_unidades_edit').val() };
+    var promise = MasterController.method_master(url,fields,"get");
+      promise.then( response => {
+         var clave = response.data.result.clave
+          jQuery('#clave_edit').val(clave);
+      }).catch( error => {
+          if( error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+            }
+          toastr.error( error.response.data.message , expired );
+
+      });
+}
+
 // jQuery('#cmb_categorias').selectpicker();
 // jQuery('#cmb_categorias_edit').selectpicker();
 // jQuery('#cmb_unidades').selectpicker();

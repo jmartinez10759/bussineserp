@@ -133,6 +133,7 @@
                      ,'class'     => 'form-control'
                      ,'leyenda'   => 'Seleccione Opcion'
                      ,'attr'      => 'data-live-search="true" '
+                     ,'event'     => 'parse_clave()'
                ]);
 
             $unidades_edit = dropdown([
@@ -143,6 +144,7 @@
                      ,'class'     => 'form-control'
                      ,'leyenda'   => 'Seleccione Opcion'
                      ,'attr'      => 'data-live-search="true" '
+                     ,'event'     => 'parse_clave_edit()'
                ]);
 
               $data = [
@@ -257,7 +259,7 @@
             DB::beginTransaction();
             try {
                 $response = $this->_tabla_model::where(['id' => $request->id])->delete();
-                SysPlanesProductosModel::where(['id' => $request->id])->delete();
+                SysPlanesProductosModel::where(['id_producto' => $request->id])->delete();
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -344,8 +346,8 @@
                 ])->delete();
             }
             SysPlanesProductosModel::where([
-                 'id_empresa'   => $request->id_empresa
-                ,'id_producto'    => $request->id_producto 
+                 #'id_empresa'   => $request->id_empresa
+                'id_producto'    => $request->id_producto 
                 ])->delete();
             $response = [];
             for ($i=0; $i < count($request->matrix) ; $i++) { 

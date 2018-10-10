@@ -13,12 +13,12 @@
                             <div class="box box-primary">
                                 <div class="box-body box-profile">
                                     <div id="load_img">
-<!--                                <img class=" img-responsive" src="img/productos/product.png" alt="Bussines profile picture">-->
+                                        <!--                                <img class=" img-responsive" src="img/productos/product.png" alt="Bussines profile picture">-->
                                     </div>
-                                    
+
                                     <div class="col-sm-10"></div>
                                     <input type="text" class="form-control" id="logo" v-model="insert.logo">
-                                    
+
                                 </div>
                                 <!-- /.box-body -->
                             </div>
@@ -28,7 +28,7 @@
                         </div>
                         <!-- /.col -->
                         <div class="col-md-9">
-                            <form class="form-horizontal" >
+                            <form class="form-horizontal">
 
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs">
@@ -42,7 +42,7 @@
                                             <div class="form-group ">
                                                 <label for="product_code" class="col-sm-2 control-label">Clave</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="clave" v-model="insert.clave_unidad">
+                                                    <input type="text" class="form-control" id="clave" v-model="insert.clave_unidad" readonly>
                                                 </div>
                                                 <label for="model" class="col-sm-2 control-label">Código</label>
                                                 <div class="col-sm-4">
@@ -166,19 +166,19 @@
             <div class="modal-body">
 
 
-                                            <section class="content">
+                <section class="content">
                     <div class="row">
                         <div class="col-md-3">
                             <!-- Profile Image -->
                             <div class="box box-primary">
                                 <div class="box-body box-profile">
                                     <div id="load_img">
-<!--                                <img class=" img-responsive" src="img/productos/product.png" alt="Bussines profile picture">-->
+                                        <!--                                <img class=" img-responsive" src="img/productos/product.png" alt="Bussines profile picture">-->
                                     </div>
-                                    
+
                                     <div class="col-sm-10"></div>
                                     <input type="text" class="form-control" id="logo" v-model="insert.logo">
-                                    
+
                                 </div>
                                 <!-- /.box-body -->
                             </div>
@@ -188,7 +188,7 @@
                         </div>
                         <!-- /.col -->
                         <div class="col-md-9">
-                            <form class="form-horizontal" >
+                            <form class="form-horizontal">
 
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs">
@@ -202,7 +202,7 @@
                                             <div class="form-group ">
                                                 <label for="product_code" class="col-sm-2 control-label">Clave</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="clave_edit" v-model="update.clave_unidad">
+                                                    <input type="text" class="form-control" id="clave_edit" v-model="update.clave_unidad" readonly>
                                                 </div>
                                                 <label for="model" class="col-sm-2 control-label">Código</label>
                                                 <div class="col-sm-4">
@@ -309,7 +309,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-info" v-on:click.prevent="update_register()" {{$update}}><i class="fa fa-save" ></i> Actualizar </button>
+                    <button type="button" class="btn btn-info" v-on:click.prevent="update_register()" {{$update}}><i class="fa fa-save"></i> Actualizar </button>
                 </div>
             </div>
 
@@ -324,8 +324,8 @@
                 <h3> Asigne Sucursales </h3>
             </div>
             <div class="modal-body">
-                <input type="text" id="id_producto">
-                <input type="text" id="id_empresa">
+                <input type="hidden" id="id_producto">
+                <input type="hidden" id="id_empresa">
                 <div id="sucursal_empresa"></div>
                 <!-- <div v-html="sucursales.tabla_sucursales" id="sucursal_empresa"></div> -->
             </div>

@@ -23,16 +23,16 @@
         *@return void
         */
         public function index(){
-            
-            if( Session::get('permisos')['GET'] ){
-              return view('errors.error');
+            if( Session::get("permisos")["GET"] ){
+              return view("errors.error");
             }
             
             $data = [
                 "page_title" 	        => ""
                 ,"title"  		        => ""
+                ,"data_table"  		    => ""
             ];
-            return self::_load_view( "development.modulo.vista",$data );
+            return self::_load_view( "administracion.configuracion.cuentas",$data );
         }
         /**
          *Metodo para obtener los datos de manera asicronica.

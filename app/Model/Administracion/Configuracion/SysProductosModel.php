@@ -47,5 +47,8 @@ class SysProductosModel extends Model
     public function empresas(){
       return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel', 'sys_planes_productos', 'id_producto', 'id_empresa');
     }
+    public function sucursales(){
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel', 'sys_planes_productos', 'id_producto', 'id_sucursal');
+    }
     
 }
