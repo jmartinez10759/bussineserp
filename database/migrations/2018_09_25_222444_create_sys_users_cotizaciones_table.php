@@ -21,7 +21,6 @@ class CreateSysUsersCotizacionesTable extends Migration
             $table->integer('id_menu')->nullable();
             $table->integer('id_cotizacion')->nullable();
             $table->integer('id_concepto')->nullable();
-            $table->integer('id_producto')->nullable();
             $table->timestamps();
         });
     }

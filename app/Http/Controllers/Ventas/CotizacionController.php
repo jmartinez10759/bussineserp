@@ -6,6 +6,8 @@
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Ventas\SysCotizacionModel;
+    use App\Model\Ventas\SysConceptosCotizacionesModel;
+    use App\Model\Ventas\SysUsersCotizacionesModel;
     use App\Model\Administracion\Configuracion\SysClientesModel;
     use App\Model\Administracion\Configuracion\SysUsersModel;
     use App\Model\Administracion\Configuracion\SysContactosModel;
@@ -195,12 +197,9 @@
                 ];
                 //debuger($cotizaciones);
 
-                $datos = SysCotizacionModel::create($cotizaciones);
-                $id_user=$datos->id;
-
-                if ($datos == true){
-                    debuger(session::all('id'));
-                    $datos = [
+                $cotizacion = SysCotizacionModel::create($cotizaciones);
+                
+                    $conceptos_cotizaciones = [
                     'id_producto'   => isset($request->conceptos['id_producto'])?$request->conceptos['id_producto']:0
                     ,'id_plan'      => isset($request->conceptos['id_plan'])?$request->conceptos['id_plan']:0
                     ,'catidad'      => isset($request->conceptos['cantidad'])?$request->conceptos['cantidad']:null
@@ -208,7 +207,20 @@
                     ,'total'        => isset($request->conceptos['total'])?$request->conceptos['total']:null
                 ];
 
-                }
+                $sys_conceptos = SysConceptosCotizacionesModel::create($conceptos_cotizaciones);
+
+                $user_co = [
+                    'id_users'           => Session::get('id')
+                    ,'id_rol'            => Session::get('id_rol')
+                    ,'id_empresa'        => Session::get('id_empresa')
+                    ,'id_sucursal'      => Session::get('id_sucursal')
+                    ,'id_menu' => 27
+                    ,'id_cotizacion' => $cotizacion->id
+                    ,'id_concepto' => $sys_conceptos->id
+                ];
+
+                SysUsersCotizacionesModel::create($user_co);
+                
 
 
             DB::commit();
@@ -220,7 +232,7 @@
             }
 
             if ($success) {
-            return $this->_message_success( 201, $datos , self::$message_success );
+            return $this->_message_success( 201, $cotizacion , self::$message_success );
             }
             return $this->show_error(6, $error, self::$message_error );
 

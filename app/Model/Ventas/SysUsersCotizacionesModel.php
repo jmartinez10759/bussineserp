@@ -15,6 +15,5 @@ class SysUsersCotizacionesModel extends Model
             ,'id_menu'
             ,'id_cotizacion'
             ,'id_concepto'
-            ,'id_producto'
       ];
 }
