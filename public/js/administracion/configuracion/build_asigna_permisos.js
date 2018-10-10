@@ -257,27 +257,38 @@ class ChangeSelect {
          let matrix = [];
          let conteo = 0;
 
-         jQuery('input[type="checkbox"]').each(function(){
+         jQuery('#datatable_permisos input[type="checkbox"]').each(function(){
              let id          = jQuery(this).attr('id_permisos');
              let check       = jQuery(`#${id}`).is(':checked');
-             if(id != undefined || id == ""){
-               matrix[conteo] = `${id}|${check}`;
-               conteo++;
-             }
-
+             matrix[conteo] = `${id}|${check}`;
+             conteo++;
          });
            console.log(matrix);
            //return;
            let fields = {
-             'id_users'	    : id_users
+             'id_users'	        : id_users
              ,'id_rol'		    : id_rol
              ,'id_empresa'		: id_empresa
-             ,'id_sucursal'	: id_sucursal
-             ,'matrix'		: matrix
-             ,'_token'   : _token
+             ,'id_sucursal'	    : id_sucursal
+             ,'matrix'		    : matrix
+             ,'_token'          : _token
            }
-
-           axios.post( url, fields, csrf_token ).then(response => {
+            var promise = MasterController.method_master(url,fields,"post");
+              promise.then( response => {
+                  $.fancybox.close({
+                       src  : '#modal_permisos',
+                       type : 'inline',
+                     });
+                  toastr.info( response.data.message , title );
+              }).catch( error => {
+                  if( error.response.status == 419 ){
+                        toastr.error( session_expired ); 
+                        redirect(domain("/"));
+                        return;
+                    }
+                  toastr.error( error.response.data.message , expired );
+              });
+          /* axios.post( url, fields, csrf_token ).then(response => {
                if (response.data.success == true) {
                    $.fancybox.close({
                        src  : '#modal_permisos',
@@ -289,7 +300,7 @@ class ChangeSelect {
                }
            }).catch(error => {
                toastr.error( error,expired );
-           });
+           });*/
 
 
        }

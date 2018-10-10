@@ -301,19 +301,22 @@
        $error = null;
         DB::beginTransaction();
         try {
-            
-            #SysPlanesProductosModel::where(['id_plan' => $response->id_plan])->delete();
+            $where = [
+                 'id_empresa'     => Session::get('id_empresa')
+                ,'id_sucursal'    => Session::get('id_sucursal')
+                ,'id_plan'        => $request->id_plan
+            ];
+            SysPlanesProductosModel::where( $where )->delete();
             for($i = 0; $i < count($request->matrix); $i++){
                 $matrices = explode('|',$request->matrix[$i]);
                 $id_producto = $matrices[0];
-                debuger($id_producto);
                 $data = [
                      'id_empresa'     => Session::get('id_empresa')
                     ,'id_sucursal'    => Session::get('id_sucursal')
-                    ,'id_plan'        => $response->id_plan
+                    ,'id_plan'        => $request->id_plan
                     ,'id_producto'    => $id_producto
                 ];
-                SysPlanesProductosModel::create($data);
+                $response[] = SysPlanesProductosModel::create($data);
             }
         DB::commit();
         $success = true;

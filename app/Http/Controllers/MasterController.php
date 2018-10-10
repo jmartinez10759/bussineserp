@@ -71,15 +71,14 @@ abstract class MasterController extends Controller
  *@return json
  */
 	protected function _message_success( $code = false, $data = [], $message = false ){
-
-            $code = ( $code )? $code : 200 ;
-            $datos = [
-                    "success"   => true,
-                    "message"   => ($message)? $message :"Transacción exitosa",
-                    "code"		  => "SYS-".$code."-".$this->setCabecera($code),
-                    "result"    => $data
-            ];
-            return response()->json($datos,$code);
+        $code = ( $code )? $code : 200 ;
+        $datos = [
+                "success"   => true,
+                "message"   => ($message)? $message :"Transacción exitosa",
+                "code"		  => "SYS-".$code."-".$this->setCabecera($code),
+                "result"    => $data
+        ];
+        return response()->json($datos,$code);
    }
 /**
  *Metodo para establecer si se realizo con exito la peticion
@@ -106,7 +105,6 @@ abstract class MasterController extends Controller
   			 412 => 'Precondition Failed',
   			 500 => 'Internal Server Error'
   		);
-
   	 return ($estado[$codigo]) ? $estado[$codigo] : $estado[500];
    }
 /**
@@ -214,10 +212,10 @@ abstract class MasterController extends Controller
 	* @return void
 	*/
 	protected function setCabecera( $codigo ) {
-			header("HTTP/1.0 " . $codigo . " " . $this->get_status_message($codigo));
-			header("Content-Type:" . $this->tipo);
-			header("status:" . $codigo);
-			return $this->get_status_message($codigo);
+        header("HTTP/1.0 " . $codigo . " " . $this->get_status_message($codigo));
+        header("Content-Type:" . $this->tipo);
+        header("status:" . $codigo);
+        return $this->get_status_message($codigo);
 	}
 	/**
 	 * Metodo para mandar a cargar el menu dependiendo el rol desempeÃ±ado por el usuario
@@ -365,7 +363,7 @@ abstract class MasterController extends Controller
           return $query->where(['sys_empresas.estatus' => 1 ])
           ->groupBy('id_users','id','nombre_comercial');
         }])->where( $condicion )->get();
-        #dd($consulta);
+        #debuger($consulta);
         if( count( $consulta ) > 0 ){
           $usuarios = data_march($consulta);
           $session = [];
@@ -601,26 +599,26 @@ abstract class MasterController extends Controller
 
     }
  /**
-	*Metodo para hacer la consulta de la vacante
+	*Metodo para hacer la consulta para los menus
 	*@access public
 	*@param string $request [Description]
 	*@return void
 	*/
 	 public static function data_session( $request ){
-		 		$session = [];
-				if( count($request) > 0 ){
-						foreach ($request as $rutas ) {
-								if( isset($rutas->link) && $rutas->link != ""){
-										$session['ruta'] = $rutas->link;
-										break;
-								}
-						}
+         #debuger($request);
+        $session = [];
+        if( count($request) > 0 ){
+                foreach ($request as $rutas ) {
+                        if( isset($rutas->link) && $rutas->link != ""){
+                            $session['ruta'] = $rutas->link;
+                            break;
+                        }
+                }
 
-				}else{
-					$session['ruta'] = 'failed/error';
-				}
-				return $session;
-
+        }else{
+            $session['ruta'] = 'failed/error';
+        }
+        return $session;
 	 }
  /**
 	*Metodo para hacer la consulta de la vacante

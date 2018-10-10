@@ -148,7 +148,7 @@ class PermisosController extends MasterController
    *@param Request $request
    *@return void
    */
-   public static function store( Request $request ){
+   public function store( Request $request ){
 
       $matrix       = $request->matrix;
       $id_rol       = $request->id_rol;
@@ -158,8 +158,14 @@ class PermisosController extends MasterController
       #se realiza una transaccion
       $error = null;
       DB::beginTransaction();
-      try {
-
+      try { 
+        $where_delete = [
+            'id_users'      => $id_users
+            ,'id_rol'       => $id_rol
+            ,'id_empresa'   => $id_empresa
+            ,'id_sucursal'  => $id_sucursal
+        ];
+          SysRolMenuModel::where($where_delete)->delete();
         for ($i=0; $i < count( $matrix ) ; $i++) {
 
             $matrices = explode( '|',$matrix[$i] );
@@ -182,7 +188,6 @@ class PermisosController extends MasterController
               ,'id_sucursal'  => $id_sucursal
               ,'id_menu'      => $matrices[0]];
             $data['id_permiso']   = (data_march(SysUsersPermisosModel::where($condicion)->get()) )? data_march(SysUsersPermisosModel::where($condicion)->get())[0]->id_permiso: 5;
-            #debuger( data_march(SysUsersPermisosModel::where($condicion)->get()) , true);
             if( $select ){
               $where = [
                 'id_users'      => $id_users
@@ -193,7 +198,7 @@ class PermisosController extends MasterController
               ];
                $response[] = self::$_model::update_model( $where, $data, new SysRolMenuModel );
             }else{
-               $response[] = self::$_model::create_model( [$data], new SysRolMenuModel );
+               $response[] = SysRolMenuModel::create($data);
             }
 
         }
@@ -205,13 +210,11 @@ class PermisosController extends MasterController
           $error = $e->getMessage();
           DB::rollback();
       }
-
-      if ($success) {
-          //return redirect()->route('configuracion.permisos');
-          return message( true, $response,"¡Se cambiaron los Permisos con exito!");
-      }
-      return message( false, $error ,'¡Ocurrio un error, favor de verificar!');
-
+       
+       if ($success) {
+            return $this->_message_success(201,$success, "¡Se cambiaron los Permisos con exito!" );
+          }
+          return $this->show_error(6,$error, self::$message_error );
    }
    /**
     *Metodo donde se crea manda  a llamar los permisos que tiene el usuario con respecto al rol

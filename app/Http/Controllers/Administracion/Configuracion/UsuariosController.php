@@ -37,7 +37,7 @@ class UsuariosController extends MasterController
      *@return void
      */
     public static function index(){
-
+        #debuger(Session::all());
         $response = SysUsersModel::with(['menus' => function($query){
           return $query->where([ 'sys_rol_menu.estatus'=> 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa')])->get();
         },'roles' => function( $query ){
