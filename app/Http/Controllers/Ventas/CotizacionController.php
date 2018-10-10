@@ -146,8 +146,14 @@
         public function all( Request $request ){
 
             try {
-
-
+                $concep = DB::select('SELECT sys_users_cotizaciones.id_cotizacion,
+                       sys_users_cotizaciones.id_concepto,
+                       sys_cotizaciones.codigo,sys_cotizaciones.descripcion,
+                       sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total
+                 FROM sysbussiness.sys_users_cotizaciones
+                 inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                 inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto');
+                $response = ['concep' => $concep];
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -202,9 +208,9 @@
                     $conceptos_cotizaciones = [
                     'id_producto'   => isset($request->conceptos['id_producto'])?$request->conceptos['id_producto']:0
                     ,'id_plan'      => isset($request->conceptos['id_plan'])?$request->conceptos['id_plan']:0
-                    ,'cantidad'      => isset($request->conceptos['cantidad'])?$request->conceptos['cantidad']:null
-                    ,'precio'       => isset($request->conceptos['precio'])?$request->conceptos['precio']:null
-                    ,'total'        => isset($request->conceptos['total'])?$request->conceptos['total']:null
+                    ,'cantidad'      => isset($request->conceptos['cantidad'])?$request->conceptos['cantidad']:3
+                    ,'precio'       => isset($request->conceptos['precio'])?$request->conceptos['precio']:0
+                    ,'total'        => isset($request->conceptos['total'])?$request->conceptos['total']:0
                 ];
 
                 $sys_conceptos = SysConceptosCotizacionesModel::create($conceptos_cotizaciones);

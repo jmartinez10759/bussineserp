@@ -21,6 +21,7 @@
 
 <div id="modal_add_register" style="display:none;" class="col-sm-12">
         <input type="hidden" id="id_factura"/>
+        <input type="hidden" id="id_concep_producto" value="">
         <h3>Registro de Información</h3>
         <hr>
 
@@ -129,13 +130,13 @@
                                         <th class="text-right">PRECIO TOTAL</th>
                                         <th></th>
                                     </tr>
-                                    <tr>
-                                        <td class="text-center">00002</td>
-                                        <td class="text-center">3</td>
-                                        <td>Shampoo</td>
-                                        <td class="text-right">4.50</td>
-                                        <td class="text-right">13.50</td>
-                                        <td class="text-center"><a href="#" onclick="eliminar('17353')"><i class="glyphicon glyphicon-trash"></i></a></td>
+                                    <tr v-for="data in datos">
+                                        <td class="text-center">@{{ data.codigo }}</td>
+                                        <td class="text-center">@{{ data.cantidad }}</td>
+                                        <td>@{{ data.descripcion }}</td>
+                                        <td class="text-right">@{{ data.precio }}</td>
+                                        <td class="text-right">@{{ data.total }}</td>
+                                        <td class="text-center"><a href="#"><i class="glyphicon glyphicon-trash"></i></a></td>
                                     </tr>            
                                     <tr>
                                         <td class="text-right" colspan="4" >SUBTOTAL </td>

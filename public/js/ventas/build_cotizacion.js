@@ -27,8 +27,8 @@ new Vue({
         var fields = {};
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
-              
+          console.log(response.data.result.concep);
+          this.datos = response.data.result.concep;
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -43,13 +43,14 @@ new Vue({
         var fields = {
             'cotizacion': {
                 'codigo'        : 'cot-1121'
-               ,'descripcion'   : jQuery('#observaciones').val()
+               ,'descripcion'   : jQuery('#descripcion').val()
                ,'id_moneda'     : jQuery('#cmb_monedas').val()
                ,'id_contacto'   : jQuery('#cmb_contactos').val()
                ,'id_metodo_pago': jQuery('#cmb_metodos_pagos').val()
                ,'id_forma_pago' : jQuery('#cmb_formas_pagos').val()
                ,'id_estatus'    : jQuery('#cmb_estatus').val()
                ,'id_cliente'    : jQuery('#cmb_clientes').val()
+               ,'id_concep_producto': jQuery('#id_concep_producto').val()
             },
             'conceptos': {
                  'id_producto'  : jQuery('#cmb_productos').val()
@@ -64,9 +65,17 @@ new Vue({
           promise.then( response => {
               
               buildSweetAlertOptions("¡Registro agregado!", "¿Deseas seguir agregando registros?", function(){
-               jQuery('#modal_conceptos').close();
+               $.fancybox.close({
+                    'type': 'inline'
+                    ,'src': "#modal_conceptos"
+                    ,'buttons' : ['share', 'close']
+                });
           }, 'success', true,['NO','SI'] );
+              clean_input_product();
               toastr.success( response.data.message , title );
+              jQuery('#id_concep_producto').val(response.data.result.id)
+              console.log(response.data.result.id);
+              
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -135,6 +144,14 @@ new Vue({
 
 
 });
-
+function clean_input_product() {
+        jQuery('#cmb_productos').val(0)
+        jQuery('#cmb_planes').val(0)
+        jQuery('#cantidad_concepto').val('')
+        jQuery('#precio_concepto').val('')
+        jQuery('#total_concepto').val('')
+        jQuery('#descripcion').val('')
+        //jQuery('#id_concep_producto').val(1)
+    }
 jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();

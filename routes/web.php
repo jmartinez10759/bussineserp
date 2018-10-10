@@ -898,9 +898,9 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'ventas.cotizacion'
     ]);
 
-    Route::get('/unidadesmedidas/all', [
-        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@all'
-        ,'as' => 'unidadesmedidas.all'
+    Route::get('/cotizacion/all', [
+        'uses' => 'Ventas\CotizacionController@all'
+        ,'as' => 'cotizacion.all'
     ]);
 
     Route::post('/cotizacion/register', [
