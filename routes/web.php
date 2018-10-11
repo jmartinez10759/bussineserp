@@ -933,15 +933,15 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'ventas.contacto'
     ]);
 
-    Route::get('/ventas/productos', [
-        'uses' => 'Ventas\CotizacionController@get_productos'
+    /*Route::get('/ventas/productos', [
+        'uses' => 'Ventas\CotizacionController@getProducto'
         ,'as' => 'ventas.productos'
     ]);
-
-    Route::get('/ventas/planes', [
+*/
+   /* Route::get('/ventas/planes', [
         'uses' => 'Ventas\CotizacionController@get_planes'
         ,'as' => 'ventas.planes'
-    ]);
+    ]);*/
 
 
 ################################## DEVELOPMENT MODULOS ################################

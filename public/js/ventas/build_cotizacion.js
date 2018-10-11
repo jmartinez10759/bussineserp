@@ -155,3 +155,5 @@ function clean_input_product() {
     }
 jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();
+
+jQuery('#cmb_clientes').selectpicker();

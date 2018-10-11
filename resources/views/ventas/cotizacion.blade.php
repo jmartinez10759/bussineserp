@@ -201,9 +201,11 @@ function parser_data(){
 }
 
 function display_productos(){
-	var id_clientes = jQuery('#cmb_productos').val();
-	var url = domain('ventas/productos');
-	var fields = {id : id_clientes};
+    jQuery('#cmb_planes').val(0);
+	var id_producto = jQuery('#cmb_productos').val();
+	//var url = domain('ventas/productos');
+	var url = domain('productos/edit');
+	var fields = {id : id_producto};
 	var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           	var select_productos = response.data.result;
@@ -221,8 +223,10 @@ function display_productos(){
 }
 
 function display_planes(){
+    jQuery('#cmb_productos').val(0);
 	var id_planes = jQuery('#cmb_planes').val();
-	var url = domain('ventas/planes');
+	//var url = domain('ventas/planes');
+	var url = domain('planes/edit');
 	var fields = {id : id_planes};
 	var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
