@@ -79,8 +79,8 @@
 										</button>
 										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
-											<li><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
+											<li {{$permisos}}><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
+											<li {{$permisos}}><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
 											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
 										</ul>
 									</div>

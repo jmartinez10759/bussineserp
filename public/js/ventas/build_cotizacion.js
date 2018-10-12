@@ -23,12 +23,14 @@ new Vue({
   mixins : [mixins],
   methods:{
     consulta_general(){
+      alert(jQuery('#id_concep_producto').val());
         var url = domain( url_all );
-        var fields = {};
+        var fields = {id: jQuery('#id_concep_producto').val() };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           console.log(response.data.result.concep);
           this.datos = response.data.result.concep;
+
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -43,7 +45,7 @@ new Vue({
         var fields = {
             'cotizacion': {
                 'codigo'        : 'cot-1121'
-               ,'descripcion'   : jQuery('#descripcion').val()
+               ,'descripcion'   : jQuery('#observaciones').val()
                ,'id_moneda'     : jQuery('#cmb_monedas').val()
                ,'id_contacto'   : jQuery('#cmb_contactos').val()
                ,'id_metodo_pago': jQuery('#cmb_metodos_pagos').val()
@@ -75,7 +77,7 @@ new Vue({
               toastr.success( response.data.message , title );
               jQuery('#id_concep_producto').val(response.data.result.id)
               console.log(response.data.result.id);
-              
+              this.consulta_general();
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -123,20 +125,37 @@ new Vue({
     }
     ,destroy_register( id ){
         var url = domain( url_destroy );
-        var fields = {id : id };
-         buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
-          var promise = MasterController.method_master(url,fields,"delete");
+        var fields = {id : id.id_concepto };
+         var promise = MasterController.method_master(url,fields,"delete");
           promise.then( response => {
               toastr.success( response.data.message , title );
+              console.log(response);
+              this.consulta_general();
           }).catch( error => {
-              if( error.response.status == 419 ){
+            
+              if( isset(error.response.status) && error.response.status == 419 ){
                     toastr.error( session_expired ); 
                     redirect(domain("/"));
                     return;
                 }
               toastr.error( error.response.data.message , expired );
           });
-      },"warning",true,["SI","NO"]);   
+      //    buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+      //     var promise = MasterController.method_master(url,fields,"delete");
+      //     promise.then( response => {
+      //         toastr.success( response.data.message , title );
+      //         //this.consulta_general();
+      //     }).catch( error => {
+            
+      //         if( isset(error.response.status) && error.response.status == 419 ){
+      //               toastr.error( session_expired ); 
+      //               redirect(domain("/"));
+      //               return;
+      //           }
+      //         toastr.error( error.response.data.message , expired );
+      //     });
+      // },"warning",true,["SI","NO"]);   
+        //this.consulta_general();
     }
     
     

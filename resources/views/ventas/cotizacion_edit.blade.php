@@ -21,7 +21,7 @@
 
 <div id="modal_add_register" style="display:none;" class="col-sm-12">
         <input type="hidden" id="id_factura"/>
-        <input type="hidden" id="id_concep_producto" value="">
+        <input type="text" id="id_concep_producto">
         <h3>Registro de Información</h3>
         <hr>
 
@@ -136,7 +136,7 @@
                                         <td>@{{ data.descripcion }}</td>
                                         <td class="text-right">@{{ data.precio }}</td>
                                         <td class="text-right">@{{ data.total }}</td>
-                                        <td class="text-center"><a href="#"><i class="glyphicon glyphicon-trash"></i></a></td>
+                                        <td class="text-center"><a href="#" v-on:click.prevent="destroy_register(data)"><i class="glyphicon glyphicon-trash"></i></a></td>
                                     </tr>            
                                     <tr>
                                         <td class="text-right" colspan="4" >SUBTOTAL </td>

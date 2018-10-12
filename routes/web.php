@@ -918,8 +918,8 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'unidadesmedidas.update'
     ]);
 
-    Route::delete('/unidadesmedidas/destroy', [
-        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@destroy'
+    Route::delete('/cotizacion/destroy', [
+        'uses' => 'Ventas\CotizacionController@destroy'
         ,'as' => 'unidadesmedidas.destroy'
     ]);
     
