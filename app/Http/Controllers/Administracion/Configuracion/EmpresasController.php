@@ -195,7 +195,7 @@ class EmpresasController extends MasterController
                 return $query->where(['sys_contactos.estatus' => 1,'sys_empresas_sucursales.estatus' => 1])->get();
             },'sucursales' => function( $query ){
                 return $query->where(['sys_empresas_sucursales.estatus' => 1])->get();
-            }])->where( $where )->get();
+            },'clientes'])->where( $where )->get();
 
             return $this->_message_success( 201, $response[0] , self::$message_success );
         } catch (\Exception $e) {

@@ -44,11 +44,11 @@ class SysEmpresasModel extends Model
   }
   
   public function proveedores(){
-//      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_roles','id_empresa','id_users');
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_empresas_sucursales','id_empresa','id_proeedor');
   }
   
   public function cuentas(){
-      
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_empresas_sucursales','id_empresa','id_cuenta');
   }
   
   public function contactos(){
@@ -64,7 +64,7 @@ class SysEmpresasModel extends Model
   }
     
   public function clientes(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel', 'sys_planes_productos', 'id_empresa', 'id_producto');
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel', 'sys_empresas_sucursales', 'id_empresa', 'id_cliente');
   }
 
 

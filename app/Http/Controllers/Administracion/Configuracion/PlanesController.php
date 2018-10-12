@@ -332,53 +332,52 @@
                 return $this->show_error(6, $error, self::$message_error );
 
         }
-             /**
-         * Metodo para borrar el registro
-         * @access public
-         * @param Request $request [Description]
-         * @return void
-         */
-        public function display_sucursales( Request $request ){
-            try {
-                #$sucursales = [];
-                $response = SysEmpresasModel::with(['sucursales' => function($query){
-                    return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->get();
-                }])->where(['id' => $request->id_empresa])->get();
-                $sucursales = SysPlanesProductosModel::select('id_sucursal')->where($request->all())->get();
-                #se crea la tabla 
-                $registros = [];
-                foreach ($response[0]->sucursales as $respuesta) {
-                    $id['id'] = 'sucursal_'.$respuesta->id;
-                    $icon = build_actions_icons($id, 'id_sucursal="' . $respuesta->id . '" ','sucursal');
-                    $registros[] = [
-                        $respuesta->codigo
-                        ,$respuesta->sucursal
-                        ,$respuesta->direccion
-                        ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-                        ,$icon
-                    ];
-                }
-
-                $titulos = [ 'Codigo','Sucursal','Direccion', 'Estatus',''];
-                $table = [
-                    'titulos' 		   => $titulos
-                    ,'registros' 	   => $registros
-                    ,'id' 			   => "sucursales"
-                    #,'class'           => "fixed_header"
+    /**
+     * Metodo para borrar el registro
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function display_sucursales( Request $request ){
+        try {
+            #$sucursales = [];
+            $response = SysEmpresasModel::with(['sucursales' => function($query){
+                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->get();
+            }])->where(['id' => $request->id_empresa])->get();
+            $sucursales = SysPlanesProductosModel::select('id_sucursal')->where($request->all())->get();
+            #se crea la tabla 
+            $registros = [];
+            foreach ($response[0]->sucursales as $respuesta) {
+                $id['id'] = 'sucursal_'.$respuesta->id;
+                $icon = build_actions_icons($id, 'id_sucursal="' . $respuesta->id . '" ','sucursal');
+                $registros[] = [
+                    $respuesta->codigo
+                    ,$respuesta->sucursal
+                    ,$respuesta->direccion
+                    ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
+                    ,$icon
                 ];
-                $data = [
-                    'tabla_sucursales' => data_table($table)
-                    ,'sucursales'   => $sucursales
-                ];
-                return $this->_message_success(201, $data, self::$message_success);
-            } catch (\Exception $e) {
-                $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-                return $this->show_error(6, $error, self::$message_error);
             }
 
-        
+            $titulos = [ 'Codigo','Sucursal','Direccion', 'Estatus',''];
+            $table = [
+                'titulos' 		   => $titulos
+                ,'registros' 	   => $registros
+                ,'id' 			   => "sucursales"
+            ];
+            $data = [
+                'tabla_sucursales' => data_table($table)
+                ,'sucursales'   => $sucursales
+            ];
+            return $this->_message_success(201, $data, self::$message_success);
+        } catch (\Exception $e) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return $this->show_error(6, $error, self::$message_error);
         }
-        /**
+
+        
+    }
+    /**
      * Metodo para insertar los permisos de los productos
      * @access public
      * @param Request $request [Description]

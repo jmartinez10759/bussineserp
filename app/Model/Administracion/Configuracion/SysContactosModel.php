@@ -16,4 +16,16 @@ class SysContactosModel extends Model
     ,'estatus'
   ];
     
+      public function empresas(){
+          return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_empresas_sucursales','id_contacto','id_empresa');
+      }
+  
+      public function clientes(){
+         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel','sys_empresas_sucursales','id_contacto','id_cliente');
+      }
+    
+      public function cuentas(){
+         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_empresas_sucursales','id_contacto','id_cuenta');
+      }
+    
 }

@@ -3,6 +3,7 @@ var url_update  = 'clientes/update';
 var url_edit    = 'clientes/edit';
 var url_destroy = "clientes/destroy";
 var redireccion = "configuracion/clientes";
+var url_display = "clientes/display_sucursales";
 
 new Vue({
   el: "#vue-clientes",
@@ -147,3 +148,39 @@ jQuery('#prospectos_tabs').click(function(){
    jQuery('#search_general').val("");
    jQuery('#search_general').keyup();
 });
+
+
+function display_sucursales(id) {
+    
+     var id_empresa = jQuery('#cmb_empresas_' + id).val();
+     var url = domain(url_display);
+     var fields = { 
+         id_empresa : id_empresa
+         ,id_cliente : id
+     };
+        jQuery('#id_cliente').val(id);
+        jQuery('#id_empresa').val(id_empresa);
+     var promise = MasterController.method_master(url, fields, "get");
+     promise.then(response => {
+         jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
+         
+         jQuery.fancybox.open({
+             'type': 'inline',
+             'src':  "#permisos",
+             'buttons': ['share', 'close']
+         });
+         for (var i = 0; i < response.data.result.sucursales.length; i++) {
+             console.log(response.data.result.sucursales[i].id_sucursal);
+             jQuery(`#sucursal_${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
+         };
+     }).catch(error => {
+         if (error.response.status == 419) {
+             toastr.error(session_expired);
+             redirect(domain("/"));
+             return;
+         }
+         toastr.error(error.response.data.message, expired);
+
+     });
+ }
+
