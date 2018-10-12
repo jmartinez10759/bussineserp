@@ -146,14 +146,51 @@
         public function all( Request $request ){
 
             try {
-                $concep = DB::select('SELECT sys_users_cotizaciones.id_cotizacion,
-                       sys_users_cotizaciones.id_concepto,
-                       sys_cotizaciones.codigo,sys_cotizaciones.descripcion,
-                       sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total
-                 FROM sysbussiness.sys_users_cotizaciones
-                 inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-                 inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto');
-                $response = ['concep' => $concep];
+
+                $where = ($request->id == "") ? 'WHERE sysbussiness.sys_cotizaciones.id = 0' : 'WHERE sysbussiness.sys_cotizaciones.id = '.$request->id;
+
+                $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+
+                $group_by_general = 'GROUP BY sys_users_cotizaciones.id_cotizacion';
+
+                $sql = "SELECT sys_users_cotizaciones.id_cotizacion
+                        ,sys_users_cotizaciones.id_concepto
+                        ,sys_cotizaciones.codigo
+                        ,sys_productos.descripcion as prod_desc
+                        ,sys_planes.descripcion
+                        ,sys_conceptos_cotizaciones.cantidad
+                        ,sys_conceptos_cotizaciones.precio
+                        ,sys_conceptos_cotizaciones.total
+                        FROM sysbussiness.sys_users_cotizaciones
+                        inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                        inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                        left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+                        left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where;
+
+                $sql_general = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
+                                   CONCAT(sys_users.name,' ',sys_users.first_surname) as vendedor,
+                                   sys_cotizaciones.codigo,DATE_FORMAT(sys_cotizaciones.created_at, '%Y-%m-%d') as created_at,
+                                   sys_contactos.nombre_completo,
+                                   sys_clientes.nombre_comercial,
+                                   sys_estatus.nombre,
+                                   sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total
+                                 FROM sysbussiness.sys_users_cotizaciones
+                                 inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                                 left join  sysbussiness.sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
+                                 left join  sysbussiness.sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
+                                 left join  sysbussiness.sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
+                                 inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                                 left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+                                 left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
+                                 left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$group_by_general;
+
+
+                $concep = DB::select($sql);
+                $cotiz_general = DB::select($sql_general);
+
+                $response = ['concep' => $concep
+                            ,'cotiz_general' => $cotiz_general
+                            ];
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -191,6 +228,7 @@
             DB::beginTransaction();
             try {
                 //debuger($request->cotizacion['id_cliente']);
+                
                 $cotizaciones = [
                     'codigo'         => isset($request->cotizacion['codigo'])?$request->cotizacion['codigo']:null
                     ,'descripcion'   => isset($request->cotizacion['descripcion'])?$request->cotizacion['descripcion']:0
@@ -203,7 +241,7 @@
                 ];
                 //debuger($cotizaciones);
 
-                $cotizacion = SysCotizacionModel::create($cotizaciones);
+                //$cotizacion = SysCotizacionModel::create($cotizaciones);
                 
                     $conceptos_cotizaciones = [
                     'id_producto'   => isset($request->conceptos['id_producto'])?$request->conceptos['id_producto']:0
@@ -213,20 +251,55 @@
                     ,'total'        => isset($request->conceptos['total'])?$request->conceptos['total']:0
                 ];
 
-                $sys_conceptos = SysConceptosCotizacionesModel::create($conceptos_cotizaciones);
+                //$sys_conceptos = SysConceptosCotizacionesModel::create($conceptos_cotizaciones);
+                
+                $id = $request->cotizacion['id_concep_producto'];
+                //debuger($id);
+                if($id == "" || $id == null){
+                    $cotizacion = SysCotizacionModel::create($cotizaciones);
+                    $sys_conceptos = SysConceptosCotizacionesModel::create($conceptos_cotizaciones);
 
-                $user_co = [
+                       $user_co = [
                     'id_users'           => Session::get('id')
                     ,'id_rol'            => Session::get('id_rol')
                     ,'id_empresa'        => Session::get('id_empresa')
-                    ,'id_sucursal'      => Session::get('id_sucursal')
-                    ,'id_menu' => 27
-                    ,'id_cotizacion' => $cotizacion->id
-                    ,'id_concepto' => $sys_conceptos->id
-                ];
+                    ,'id_sucursal'       => Session::get('id_sucursal')
+                    ,'id_menu'           => 27
+                    ,'id_cotizacion'     => $cotizacion->id
+                    ,'id_concepto'       => $sys_conceptos->id
+                    ];
+                    SysUsersCotizacionesModel::create($user_co);
 
-                SysUsersCotizacionesModel::create($user_co);
-                
+                } else {
+                    $cotizacion                 = SysCotizacionModel::FindOrFail($id);
+                    $cotizacion->codigo         = $request->cotizacion['codigo'];
+                    $cotizacion->descripcion    = $request->cotizacion['descripcion'];
+                    $cotizacion->id_cliente     = $request->cotizacion['id_cliente'];
+                    $cotizacion->id_moneda      = $request->cotizacion['id_moneda'];
+                    $cotizacion->id_contacto    = $request->cotizacion['id_contacto'];
+                    $cotizacion->id_metodo_pago = $request->cotizacion['id_metodo_pago'];
+                    $cotizacion->id_forma_pago  = $request->cotizacion['id_forma_pago'];
+                    $cotizacion->id_estatus     = $request->cotizacion['id_estatus'];
+                    $cotizacion->save();
+                    /*SysCotizacionModel::where()->update();
+                    $cotizacion = SysCotizacionModel::where(['id' => $id])->get();
+*/
+                    //debuger($cotizacion);
+                    $sys_conceptos = SysConceptosCotizacionesModel::create($conceptos_cotizaciones);
+                    $user_co = [
+                    'id_users'           => Session::get('id')
+                    ,'id_rol'            => Session::get('id_rol')
+                    ,'id_empresa'        => Session::get('id_empresa')
+                    ,'id_sucursal'       => Session::get('id_sucursal')
+                    ,'id_menu'           => 27
+                    ,'id_cotizacion'     => $cotizacion->id
+                    ,'id_concepto'       => $sys_conceptos->id
+                    ];
+                    SysUsersCotizacionesModel::create($user_co);
+                }
+
+
+                //SysUsersCotizacionesModel::create($user_co);
 
 
             DB::commit();
@@ -278,11 +351,12 @@
         * @return void
         */
         public function destroy( Request $request ){
-
+            #debuger($request->all());
             $error = null;
             DB::beginTransaction();
             try {
-
+                SysConceptosCotizacionesModel::where(['id' => $request->id])->delete();
+                $response = SysUsersCotizacionesModel::where('id_concepto',$request->input('id'))->delete();
 
             DB::commit();
             $success = true;

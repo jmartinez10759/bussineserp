@@ -17,4 +17,10 @@ class SysCotizacionModel extends Model
       		,'condiciones_pago'
       		,'id_estatus'
       ];
+
+      public function conceptos(){
+            return $this->belongsToMany('App\Model\Ventas\SysConceptosCotizacionesModel','sys_users_cotizaciones','id_cotizacion','id_concepto');
+      }
+
+       
 }

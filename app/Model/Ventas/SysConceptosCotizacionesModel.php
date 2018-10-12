@@ -15,4 +15,10 @@ class SysConceptosCotizacionesModel extends Model
             ,'precio'
             ,'total'
       ];
+ 
+	 public function cotizaciones(){
+	 	return $this->belongsToMany('AppApp\Model\Ventas\SysCotizacionModel','sys_users_cotizaciones','id_concepto','id_cotizacion');
+	 }
+
+
 }
