@@ -41,7 +41,7 @@
 					</form>
 					<div id="resultados"></div><!-- Carga los datos ajax -->
 					<div class='outer_div'></div><!-- Carga los datos ajax -->
-					<div class="table-responsive">
+					<div class="table-responsive" v-cloak>
 						<table class="table table-striped table-response highlight table-hover fixed_header" id="datatable">
 							<thead>
 								<tr style="background-color: #337ab7; color: #ffffff;">
@@ -51,9 +51,9 @@
 									<th>Cliente</th>
 									<th>Vendedor</th>
 									<th>Estado</th>
-									<th class="text-right">Neto</th>
+									<!-- <th class="text-right">Neto</th>
 									<th class="text-right">Iva</th>
-									<th class="text-right">Total</th>
+									<th class="text-right">Total</th> -->
 									<th class="text-right">Acciones</th>
 									<!-- 								<th class="text-right">Acciones</th> -->
 
@@ -61,24 +61,25 @@
 							</thead>
 							<tbody>
 
-							<tr>
-								<td data-toggle="modal" data-target="#modal-detail-factura">2517</td>
-								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="444 444@44.44">444</a></td>
-								<td>Obed Alvarado</td>
-								<td>Obed Alvarado</td>
-								<td><span class="label label-success">Pagada</span></td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
-								<td class="text-right">184.76</td>
+							<tr v-for="cot in cotizacion">
+								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.codigo }}</td>
+								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.created_at }}</td>
+								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
+								<td>@{{ cot.nombre_comercial }}</td>
+								<td>@{{ cot.vendedor }}</td>
+								<td><span class="label label-danger">@{{ cot.nombre }}</span></td>
+								<!-- <td class="text-right">	</td>
+								<td class="text-right"> </td>
+								<td class="text-right"> @{{ cot.total }}</td> -->
+								 
 								<td class="text-right"> 
 									<div class="dropdown">
-										<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 											Acciones
 											<span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a href="editar_cotizacion.php?id=253" title="Editar cotización"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
+											<li><a style="cursor: pointer;" title="Editar cotización" onclick="fancy_click();"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
 											<li {{$permisos}}><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
 											<li {{$permisos}}><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
 											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
@@ -262,6 +263,20 @@ function calcular_suma(){
 	jQuery('#total_concepto').val(total);
 
 }
+
+function fancy_click()
+  {
+
+    $.fancybox.open({
+    src  : '#modal_edit_register',
+    type : 'inline',
+    opts : {
+      onComplete : function() {
+        console.info('done!');
+      }
+    }
+  });
+  }
 
 </script>
 @endpush

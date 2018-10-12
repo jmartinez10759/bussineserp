@@ -12,6 +12,7 @@ new Vue({
   },
   data: {
     datos: [],
+    cotizacion: [],
     insert: {},
     update: {},
     edit: {},
@@ -23,13 +24,15 @@ new Vue({
   mixins : [mixins],
   methods:{
     consulta_general(){
-      alert(jQuery('#id_concep_producto').val());
+      //alert(jQuery('#id_concep_producto').val());
         var url = domain( url_all );
         var fields = {id: jQuery('#id_concep_producto').val() };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          console.log(response.data.result.concep);
+          //console.log(response.data.result.concep);
           this.datos = response.data.result.concep;
+          this.cotizacion = response.data.result.cotiz_general;
+          //console.log(response.data.result.cotiz_general);
 
           }).catch( error => {
               if( error.response.status == 419 ){

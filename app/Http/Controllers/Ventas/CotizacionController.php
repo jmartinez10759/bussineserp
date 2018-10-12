@@ -148,6 +148,11 @@
             try {
 
                 $where = ($request->id == "") ? 'WHERE sysbussiness.sys_cotizaciones.id = 0' : 'WHERE sysbussiness.sys_cotizaciones.id = '.$request->id;
+
+                $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+
+                $group_by_general = 'GROUP BY sys_users_cotizaciones.id_cotizacion';
+
                 $sql = "SELECT sys_users_cotizaciones.id_cotizacion
                         ,sys_users_cotizaciones.id_concepto
                         ,sys_cotizaciones.codigo
@@ -161,9 +166,31 @@
                         inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
                         left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
                         left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where;
-                        
+
+                $sql_general = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
+                                   CONCAT(sys_users.name,' ',sys_users.first_surname) as vendedor,
+                                   sys_cotizaciones.codigo,DATE_FORMAT(sys_cotizaciones.created_at, '%Y-%m-%d') as created_at,
+                                   sys_contactos.nombre_completo,
+                                   sys_clientes.nombre_comercial,
+                                   sys_estatus.nombre,
+                                   sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total
+                                 FROM sysbussiness.sys_users_cotizaciones
+                                 inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                                 left join  sysbussiness.sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
+                                 left join  sysbussiness.sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
+                                 left join  sysbussiness.sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
+                                 inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                                 left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+                                 left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
+                                 left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$group_by_general;
+
+
                 $concep = DB::select($sql);
-                $response = ['concep' => $concep];
+                $cotiz_general = DB::select($sql_general);
+
+                $response = ['concep' => $concep
+                            ,'cotiz_general' => $cotiz_general
+                            ];
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
