@@ -554,6 +554,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'clientes.edit'
     ]);
     
+    Route::get('/clientes/display_sucursales', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@display_sucursales'
+        ,'as'       => 'clientes.display_sucursales'
+    ]);
+    
+    
     Route::put('/clientes/update', [
         'uses'      => 'Administracion\Configuracion\ClientesController@update'
         ,'as'       => 'clientes.update'
@@ -888,6 +894,44 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::delete('/unidadesmedidas/destroy', [
         'uses' => 'Administracion\Configuracion\UnidadesMedidasController@destroy'
         ,'as' => 'unidadesmedidas.destroy'
+    ]);
+    
+    
+    ################################## CATALOGO DE CUENTAS ################################
+
+    Route::get('/configuracion/cuentas', [
+        'uses' => 'Administracion\Configuracion\CuentasController@index'
+        ,'as' => 'configuracion.cuentas'
+    ]);
+
+    Route::get('/cuentas/all', [
+        'uses' => 'Administracion\Configuracion\CuentasController@all'
+        ,'as' => 'cuentas.all'
+    ]);
+
+    Route::post('/cuentas/register', [
+        'uses' => 'Administracion\Configuracion\CuentasController@store'
+        ,'as' => 'cuentas.register'
+    ]);
+
+    Route::get('/cuentas/edit', [
+        'uses' => 'Administracion\Configuracion\CuentasController@show'
+        ,'as' => 'cuentas.edit'
+    ]);
+    
+    /*Route::get('/cuentas/display_clientes', [
+        'uses' => 'Administracion\Configuracion\CuentasController@display_clientes'
+        ,'as' => 'cuentas.display_clientes'
+    ]);*/
+
+    Route::put('/cuentas/update', [
+        'uses' => 'Administracion\Configuracion\CuentasController@update'
+        ,'as' => 'cuentas.update'
+    ]);
+
+    Route::delete('/cuentas/destroy', [
+        'uses' => 'Administracion\Configuracion\CuentasController@destroy'
+        ,'as' => 'cuentas.destroy'
     ]);
     
 ##################################### COTIZACIONES #########################################    

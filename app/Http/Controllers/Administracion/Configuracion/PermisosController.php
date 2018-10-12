@@ -28,77 +28,77 @@ class PermisosController extends MasterController
    */
     public static function index(){
 
-            $response = SysMenuModel::where(['estatus' => 1])->get();
-            $response_acciones = SysAccionesModel::where(['estatus'=> 1])->orderBy('id','ASC')->get();
-            $registros = [];
-            $registros_acciones = [];
+        $response = SysMenuModel::where(['estatus' => 1])->get();
+        $response_acciones = SysAccionesModel::where(['estatus'=> 1])->orderBy('id','ASC')->get();
+        $registros = [];
+        $registros_acciones = [];
 
-             foreach ($response as $respuesta) {
-               $id['id'] = $respuesta->id;
-               $checkbox = build_actions_icons($id,'id_permisos= "'.$respuesta->id.'" ');
-               $checkbox_actions = build_acciones_usuario($id,'v-editar','','btn btn-primary '.$respuesta->id,'fa fa-users','title="Asignar Permisos"');
-               $registros[] = [
-                  $respuesta->id
-                 ,$respuesta->texto
-                 ,$respuesta->id_padre
-                 ,$respuesta->tipo
-                 ,$checkbox
-                 ,$checkbox_actions
-               ];
-             }
-             foreach ($response_acciones as $respuesta) {
-               $id['id'] = 'actions_'.$respuesta->id;
-               $checkbox_actions_permisos = build_actions_icons($id,'id_actions="'.$respuesta->id.'" ');
-               $registros_acciones[] = [
-                  $respuesta->clave_corta
-                  ,$respuesta->descripcion
-                  ,$checkbox_actions_permisos
-               ];
+         foreach ($response as $respuesta) {
+           $id['id'] = $respuesta->id;
+           $checkbox = build_actions_icons($id,'id_permisos= "'.$respuesta->id.'" ');
+           $checkbox_actions = build_acciones_usuario($id,'v-editar','','btn btn-primary '.$respuesta->id,'fa fa-users','title="Asignar Permisos"');
+           $registros[] = [
+              $respuesta->id
+             ,$respuesta->texto
+             ,$respuesta->id_padre
+             ,$respuesta->tipo
+             ,$checkbox
+             ,$checkbox_actions
+           ];
+         }
+         foreach ($response_acciones as $respuesta) {
+           $id['id'] = 'actions_'.$respuesta->id;
+           $checkbox_actions_permisos = build_actions_icons($id,'id_actions="'.$respuesta->id.'" ');
+           $registros_acciones[] = [
+              $respuesta->clave_corta
+              ,$respuesta->descripcion
+              ,$checkbox_actions_permisos
+           ];
 
-             }
-             $titulos = ['id','Nombre Modulo','Id Padre','Tipo','Permisos','Acciones'];
-             $titulos_acciones = ['Tipo Accion','Descripcion','Permiso'];
-             $table = [ 'titulos' => $titulos ,'registros' => $registros ,'id'=> "datatable"];
-             $table_acciones = [ 'titulos' => $titulos_acciones ,'registros' => $registros_acciones ,'id'=> "datatable_acciones"];
+         }
+         $titulos = ['id','Nombre Modulo','Id Padre','Tipo','Permisos','Acciones'];
+         $titulos_acciones = ['Tipo Accion','Descripcion','Permiso'];
+         $table = [ 'titulos' => $titulos ,'registros' => $registros ,'id'=> "datatable"];
+         $table_acciones = [ 'titulos' => $titulos_acciones ,'registros' => $registros_acciones ,'id'=> "datatable_acciones"];
 
-             $users = dropdown([
-               'data'      => SysUsersModel::where(['estatus' => 1])->get()
-               ,'value'     => 'id'
-               ,'text'      => 'name'
-               ,'name'      => 'cmb_users'
-               ,'class'     => 'form-control'
-               ,'leyenda'   => 'Seleccione Opcion'
-               ,'event'     => 'v-change_usuario()'
-               ,'attr'      => 'v-model="newKeep.id_users" '
-             ]);
+         $users = dropdown([
+           'data'      => SysUsersModel::where(['estatus' => 1])->get()
+           ,'value'     => 'id'
+           ,'text'      => 'name'
+           ,'name'      => 'cmb_users'
+           ,'class'     => 'form-control'
+           ,'leyenda'   => 'Seleccione Opcion'
+           ,'event'     => 'v-change_usuario()'
+           ,'attr'      => 'v-model="newKeep.id_users" '
+         ]);
 
-             #se crea el dropdown
-              $roles = dropdown([
-                'data'      => SysRolesModel::where(['estatus' => 1])->get()
-                ,'value'     => 'id'
-                ,'text'      => 'perfil'
-                ,'name'      => 'cmb_roles'
-                ,'class'     => 'form-control'
-                ,'leyenda'   => 'Seleccione Opcion'
-                ,'event'     => 'v-change_roles()'
-                ,'attr'      => 'v-model="fillKeep.id_rol" disabled'
-              ]);
+         #se crea el dropdown
+          $roles = dropdown([
+            'data'      => SysRolesModel::where(['estatus' => 1])->get()
+            ,'value'     => 'id'
+            ,'text'      => 'perfil'
+            ,'name'      => 'cmb_roles'
+            ,'class'     => 'form-control'
+            ,'leyenda'   => 'Seleccione Opcion'
+            ,'event'     => 'v-change_roles()'
+            ,'attr'      => 'v-model="fillKeep.id_rol" disabled'
+          ]);
 
-             $data = [
-                'page_title' 	      => "Configuración"
-                ,'title'  		      => "Permisos"
-                ,'subtitle' 	      => "Creacion de Permisos"
-                ,'titulo_modal' 	  => "Asignacion de Acciones"
-                ,'data_table'  	    =>  data_table($table)
-                ,'data_table_acciones'=>  data_table($table_acciones)
-                ,'select_roles'      =>  $roles
-                ,'select_users'      =>  $users
-                #,'select_empresas'   =>  $empresas
-                #,'select_sucursales' =>  $sucursales
+         $data = [
+            'page_title' 	      => "Configuración"
+            ,'title'  		      => "Permisos"
+            ,'subtitle' 	      => "Creacion de Permisos"
+            ,'titulo_modal' 	  => "Asignacion de Acciones"
+            ,'data_table'  	    =>  data_table($table)
+            ,'data_table_acciones'=>  data_table($table_acciones)
+            ,'select_roles'      =>  $roles
+            ,'select_users'      =>  $users
+            #,'select_empresas'   =>  $empresas
+            #,'select_sucursales' =>  $sucursales
 
-              ];
-            #debuger($data);
-            return self::_load_view( 'administracion.configuracion.permisos', $data );
+          ];
+        #debuger($data);
+        return self::_load_view( 'administracion.configuracion.permisos', $data );
 
        }
    /**
@@ -117,7 +117,7 @@ class PermisosController extends MasterController
         ];
         $permisos = SysRolMenuModel::where( $where )->get();
         if( count($permisos) > 0){
-          return message(true,$permisos,"¡Permisos del usuario.!");
+          return message(true,$permisos,"¡Permisos del usuario!");
         }
           return message(false,$permisos,"¡No cuenta con permisos!");
 
@@ -223,8 +223,7 @@ class PermisosController extends MasterController
     *@return void
     */
     public static function store_actions( Request $request ){
-          #ddebuger($request->all());
-          #$matrix       = explode( ',',$request->matrix );
+        
           $matrix       = $request->matrix;
           $id_rol       = $request->id_rol;
           $id_users     = $request->id_users;

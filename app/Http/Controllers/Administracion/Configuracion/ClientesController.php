@@ -7,11 +7,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysEstadosModel;
+use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysClientesModel;
 use App\Model\Administracion\Facturacion\SysFacturacionModel;
 use App\Model\Administracion\Configuracion\SysContactosModel;
 use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
-use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
+use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 
 class ClientesController extends MasterController
 {
@@ -41,13 +42,13 @@ class ClientesController extends MasterController
           $registros_clientes = [];
           #debuger($permiso_class_destroy);
           $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
+          $permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
           foreach ($response as $respuesta) {
             $id['id'] = $respuesta->id;
             $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit', 'title="Editar"' );
-            $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash ','title="Borrar"'.$eliminar);
+            $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash ','title="Borrar"'.$eliminar);  
             $registros[] = [
-               $respuesta->id
-              ,$respuesta->razon_social
+              $respuesta->razon_social
               ,$respuesta->rfc_receptor
               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo: ""
               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->correo:""
@@ -65,9 +66,19 @@ class ClientesController extends MasterController
             $id['id'] = $respuesta->id;
             $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit', 'title="Editar"' );
             $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash ','title="Borrar"'.$eliminar);
+            $assign_employes = dropdown([
+                'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
+                ,'value'     => 'id'
+                ,'text'      => 'nombre_comercial'
+                ,'name'      => 'cmb_empresas_'. $respuesta->id
+                ,'class'     => 'form-control'
+                ,'selected'  => isset($respuesta->empresas[0] )? $respuesta->empresas[0]->id : 0
+                ,'leyenda'   => 'Seleccione Opcion'
+                ,'attr'      => 'data-live-search="true" '. $permisos
+                ,'event'     => 'display_sucursales('. $respuesta->id .')'
+            ]); 
             $registros_clientes[] = [
-               $respuesta->id
-              ,$respuesta->razon_social
+              $respuesta->razon_social
               ,$respuesta->rfc_receptor
               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo: ""
               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->correo:""
@@ -77,13 +88,13 @@ class ClientesController extends MasterController
               ,($respuesta->estatus == 1)?"CLIENTE":"PROSPECTO"
               ,$editar
               ,$borrar
+              ,$assign_employes
             ];
 
           }
 
           $titulos = [
-            'id'
-            ,'RAZÓN SOCIAL'
+            'RAZÓN SOCIAL'
             ,'RFC'
             ,'CONTACTO'
             ,'CORREO'
@@ -93,19 +104,20 @@ class ClientesController extends MasterController
             ,'ESTATUS'
             ,''
             ,''
+            ,''
           ];
           $table = [
-            'titulos' 		  => $titulos
-            ,'registros' 	  => $registros
+            'titulos' 		    => $titulos
+            ,'registros' 	    => $registros
             ,'id' 			    => "datatable"
-            ,'class'        => "fixed_header"
+            ,'class'            => "fixed_header"
           ];
 
           $table_clientes = [
-            'titulos' 		  => $titulos
-            ,'registros' 	  => $registros_clientes
+            'titulos' 		    => $titulos
+            ,'registros' 	    => $registros_clientes
             ,'id' 			    => "datatable_clientes"
-            ,'class'        => "fixed_header"
+            ,'class'            => "fixed_header"
           ];  
             #se crea el dropdown
            $estados = dropdown([
@@ -317,5 +329,108 @@ class ClientesController extends MasterController
 
         #return message(true,$request->all(),self::$message_success);
     }
+    /**
+     * Metodo para borrar el registro
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function display_sucursales( Request $request ){
+        
+        try {
+            $response = SysEmpresasModel::with(['sucursales' => function($query){
+                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->get();
+            }])->where(['id' => $request->id_empresa])->get();
+            $sucursales = SysEmpresasSucursalesModel::select('id_sucursal')->where($request->all())->get();
+            #se crea la tabla 
+            $registros = [];
+            foreach ($response[0]->sucursales as $respuesta) {
+                $id['id'] = 'sucursal_'.$respuesta->id;
+                $icon = build_actions_icons($id, 'id_sucursal="' . $respuesta->id . '" ','sucursal');
+                $registros[] = [
+                    $respuesta->codigo
+                    ,$respuesta->sucursal
+                    ,$respuesta->direccion
+                    ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
+                    ,$icon
+                ];
+            }
+
+            $titulos = [ 'Codigo','Sucursal','Direccion', 'Estatus',''];
+            $table = [
+                'titulos' 		   => $titulos
+                ,'registros' 	   => $registros
+                ,'id' 			   => "sucursales"
+            ];
+            $data = [
+                'tabla_sucursales'  => data_table($table)
+                ,'sucursales'       => $sucursales
+            ];
+            return $this->_message_success(201, $data, self::$message_success);
+        } catch (\Exception $e) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return $this->show_error(6, $error, self::$message_error);
+        }
+
+        
+    }
+    /**
+     * Metodo para insertar los permisos de los productos
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function register_permisos(Request $request){
+
+        $error = null;
+        DB::beginTransaction();
+        try {
+            #debuger($request->all());
+            $response_producto = SysEmpresasSucursalesModel::where([
+                'id_empresa'   => Session::get('id_empresa')
+                ,'id_sucursal' => Session::get('id_sucursal')
+                ] )->get();
+            if( count($response_producto) > 0){
+                SysEmpresasSucursalesModel::where([
+                    'id_empresa'   => Session::get('id_empresa')
+                    ,'id_sucursal' => Session::get('id_sucursal')
+                ])->delete();
+            }
+            SysEmpresasSucursalesModel::where([
+                 #'id_empresa'   => $request->id_empresa
+                'id_cliente'    => $request->id_plan 
+                ])->delete();
+            $response = [];
+            for ($i=0; $i < count($request->matrix) ; $i++) { 
+                $matrices = explode('|', $request->matrix[$i] );
+                $id_sucursal = $matrices[0];
+                #se realiza una consulta si existe un registro.
+                $data = [
+                    'id_empresa'      => $request->id_empresa
+                    ,'id_sucursal'    => $id_sucursal
+                    ,'id_plan'        => $request->id_plan
+                    ,'id_producto'    => 0
+                ];
+                $response[] = SysPlanesProductosModel::create($data);
+            }
+
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+            return $this->_message_success(201, $response, self::$message_success);
+        }
+        return $this->show_error(6, $error, self::$message_error);
+
+
+    }
+    
+    
+    
 
 }

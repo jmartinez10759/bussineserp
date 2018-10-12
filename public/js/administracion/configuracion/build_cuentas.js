@@ -3,6 +3,7 @@ var url_update   = "cuentas/update";
 var url_edit     = "cuentas/edit";
 var url_destroy  = "cuentas/destroy";
 var url_all      = "cuentas/all";
+var url_display_clientes  = "empresas/edit";
 var redireccion  = "configuracion/cuentas";
 
 new Vue({
@@ -12,8 +13,12 @@ new Vue({
   },
   data: {
     datos: [],
-    insert: {},
-    update: {},
+    insert: {
+        estatus: 1
+    },
+    update: {
+        estatus: 1
+    },
     edit: {},
     fields: {},
 
@@ -25,8 +30,8 @@ new Vue({
         var fields = {};
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
-              
+              this.fields = response.data.result;
+              console.log(this.fields);
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -111,3 +116,29 @@ new Vue({
 
 
 });
+jQuery('#cmb_empresas').selectpicker();
+
+function display_clientes(){
+    
+    var id_empresa = jQuery('#cmb_empresas').val();
+    var url = domain( url_display_clientes );
+    var fields = {id : id_empresa };
+    var promise = MasterController.method_master(url,fields,"get");
+      promise.then( response => {
+
+          toastr.success( response.data.message , title );
+
+      }).catch( error => {
+          if( error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+            }
+          toastr.error( error.response.data.message , expired );              
+      });
+    
+    
+    
+}
+
+

@@ -39,12 +39,16 @@ class SysClientesModel extends Model
     }
     
     public function contactos(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_empresas_sucursales','id_clientes','id_contacto');
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_empresas_sucursales','id_cliente','id_contacto');
     }
 
     public function empresas(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_empresas_sucursales','id_empresa','id_clientes');
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_empresas_sucursales','id_cliente','id_empresa');
     }
-
+    
+    public function sucursales(){
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_empresas_sucursales','id_cliente','id_sucursal');
+    }
+    
 
 }

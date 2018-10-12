@@ -4,7 +4,7 @@ namespace App\Model\Administracion\Configuracion;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysEmpresasSecursalesModel extends Model
+class SysEmpresasSucursalesModel extends Model
 {
   public $table = "sys_empresas_sucursales";
   public $fillable = [
@@ -12,8 +12,8 @@ class SysEmpresasSecursalesModel extends Model
     ,'id_empresa'
     ,'id_sucursal'
     ,'id_contacto'
-    ,'id_clientes'
-    ,'id_proveedores'
+    ,'id_cliente'
+    ,'id_proveedor'
     ,'estatus'
   ];
 }

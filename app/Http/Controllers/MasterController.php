@@ -281,6 +281,7 @@ abstract class MasterController extends Controller
 		$parse['APPTITLE'] 				= utf8_decode( self::$_titulo );
 		$parse['IMG_PATH']  			= domain().'images/';
 		$parse['anio']					= date('Y');
+		$parse['version']				= "2.0.1";
 		$parse['base_url']				= domain();
 		$parse['nombre_completo']		= Session::get('name')." ".Session::get('first_surname');
 		$parse['desarrollo'] 			= utf8_decode(self::$_desarrollo);

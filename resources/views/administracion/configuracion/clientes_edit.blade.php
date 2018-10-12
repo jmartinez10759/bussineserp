@@ -238,7 +238,7 @@
                             <input type="text" id="giro_comercial_edit" class="form-control" placeholder="" v-model="edit.giro_comercial">
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="control-label col-sm-3">Estatus: </label>
                         <div class="col-sm-7">
@@ -248,7 +248,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
 
 
                 </form>
@@ -265,3 +265,25 @@
     </div>
 </div>
 
+
+<div class="" id="permisos" style="display:none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Asigne Sucursales </h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="id_empresa">
+                <input type="hidden" id="id_cliente">
+                <div id="sucursal_empresa"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-primary" v-on:click.prevent="insert_permisos()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

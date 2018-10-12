@@ -18,8 +18,8 @@ class CreateSysEmpresasSucursalesTable extends Migration
             $table->integer('id_empresa')->nullable();
             $table->integer('id_sucursal')->nullable();
             $table->integer('id_contacto')->nullable();
-            $table->integer('id_clientes')->nullable();
-            $table->integer('id_proveedores')->nullable();
+            $table->integer('id_cliente')->nullable();
+            $table->integer('id_proveedor')->nullable();
             $table->boolean('estatus')->default(1);
             $table->timestamps();
         });

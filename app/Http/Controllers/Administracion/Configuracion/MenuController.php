@@ -30,12 +30,15 @@ class MenuController extends MasterController
           $where = [
             'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
           ];
-          return $query->where($where)->orderBy('orden', 'asc')->get();
+          return $query->where($where)->groupby('id')->orderBy('orden', 'asc')->get();
       }])->where(['id' => Session::get('id')])->get();
         $response = [];
         foreach ($usuarios as $menu) {
             $response = $menu->menus;
         }
+        
+       
+       
          $registros = [];
          $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
          foreach ($response as $respuesta) {
@@ -69,19 +72,19 @@ class MenuController extends MasterController
            ,''
          ];
          $table = [
-           'titulos' 		  => $titulos
-           ,'registros' 	=> $registros
+           'titulos' 		    => $titulos
+           ,'registros' 	    => $registros
            ,'id' 			    => "datatable"
-           ,'class'       => "fixed_header"
+           ,'class'             => "fixed_header"
          ];
 
          $data = [
       			'page_title' 	      => "Configuración"
       			,'title'  		      => "Menus"
       			,'subtitle' 	      => "Creación de Menus"
-      			,'data_table'  	    =>  data_table($table)
-      			,'titulo_modal'     => "Crear Menú"
-      			,'titulo_modal_edit'=> "Actualizar Menus"
+      			,'data_table'  	      =>  data_table($table)
+      			,'titulo_modal'       => "Crear Menú"
+      			,'titulo_modal_edit'  => "Actualizar Menus"
       			,'campo_1' 		      => 'Menú'
       			,'campo_2' 		      => 'Tipo'
       			,'campo_3' 		      => 'Menú Padre'
@@ -119,15 +122,19 @@ class MenuController extends MasterController
       DB::beginTransaction();
       try {
         $response = SysMenuModel::create( $request->all() );
-        $data = [
-            'id_rol'  => Session::get('id_rol')
-            ,'id_users'  => Session::get('id')
-              ,'id_empresa'  => Session::get('id_empresa')
-              ,'id_sucursal'  => Session::get('id_sucursal')
-                ,'id_menu'        => $response->id
-                ,'id_permiso'       => 5
-                  ,'estatus'            => 1
-        ];
+        if( Session::get('id_rol') != 1){
+            $data = [
+                'id_rol'  => Session::get('id_rol')
+                ,'id_users'  => Session::get('id')
+                  ,'id_empresa'  => Session::get('id_empresa')
+                  ,'id_sucursal'   => Session::get('id_sucursal')
+                    ,'id_menu'        => $response->id
+                    ,'id_permiso'       => 5
+                      ,'estatus'            => 1
+            ];
+            
+            SysRolMenuModel::create($data);
+        }
         $data_admin = [
             'id_rol'  => 1
             ,'id_users'  => 1
@@ -135,10 +142,8 @@ class MenuController extends MasterController
               ,'id_sucursal'   => 0
                 ,'id_menu'        => $response->id
                 ,'id_permiso'       => 5
-                  ,'estatus'            => 1
+                  ,'estatus'           => 1
         ];
-
-        SysRolMenuModel::create($data);
         SysRolMenuModel::create($data_admin);
 
         DB::commit();
