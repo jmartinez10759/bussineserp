@@ -26,19 +26,7 @@ class MenuController extends MasterController
    */
    public function index(){
 
-      $usuarios = SysUsersModel::with(['menus' => function ($query) {
-          $where = [
-            'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
-          ];
-          return $query->where($where)->groupby('id')->orderBy('orden', 'asc')->get();
-      }])->where(['id' => Session::get('id')])->get();
-        $response = [];
-        foreach ($usuarios as $menu) {
-            $response = $menu->menus;
-        }
-        
-       
-       
+       $response = $this->_consulta_menus( new SysUsersModel);
          $registros = [];
          $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
          foreach ($response as $respuesta) {

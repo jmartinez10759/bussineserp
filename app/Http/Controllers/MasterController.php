@@ -956,7 +956,7 @@ abstract class MasterController extends Controller
  * @return void
  */
     protected function _consulta_employes( $table_model ){
-        
+        #SysUsersModel
         $response = $table_model::with(['empresas' => function( $query ){
             if(Session::get('id_rol') != 1){
                 return $query->where([ 'sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa') ]);
@@ -969,6 +969,28 @@ abstract class MasterController extends Controller
                 }
             }
         return $request;
+        
+    }
+/**
+ * Metodo para obtener los registros de los menus de esa empresa.
+ * @access public
+ * @param Request $request [Description]
+ * @return void
+ */    
+    protected function _consulta_menus( $table_model ){
+        #SysUsersModel
+        $usuarios = $table_model::with(['menus' => function ($query) {
+          $where = [
+            'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
+          ];
+          return $query->where($where)->groupby('id')->orderBy('orden', 'asc')->get();
+      }])->where(['id' => Session::get('id')])->get();
+        $response = [];
+        foreach ($usuarios as $menu) {
+            $response = $menu->menus;
+        }
+        
+        return $response;
         
     }
 

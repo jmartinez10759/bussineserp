@@ -4,6 +4,7 @@ var url_edit    = 'clientes/edit';
 var url_destroy = "clientes/destroy";
 var redireccion = "configuracion/clientes";
 var url_display = "clientes/display_sucursales";
+var url_insert_permisos = "clientes/register_permisos";
 
 new Vue({
   el: "#vue-clientes",
@@ -91,7 +92,7 @@ new Vue({
           });
 
     }
-      ,update_cliente(){
+    ,update_cliente(){
          var validacion = ['correo_edit','razon_social_edit','rfc_receptor_edit'];
         if(validacion_fields(validacion) == "error"){return;}
         if( !emailValidate(jQuery('#correo_edit').val()) ){
@@ -128,6 +129,43 @@ new Vue({
               //redirect();
           });
       }
+    ,insert_permisos(){
+        var matrix = [];
+        var i = 0;
+        jQuery('#sucursales input[type="checkbox"]').each(function () {
+            if (jQuery(this).is(':checked') == true) {
+                var id = jQuery(this).attr('id_sucursal');
+                matrix[i] = `${id}|${jQuery(this).is(':checked')}`;
+                i++;
+            }
+        });
+        var url = domain(url_insert_permisos);
+        var fields = {
+            'matrix' : matrix
+            , 'id_empresa': jQuery('#id_empresa').val()
+            , 'id_cliente': jQuery('#id_cliente').val()
+        }
+        var promise = MasterController.method_master(url, fields, "post");
+        promise.then(response => {
+            this.sucursales = response.data.result;
+            jQuery.fancybox.close({
+                'type': 'inline',
+                'src': "#permisos",
+                'buttons': ['share', 'close']
+            });
+        }).catch(error => {
+            if (error.response.status == 419) {
+                toastr.error(session_expired);
+                redirect(domain("/"));
+                return;
+            }
+            toastr.error(error.response.data.message, expired);
+
+        });
+
+        
+
+    }
   }
 
 

@@ -300,7 +300,7 @@ class ClientesController extends MasterController
         try {
           $where = ['id' => $request->id_cliente];
           $users_facturas = SysUsersFacturacionModel::where(['id_cliente' => $request->id_cliente])->get();
-          $clientes_empresas = SysEmpresasSecursalesModel::where(['id_clientes' => $request->id_cliente])->get(); 
+          $clientes_empresas = SysEmpresasSucursalesModel::where(['id_cliente' => $request->id_cliente])->get(); 
             #debuger($clientes_empresas);
           if( count($users_facturas) > 0){
               foreach ($users_facturas as $tbl_factura) {
@@ -313,7 +313,7 @@ class ClientesController extends MasterController
               } 
             }
           SysClientesModel::where( $where )->delete();
-          SysEmpresasSecursalesModel::where(['id_clientes' => $request->id_cliente])->delete();
+          SysEmpresasSucursalesModel::where(['id_cliente' => $request->id_cliente])->delete();
           DB::commit();
           $success = true;
         } catch (\Exception $e) {
@@ -339,8 +339,9 @@ class ClientesController extends MasterController
         
         try {
             $response = SysEmpresasModel::with(['sucursales' => function($query){
-                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->get();
+                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->groupby('id')->get();
             }])->where(['id' => $request->id_empresa])->get();
+            
             $sucursales = SysEmpresasSucursalesModel::select('id_sucursal')->where($request->all())->get();
             #se crea la tabla 
             $registros = [];
@@ -385,33 +386,24 @@ class ClientesController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-            #debuger($request->all());
-            $response_producto = SysEmpresasSucursalesModel::where([
-                'id_empresa'   => Session::get('id_empresa')
-                ,'id_sucursal' => Session::get('id_sucursal')
-                ] )->get();
-            if( count($response_producto) > 0){
-                SysEmpresasSucursalesModel::where([
-                    'id_empresa'   => Session::get('id_empresa')
-                    ,'id_sucursal' => Session::get('id_sucursal')
-                ])->delete();
-            }
-            SysEmpresasSucursalesModel::where([
-                 #'id_empresa'   => $request->id_empresa
-                'id_cliente'    => $request->id_plan 
-                ])->delete();
+            $id_contacto = SysClientesModel::with(['contactos'])->where(['id' => $request->id_cliente])->get();
+            SysEmpresasSucursalesModel::where(['id_cliente'=> $request->id_cliente])->delete();
             $response = [];
             for ($i=0; $i < count($request->matrix) ; $i++) { 
                 $matrices = explode('|', $request->matrix[$i] );
                 $id_sucursal = $matrices[0];
+                $estatus = ($matrices[1] == true)? 1: 0;
                 #se realiza una consulta si existe un registro.
                 $data = [
-                    'id_empresa'      => $request->id_empresa
-                    ,'id_sucursal'    => $id_sucursal
-                    ,'id_plan'        => $request->id_plan
-                    ,'id_producto'    => 0
+                    'id_cuenta'     => 0
+                    ,'id_empresa'   => $request->id_empresa
+                    ,'id_sucursal'  => $id_sucursal
+                    ,'id_contacto'  => isset($id_contacto[0]->contactos[0])? $id_contacto[0]->contactos[0]->id: 0
+                    ,'id_cliente'   => $request->id_cliente
+                    ,'id_proveedor' => 0
+                    ,'estatus'      => $estatus
                 ];
-                $response[] = SysPlanesProductosModel::create($data);
+                $response[] = SysEmpresasSucursalesModel::create($data);
             }
 
             DB::commit();

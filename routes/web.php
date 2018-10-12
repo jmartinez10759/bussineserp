@@ -549,6 +549,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'clientes.register'
     ]);
     
+    Route::post('/clientes/register_permisos', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@register_permisos'
+        ,'as'       => 'clientes.register'
+    ]);
+    
     Route::get('/clientes/edit', [
         'uses'      => 'Administracion\Configuracion\ClientesController@show'
         ,'as'       => 'clientes.edit'

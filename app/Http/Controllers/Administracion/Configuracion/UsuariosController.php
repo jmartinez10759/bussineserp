@@ -36,7 +36,7 @@ class UsuariosController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function index(){
+    public function index(){
         #debuger(Session::all());
         $response = SysUsersModel::with(['menus' => function($query){
           return $query->where([ 'sys_rol_menu.estatus'=> 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa')])->get();
@@ -104,7 +104,7 @@ class UsuariosController extends MasterController
       ];
       #se crea el dropdown
        $roles = dropdown([
-         'data'      => SysRolesModel::where(['estatus' => 1])->get()
+         'data'      => (Session::get('id_rol') == 1)?SysRolesModel::where(['estatus' => 1])->get(): $this->_consulta(new SysRolesModel)
          ,'value'     => 'id'
          ,'text'      => 'perfil'
          ,'name'      => 'cmb_roles'
@@ -115,7 +115,7 @@ class UsuariosController extends MasterController
        ]);
 
        $roles_edit = dropdown([
-         'data'      => SysRolesModel::where(['estatus' => 1])->get()
+         'data'       => (Session::get('id_rol') == 1)?SysRolesModel::where(['estatus' => 1])->get(): $this->_consulta(new SysRolesModel)
          ,'value'     => 'id'
          ,'text'      => 'perfil'
          ,'name'      => 'cmb_roles_edit'
@@ -126,7 +126,7 @@ class UsuariosController extends MasterController
        ]);
 
        $empresas = dropdown([
-         'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
+         'data'      => (Session::get('id_rol') == 1 )?SysEmpresasModel::where(['estatus' => 1])->get(): $this->_consulta_employes(new SysUsersModel)
          ,'value'     => 'id'
          ,'text'      => 'nombre_comercial'
          ,'name'      => 'cmb_empresas'
@@ -138,7 +138,7 @@ class UsuariosController extends MasterController
        ]);
 
        $empresas_edit = dropdown([
-         'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
+         'data'      => (Session::get('id_rol') == 1 )?SysEmpresasModel::where(['estatus' => 1])->get(): $this->_consulta_employes(new SysUsersModel)
          ,'value'     => 'id'
          ,'text'      => 'nombre_comercial'
          ,'name'      => 'cmb_empresas_edit'
@@ -192,7 +192,8 @@ class UsuariosController extends MasterController
             return $query->where(['sys_sucursales.estatus' => 1 ])->groupBy('id_users','id','sucursal');
           },'details'])->where(['id' => $request->id ] )->get();
           #debuger($response[0]->empresas);
-          $response_menu = SysMenuModel::where(['estatus' => 1])->get();
+          $response_menu = (Session::get('id_rol') == 1)? SysMenuModel::where(['estatus' => 1])->get() : $this->_consulta_menus( new SysUsersModel);
+            #debuger($response_menu);
           $response_acciones = SysAccionesModel::where(['estatus'=> 1])->orderBy('id','ASC')->get();
           $registros = [];
           $registros_acciones = [];
