@@ -29,15 +29,16 @@ class ClientesController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function index(){
+    public function index(){
         
         if( Session::get('permisos')['GET'] ){
           return view('errors.error');
         }
           $response = SysClientesModel::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
           #debuger($response);
-          $response_clientes = SysClientesModel::with(['estados'])->where(['estatus' => 1])->orderBy('id','desc')->get();
+          $response_clientes = ( Session::get('id_rol') == 1)? SysClientesModel::with(['estados'])->where(['estatus' => 1])->orderBy('id','desc')->get() : $this->_consulta( new SysClientesModel );
             #debuger($response[0]->estados->nombre);
+        #debuger($response_clientes);
           $registros = [];
           $registros_clientes = [];
           #debuger($permiso_class_destroy);
@@ -50,7 +51,7 @@ class ClientesController extends MasterController
             $registros[] = [
               $respuesta->razon_social
               ,$respuesta->rfc_receptor
-              ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo: ""
+              #,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo: ""
               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->correo:""
               ,isset($respuesta->estados->nombre)?$respuesta->estados->nombre: ""
               ,isset($respuesta->contactos[0])? $respuesta->contactos[0]->departamento :""
@@ -80,7 +81,7 @@ class ClientesController extends MasterController
             $registros_clientes[] = [
               $respuesta->razon_social
               ,$respuesta->rfc_receptor
-              ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo: ""
+              #,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo: ""
               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->correo:""
               ,isset($respuesta->estados->nombre)?$respuesta->estados->nombre: ""
               ,isset($respuesta->contactos[0])? $respuesta->contactos[0]->departamento :""
@@ -96,7 +97,7 @@ class ClientesController extends MasterController
           $titulos = [
             'RAZÓN SOCIAL'
             ,'RFC'
-            ,'CONTACTO'
+            #,'CONTACTO'
             ,'CORREO'
             ,'ESTADO'
             ,'DEPARTAMENTO'

@@ -130,7 +130,10 @@ class SucursalesController extends MasterController
       public static function lista_sucursal( Request $request ){
 
         Session::put(['id_empresa' => $request->id_empresa ]);
-        $response = SysEmpresasModel::with('sucursales')->where(['id' => $request->id_empresa])->get();
+        $response = SysEmpresasModel::with(['sucursales' => function($query){
+            return $query->groupby('id');
+        }])->where(['id' => $request->id_empresa])->get();
+          #debuger($response);
          $sucursal = [];
          foreach ($response as $sucursales) {
             foreach ($sucursales->sucursales as $bussines) {
@@ -141,28 +144,7 @@ class SucursalesController extends MasterController
          }
          $data['sucursales'] = $sucursal;
          return message( true, $data , "¡Listado de sucursales de la empresa!" );
-         #return view( 'administracion.configuracion.lista_sucursales' ,$data);
-
-        //  $registros = [];
-        //  foreach ($data as $respuesta) {
-        //    $id['id'] = $respuesta->id;
-        //    $portal = build_acciones_usuario($id,'portal','Ingresar','btn btn-primary','fa fa-edit');
-        //    $registros[] = [
-        //       $respuesta->id
-        //      ,$respuesta->sucursal
-        //      ,$respuesta->descripcion
-        //      #,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-        //      ,$portal
-        //    ];
-        //  }
-         //
-        //  $titulos = [ 'ID','Sucursal','Descripción',''];
-        //  $table = [
-        //    'titulos' 		   => $titulos
-        //    ,'registros' 	 => $registros
-        //    ,'id' 			     => "data_table_sucursales"
-        //  ];
-
+          
       }
       /**
        *Metodo para Cargar la vista de las sucursales por empresa.

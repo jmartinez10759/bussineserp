@@ -333,8 +333,7 @@ class EmpresasController extends MasterController
     public static function show_rel_sucursal( Request $request ){
           $empresa = [];
           if( !isset($request->id_empresa) || in_array( 0,$request->id_empresa) ){
-              $empresa['sucursales'] = ['id' => 0];
-              //$empresa['sucursal'] = "Todas las Sucursales";
+              $empresa['sucursales'] = ['id' => 0];              
               return message(true,$empresa,"¡Se cargo correctamente las sucursales!");
           }
           $response = [];
