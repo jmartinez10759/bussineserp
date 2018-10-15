@@ -7,6 +7,7 @@
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysCuentasModel;
     use App\Model\Administracion\Configuracion\SysEmpresasModel;
+    use App\Model\Administracion\Configuracion\SysCuentasEmpresasModel;
 
     class CuentasController extends MasterController
     {
@@ -123,8 +124,38 @@
             $error = null;
             DB::beginTransaction();
             try {
-
-
+                for($i=0; $i < count($request->clientes); $i++){
+                    if( Session::get('id_rol') == 1){
+                        SysEmpresasSucursalesModel::where(['id_empresa' => $request->empresa, 'id_cliente' => $request->clientes[$i] ])->delete();
+                    }else{
+                        SysEmpresasSucursalesModel::where(['id_empresa' => Session::get('id_empresa'), 'id_cliente' => $request->clientes[$i]])->delete();
+                    }
+                }
+                $data_cuenta = [
+                    'nombre_comercial'  =>  isset($request->nombre_comercial)?$request->nombre_comercial: ""
+                    ,'giro_comercial'   =>  isset($request->giro_comercial)?$request->nombre_comercial: ""
+                    ,'estatus'          =>  isset($request->estatus)? $request->estatus : ""
+                ];
+                $response = $this->_tabla_model::create($data_cuenta);
+                for($i=0; $i < count($request->clientes); $i++){
+                    $data = [
+                      'id_cuenta'      =>   $response->id     
+                      ,'id_cliente'    =>   $request->clientes[$i]
+                      ,'id_contacto'   =>   $request->contacto
+                      ,'id_proveedor'  =>   0
+                      ,'estatus'       =>   1
+                    ];
+                    if( Session::get('id_rol') == 1){
+                        $data['id_empresa']  = $request->empresa;
+                        $data['id_sucursal'] = $request->sucursal;
+                        SysEmpresasSucursalesModel::create($data);
+                    }else{
+                        $data['id_empresa'] = Session::get('id_empresa');
+                        $data['id_sucursal'] = Session::get('id_sucursal');
+                        SysEmpresasSucursalesModel::create($data);
+                    }
+                }
+                
             DB::commit();
             $success = true;
             } catch (\Exception $e) {

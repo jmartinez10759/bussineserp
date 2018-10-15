@@ -69,8 +69,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="control-label col-sm-3">Clientes: </label>
-                        <div class="col-sm-7">
+                        <label class="control-label col-sm-3">Sucursales: </label>
+                        <div class="col-sm-7" id="div_cmb_sucursales">
                              <select class="form-control" disabled>
                                 <option value="0">Seleccione Opcion</option>
                             </select>
@@ -78,8 +78,26 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="control-label col-sm-3">Contactos: </label>
-                        <div class="col-sm-7" id="div_contactos">
+                        <label class="control-label col-sm-3">Clientes Asignados: </label>
+                        <div class="col-sm-7" id="div_cmb_clientes_asignados">
+                             <select class="form-control" disabled>
+                                <option value="0">Seleccione Opcion</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Cliente Principal: </label>
+                        <div class="col-sm-7" id="div_cmb_clientes">
+                             <select class="form-control" disabled>
+                                <option value="0">Seleccione Opcion</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Contacto Principal: </label>
+                        <div class="col-sm-7" id="div_cmb_contactos">
                             <select class="form-control" disabled>
                                 <option value="0">Seleccione Opcion</option>
                             </select>

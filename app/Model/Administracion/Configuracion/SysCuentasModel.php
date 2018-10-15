@@ -16,15 +16,15 @@ class SysCuentasModel extends Model
       ];
     
       public function empresas(){
-          return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_empresas_sucursales','id_cuenta','id_empresa');
+          return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_cuentas_empresas','id_cuenta','id_empresa');
       }
   
       public function clientes(){
-         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel','sys_empresas_sucursales','id_cuenta','id_cliente');
+         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel','sys_cuentas_empresas','id_cuenta','id_cliente');
       }
     
       public function contactos(){
-         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_empresas_sucursales','id_cuenta','id_contacto');
+         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_cuentas_empresas','id_cuenta','id_contacto');
       }
     
 
