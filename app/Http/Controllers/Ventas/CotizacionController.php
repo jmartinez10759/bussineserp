@@ -42,7 +42,7 @@
                         },"empresas"])->where('id','=',Session::get('id'))->where(['estatus' => 1])->get();
             #debuger($users);
             $clientes = dropdown([
-                 'data'       => SysClientesModel::where(['estatus' => 1 ])->orderby('id', 'desc')->get()
+                 'data'       => $this->_consulta(new SysClientesModel)
                  ,'value'     => 'id'
                  ,'text'      => 'razon_social rfc_receptor'
                  ,'name'      => 'cmb_clientes'
@@ -113,6 +113,17 @@
                  ,'leyenda'   => 'Seleccione Opción'
                  ,'attr'      => 'data-live-search="true" '                
            ]);
+
+            $estatus_inicio = dropdown([
+                 'data'       => SysEstatusModel::where(['estatus' => 1 ])->orderby('nombre', 'asc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_estatus_inicio'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" ' 
+                 ,'event'     => 'display_estatus_select()'               
+           ]);
             /*$response = SysClientesModel::with(['contactos'])
                 ->where(['estatus' => 1,'id' => $request->input('id')])
                 ->orderby('id','asc')
@@ -134,6 +145,7 @@
                 ,'productos'            => $productos
                 ,'planes'               => $planes
                 ,'estatus'              => $estatus
+                ,'estatus_inicio'       => $estatus_inicio
             ];
             return self::_load_view( "ventas.cotizacion",$data );
         }
@@ -146,9 +158,10 @@
         public function all( Request $request ){
 
             try {
-
+                /*Consulta por id cotizacion agregar cotizacion*/
                 $where = ($request->id == "") ? 'WHERE sysbussiness.sys_cotizaciones.id = 0' : 'WHERE sysbussiness.sys_cotizaciones.id = '.$request->id;
 
+                /*Consulta general de las cotizaciones*/
                 $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
 
                 $group_by_general = 'GROUP BY sys_users_cotizaciones.id_cotizacion';
@@ -172,6 +185,7 @@
                                    sys_cotizaciones.codigo,DATE_FORMAT(sys_cotizaciones.created_at, '%Y-%m-%d') as created_at,
                                    sys_contactos.nombre_completo,
                                    sys_clientes.nombre_comercial,
+                                   sys_cotizaciones.id_estatus,
                                    sys_estatus.nombre,
                                    sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total
                                  FROM sysbussiness.sys_users_cotizaciones
@@ -188,9 +202,10 @@
                 $concep = DB::select($sql);
                 $cotiz_general = DB::select($sql_general);
 
-                $response = ['concep' => $concep
-                            ,'cotiz_general' => $cotiz_general
-                            ];
+                $response = [
+                    'concep'            => $concep
+                    ,'cotiz_general'    => $cotiz_general
+                ];
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();

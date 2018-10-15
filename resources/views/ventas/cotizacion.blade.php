@@ -62,12 +62,14 @@
 							<tbody>
 
 							<tr v-for="cot in cotizacion">
-								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.codigo }}</td>
+								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.codigo }}
+									<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>
 								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.created_at }}</td>
 								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
 								<td>@{{ cot.nombre_comercial }}</td>
 								<td>@{{ cot.vendedor }}</td>
-								<td><span class="label label-danger">@{{ cot.nombre }}</span></td>
+								<!-- <td><span class="label label-danger">@{{ cot.nombre }}</span></td> -->
+								<td>{!! $estatus_inicio !!}</td>
 								<!-- <td class="text-right">	</td>
 								<td class="text-right"> </td>
 								<td class="text-right"> @{{ cot.total }}</td> -->
@@ -229,6 +231,30 @@ function display_planes(){
 	//var url = domain('ventas/planes');
 	var url = domain('planes/edit');
 	var fields = {id : id_planes};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+          	//var select_productos = response.data.result;
+            jQuery('#precio_concepto').val(response.data.result.total);
+            jQuery('#descripcion').val(response.data.result.descripcion);
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+
+}
+
+/*Funcion para actualizar eststus*/
+function display_estatus_select(){
+	var id_estatus = jQuery('#cmb_estatus_inicio').val();
+	var id_cot = jQuery('#id_cot').val();
+	
+	//var url = domain('ventas/planes');
+	var url = domain('cotizaciones/update');
+	var fields = {id : id_estatus};
 	var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           	//var select_productos = response.data.result;

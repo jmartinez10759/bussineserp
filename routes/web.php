@@ -969,7 +969,7 @@ Route::get('/ventas/cotizacion', [
 
     Route::delete('/cotizacion/destroy', [
         'uses' => 'Ventas\CotizacionController@destroy'
-        ,'as' => 'unidadesmedidas.destroy'
+        ,'as' => 'cotizacion.destroy'
     ]);
     
     Route::get('/ventas/contactos', [
@@ -980,6 +980,11 @@ Route::get('/ventas/cotizacion', [
     Route::get('/ventas/contacto', [
         'uses' => 'Ventas\CotizacionController@getContacto'
         ,'as' => 'ventas.contacto'
+    ]);
+
+    Route::post('/cotizaciones/update', [
+        'uses' => 'Ventas\CotizacionController@update_estatus'
+        ,'as' => 'cotizaciones.update'
     ]);
 
     /*Route::get('/ventas/productos', [
