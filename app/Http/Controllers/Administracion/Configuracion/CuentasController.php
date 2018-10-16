@@ -69,11 +69,23 @@
                 ,'event'     => 'display_clientes()'
             ]);
             
+            $cmb_empresas_edit = dropdown([
+                'data'      => (Session::get('id_rol') == 1)? SysEmpresasModel::where(['estatus' => 1 ])->get(): SysEmpresasModel::where(['estatus' => 1, 'id' => Session::get('id_empresa') ])->get() 
+                ,'value'     => 'id'
+                ,'text'      => 'rfc_emisor nombre_comercial'
+                ,'name'      => 'cmb_empresas_edit'
+                ,'class'     => 'form-control'
+                ,'leyenda'   => 'Seleccione Opcion'
+                ,'attr'      => 'data-live-search="true" '
+                ,'event'     => 'display_clientes_edit()'
+            ]);
+            
             $data = [
                 "page_title" 	        => "Configuración"
                 ,"title"  		        => "Cuentas"
                 ,"data_table"  		    => data_table($table)
                 ,'cmb_empresas'         => $cmb_empresas
+                ,'cmb_empresas_edit'    => $cmb_empresas_edit
             ];
             return self::_load_view( "administracion.configuracion.cuentas",$data );
         }
@@ -104,9 +116,14 @@
         public function show( Request $request ){
 
             try {
-
-
-            return $this->_message_success( 201, $response , self::$message_success );
+                $response = $this->_tabla_model::with(['contactos' => function($query){
+                    return $query->groupby('id');
+                },'empresas' => function($query){
+                    return $query->groupby('id');
+                },'sucursales' => function($query){
+                    return $query->groupby('id');
+                },'clientes'])->where(['id' => $request->id])->get();
+            return $this->_message_success( 201, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -126,34 +143,26 @@
             try {
                 for($i=0; $i < count($request->clientes); $i++){
                     if( Session::get('id_rol') == 1){
-                        SysEmpresasSucursalesModel::where(['id_empresa' => $request->empresa, 'id_cliente' => $request->clientes[$i] ])->delete();
+                        SysCuentasEmpresasModel::where(['id_empresa' => $request->empresa, 'id_cliente' => $request->clientes[$i] ])->delete();
                     }else{
-                        SysEmpresasSucursalesModel::where(['id_empresa' => Session::get('id_empresa'), 'id_cliente' => $request->clientes[$i]])->delete();
+                        SysCuentasEmpresasModel::where(['id_empresa' => Session::get('id_empresa'), 'id_cliente' => $request->clientes[$i]])->delete();
                     }
                 }
                 $data_cuenta = [
-                    'nombre_comercial'  =>  isset($request->nombre_comercial)?$request->nombre_comercial: ""
-                    ,'giro_comercial'   =>  isset($request->giro_comercial)?$request->nombre_comercial: ""
+                    'nombre_comercial'  =>  isset($request->nombre_comercial)? strtoupper($request->nombre_comercial): ""
+                    ,'giro_comercial'   =>  isset($request->giro_comercial)? strtoupper($request->giro_comercial): ""
                     ,'estatus'          =>  isset($request->estatus)? $request->estatus : ""
                 ];
                 $response = $this->_tabla_model::create($data_cuenta);
                 for($i=0; $i < count($request->clientes); $i++){
                     $data = [
-                      'id_cuenta'      =>   $response->id     
-                      ,'id_cliente'    =>   $request->clientes[$i]
-                      ,'id_contacto'   =>   $request->contacto
-                      ,'id_proveedor'  =>   0
-                      ,'estatus'       =>   1
+                      'id_cuenta'       =>  $response->id     
+                      ,'id_cliente'     =>  $request->clientes[$i]
+                      ,'id_contacto'    =>  $request->contacto
+                      ,'id_empresa'     => ( Session::get('id_rol') == 1 )? $request->empresa  : Session::get('id_empresa')
+                      ,'id_sucursal'    => ( Session::get('id_rol') == 1 )? $request->sucursal : Session::get('id_sucursal')
                     ];
-                    if( Session::get('id_rol') == 1){
-                        $data['id_empresa']  = $request->empresa;
-                        $data['id_sucursal'] = $request->sucursal;
-                        SysEmpresasSucursalesModel::create($data);
-                    }else{
-                        $data['id_empresa'] = Session::get('id_empresa');
-                        $data['id_sucursal'] = Session::get('id_sucursal');
-                        SysEmpresasSucursalesModel::create($data);
-                    }
+                    SysCuentasEmpresasModel::create($data);
                 }
                 
             DB::commit();

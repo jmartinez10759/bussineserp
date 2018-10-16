@@ -14,12 +14,10 @@ class CreateSysEmpresasSucursalesTable extends Migration
     public function up()
     {
         Schema::create('sys_empresas_sucursales', function (Blueprint $table) {
-            $table->integer('id_cuenta')->nullable();
             $table->integer('id_empresa')->nullable();
             $table->integer('id_sucursal')->nullable();
             $table->integer('id_contacto')->nullable();
             $table->integer('id_cliente')->nullable();
-            $table->integer('id_proveedor')->nullable();
             $table->boolean('estatus')->default(1);
             $table->timestamps();
         });

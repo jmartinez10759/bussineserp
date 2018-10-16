@@ -131,7 +131,7 @@
 </div>
 
 
-<div class="modal fade" id="modal_edit_register" role="dialog" aria-hidden="true">
+<div id="modal_edit_register" style="display:none;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -194,6 +194,49 @@
                         <label class="control-label col-sm-3">Giro Comercial: </label>
                         <div class="col-sm-7">
                             <input type="text" id="giro_comercial" class="form-control" placeholder="" v-model="update.giro_comercial">
+                        </div>
+                    </div>
+                    
+                     <div class="form-group">
+                        <label class="control-label col-sm-3">Empresas: </label>
+                        <div class="col-sm-7">
+                            {!! $cmb_empresas_edit !!}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Sucursales: </label>
+                        <div class="col-sm-7" id="div_cmb_sucursales_edit">
+                             <select class="form-control" disabled>
+                                <option value="0">Seleccione Opcion</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Clientes Asignados: </label>
+                        <div class="col-sm-7" id="div_cmb_clientes_asignados_edit">
+                             <select class="form-control" disabled>
+                                <option value="0">Seleccione Opcion</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Cliente Principal: </label>
+                        <div class="col-sm-7" id="div_cmb_clientes_edit">
+                             <select class="form-control" disabled>
+                                <option value="0">Seleccione Opcion</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Contacto Principal: </label>
+                        <div class="col-sm-7" id="div_cmb_contactos_edit">
+                            <select class="form-control" disabled>
+                                <option value="0">Seleccione Opcion</option>
+                            </select>
                         </div>
                     </div>
 

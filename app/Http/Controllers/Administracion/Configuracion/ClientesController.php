@@ -200,16 +200,14 @@ class ClientesController extends MasterController
                 $response = $this->_tabla_model::create( $string_data_clientes );
                 $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
-                     'id_cuenta'        => 0
-                    ,'id_empresa'       => 0
-                    ,'id_sucursal'      => 0
-                    ,'id_contacto'      => $response_contactos->id
-                    ,'id_clientes'      => $response->id
-                    ,'id_proveedores'   => 0
-                    ,'estatus'          => 1
+                    'id_empresa'       => (Session::get('id_rol') != 1)? Session::get('id_empresa') :0
+                    ,'id_sucursal'     => (Session::get('id_rol') != 1)? Session::get('id_sucursal') :0
+                    ,'id_contacto'     => $response_contactos->id
+                    ,'id_cliente'      => $response->id
+                    ,'estatus'         => 1
                 ];
                 
-               SysEmpresasSecursalesModel::create($data);    
+               SysEmpresasSucursalesModel::create($data);    
             DB::commit();
             $success = true;
           } catch (\Exception $e) {
@@ -264,15 +262,13 @@ class ClientesController extends MasterController
             }else{
                 $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
-                     'id_cuenta'        => 0
-                    ,'id_empresa'       => 0
-                    ,'id_sucursal'      => 0
-                    ,'id_contacto'      => $response_contactos->id
-                    ,'id_clientes'      => $request->id
-                    ,'id_proveedores'   => 0
-                    ,'estatus'          => 1
+                    'id_empresa'       => (Session::get('id_rol') != 1)? Session::get('id_empresa') :0
+                    ,'id_sucursal'     => (Session::get('id_rol') != 1)? Session::get('id_sucursal') :0
+                    ,'id_contacto'     => $response_contactos->id
+                    ,'id_cliente'      => $request->id
+                    ,'estatus'         => 1
                 ];
-               SysEmpresasSecursalesModel::create($data);   
+               SysEmpresasSucursalesModel::create($data);   
                 
             }
             DB::commit();
