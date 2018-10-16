@@ -93,7 +93,7 @@ new Vue({
 
     }
     ,update_cliente(){
-         var validacion = ['correo_edit','razon_social_edit','rfc_receptor_edit'];
+        var validacion = ['correo_edit','razon_social_edit','rfc_receptor_edit'];
         if(validacion_fields(validacion) == "error"){return;}
         if( !emailValidate(jQuery('#correo_edit').val()) ){
             jQuery('#correo_edit').parent().parent().addClass('has-error');

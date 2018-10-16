@@ -85,9 +85,13 @@ new Vue({
         var fields = {id : id };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
-              toastr.success( response.data.message , title );
-              
+              console.log(response.data.result);
+              this.update = response.data.result;
+              jQuery.fancybox.open({
+                  'type': 'inline'
+                  ,'src': "#modal_edit_register"
+                  ,'buttons' : ['share', 'close']
+               });
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -122,6 +126,7 @@ new Vue({
 
 });
 jQuery('#cmb_empresas').selectpicker();
+jQuery('#cmb_empresas_edit').selectpicker();
 
 function display_clientes(){
     
@@ -219,4 +224,96 @@ function change_clientes(){
     
 }
 
+function display_clientes_edit(){
+    
+    var id_empresa = jQuery('#cmb_empresas_edit').val();
+    var url = domain( url_display_clientes );
+    var fields = {id : id_empresa };
+    var promise = MasterController.method_master(url,fields,"get");
+      promise.then( response => {
+        console.log(response.data.result.clientes);
+        var clientes = {
+             'data'    : response.data.result.clientes
+             ,'text'   : "nombre_comercial"
+             ,'value'  : "id"
+             ,'name'   : 'cmb_clientes'
+             ,'class'  : 'form-control'
+             ,'leyenda': 'Seleccione Opcion'
+             ,'event'  : 'change_clientes()'
+            ,'attr'    : ''     
+         };
+          
+         var clientes_asignados = {
+             'data'    : response.data.result.clientes
+             ,'text'   : "nombre_comercial"
+             ,'value'  : "id"
+             ,'name'   : 'cmb_clientes_asignados_edit'
+             ,'class'  : 'form-control'
+             ,'leyenda': 'Seleccione Opcion'
+            ,'attr'    : 'multiple'     
+         };
+          
+       var sucursales = {
+            'data'    : response.data.result.sucursales
+            ,'text'   : "sucursal"
+            ,'value'  : "id"
+            ,'name'   : 'cmb_sucursales_edit'
+            ,'class'  : 'form-control'
+            ,'leyenda': 'Seleccione Opcion'
+        };
+          
+         jQuery('#div_cmb_clientes_edit').html('');
+         jQuery('#div_cmb_clientes_edit').html( select_general(clientes) );
+          
+         jQuery('#div_cmb_clientes_asignados_edit').html('');
+         jQuery('#div_cmb_clientes_asignados_edit').html( select_general(clientes_asignados) );
+          
+         jQuery('#div_cmb_sucursales_edit').html('');
+         jQuery('#div_cmb_sucursales_edit').html( select_general(sucursales) );
+          
+         jQuery('#cmb_clientes_asignados_edit').selectpicker();
+         jQuery('#cmb_clientes_edit').selectpicker();
+         jQuery('#cmb_sucursales_edit').selectpicker();
+        //toastr.success( response.data.message , title );
 
+      }).catch( error => {
+          if( error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+            }
+          toastr.error( error.response.data.message , expired );              
+      });
+     
+}
+
+function change_clientes_edit(){
+    var id_cliente = jQuery('#cmb_clientes_edit').val();
+    var url = domain(url_display_contactos);
+    var fields = { id_cliente: id_cliente };
+    var promise = MasterController.method_master(url,fields,"get");
+      promise.then( response => {
+        console.log(response.data.result.contactos);
+        var contactos = {
+             'data'    : response.data.result.contactos
+             ,'text'   : "nombre_completo"
+             ,'value'  : "id"
+             ,'name'   : 'cmb_contactos_edit'
+             ,'class'  : 'form-control'
+             ,'leyenda': 'Seleccione Opcion'
+            ,'attr'    : ''     
+         };
+         jQuery('#div_cmb_contactos_edit').html('');
+         jQuery('#div_cmb_contactos_edit').html( select_general(contactos) );
+         jQuery('#cmb_contactos_edit').selectpicker();
+         toastr.success( response.data.message , title );
+      }).catch( error => {
+          if( error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+          }
+          toastr.error( error.response.data.message , expired );              
+      });
+    
+}

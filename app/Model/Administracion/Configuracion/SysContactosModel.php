@@ -25,7 +25,7 @@ class SysContactosModel extends Model
       }
     
       public function cuentas(){
-         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_empresas_sucursales','id_contacto','id_cuenta');
+         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_cuentas_empresas','id_contacto','id_cuenta');
       }
     
 }
