@@ -194,7 +194,7 @@ class EmpresasController extends MasterController
             $response = SysEmpresasModel::with( ['contactos' => function($query){
                 return $query->where(['sys_contactos.estatus' => 1,'sys_empresas_sucursales.estatus' => 1])->get();
             },'sucursales' => function( $query ){
-                return $query->where(['sys_empresas_sucursales.estatus' => 1])->get();
+                return $query->where(['sys_empresas_sucursales.estatus' => 1])->groupby('id')->get();
             },'clientes'])->where( $where )->get();
 
             return $this->_message_success( 201, $response[0] , self::$message_success );

@@ -28,7 +28,7 @@ new Vue({
         jQuery("*").css("cursor", "wait");
         var response = MasterController.method_master(url,this.newKeep,"post");
         response.then(response => {
-            toastr.info(response.data.message , title_error );
+            toastr.info(response.data.message , title );
             redirect( domain( response.data.result.ruta ) );
         }).catch(error => {
             if( error.response.status == 419 ){
