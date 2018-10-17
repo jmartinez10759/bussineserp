@@ -10,6 +10,7 @@ class SysCuentasModel extends Model
       public $fillable = [
         'id'
         ,'nombre_comercial'
+        ,'id_cliente'
         ,'giro_comercial'
         ,'logo'
         ,'estatus'

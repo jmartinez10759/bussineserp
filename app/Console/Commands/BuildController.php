@@ -427,12 +427,12 @@ new Vue({
           
               
           }).catch( error => {
-              if( error.response.status == 419 ){
+              if( isset(error.response) && error.response.status == 419 ){
                     toastr.error( session_expired ); 
                     redirect(domain("/"));
                     return;
                 }
-              toastr.error( error.response.data.message , expired );
+                toastr.error( error.result , expired );
           });
     }
     ,insert_register(){
@@ -444,12 +444,12 @@ new Vue({
               toastr.success( response.data.message , title );
               
           }).catch( error => {
-              if( error.response.status == 419 ){
+                if( isset(error.response) && error.response.status == 419 ){
                     toastr.error( session_expired ); 
                     redirect(domain("/"));
                     return;
                 }
-              toastr.error( error.response.data.message , expired );
+                toastr.error( error.result  , expired );
           });
     }
     ,update_register(){
@@ -461,12 +461,12 @@ new Vue({
               toastr.success( response.data.message , title );
               
           }).catch( error => {
-              if( error.response.status == 419 ){
+              if( isset(error.response) && error.response.status == 419 ){
                     toastr.error( session_expired ); 
                     redirect(domain("/"));
                     return;
                 }
-              toastr.error( error.response.data.message , expired );
+                toastr.error( error.result  , expired );
           });
     }
     ,edit_register( id ){
@@ -478,12 +478,12 @@ new Vue({
               toastr.success( response.data.message , title );
               
           }).catch( error => {
-              if( error.response.status == 419 ){
+              if( isset(error.response) && error.response.status == 419 ){
                     toastr.error( session_expired ); 
                     redirect(domain("/"));
                     return;
                 }
-              toastr.error( error.response.data.message , expired );              
+                toastr.error( error.result  , expired );           
           });
         
     }
@@ -495,12 +495,12 @@ new Vue({
           promise.then( response => {
               toastr.success( response.data.message , title );
           }).catch( error => {
-              if( error.response.status == 419 ){
+              if( isset(error.response) && error.response.status == 419 ){
                     toastr.error( session_expired ); 
                     redirect(domain("/"));
                     return;
                 }
-              toastr.error( error.response.data.message , expired );
+                toastr.error( error.result  , expired );
           });
       },"warning",true,["SI","NO"]);   
     }

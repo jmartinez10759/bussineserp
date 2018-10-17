@@ -574,6 +574,39 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ClientesController@destroy'
         ,'as'       => 'clientes.destroy'
     ]);
+
+    ############################ SECCION DE CONTACTOS ###################################
+    Route::get('/configuracion/contactos', [
+        'uses'      => 'Administracion\Configuracion\ContactosController@index'
+        ,'as'       => 'configuracion.clientes'
+    ]);
+        
+    Route::post('/contactos/register', [
+        'uses'      => 'Administracion\Configuracion\ContactosController@store'
+        ,'as'       => 'contactos.register'
+    ]);
+    
+    Route::get('/contactos/edit', [
+        'uses'      => 'Administracion\Configuracion\ContactosController@show'
+        ,'as'       => 'clientes.edit'
+    ]);
+    
+    Route::get('/contactos/display_sucursales', [
+        'uses'      => 'Administracion\Configuracion\ContactosController@display_sucursales'
+        ,'as'       => 'contactos.display_sucursales'
+    ]);
+    
+    
+    Route::put('/contactos/update', [
+        'uses'      => 'Administracion\Configuracion\ContactosController@update'
+        ,'as'       => 'contactos.update'
+    ]);
+
+    Route::delete('/contactos/destroy', [
+        'uses'      => 'Administracion\Configuracion\ContactosController@destroy'
+        ,'as'       => 'contactos.destroy'
+    ]);
+    
     
 ############################ SECCION DE PRODUCTOS #######################################
     

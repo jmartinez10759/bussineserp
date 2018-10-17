@@ -31,7 +31,8 @@
             if( Session::get('permisos')['GET'] ){
                 return view('errors.error');
             }
-            $response = $this->_tabla_model::with(['categorias' => function( $query ){
+            $response = (Session::get('id_rol') != 1)? $this->_consulta( $this->_tabla_model ): $this->_tabla_model::orderby('id','desc')->get();
+            /*$response = $this->_tabla_model::with(['categorias' => function( $query ){
                     return $query->where(['estatus' => 1])->get();
             },'planes' => function( $query ){
                 return $query->where(['estatus' => 1])->get();
@@ -40,10 +41,10 @@
             },'unidades' => function($query){
                 return $query->where(['estatus' => 1])->get();
             }, 'empresas' => function( $query ){
-            if(Session::get('id_rol') != 1){
-                return $query->where([ 'estatus' => 1, 'id' => Session::get('id_empresa') ]);
-            }
-            }])->orderby('id','desc')->get();
+                if(Session::get('id_rol') != 1){
+                    return $query->where([ 'estatus' => 1, 'id' => Session::get('id_empresa') ]);
+                }
+            }])->orderby('id','desc')->get();*/
             #debuger($response);
             $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
             $permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
