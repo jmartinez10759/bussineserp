@@ -10,7 +10,7 @@ var redireccion  = "configuracion/cuentas";
 new Vue({
   el: "#vue-cuentas",
   created: function () {
-    this.consulta_general();
+    //this.consulta_general();
   },
   data: {
     datos: [],
@@ -34,12 +34,12 @@ new Vue({
               this.fields = response.data.result;
               console.log(this.fields);
           }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
+              if( isset(error.response) && error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+              }
+              toastr.error( error.result , expired );  
           });
     }
     ,insert_register(){
@@ -48,12 +48,12 @@ new Vue({
         this.insert.sucursal = jQuery('#cmb_sucursales').val();
         this.insert.clientes = jQuery('#cmb_clientes_asignados').val();
         this.insert.contacto = jQuery('#cmb_contactos').val();
+        this.insert.id_cliente  = jQuery('#cmb_clientes').val();
         var fields = this.insert;
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
-              
               toastr.success( response.data.message , title );
-              
+              //redirect(domain(redireccion));
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -65,19 +65,28 @@ new Vue({
     }
     ,update_register(){
         var url = domain( url_update );
-        var fields = {};
+        this.update.id = this.edit.id;
+        this.update.id_empresa  = jQuery('#cmb_empresas_edit').val();
+        this.update.id_sucursal = jQuery('#cmb_sucursales_edit').val();
+        this.update.clientes    = jQuery('#cmb_clientes_asignados_edit').val();
+        this.update.id_contacto = jQuery('#cmb_contactos_edit').val();
+        this.update.id_cliente  = jQuery('#cmb_clientes_edit').val();
+        this.update.nombre_comercial    = this.edit.nombre_comercial
+        this.update.giro_comercial      = this.edit.giro_comercial
+        this.update.estatus             = this.edit.estatus
+        
+        var fields = this.update;
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
-          
               toastr.success( response.data.message , title );
-              
+              redirect(domain(redireccion));
           }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
+              if( isset(error.response) && error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+             }
+            toastr.error( error.result , expired );  
           });
     }
     ,edit_register( id ){
@@ -85,20 +94,29 @@ new Vue({
         var fields = {id : id };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-              console.log(response.data.result);
-              this.update = response.data.result;
+              this.edit = response.data.result;
+              jQuery('#cmb_empresas_edit').selectpicker('val',[this.edit.empresas[0].id]);
+              var clientes = [];
+              var j = 0;
+              if(this.edit.clientes.length > 0){
+                 for (var i in this.edit.clientes) {
+                    clientes[j] = this.edit.clientes[i].id;
+                    j++;
+                }
+              }
+              display_clientes_edit( this.edit.sucursales[0].id, clientes , this.edit.id_cliente, this.edit.contactos[0].id);
               jQuery.fancybox.open({
                   'type': 'inline'
                   ,'src': "#modal_edit_register"
                   ,'buttons' : ['share', 'close']
                });
           }).catch( error => {
-              if( error.response.status == 419 ){
+              if( isset(error.response) && error.response.status == 419 ){
                     toastr.error( session_expired ); 
                     redirect(domain("/"));
                     return;
                 }
-              toastr.error( error.response.data.message , expired );              
+              toastr.error( error.result , expired );              
           });
         
     }
@@ -109,13 +127,14 @@ new Vue({
           var promise = MasterController.method_master(url,fields,"delete");
           promise.then( response => {
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion));
           }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
+              if( isset(error.response) && error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+              }
+                toastr.error( error.result , expired );  
           });
       },"warning",true,["SI","NO"]);   
     }
@@ -144,7 +163,7 @@ function display_clientes(){
              ,'class'  : 'form-control'
              ,'leyenda': 'Seleccione Opcion'
              ,'event'  : 'change_clientes()'
-            ,'attr'    : ''     
+            ,'attr'    : 'data-live-search="true"'     
          };
           
          var clientes_asignados = {
@@ -155,7 +174,7 @@ function display_clientes(){
              ,'class'  : 'form-control'
              ,'leyenda': 'Seleccione Opcion'
              //,'event'  : 'change_clientes()'
-            ,'attr'    : 'multiple'     
+            ,'attr'    : 'multiple data-live-search="true"'     
          };
           
        var sucursales = {
@@ -165,6 +184,7 @@ function display_clientes(){
             ,'name'   : 'cmb_sucursales'
             ,'class'  : 'form-control'
             ,'leyenda': 'Seleccione Opcion'
+            ,attr     : 'data-live-search="true"'
         };
           
          jQuery('#div_cmb_clientes').html('');
@@ -182,12 +202,12 @@ function display_clientes(){
         //toastr.success( response.data.message , title );
 
       }).catch( error => {
-          if( error.response.status == 419 ){
+          if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
                 redirect(domain("/"));
                 return;
             }
-          toastr.error( error.response.data.message , expired );              
+          toastr.error( error.result , expired );              
       });
      
 }
@@ -207,7 +227,7 @@ function change_clientes(){
              ,'class'  : 'form-control'
              ,'leyenda': 'Seleccione Opcion'
              //,'event'  : 'change_clientes()'
-            ,'attr'    : ''     
+            ,'attr'    : 'data-live-search="true"'     
          };
          jQuery('#div_cmb_contactos').html('');
          jQuery('#div_cmb_contactos').html( select_general(contactos) );
@@ -224,7 +244,7 @@ function change_clientes(){
     
 }
 
-function display_clientes_edit(){
+function display_clientes_edit( id_sucursal, id_clientes = {}, id_cliente, id_contacto ){
     
     var id_empresa = jQuery('#cmb_empresas_edit').val();
     var url = domain( url_display_clientes );
@@ -236,11 +256,12 @@ function display_clientes_edit(){
              'data'    : response.data.result.clientes
              ,'text'   : "nombre_comercial"
              ,'value'  : "id"
-             ,'name'   : 'cmb_clientes'
+             ,'name'   : 'cmb_clientes_edit'
              ,'class'  : 'form-control'
              ,'leyenda': 'Seleccione Opcion'
-             ,'event'  : 'change_clientes()'
-            ,'attr'    : ''     
+             ,'event'  : 'change_clientes_edit()'
+             ,'attr'   : 'data-live-search="true"' 
+             ,selected : (id_cliente != "")?id_cliente: 0
          };
           
          var clientes_asignados = {
@@ -250,7 +271,7 @@ function display_clientes_edit(){
              ,'name'   : 'cmb_clientes_asignados_edit'
              ,'class'  : 'form-control'
              ,'leyenda': 'Seleccione Opcion'
-            ,'attr'    : 'multiple'     
+             ,'attr'    : 'multiple data-live-search="true"'
          };
           
        var sucursales = {
@@ -260,8 +281,10 @@ function display_clientes_edit(){
             ,'name'   : 'cmb_sucursales_edit'
             ,'class'  : 'form-control'
             ,'leyenda': 'Seleccione Opcion'
+            ,selected : ( id_sucursal != "" )? id_sucursal: 0
+            ,attr     : 'data-live-search="true"'
         };
-          
+         
          jQuery('#div_cmb_clientes_edit').html('');
          jQuery('#div_cmb_clientes_edit').html( select_general(clientes) );
           
@@ -270,24 +293,26 @@ function display_clientes_edit(){
           
          jQuery('#div_cmb_sucursales_edit').html('');
          jQuery('#div_cmb_sucursales_edit').html( select_general(sucursales) );
-          
-         jQuery('#cmb_clientes_asignados_edit').selectpicker();
+         jQuery('#cmb_clientes_asignados_edit').selectpicker('val',id_clientes);
          jQuery('#cmb_clientes_edit').selectpicker();
          jQuery('#cmb_sucursales_edit').selectpicker();
+         change_clientes_edit(id_contacto);
+          //jQuery('#cmb_sucursales_edit').selectpicker('val',[1]);
         //toastr.success( response.data.message , title );
 
       }).catch( error => {
-          if( error.response.status == 419 ){
+          
+          if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
                 redirect(domain("/"));
                 return;
             }
-          toastr.error( error.response.data.message , expired );              
+          toastr.error( error.result , expired );              
       });
      
 }
 
-function change_clientes_edit(){
+function change_clientes_edit( id_contacto ){
     var id_cliente = jQuery('#cmb_clientes_edit').val();
     var url = domain(url_display_contactos);
     var fields = { id_cliente: id_cliente };
@@ -301,19 +326,20 @@ function change_clientes_edit(){
              ,'name'   : 'cmb_contactos_edit'
              ,'class'  : 'form-control'
              ,'leyenda': 'Seleccione Opcion'
-            ,'attr'    : ''     
+            ,'attr'    : 'data-live-search="true"'     
+            ,selected  : (id_contacto != "")?id_contacto : 0   
          };
          jQuery('#div_cmb_contactos_edit').html('');
          jQuery('#div_cmb_contactos_edit').html( select_general(contactos) );
          jQuery('#cmb_contactos_edit').selectpicker();
          toastr.success( response.data.message , title );
       }).catch( error => {
-          if( error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-          }
-          toastr.error( error.response.data.message , expired );              
+          if( isset(error.response) && error.response.status == 419 ){
+            toastr.error( session_expired ); 
+            redirect(domain("/"));
+            return;
+         }
+         toastr.error( error , expired );           
       });
     
 }

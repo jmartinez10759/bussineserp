@@ -5,7 +5,7 @@
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
-    use app\Model\Administracion\Configuracion\SysContactosModel;
+    use App\Model\Administracion\Configuracion\SysContactosModel;
 
     class ContactosController extends MasterController
     {
@@ -57,9 +57,8 @@
         public function show( Request $request ){
 
             try {
-
-
-            return $this->_message_success( 201, $response , self::$message_success );
+                $response = SysContactosModel::where(['id' => $request->id])->get();
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );

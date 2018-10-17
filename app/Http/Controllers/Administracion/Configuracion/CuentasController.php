@@ -141,18 +141,13 @@
             $error = null;
             DB::beginTransaction();
             try {
-                for($i=0; $i < count($request->clientes); $i++){
-                    if( Session::get('id_rol') == 1){
-                        SysCuentasEmpresasModel::where(['id_empresa' => $request->empresa, 'id_cliente' => $request->clientes[$i] ])->delete();
-                    }else{
-                        SysCuentasEmpresasModel::where(['id_empresa' => Session::get('id_empresa'), 'id_cliente' => $request->clientes[$i]])->delete();
-                    }
-                }
                 $data_cuenta = [
                     'nombre_comercial'  =>  isset($request->nombre_comercial)? strtoupper($request->nombre_comercial): ""
                     ,'giro_comercial'   =>  isset($request->giro_comercial)? strtoupper($request->giro_comercial): ""
+                    ,'id_cliente'       =>  isset($request->id_cliente)? strtoupper($request->id_cliente): 0
                     ,'estatus'          =>  isset($request->estatus)? $request->estatus : ""
                 ];
+                #debuger($data_cuenta);
                 $response = $this->_tabla_model::create($data_cuenta);
                 for($i=0; $i < count($request->clientes); $i++){
                     $data = [
@@ -187,11 +182,33 @@
         *@return void
         */
         public function update( Request $request){
-
+            //debuger($request->all());
             $error = null;
             DB::beginTransaction();
             try {
-
+                if( Session::get('id_rol') == 1){
+                    SysCuentasEmpresasModel::where(['id_empresa' => $request->id_empresa, 'id_cuenta' => $request->id ])->delete();
+                }else{
+                    SysCuentasEmpresasModel::where(['id_empresa' => Session::get('id_empresa'), 'id_cuenta' => $request->id])->delete();
+                }
+                $data_cuenta = [
+                    'nombre_comercial'  =>  isset($request->nombre_comercial)? strtoupper($request->nombre_comercial): ""
+                    ,'giro_comercial'   =>  isset($request->giro_comercial)? strtoupper($request->giro_comercial): ""
+                    ,'id_cliente'       =>  isset($request->id_cliente)? strtoupper($request->id_cliente): ""
+                    ,'estatus'          =>  isset($request->estatus)? $request->estatus : 0
+                ];
+                $this->_tabla_model::where(['id' => $request->id])->update($data_cuenta);
+                $response = $this->_tabla_model::where(['id' => $request->id])->get();
+                for($i=0; $i < count($request->clientes); $i++){
+                    $data = [
+                      'id_cuenta'       =>  isset($response[0]->id)? $response[0]->id : 0     
+                      ,'id_cliente'     =>  $request->clientes[$i]
+                      ,'id_contacto'    =>  $request->id_contacto
+                      ,'id_empresa'     => ( Session::get('id_rol') == 1 )? $request->id_empresa  : Session::get('id_empresa')
+                      ,'id_sucursal'    => ( Session::get('id_rol') == 1 )? $request->id_sucursal : Session::get('id_sucursal')
+                    ];
+                    SysCuentasEmpresasModel::create($data);
+                }
 
             DB::commit();
             $success = true;
@@ -218,8 +235,8 @@
             $error = null;
             DB::beginTransaction();
             try {
-
-
+                $response = $this->_tabla_model::where(['id' => $request->id])->delete();
+                SysCuentasEmpresasModel::where(['id_cuenta' => $request->id])->delete();
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -234,23 +251,6 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
-        /**
-        *Metodo para realizar la consulta por medio de su id
-        *@access public
-        *@param Request $request [Description]
-        *@return void
-        */
-        /*public function display_clientes( Request $request ){ 
-
-            try {
-                
-            return $this->_message_success( 201, $response , self::$message_success );
-            } catch (\Exception $e) {
-            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            return $this->show_error(6, $error, self::$message_error );
-            }
-
-        }*/
         
         
 
