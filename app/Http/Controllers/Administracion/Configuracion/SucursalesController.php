@@ -131,9 +131,8 @@ class SucursalesController extends MasterController
 
         Session::put(['id_empresa' => $request->id_empresa ]);
         $response = SysEmpresasModel::with(['sucursales' => function($query){
-            return $query->groupby('id');
-        }])->where(['id' => $request->id_empresa])->get();
-          #debuger($response);
+                 return $query->groupby('id');
+              }])->where(['id' => $request->id_empresa])->get();
          $sucursal = [];
          foreach ($response as $sucursales) {
             foreach ($sucursales->sucursales as $bussines) {
@@ -144,7 +143,28 @@ class SucursalesController extends MasterController
          }
          $data['sucursales'] = $sucursal;
          return message( true, $data , "¡Listado de sucursales de la empresa!" );
-          
+         #return view( 'administracion.configuracion.lista_sucursales' ,$data);
+
+        //  $registros = [];
+        //  foreach ($data as $respuesta) {
+        //    $id['id'] = $respuesta->id;
+        //    $portal = build_acciones_usuario($id,'portal','Ingresar','btn btn-primary','fa fa-edit');
+        //    $registros[] = [
+        //       $respuesta->id
+        //      ,$respuesta->sucursal
+        //      ,$respuesta->descripcion
+        //      #,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
+        //      ,$portal
+        //    ];
+        //  }
+         //
+        //  $titulos = [ 'ID','Sucursal','Descripción',''];
+        //  $table = [
+        //    'titulos' 		   => $titulos
+        //    ,'registros' 	 => $registros
+        //    ,'id' 			     => "data_table_sucursales"
+        //  ];
+
       }
       /**
        *Metodo para Cargar la vista de las sucursales por empresa.
@@ -167,8 +187,7 @@ class SucursalesController extends MasterController
           $sessions['id_sucursal']  = $request->id_sucursal;
           Session::put($sessions);
           $response = SysUsersModel::with(['menus' => function($query){
-             return $query->where(['sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa') ])
-                             ->groupBy('sys_rol_menu.id_users','sys_rol_menu.id_menu','sys_rol_menu.estatus');
+             return $query->where(['sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa') ])->groupBy('sys_rol_menu.id_users','sys_rol_menu.id_menu','sys_rol_menu.estatus');
            },'roles' => function( $query ){
                return $query->where(['sys_roles.estatus' => 1 ])
                              ->groupBy('sys_users_roles.id_users','sys_users_roles.id_rol');
