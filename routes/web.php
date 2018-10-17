@@ -971,6 +971,11 @@ Route::get('/ventas/cotizacion', [
         'uses' => 'Ventas\CotizacionController@destroy'
         ,'as' => 'cotizacion.destroy'
     ]);
+
+    Route::delete('/cotizacion/destroy/gen', [
+        'uses' => 'Ventas\CotizacionController@destroy_cotizacion'
+        ,'as' => 'cotizacion.destroy.gen'
+    ]);
     
     Route::get('/ventas/contactos', [
         'uses' => 'Ventas\CotizacionController@getbycontactos'

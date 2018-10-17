@@ -2,6 +2,7 @@ var url_insert  = "cotizacion/register";
 var url_update   = "cotizacion/update";
 var url_edit     = "cotizacion/edit";
 var url_destroy  = "cotizacion/destroy";
+var url_destroy_cont  = "cotizacion/destroy/gen";
 var url_all      = "cotizacion/all";
 var redireccion  = "ventas/cotizacion";
 
@@ -19,6 +20,9 @@ new Vue({
     fields: {},
     clients: {},
     products: {},
+    subtotal: '0',
+    iva: '0',
+    Total: '0',
 
   },
   mixins : [mixins],
@@ -29,11 +33,26 @@ new Vue({
         var fields = {id: jQuery('#id_concep_producto').val() };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          //console.log(response.data.result.concep);
+          console.log(response.data.result.concep);
           this.datos = response.data.result.concep;
           this.cotizacion = response.data.result.cotiz_general;
           //console.log(response.data.result.cotiz_general);
+          /* Calcular total de productos (conceptos)*/
+          var msgTotal = this.datos.reduce(function(prev, cur) {
+            return prev + cur.total;
+          }, 0);
+          var subt = msgTotal;
+          var iv = subt * 0.16;
+          var tol = subt + iv;
 
+          this.subtotal = subt.toFixed(2);
+          this.iva = iv.toFixed(2);
+          this.Total = tol.toFixed(2);
+
+          console.log('Subtotal:', this.subtotal);
+          console.log('Iva:', this.iva);
+          console.log('Total:', this.Total);
+          /*hasta aca*/
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -160,7 +179,27 @@ new Vue({
       // },"warning",true,["SI","NO"]);   
         //this.consulta_general();
     }
-    
+    ,destroy_cotizacion( id ){
+        var url = domain( url_destroy_cont );
+        var fields = {id : id.id_cotizacion };
+         buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+          var promise = MasterController.method_master(url,fields,"delete");
+          promise.then( response => {
+              toastr.success( response.data.message , title );
+              location.reload();
+              //this.consulta_general();
+          }).catch( error => {
+            
+              if( isset(error.response.status) && error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+      },"warning",true,["SI","NO"]);   
+        this.consulta_general();
+    }
     
   }
 

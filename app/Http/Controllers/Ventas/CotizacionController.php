@@ -360,7 +360,7 @@
 
         }
         /**
-        * Metodo para borrar el registro
+        * Metodo para borrar el registro producto (concepto)
         * @access public
         * @param Request $request [Description]
         * @return void
@@ -372,6 +372,42 @@
             try {
                 SysConceptosCotizacionesModel::where(['id' => $request->id])->delete();
                 $response = SysUsersCotizacionesModel::where('id_concepto',$request->input('id'))->delete();
+
+            DB::commit();
+            $success = true;
+            } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+            }
+
+            if ($success) {
+            return $this->_message_success( 201, $response , self::$message_success );
+            }
+            return $this->show_error(6, $error, self::$message_error );
+
+        }
+                /**
+        * Metodo para borrar el registro cotizacion
+        * @access public
+        * @param Request $request [Description]
+        * @return void
+        */
+        public function destroy_cotizacion ( Request $request ){
+            //debuger($request->all());
+            $error = null;
+            DB::beginTransaction();
+            try {
+                $id = SysUsersCotizacionesModel::select('id_concepto')->where('id_cotizacion',$request->input('id'))->get();
+                //debuger($id);
+                foreach ($id as $value) {
+                    $v=    $value->id_concepto;
+                    SysConceptosCotizacionesModel::where(['id' => $v])->delete();
+                }
+    
+                SysUsersCotizacionesModel::where('id_cotizacion',$request->input('id'))->delete();
+
+                $response = SysCotizacionModel::where(['id' => $request->id])->delete();
 
             DB::commit();
             $success = true;

@@ -140,15 +140,15 @@
                                     </tr>            
                                     <tr>
                                         <td class="text-right" colspan="4" >SUBTOTAL </td>
-                                        <td class="text-right" id="subtotal" style="background-color:#eee">  </td>
+                                        <td class="text-right" id="subtotal" style="background-color:#eee"> @{{ subtotal }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
-                                        <td class="text-right" id="iva" style="background-color:#eee"> </td>
+                                        <td class="text-right" id="iva" style="background-color:#eee"> @{{ iva }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-right" colspan="4">TOTAL </td>
-                                        <td class="text-right" id="total" style="background-color:#eee"></td>
+                                        <td class="text-right" id="total" style="background-color:#eee"> @{{ Total }} </td>
                                     </tr>
 
                                 </tbody></table>
@@ -297,18 +297,18 @@
                                 <label for="condiciones" class="col-md-2 control-label">Forma de pago:</label>
                                 <div class="col-md-3">
 
-                                    {!! $formas_pagos !!}
+                                    <!-- {!! $formas_pagos !!} -->
                                 </div>
                                 <label for="validez" class="col-md-1 control-label">Método de pago:</label>
                                 <div class="col-md-2">
 
-                                    {!! $metodos_pagos !!}
+                                    <!-- {!! $metodos_pagos !!} -->
                                 </div>
 
                                 <label for="validez" class="col-md-1 control-label">Estatus:</label>
                                 <div class="col-md-3">
 
-                                    {!! $estatus !!}
+                                    <!-- {!! $estatus !!} -->
                                 </div>
 
                             </div>
@@ -316,12 +316,12 @@
                             <div class="form-group row">
                                 <label for="condiciones" class="col-md-2 control-label">Descripción:</label>
                                 <div class="col-md-6">
-                                    <textarea class="form-control" id="observaciones" name="observaciones"></textarea>
+                                    <textarea class="form-control" id="observaciones_edit" name="observaciones"></textarea>
                                 </div>
                                 
                                 <label for="moneda" class="col-md-1 control-label">Moneda:</label>
                                 <div class="col-md-3">
-                                    {!! $monedas !!}
+                                    <!-- {!! $monedas !!} -->
                                 </div>
                                 
                             </div>

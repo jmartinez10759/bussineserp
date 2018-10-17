@@ -63,13 +63,13 @@
 
 							<tr v-for="cot in cotizacion">
 								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.codigo }}
-									<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>
+									<!--<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>-->
 								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.created_at }}</td>
 								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
 								<td>@{{ cot.nombre_comercial }}</td>
 								<td>@{{ cot.vendedor }}</td>
-								<!-- <td><span class="label label-danger">@{{ cot.nombre }}</span></td> -->
-								<td>{!! $estatus_inicio !!}</td>
+								<td><span class="label label-danger">@{{ cot.nombre }}</span></td>
+								<!-- <td>{!! $estatus_inicio !!}</td> -->
 								<!-- <td class="text-right">	</td>
 								<td class="text-right"> </td>
 								<td class="text-right"> @{{ cot.total }}</td> -->
@@ -84,7 +84,7 @@
 											<li><a style="cursor: pointer;" title="Editar cotización" onclick="fancy_click();"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
 											<li {{$permisos}}><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
 											<li {{$permisos}}><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" onclick="eliminar('253')"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
+											<li><a href="#" title="Borrar cotización" v-on:click.prevent="destroy_cotizacion(cot)"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
 										</ul>
 									</div>
 								</td>					
@@ -251,7 +251,7 @@ function display_planes(){
 function display_estatus_select(){
 	var id_estatus = jQuery('#cmb_estatus_inicio').val();
 	var id_cot = jQuery('#id_cot').val();
-	
+
 	//var url = domain('ventas/planes');
 	var url = domain('cotizaciones/update');
 	var fields = {id : id_estatus};
