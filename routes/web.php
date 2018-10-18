@@ -811,7 +811,7 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'ventas.pedidos'
         ]);
         
-        Route::get('/ventas/all', [
+        Route::get('/pedidos/all', [
             'uses'      => 'Ventas\PedidosController@all'
             ,'as'       => 'pedidos.all'
         ]);

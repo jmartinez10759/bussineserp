@@ -3,7 +3,7 @@ var url_update   = "pedidos/update";
 var url_edit     = "pedidos/edit";
 var url_destroy  = "pedidos/destroy";
 var url_all      = "pedidos/all";
-var redireccion  = "configuracion/pedidos";
+var redireccion  = "ventas/pedidos";
 var url_edit_clientes  = "clientes/edit";
 var url_edit_contactos  = "contactos/edit";
 var url_edit_productos  = "productos/edit";
@@ -20,6 +20,7 @@ new Vue({
     update: {},
     edit: {},
     fields: {},
+    conceptos: {},
 
   },
   mixins : [mixins],
@@ -29,8 +30,7 @@ new Vue({
         var fields = {};
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
-              
+              this.datos = response.data.result;
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -40,14 +40,73 @@ new Vue({
                 toastr.error( error.result , expired );  
           });
     }
+    ,consulta_conceptos( id ){
+        var url = domain( url_edit );
+        var fields = {id : id };
+        var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+              jQuery('#id_pedido').val(id);
+              this.conceptos = response.data.result.pedidos.conceptos;
+              jQuery('#subtotal').text(response.data.result.subtotal);
+              jQuery('#iva').text(response.data.result.iva);
+              jQuery('#total').text(response.data.result.total);
+
+              jQuery('#subtotal_').val(response.data.result.subtotal_);
+              jQuery('#iva_').val(response.data.result.iva_);
+              jQuery('#total_').val(response.data.result.total_);
+              this.consulta_general();
+          }).catch( error => {
+              if( isset(error.response) && error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+              }
+                toastr.error( error.result , expired );  
+          });
+        
+    }
     ,insert_register(){
         var url = domain( url_insert );
-        var fields = {};
+        this.insert.pedidos = {
+            id                : jQuery('#id_pedido').val()
+           ,id_cliente        : jQuery('#cmb_clientes').val()
+           ,id_contacto       : jQuery('#cmb_contactos').val()
+           ,id_forma_pago     : jQuery('#cmb_formas_pagos').val() 
+           ,id_metodo_pago    : jQuery('#cmb_metodos_pagos').val() 
+           ,id_estatus        : jQuery('#cmb_estatus_form').val()
+           ,id_moneda         : jQuery('#cmb_monedas').val()
+           ,descripcion       : jQuery('#observaciones').val()
+           ,iva               : jQuery('#iva_').val().replace(',',"")
+           ,subtotal          : jQuery('#subtotal_').val().replace(',',"")
+           ,total             : jQuery('#total_').val().replace(',',"")
+        };
+
+        this.insert.conceptos = {
+           id_producto        : jQuery('#cmb_productos').val()
+           ,id_plan           : jQuery('#cmb_planes').val()
+           ,cantidad          : jQuery('#cantidad_concepto').val() 
+           ,precio            : jQuery('#precio_concepto').val() 
+           ,total             : jQuery('#total_concepto').val()
+        };
+
+        if(this.insert.conceptos.precio == 0 || this.insert.conceptos.precio == ""){
+            return toastr.error('Debe de Ingresar al menos un concepto al pedido','Tabla Conceptos');
+        }
+
+        var fields = {
+          pedidos : this.insert.pedidos
+          ,conceptos : this.insert.conceptos
+        };
+
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
-          
-              toastr.success( response.data.message , title );
-              
+              jQuery.fancybox.close({
+                  'type'      : 'inline'
+                  ,'src'      : "#modal_conceptos"
+                  ,'buttons'  : ['share', 'close']
+              });
+              this.consulta_conceptos( response.data.result.id );
+              //this.consulta_general();
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -79,8 +138,12 @@ new Vue({
         var fields = {id : id };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
-              toastr.success( response.data.message , title );
+              jQuery('#id_pedido').val(id);
+              jQuery('#cm').val(id);
+              jQuery('#id_pedido').val(id);
+              jQuery('#id_pedido').val(id);
+              jQuery('#id_pedido').val(id);
+              //toastr.success( response.data.message , title );
               
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
@@ -99,6 +162,7 @@ new Vue({
           var promise = MasterController.method_master(url,fields,"delete");
           promise.then( response => {
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion));
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 

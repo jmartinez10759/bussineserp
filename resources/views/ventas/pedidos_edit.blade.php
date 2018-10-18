@@ -1,6 +1,6 @@
+
 <div id="modal_add_register" style="display:none;" class="col-sm-12">
-    <input type="hidden" id="id_factura" />
-    <input type="hidden" id="id_concep_producto">
+    <input type="text" id="id_pedido">
     <h3>Registro de Pedidos</h3>
     <hr>
 
@@ -90,7 +90,7 @@
 
             <div class="table-responsive" style="overflow-y:scroll; height:200px;">
 
-                <table class="table table-hover">
+                <table class="table table-hover" id="table_concepts">
                     <thead>
                         <tr style="background-color: #337ab7; color: #ffffff;">
                             <th class="text-center">CÓDIGO</th>
@@ -103,14 +103,14 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td></td>
-                            <td class="text-right"></td>
-                            <td class="text-right"></td>
+                        <tr v-for="(concepto,key) in conceptos">
+                            <td class="text-center">@{{ (concepto.id_producto == 0)? concepto.planes.codigo :concepto.productos.codigo}}</td>
+                            <td class="text-center">@{{concepto.cantidad}}</td>
+                            <td>@{{ (concepto.id_producto == 0)? concepto.planes.descripcion :concepto.productos.descripcion }} </td>
+                            <td class="text-right"> @{{concepto.precio}} </td>
+                            <td class="text-right"> @{{concepto.total}}</td>
                             <td class="text-center">
-                                <a href="#" v-on:click.prevent="destroy_concepto()">
+                                <a href="#" v-on:click.prevent="destroy_concepto(concepto.id)">
                                     <i class="glyphicon glyphicon-trash"></i>
                                 </a>
                             </td>
@@ -121,15 +121,18 @@
                     <tfoot>
                         <tr>
                             <td class="text-right" colspan="4">SUBTOTAL </td>
-                            <td class="text-right" id="subtotal" style="background-color:#eee"> </td>
+                            <td class="text-right" id="subtotal" style="background-color:#eee">$ 0.00</td>
+                            <input type="hidden" id="subtotal_">
                         </tr>
                         <tr>
                             <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
-                            <td class="text-right" id="iva" style="background-color:#eee"> </td>
+                            <td class="text-right" id="iva" style="background-color:#eee">$ 0.00</td>
+                            <input type="hidden" id="iva_">
                         </tr>
                         <tr>
                             <td class="text-right" colspan="4">TOTAL </td>
-                            <td class="text-right" id="total" style="background-color:#eee"></td>
+                            <td class="text-right" id="total" style="background-color:#eee">$ 0.00</td>
+                            <input type="hidden" id="total_">
                         </tr>
                     </tfoot>
 
@@ -152,7 +155,6 @@
     </div>
 
 </div>
-
 
 <div class="" id="modal_conceptos" style="display:none;">
     <div class="modal-dialog">
@@ -208,7 +210,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-info" v-on:click.prevent="insert_productos()" {{$insertar}}><i class="fa fa-save"></i> Agregar </button>
+                    <button type="button" class="btn btn-info" v-on:click.prevent="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Agregar </button>
                 </div>
             </div>
 

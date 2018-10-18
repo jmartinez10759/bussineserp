@@ -36,4 +36,9 @@ class SysPlanesModel extends Model
       return $this->hasOne('App\Model\Administracion\Configuracion\SysUnidadesMedidasModel', 'id', 'id_unidadmedida');
     }
     
+    public function conceptos(){
+      return $this->belongsTo('App\Model\Ventas\SysConceptosPedidosModel', 'id', 'id_plan');
+    }
+
+
 }

@@ -50,5 +50,10 @@ class SysProductosModel extends Model
     public function sucursales(){
       return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel', 'sys_planes_productos', 'id_producto', 'id_sucursal');
     }
+
+    public function conceptos(){
+      return $this->belongsTo('App\Model\Ventas\SysConceptosPedidosModel', 'id', 'id_producto');
+    }
+
     
 }

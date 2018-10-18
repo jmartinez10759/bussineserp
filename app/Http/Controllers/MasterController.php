@@ -278,7 +278,8 @@ abstract class MasterController extends Controller
 		}
 		#debuger($notificaciones	);
 		$parse['MENU_DESKTOP'] 			= self::menus( $response );
-		$parse['APPTITLE'] 				= utf8_decode( self::$_titulo );
+		self::$_titulo = (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial) )? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial: "Empresa No Asignada";
+		$parse['APPTITLE'] 				= utf8_decode( ucwords( strtolower(self::$_titulo) )  );
 		$parse['IMG_PATH']  			= domain().'images/';
 		$parse['anio']					= date('Y');
 		$parse['version']				= "2.0.1";
@@ -357,15 +358,14 @@ abstract class MasterController extends Controller
         $response = self::$_model::update_model( $where,$datos, $tabla_model );
         $condicion['api_token'] = ( $response )? $response[0]->api_token: null;
         $consulta = $tabla_model::with(['menus' => function($query){
-          return $query->where(['sys_rol_menu.estatus' => 1 ])
-          ->groupBy('sys_rol_menu.id_users','sys_rol_menu.id_menu','sys_rol_menu.estatus');
+          return $query->where(['sys_rol_menu.estatus' => 1 ])->groupBy('sys_rol_menu.id_users','sys_rol_menu.id_menu','sys_rol_menu.estatus');
         },'roles' => function( $query ){
-          return $query->where(['sys_roles.estatus' => 1 ])
-          ->groupBy('sys_users_roles.id_users','sys_users_roles.id_rol');
+          return $query->where(['sys_roles.estatus' => 1 ])->groupBy('sys_users_roles.id_users','sys_users_roles.id_rol');
         },'empresas' => function($query) {
-          return $query->where(['sys_empresas.estatus' => 1 ])
-          ->groupBy('id_users','id','nombre_comercial');
-        }])->where( $condicion )->get();
+          return $query->where(['sys_empresas.estatus' => 1 ])->groupBy('id_users','id','nombre_comercial');
+        },'sucursales' => function( $query ){
+			return $query->groupby('id');
+		}])->where( $condicion )->get();
         #debuger($consulta);
         if( count( $consulta ) > 0 ){
           $usuarios = data_march($consulta);
@@ -376,22 +376,18 @@ abstract class MasterController extends Controller
               $session[$key] = $value;
             }
           }
-          foreach ($consulta as $response) { $empresas = $response->empresas; }
+		  foreach ($consulta as $response) { $empresas = $response->empresas; }
+		  #debuger(count($response->empresas));
           #se realiza la consulta a la tabla ralacional.
-          if( count( $empresas ) > 0 ){
+          if( count( $empresas ) > 1 ){
             Session::put( $session );
             self::_bitacora();
             $session['ruta'] = 'list/empresas';
             return $this->_message_success(200,$session,'¡Usuario inicio Sesion Correctamente!' );
           }
-          $where = [
-            'id_users'     => $session['id']
-            ,'id_empresa'  => 0
-            ,'id_sucursal' => 0
-          ];
-          $sessions['id_empresa'] = 0;
-          $sessions['id_sucursal'] = 0;
-          $sessions['id_rol'] = isset($consulta[0]->roles[0]->id)? $consulta[0]->roles[0]->id : "";
+          $sessions['id_empresa'] 	= isset($consulta[0]->empresas[0]->id) ? $consulta[0]->empresas[0]->id : 0;
+          $sessions['id_sucursal'] 	= isset($consulta[0]->sucursales[0]->id)? $consulta[0]->sucursales[0]->id : 0;
+          $sessions['id_rol'] 		= isset($consulta[0]->roles[0]->id)? $consulta[0]->roles[0]->id : "";
           $ruta = self::data_session( $consulta[0]->menus );
           $sesiones = array_merge($sessions,$ruta);
           if( count($consulta[0]->menus) < 1 ){
@@ -405,7 +401,7 @@ abstract class MasterController extends Controller
         return $this->show_error(6,$consulta,'¡Por favor verificar la información ingresada!');
     } catch (\Exception $e) {
         $success = false;
-        $error = $e->getMessage()." ".$e->getLine();
+        $error = $e->getFile() . " " . $e->getMessage() . " " . $e->getLine();
         return $this->show_error(6,$error);
         #$error = $e->getFile()." ".$e->getMessage()." ".$e->getLine();
     }
@@ -514,15 +510,15 @@ abstract class MasterController extends Controller
 		 #debuger($tags);
 		 $data = [
 				'page_title' 	      => "Correos"
-				,'title'  		      	=> $titulos
-				,'subtitle' 	      	=> $titulos
+				,'title'  		      => $titulos
+				,'subtitle' 	      => $titulos
 				,'correo' 	      	  => $email
 				,'correos' 	      	  => $datos_correo
-				,'papelera' 	      	=> $tash
+				,'papelera' 	      => $tash
 				,'destacados' 	      => $destacado
-				,'categoria' 	        => $tags
+				,'categoria' 	      => $tags
 				,'categorias' 	      => $categorias
-				,'enviados' 	        => $send
+				,'enviados' 	      => $send
 				,'borradores' 	      => $drafts
 				,'titulo' 	          => $titulos
 				,'campo_1' 	          => "Categoria"
@@ -530,7 +526,7 @@ abstract class MasterController extends Controller
 				,'select_estados' 	  => $estados
 
 			];
-			#ddebuger( Session::get('permisos') );
+			#debuger($data);
 			return $data;
 
 	}

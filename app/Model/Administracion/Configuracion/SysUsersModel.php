@@ -72,5 +72,13 @@ class SysUsersModel extends Model
         return $this->belongsToMany(SysClientesModel::class,'sys_users_facturacion','id_users','id_cliente');
     }
 
+    public function pedidos(){
+        return $this->belongsToMany('App\Model\Ventas\SysPedidosModel','sys_users_pedidos','id_users','id_pedido');
+    }
+
+    public function cotizaciones(){
+        return $this->belongsToMany('App\Model\Ventas\SysCotizacionesModel','sys_users_cotizaciones','id_users','id_cotizacion');
+    }
+
 
 }

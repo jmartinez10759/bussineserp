@@ -6,6 +6,10 @@
     use App\Model\Ventas\SysPedidosModel;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
+    use App\Model\Ventas\SysUsersPedidosModel;
+    use App\Model\Ventas\SysConceptosPedidosModel;
+    use App\Model\Administracion\Configuracion\SysUsersModel;
+    use App\Model\Administracion\Configuracion\SysEmpresasModel;
     use App\Model\Administracion\Configuracion\SysPlanesModel;
     use App\Model\Administracion\Configuracion\SysMonedasModel;
     use App\Model\Administracion\Configuracion\SysEstatusModel;
@@ -30,7 +34,10 @@
         *@return void
         */
         public function index(){
-            
+            if (Session::get("permisos")["GET"]) {
+                return view("errors.error");
+            }
+            #debuger(Session::all());
             $cmb_estatus = dropdown([
                 'data'       => SysEstatusModel::wherein('id',[5,4,6])->get()
                 ,'value'     => 'id'
@@ -228,7 +235,23 @@
 
             try {
 
+                if( Session::get('id_rol') == 1 ){
+                    $response = $this->_tabla_model::with(['clientes','contactos','usuarios','estatus'])->orderby('id','desc')->get();
+                }
+                if( Session::get('id_rol') == 3 ){
+                    
+                    $response = $data = SysEmpresasModel::with(['pedidos' => function($query){
+                        return $query->with(['clientes','contactos','usuarios','estatus'])->groupby('id')->orderby('id','desc');
+                    }])->where(['id' => Session::get('id_empresa')])->get();
+                    $response = $data[0]->pedidos;
 
+                }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
+                    $data = SysUsersModel::with(['pedidos' => function($query){
+                        return $query->with(['clientes','contactos','usuarios','estatus'])->orderby('id','desc');
+                    }])->where(['id' => Session::get('id')])->get();
+                    $response = $data[0]->pedidos;
+                }
+                #debuger($response);
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -245,9 +268,22 @@
         public function show( Request $request ){
 
             try {
-
-
-            return $this->_message_success( 201, $response , self::$message_success );
+                $response = $this->_tabla_model::with(['conceptos'=>function($query){
+                    return $query->with(['productos','planes']);
+                },'clientes','contactos'])->where(['id' => $request->id])->get();
+                $subtotal  = $response[0]->conceptos->sum('total');
+                $iva       = $subtotal * Session::get('iva') / 100;
+                $total     = ($subtotal + $iva);
+             $data = [
+                'pedidos'   => $response[0]
+                ,'subtotal' => format_currency($subtotal,2)
+                ,'iva'      => format_currency($iva,2)
+                ,'total'    => format_currency($total,2)
+                ,'subtotal_' => number_format($subtotal,2)
+                ,'iva_'      => number_format($iva,2)
+                ,'total_'    => number_format($total,2)
+             ];
+            return $this->_message_success( 200, $data , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -265,7 +301,32 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $data = [];
+                $key_value = ['id'];
+                foreach ($request->pedidos as $key => $value) {
+                    if( !in_array($key, $key_value)){
+                        $data[$key] = strtoupper($value);
+                    }
+                }
+                #debuger($request->all());
+                if ( $request->pedidos['id'] == "" ) {
+                    $response_pedido = $this->_tabla_model::create($data);
+                }else{
+                    $this->_tabla_model::where(['id' => $request->pedidos['id']])->update($request->pedidos);
+                    $response_pedido = $this->_tabla_model::where(['id' => $request->pedidos['id']])->get()[0];
+                }
+                $response_conceptos = SysConceptosPedidosModel::create( $request->conceptos );
+                $datos = [
+                   'id_users'       => Session::get('id')
+                  ,'id_rol'         => Session::get('id_rol')
+                  ,'id_empresa'     => Session::get('id_empresa')
+                  ,'id_sucursal'    => Session::get('id_sucursal')
+                  ,'id_menu'        => 28
+                  ,'id_pedido'      => $response_pedido->id
+                  ,'id_concepto'    => $response_conceptos->id
+                ];
+                #debuger($datos);
+                SysUsersPedidosModel::create($datos);
 
             DB::commit();
             $success = true;
@@ -276,7 +337,7 @@
             }
 
             if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 201, $response_pedido , self::$message_success );
             }
             return $this->show_error(6, $error, self::$message_error );
 
@@ -293,8 +354,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
-
+                
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -320,7 +380,12 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = $this->_tabla_model::where(['id' => $request->id])->delete();
+                $conceptos =  SysUsersPedidosModel::where(['id_pedido' => $request->id])->get();
+                for ($i=0; $i < count($conceptos); $i++) { 
+                    SysConceptosPedidosModel::where(['id' => $conceptos[$i]->id_concepto])->delete();
+                }
+                SysUsersPedidosModel::where(['id_pedido' => $request->id])->delete();
 
             DB::commit();
             $success = true;

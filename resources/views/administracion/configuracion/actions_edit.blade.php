@@ -1,5 +1,5 @@
 <div class="modal fade" id="modal_edit_register" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
@@ -16,7 +16,7 @@
 							<label class="col-sm-3 control-label">{{$campo_1}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" style="text-transform: capitalize;" v-model="fillKeep.clave_corta">
+							<input type="text" class="form-control" style="text-transform: capitalize;" v-model="fillKeep.clave_corta" readonly>
 						</div>
 					</div>
 
@@ -46,7 +46,7 @@
 			</div>
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
-          <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
+          			<button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
 					<button type= "button" class="btn btn-info" v-on:click.prevent="update()" ><i class="fa fa-save"></i> Actualizar</button>
 				</div>
 			</div>
@@ -54,12 +54,10 @@
 	</div>
 </div>
 
-<div class="" id="modal_add_register" role="dialog" aria-hidden="true" style="display:none;">
-	<div class="modal-dialog modal-lg">
+<div class="" id="modal_add_register" style="display:none;">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
-				</button>
 				<h3>{{$titulo_modal}}</h3>
 			</div>
 
@@ -102,7 +100,7 @@
 			</div>
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
-					<button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
+					<button type= "button" class="btn btn-danger" data-fancybox-close><i class="fa fa-times-circle"></i> Cancelar</button>
 					<button type= "button" class="btn btn-primary" v-on:click.prevent="insert()" ><i class="fa fa-save"></i> Registrar</button>
 				</div>
 			</div>

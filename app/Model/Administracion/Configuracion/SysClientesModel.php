@@ -49,6 +49,10 @@ class SysClientesModel extends Model
     public function sucursales(){
       return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_empresas_sucursales','id_cliente','id_sucursal');
     }
+
+    public function pedidos(){
+        return $this->belongsTo('App\Model\Ventas\SysPedidosModel','id','id_cliente');
+    }
     
 
 }

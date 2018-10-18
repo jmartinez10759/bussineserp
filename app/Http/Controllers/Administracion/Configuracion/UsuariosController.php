@@ -18,7 +18,7 @@ use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
 use App\Model\Administracion\Facturacion\SysFacturacionModel;
-use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
+use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Facturacion\SysParcialidadesFechasModel;
 use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
 
@@ -464,7 +464,7 @@ class UsuariosController extends MasterController
      */
     private static function _empresas( $id_sucursal ){
         $where = [ 'id_sucursal' => $id_sucursal,'estatus' => 1];
-        $empresa =  SysEmpresasSecursalesModel::select('id_empresa')->where( $where )->get();
+        $empresa = SysEmpresasSucursalesModel::select('id_empresa')->where( $where )->get();
         return isset($empresa[0]->id_empresa)?$empresa[0]->id_empresa: 0;
     }
 

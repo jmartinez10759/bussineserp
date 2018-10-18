@@ -10,7 +10,7 @@
   <section class="content">
     <div class="row">
       <div class="col-md-3">
-        <a href="{{route('correos.redactar')}}" class="btn btn-primary btn-block margin-bottom {{$emails_permisos}}" {{$emails_permisos}}>Redactar</a>
+        <a href="{{route('correos.redactar')}}" class="btn btn-primary btn-block margin-bottom" {{$email}}>Redactar</a>
 
         <div class="box box-solid">
           <div class="box-header with-border">
@@ -84,7 +84,7 @@
               <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
               </button>
               <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm btn-papelera {{$destroy}}" {{$destroy}} v-on:click.prevent="estatus_papelera()" ><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} v-on:click.prevent="estatus_papelera()" ><i class="fa fa-trash-o"></i></button>
                 <!-- <button type="button" class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button> -->
                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_categorias" title="Agregar categoria"><i class="fa fa-bars"></i></button>
                 <button type="button" class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
@@ -104,7 +104,8 @@
             <div class="table-responsive mailbox-messages">
               <table class="table table-hover table-striped" id="bandeja_correos">
                 <tbody>
-              @foreach($correos as $correo)
+            {{print_r($correos)}}
+              @foreach($correo as $correo)
                 @if($correo->estatus_vistos == 0)
                   <tr style="cursor:pointer; font-weight: bold;" class="info" id_email="{{$correo->id}}">
                 @else
@@ -133,12 +134,11 @@
                     <button type="button" class="btn btn-success btn-sm" title="Orden de Servicio" v-on:click.prevent="modal_show({{$correo->id}},'')"><i class="fa fa-exchange"></i></button>
                   </td> -->
                   <td class="">
-                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" v-on:click.prevent="estatus_papelera({{$correo->id}})" {{$destroy}} ><i class="fa fa-trash"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" v-on:click.prevent="estatus_papelera({{$correo->id}})" {{$eliminar}} ><i class="fa fa-trash"></i></button>
                   </td>
                 </tr>
 
               @endforeach
-
 
                 </tbody>
               </table>
@@ -153,7 +153,7 @@
               <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
               </button>
               <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm btn-papelera {{$destroy}}" {{$destroy}} v-on:click.prevent="estatus_papelera()"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} v-on:click.prevent="estatus_papelera()"><i class="fa fa-trash-o"></i></button>
                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_categorias" title="Agregar categoria"><i class="fa fa-bars"></i></button>
                 <button type="button" class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
               </div>
@@ -216,7 +216,7 @@
         </div>
         <div class="modal-footer">
           <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
-					<button type= "button" class="btn btn-primary" v-on:click.prevent="insert_categorias()" {{$insert}} ><i class="fa fa-save"></i> Registrar </button>
+					<button type= "button" class="btn btn-primary" v-on:click.prevent="insert_categorias()" {{$insertar}} ><i class="fa fa-save"></i> Registrar </button>
         </div>
       </div>
 
