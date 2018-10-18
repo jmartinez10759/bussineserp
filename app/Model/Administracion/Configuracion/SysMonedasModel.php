@@ -13,4 +13,8 @@ class SysMonedasModel extends Model
         ,'descripcion'
         ,'estatus'
       ];
+
+      public function pedidos(){
+        return $this->belongsTo('App\Model\Ventas\SysPedidosModel','id_moneda','id');
+      }
 }

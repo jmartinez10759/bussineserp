@@ -45,7 +45,7 @@
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
 					<button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
-					<button type= "button" class="btn btn-primary" v-on:click.prevent="insert_notas()" {{$insert}}><i class="fa fa-save"></i> Registrar</button>
+					<button type= "button" class="btn btn-primary" v-on:click.prevent="insert_notas()" {{$insertar}}><i class="fa fa-save"></i> Registrar</button>
 				</div>
 			</div>
 		</div>
@@ -136,7 +136,7 @@
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
 					<button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
-					<button type= "button" class="btn btn-primary" v-on:click.prevent="insert_cita()" {{$insert}}><i class="fa fa-save"></i> Registrar</button>
+					<button type= "button" class="btn btn-primary" v-on:click.prevent="insert_cita()" {{$insertar}}><i class="fa fa-save"></i> Registrar</button>
 				</div>
 			</div>
 		</div>

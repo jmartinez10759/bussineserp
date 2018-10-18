@@ -30,7 +30,7 @@ class CorreoController extends MasterController
      public static function index(){
 
          $data = self::page_mail();
-         #ddebuger($data);
+         #debuger( count($data['correos']) );
          return self::_load_view('administracion.correos.recibidos',$data);
 
      }

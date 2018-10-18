@@ -67,6 +67,9 @@ class SysEmpresasModel extends Model
         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel', 'sys_empresas_sucursales', 'id_empresa', 'id_cliente');
   }
 
+  public function pedidos(){
+        return $this->belongsToMany('App\Model\Ventas\SysPedidosModel','sys_users_pedidos','id_empresa','id_pedido');
+    }
 
 
 }

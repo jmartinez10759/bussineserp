@@ -43,8 +43,8 @@
                         <th>Fecha</th>
                         <th>Contacto</th>
                         <th>Cliente</th>
-                        <th>Ejecutivo</th>
-                        <th>Estado</th>
+                        <!-- <th>Ejecutivo</th> -->
+                        <th>Estatus</th>
                         <th class="text-right">Subtotal</th>
                         <th class="text-right">Iva</th>
                         <th class="text-right">Total</th>
@@ -53,16 +53,16 @@
                 </thead>
                 <tbody>
 
-                    <tr>
-                        <td>2517</td>
-                        <td >01/08/2018</td>
-                        <td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="444 444@44.44">444</a></td>
-                        <td>Obed Alvarado</td>
-                        <td>Obed Alvarado</td>
-                        <td><span class="label label-success">Pagada</span></td>
-                        <td class="text-right">184.76</td>
-                        <td class="text-right">184.76</td>
-                        <td class="text-right">184.76</td>
+                    <tr v-for="data in datos">
+                        <td>000@{{data.id}}</td>
+                        <td>@{{data.created_at}}</td>
+                        <td>@{{(data.id_contacto != 0)? data.contactos.nombre_completo:"" }}</td>
+                        <td>@{{(data.id_cliente != 0)?data.clientes.nombre_comercial:"" }}</td>
+                        <!-- <td>@{{data.usuarios[0].name}}</td> -->
+                        <td><span class="label label-warning">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span></td>
+                        <td class="text-right">@{{data.subtotal}}</td>
+                        <td class="text-right">@{{data.iva}}</td>
+                        <td class="text-right">@{{data.total}}</td>
                         <td class="text-right">
                             <div class="dropdown">
                                 <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -71,7 +71,7 @@
                                 </button>
                                 <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
                                     <li>
-                                        <a title="Editar" style="cursor:pointer;">
+                                        <a title="Editar" style="cursor:pointer;" v-on:click.prevent="edit_register(data.id)">
                                             <i class="glyphicon glyphicon-edit"></i> Editar
                                         </a>
                                     </li>
@@ -86,7 +86,7 @@
                                         </a>
                                     </li>
                                     <li {{$eliminar}}>
-                                        <a style="cursor:pointer;" title="Borrar" v-on:click.prevent="destroy_register()" >
+                                        <a style="cursor:pointer;" title="Borrar" v-on:click.prevent="destroy_register(data.id)" >
                                             <i class="glyphicon glyphicon-trash"></i> Eliminar
                                         </a>
                                     </li>

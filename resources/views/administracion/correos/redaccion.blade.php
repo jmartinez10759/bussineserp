@@ -28,7 +28,7 @@
         <div class="box-footer">
           <div class="pull-right">
             <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
-            <button type="button" class="btn btn-primary" v-on:click.prevent="send_correo()" {{$emails_permisos}}><i class="fa fa-envelope-o"></i> Enviar</button>
+            <button type="button" class="btn btn-primary" v-on:click.prevent="send_correo()" {{$email}}><i class="fa fa-envelope-o"></i> Enviar</button>
           </div>
           <!-- <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Discard</button> -->
         </div>

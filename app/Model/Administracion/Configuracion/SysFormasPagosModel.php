@@ -13,4 +13,8 @@ class SysFormasPagosModel extends Model
     ,'descripcion'
   ];
 
+  	public function pedidos(){
+        return $this->belongsTo('App\Model\Ventas\SysPedidosModel','id_forma_pago','id');
+    }
+
 }
