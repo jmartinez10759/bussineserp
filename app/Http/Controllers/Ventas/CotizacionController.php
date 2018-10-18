@@ -242,7 +242,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-                //debuger($request->cotizacion['id_cliente']);
+                //debuger($request->cotizacion['Total']['iva']);
                 
                 $cotizaciones = [
                     'codigo'         => isset($request->cotizacion['codigo'])?$request->cotizacion['codigo']:null
@@ -258,20 +258,31 @@
 
                 //$cotizacion = SysCotizacionModel::create($cotizaciones);
                 
-                    $conceptos_cotizaciones = [
+                $conceptos_cotizaciones = [
                     'id_producto'   => isset($request->conceptos['id_producto'])?$request->conceptos['id_producto']:0
                     ,'id_plan'      => isset($request->conceptos['id_plan'])?$request->conceptos['id_plan']:0
-                    ,'cantidad'      => isset($request->conceptos['cantidad'])?$request->conceptos['cantidad']:3
+                    ,'cantidad'     => isset($request->conceptos['cantidad'])?$request->conceptos['cantidad']:3
                     ,'precio'       => isset($request->conceptos['precio'])?$request->conceptos['precio']:0
                     ,'total'        => isset($request->conceptos['total'])?$request->conceptos['total']:0
                 ];
 
+                $subtotal = $conceptos_cotizaciones['total'];
+                $iv = Session::get('iva') / 100;
+                $iva = $subtotal * $iv;
+
+                $totales = [
+                     'iva'          => $this->truncarDecimales($iva,2)
+                    ,'subtotal'      => $this->truncarDecimales($subtotal,2)
+                    ,'total'        => $this->truncarDecimales($subtotal + $iva,2)
+                ];
+                
                 //$sys_conceptos = SysConceptosCotizacionesModel::create($conceptos_cotizaciones);
                 
                 $id = $request->cotizacion['id_concep_producto'];
                 //debuger($id);
                 if($id == "" || $id == null){
                     $cotizacion = SysCotizacionModel::create($cotizaciones);
+                    SysCotizacionModel::where('id',$cotizacion->id)->update($totales);
                     $sys_conceptos = SysConceptosCotizacionesModel::create($conceptos_cotizaciones);
 
                        $user_co = [
@@ -287,6 +298,11 @@
 
                 } else {
                     $cotizacion                 = SysCotizacionModel::FindOrFail($id);
+
+                    $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;
+                    $iv = Session::get('iva') / 100;
+                    $iva = $subtotal * $iv;
+                    
                     $cotizacion->codigo         = $request->cotizacion['codigo'];
                     $cotizacion->descripcion    = $request->cotizacion['descripcion'];
                     $cotizacion->id_cliente     = $request->cotizacion['id_cliente'];
@@ -295,6 +311,9 @@
                     $cotizacion->id_metodo_pago = $request->cotizacion['id_metodo_pago'];
                     $cotizacion->id_forma_pago  = $request->cotizacion['id_forma_pago'];
                     $cotizacion->id_estatus     = $request->cotizacion['id_estatus'];
+                    $cotizacion->iva            = $this->truncarDecimales($iva,2);
+                    $cotizacion->subtotal       = $this->truncarDecimales($subtotal,2);
+                    $cotizacion->total          = $this->truncarDecimales($subtotal + $iva,2);
                     $cotizacion->save();
                     /*SysCotizacionModel::where()->update();
                     $cotizacion = SysCotizacionModel::where(['id' => $id])->get();
@@ -370,6 +389,29 @@
             $error = null;
             DB::beginTransaction();
             try {
+                /*Busco id cotizacion en users cotizacion referente al id concepto*/
+                $total = SysUsersCotizacionesModel::select('id_cotizacion')->where('id_concepto',$request->input('id'))->groupBy('id_cotizacion')->get();
+                foreach ($total as $value) {
+                    $dl=    $value->id_cotizacion;
+                }
+                /*Identifico id_cotizacion*/
+                $cot = SysCotizacionModel::where('id',$dl)->get();
+                foreach ($cot as $id_cot) {
+                    $getCotizacion=    $id_cot->subtotal;
+                }
+                /*Opetreaciones para restar*/
+                $subtotal = $getCotizacion-$request->input('total');
+                $iv = Session::get('iva') / 100;
+                $iva = $subtotal * $iv;
+
+                $totales = [
+                     'iva'          => $this->truncarDecimales($iva,2)
+                    ,'subtotal'      => $this->truncarDecimales($subtotal,2)
+                    ,'total'        => $this->truncarDecimales($subtotal + $iva,2)
+                ];
+                /*Update total.iva,subtotal*/
+                SysCotizacionModel::where('id',$dl)->update($totales);
+                /*Eliminacion cocepto*/
                 SysConceptosCotizacionesModel::where(['id' => $request->id])->delete();
                 $response = SysUsersCotizacionesModel::where('id_concepto',$request->input('id'))->delete();
 
@@ -516,5 +558,13 @@
             }
 
         }
+
+        public function truncarDecimales($numero, $digitos)
+        {
+            $truncar = 10**$digitos;
+            return intval($numero * $truncar) / $truncar;
+        }
+                 
+        
 
     }

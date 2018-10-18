@@ -16,6 +16,9 @@ class SysCotizacionModel extends Model
       		,'id_contacto'
       		,'condiciones_pago'
       		,'id_estatus'
+                  ,'iva'
+                  ,'subtotal'
+                  ,'total'
       ];
 
       public function conceptos(){

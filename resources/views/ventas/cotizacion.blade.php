@@ -5,7 +5,7 @@
 <div id="vue-cotizacion">
     				<div class="panel-body">
 				<form class="form-horizontal" role="form" id="datos_cotizacion">
-
+        			<input type="hidden" id="Iva" value="{{$iva}}">
 						<div class="form-group row">
 								<label for="daterange" class="col-md-1 control-label input-sm">Fecha</label>
 								<div class="col-md-3">

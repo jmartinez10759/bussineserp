@@ -20,10 +20,7 @@ new Vue({
     fields: {},
     clients: {},
     products: {},
-    subtotal: '0',
-    iva: '0',
-    Total: '0',
-
+    totales: {'iva': '', 'subtotal': '', 'Total': ''},
   },
   mixins : [mixins],
   methods:{
@@ -42,16 +39,17 @@ new Vue({
             return prev + cur.total;
           }, 0);
           var subt = msgTotal;
-          var iv = subt * 0.16;
+          var get_iva = jQuery('#Iva').val() / 100;
+          var iv = subt * get_iva;
           var tol = subt + iv;
 
-          this.subtotal = subt.toFixed(2);
-          this.iva = iv.toFixed(2);
-          this.Total = tol.toFixed(2);
+          this.totales.subtotal = myRound(subt);
+          this.totales.iva = myRound(iv);
+          this.totales.Total = myRound(tol);
 
-          console.log('Subtotal:', this.subtotal);
-          console.log('Iva:', this.iva);
-          console.log('Total:', this.Total);
+          console.log('Subtotal:', this.totales.subtotal);
+          console.log('Iva:', this.totales.iva);
+          console.log('Total:', this.totales.Total);
           /*hasta aca*/
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -75,6 +73,9 @@ new Vue({
                ,'id_estatus'    : jQuery('#cmb_estatus').val()
                ,'id_cliente'    : jQuery('#cmb_clientes').val()
                ,'id_concep_producto': jQuery('#id_concep_producto').val()
+               ,'iva'           : this.totales.iva
+               ,'subtotal'      : this.totales.subtotal
+               ,'Total'         : this.totales.Total
             },
             'conceptos': {
                  'id_producto'  : jQuery('#cmb_productos').val()
@@ -147,7 +148,7 @@ new Vue({
     }
     ,destroy_register( id ){
         var url = domain( url_destroy );
-        var fields = {id : id.id_concepto };
+        var fields = {id : id.id_concepto, total: id.total };
          var promise = MasterController.method_master(url,fields,"delete");
           promise.then( response => {
               toastr.success( response.data.message , title );
@@ -214,6 +215,11 @@ function clean_input_product() {
         jQuery('#descripcion').val('')
         //jQuery('#id_concep_producto').val(1)
     }
+function myRound(num, dec) {
+    var exp = Math.pow(10, dec || 2); // 2 decimales por defecto
+    return parseInt(num * exp, 10) / exp;
+}
+
 jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();
 

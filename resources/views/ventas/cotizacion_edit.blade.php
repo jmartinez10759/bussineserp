@@ -118,7 +118,10 @@
 
                             
                             <hr>    
-
+                        
+                            <input type="hidden" v-model="totales.subtotal" id="sub">
+                            <input type="hidden" v-model="totales.iva" id="iv">
+                            <input type="hidden" v-model="totales.Total" id="tol">
                             <div class="table-responsive">
 
                                 <table class="table">
@@ -140,15 +143,15 @@
                                     </tr>            
                                     <tr>
                                         <td class="text-right" colspan="4" >SUBTOTAL </td>
-                                        <td class="text-right" id="subtotal" style="background-color:#eee"> @{{ subtotal }} </td>
+                                        <td class="text-right" style="background-color:#eee"> @{{ totales.subtotal }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
-                                        <td class="text-right" id="iva" style="background-color:#eee"> @{{ iva }} </td>
+                                        <td class="text-right" style="background-color:#eee"> @{{ totales.iva }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-right" colspan="4">TOTAL </td>
-                                        <td class="text-right" id="total" style="background-color:#eee"> @{{ Total }} </td>
+                                        <td class="text-right" style="background-color:#eee"> @{{ totales.Total }} </td>
                                     </tr>
 
                                 </tbody></table>
