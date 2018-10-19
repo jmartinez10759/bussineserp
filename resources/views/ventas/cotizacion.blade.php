@@ -81,7 +81,7 @@
 											<span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a style="cursor: pointer;" title="Editar cotización" onclick="fancy_click();"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
+											<li><a style="cursor: pointer;" title="Editar cotización" v-on:click.prevent="edit_register(cot);"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
 											<li {{$permisos}}><a href="#" title="Imprimir cotización" onclick="descargar('312');"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
 											<li {{$permisos}}><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
 											<li><a href="#" title="Borrar cotización" v-on:click.prevent="destroy_cotizacion(cot)"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
@@ -271,6 +271,103 @@ function display_estatus_select(){
 
 }
 
+/*Funciones para editar*/
+function display_contactos_edit(id_clientes){
+	var id_clientes = jQuery('#cmb_clientes_edit').val();
+	var url = domain('ventas/contacto/edicion');
+	var fields = {id : id_clientes};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+          	var select_contactos = response.data.result;
+          	//console.log(response.data.result.correo);
+          	jQuery('#div_contacto_edit').html(select_contactos.combo_contactos);
+
+			$('#div_contacto').on('change', function() {
+			  	jQuery('#tel1_edit').val('');
+              	jQuery('#email_contact_edit').val('');
+			});
+            jQuery('#rfc_empresa_edit').val(response.data.result.correo.rfc_receptor);
+            jQuery('#nombre_comercial_edit').val(response.data.result.correo.nombre_comercial);
+            jQuery('#tel2_edit').val(response.data.result.correo.telefono);
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+
+}
+
+function parser_data_edit(){
+	var id_contacto = jQuery('#cmb_contactos_edit').val();
+	var url = domain('ventas/contactos');
+	var fields = {id : id_contacto};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+              	jQuery('#tel1_edit').val(response.data.result.telefono);
+              	jQuery('#email_contact_edit').val(response.data.result.correo);
+          		$('#cmb_clientes_edit').on('change', function() {
+				  	jQuery('#tel1_edit').val('');
+	              	jQuery('#email_contact_edit').val('');
+				});
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+}
+
+function display_productos_edit(){
+    jQuery('#cmb_planes_edit').val(0);
+	var id_producto = jQuery('#cmb_productos_edit').val();
+	//var url = domain('ventas/productos');
+	var url = domain('productos/edit');
+	var fields = {id : id_producto};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+          	var select_productos = response.data.result;
+            jQuery('#precio_concepto_edit').val(response.data.result.total);
+            jQuery('#descripcion_edit').val(response.data.result.descripcion);
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+
+}
+
+function display_planes_edit(){
+    jQuery('#cmb_productos_edit').val(0);
+	var id_planes = jQuery('#cmb_planes_edit').val();
+	//var url = domain('ventas/planes');
+	var url = domain('planes/edit');
+	var fields = {id : id_planes};
+	var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+          	//var select_productos = response.data.result;
+            jQuery('#precio_concepto_edit').val(response.data.result.total);
+            jQuery('#descripcion_edit').val(response.data.result.descripcion);
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
+
+}
+
+/*end edit*/
+
 function calcular_suma(){
 	var cantidad = jQuery('#cantidad_concepto').val();
 	if(cantidad == '') cantidad = 0;
@@ -290,6 +387,25 @@ function calcular_suma(){
 
 }
 
+function calcular_suma_edit(){
+	var cantidad = jQuery('#cantidad_concepto_edit').val();
+	if(cantidad == '') cantidad = 0;
+
+	var precio_unitario = jQuery('#precio_concepto_edit').val();
+	if (precio_unitario == '') {
+		precio_unitario = 0;
+	} else {
+			jQuery('#cmb_productos_edit').on('change', function() {
+				jQuery('#cantidad_concepto_edit').val('');
+              	jQuery('#total_concepto_edit').val('');
+			});	
+	}
+
+	var total = parseInt(cantidad) * parseFloat(precio_unitario);
+	jQuery('#total_concepto_edit').val(total);
+
+}
+
 function fancy_click()
   {
 
@@ -303,6 +419,5 @@ function fancy_click()
     }
   });
   }
-
 </script>
 @endpush

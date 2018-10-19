@@ -124,6 +124,80 @@
                  ,'attr'      => 'data-live-search="true" ' 
                  ,'event'     => 'display_estatus_select()'               
            ]);
+
+            /* Editar*/
+            $clientes_edit = dropdown([
+                 'data'       => $this->_consulta(new SysClientesModel)
+                 ,'value'     => 'id'
+                 ,'text'      => 'razon_social rfc_receptor'
+                 ,'name'      => 'cmb_clientes_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '
+                 ,'event'     => 'display_contactos_edit()'                
+           ]);
+
+            $formas_pagos_edit = dropdown([
+                 'data'       => SysFormasPagosModel::where(['estatus' => 1 ])->orderby('descripcion', 'asc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'descripcion'
+                 ,'name'      => 'cmb_formas_pagos_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '              
+           ]);
+
+            $metodos_pagos_edit = dropdown([
+                 'data'       => SysMetodosPagosModel::where(['estatus' => 1 ])->orderby('id', 'desc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'descripcion'
+                 ,'name'      => 'cmb_metodos_pagos_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true" '               
+           ]); 
+
+            $monedas_edit = dropdown([
+                 'data'       => SysMonedasModel::where(['estatus' => 1 ])->orderby('descripcion', 'asc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'descripcion'
+                 ,'name'      => 'cmb_monedas_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '                
+           ]);
+
+            $productos_edit = dropdown([
+                 'data'       => $this->_consulta(new SysProductosModel)
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_productos_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '   
+                 ,'event'     => 'display_productos_edit()'               
+           ]);
+
+            $planes_edit = dropdown([
+                 'data'       => $this->_consulta(new SysPlanesModel) 
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_planes_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '   
+                 ,'event'     => 'display_planes_edit()'               
+           ]);
+            /*where(['estatus' => 1 ])->whereIn('id',['94','95','96','97'])->orderby('descripcion', 'asc')->get()*/
+            $estatus_edit = dropdown([
+                 'data'       => SysEstatusModel::where(['estatus' => 1 ])->orderby('nombre', 'asc')->get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_estatus_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opción'
+                 ,'attr'      => 'data-live-search="true" '                
+           ]);
             /*$response = SysClientesModel::with(['contactos'])
                 ->where(['estatus' => 1,'id' => $request->input('id')])
                 ->orderby('id','asc')
@@ -146,6 +220,13 @@
                 ,'planes'               => $planes
                 ,'estatus'              => $estatus
                 ,'estatus_inicio'       => $estatus_inicio
+                ,'clientes_edit'        => $clientes_edit
+                ,'formas_pagos_edit'    => $formas_pagos_edit
+                ,'metodos_pagos_edit'   => $metodos_pagos_edit
+                ,'monedas_edit'         => $monedas_edit
+                ,'productos_edit'       => $productos_edit
+                ,'planes_edit'          => $planes_edit
+                ,'estatus_edit'         => $estatus_edit
             ];
             return self::_load_view( "ventas.cotizacion",$data );
         }
@@ -222,8 +303,37 @@
         public function show( Request $request ){
 
             try {
+                $coti = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
+                       sys_cotizaciones.codigo,
+                       sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente,
+                       sys_cotizaciones.id_moneda,sys_cotizaciones.id_contacto,sys_cotizaciones.id_metodo_pago,
+                       sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus
+             FROM sysbussiness.sys_users_cotizaciones
+             inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+             inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+             left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+             left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sysbussiness.sys_cotizaciones.id =".$request->id.' '."GROUP BY sys_users_cotizaciones.id_cotizacion";
 
+                $conc = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
+                       sys_cotizaciones.codigo,sys_cotizaciones.created_at,sys_productos.descripcion as prod_desc,sys_planes.descripcion,
+                       sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
+                       sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc,
+                       sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente,
+                       sys_cotizaciones.id_moneda,sys_cotizaciones.id_contacto,sys_cotizaciones.id_metodo_pago,
+                       sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus
+             FROM sysbussiness.sys_users_cotizaciones
+             inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+             inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+             left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+             left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sysbussiness.sys_cotizaciones.id =".$request->id;
 
+                $concep = DB::select($coti);
+                $conceptos = DB::select($conc);
+
+                $response = [
+                    'cotizacion'    => $concep
+                    ,'conceptos'    => $conceptos
+                ];
             return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -466,6 +576,58 @@
 
         }
         /**
+        * Metodo para borrar el registro producto (concepto)
+        * @access public
+        * @param Request $request [Description]
+        * @return void
+        */
+        public function destroy_cotizacion_edit( Request $request ){
+            #debuger($request->all());
+            $error = null;
+            DB::beginTransaction();
+            try {
+                /*Busco id cotizacion en users cotizacion referente al id concepto*/
+
+                $total = SysUsersCotizacionesModel::select('id_cotizacion')->where('id_concepto',$request->input('id'))->groupBy('id_cotizacion')->get();
+                foreach ($total as $value) {
+                    $dl=    $value->id_cotizacion;
+                }
+                /*Identifico id_cotizacion*/
+                $cot = SysCotizacionModel::where('id',$dl)->get();
+                foreach ($cot as $id_cot) {
+                    $getCotizacion=    $id_cot->subtotal;
+                }
+                /*Opetreaciones para restar*/
+                $subtotal = $getCotizacion-$request->input('total');
+                $iv = Session::get('iva') / 100;
+                $iva = $subtotal * $iv;
+
+                $totales = [
+                     'iva'          => $this->truncarDecimales($iva,2)
+                    ,'subtotal'     => $this->truncarDecimales($subtotal,2)
+                    ,'total'        => $this->truncarDecimales($subtotal + $iva,2)
+                ];
+                /*Update total.iva,subtotal*/
+                $io = SysCotizacionModel::where('id',$dl)->update($totales);
+                /*Eliminacion cocepto*/
+                SysConceptosCotizacionesModel::where(['id' => $request->id])->delete();
+                $response = SysUsersCotizacionesModel::where('id_concepto',$request->input('id'))->delete();
+
+            DB::commit();
+            $success = true;
+            } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+            }
+
+            if ($success) {
+            return $this->_message_success( 201, $response , self::$message_success );
+            }
+            return $this->show_error(6, $error, self::$message_error );
+
+        }
+        /**
         * Metodo para traer informacion de la empresa cliente
         * @access public
         * @param Request $request [Description]
@@ -511,6 +673,50 @@
                      ,'leyenda'   => 'Seleccione Opcion'
                      ,'attr'      => 'data-live-search="true" '
                      ,'event'      => 'parser_data()'
+               ]);
+                $data = [
+                    'combo_contactos' => $contact
+                    ,'rfc' => isset($response[0])? $response[0]->rfc_receptor:""
+                    ,'telefono' => isset($response[0])? $response[0]:""
+                    ,'correo' => isset($response[0])? $response[0]: ""
+                ];
+                #$response = SysClientesModel::all();
+            return $this->_message_success( 201, $data , self::$message_success );
+            } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
+            }
+
+        }
+
+                /**
+        * Metodo para traer informacion de la empresa cliente edicion
+        * @access public
+        * @param Request $request [Description]
+        * @return void
+        */
+        public function getContactoEdicion( Request $request ){
+
+            try {
+                #debuger($request->input('id'));
+                $response = SysClientesModel::with(['contactos'])
+                ->where(['estatus' => 1,'id' => $request->input('id')])
+                ->orderby('id','asc')
+                ->get();
+                #debuger($response);
+                $contactos = [];
+                foreach ($response as $contacto) {
+                    $contactos = $contacto->contactos;
+                }                
+                $contact = dropdown([
+                     'data'       => $contactos
+                     ,'value'     => 'id'
+                     ,'text'      => 'nombre_completo'
+                     ,'name'      => 'cmb_contactos_edit'
+                     ,'class'     => 'form-control'
+                     ,'leyenda'   => 'Seleccione Opcion'
+                     ,'attr'      => 'data-live-search="true" '
+                     ,'event'      => 'parser_data_edit()'
                ]);
                 $data = [
                     'combo_contactos' => $contact

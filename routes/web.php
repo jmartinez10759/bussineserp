@@ -990,14 +990,14 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'cotizacion.register'
     ]);
 
-    Route::get('/unidadesmedidas/edit', [
-        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@show'
-        ,'as' => 'unidadesmedidas.edit'
+    Route::get('/cotizacion/edit', [
+        'uses' => 'Ventas\CotizacionController@show'
+        ,'as' => 'cotizacion.edit'
     ]);
 
-    Route::put('/unidadesmedidas/update', [
-        'uses' => 'Administracion\Configuracion\UnidadesMedidasController@update'
-        ,'as' => 'unidadesmedidas.update'
+    Route::put('/cotizacion/update', [
+        'uses' => 'Ventas\CotizacionController@update'
+        ,'as' => 'cotizacion.update'
     ]);
 
     Route::delete('/cotizacion/destroy', [
@@ -1009,6 +1009,11 @@ Route::get('/ventas/cotizacion', [
         'uses' => 'Ventas\CotizacionController@destroy_cotizacion'
         ,'as' => 'cotizacion.destroy.gen'
     ]);
+
+    Route::delete('/cotizacion/destroy/edit', [
+        'uses' => 'Ventas\CotizacionController@destroy_cotizacion_edit'
+        ,'as' => 'cotizacion.destroy.edit'
+    ]);
     
     Route::get('/ventas/contactos', [
         'uses' => 'Ventas\CotizacionController@getbycontactos'
@@ -1018,6 +1023,11 @@ Route::get('/ventas/cotizacion', [
     Route::get('/ventas/contacto', [
         'uses' => 'Ventas\CotizacionController@getContacto'
         ,'as' => 'ventas.contacto'
+    ]);
+
+    Route::get('/ventas/contacto/edicion', [
+        'uses' => 'Ventas\CotizacionController@getContactoEdicion'
+        ,'as' => 'ventas.contacto.edicion'
     ]);
 
     Route::post('/cotizaciones/update', [
