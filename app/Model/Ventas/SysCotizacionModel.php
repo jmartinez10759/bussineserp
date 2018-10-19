@@ -8,6 +8,7 @@ class SysCotizacionModel extends Model
 {
       public $table = "sys_cotizaciones";
       public $fillable = [
+
 		'id'
 		,'codigo'
 		,'descripcion'
@@ -20,6 +21,7 @@ class SysCotizacionModel extends Model
             ,'id_metodo_pago'
             ,'id_forma_pago'
             ,'id_estatus'
+
       ];
 
       public function conceptos(){
