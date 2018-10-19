@@ -10,8 +10,14 @@
             <div class="form-group row">
                 <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
                 <div class="col-md-3">
-                    <input type="text" name="daterange" id="daterange" class="form-control" readonly="">
+                    <input type="text" class="form-control fecha" readonly="" id="fecha_inicial">
                 </div>
+
+                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Final </label>
+                <div class="col-md-3">
+                    <input type="text" class="form-control fecha" readonly="" id="fecha_final">
+                </div>
+
                 <!-- <div class="col-md-2">
                     {!! $cmb_estatus !!}
                 </div> -->

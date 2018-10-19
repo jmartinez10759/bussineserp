@@ -55,7 +55,6 @@ new Vue({
               jQuery('#subtotal_').val(response.data.result.subtotal_);
               jQuery('#iva_').val(response.data.result.iva_);
               jQuery('#total_').val(response.data.result.total_);
-
               this.consulta_general();
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
@@ -80,7 +79,7 @@ new Vue({
               jQuery('#edit_subtotal_').val(response.data.result.subtotal_);
               jQuery('#edit_iva_').val(response.data.result.iva_);
               jQuery('#edit_total_').val(response.data.result.total_);
-
+              //mandar a llamar un metodo para la parte de actualizacion de los registros de las cantidades
               this.consulta_general();
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
@@ -136,6 +135,9 @@ new Vue({
         if(this.insert.conceptos[0].cantidad == 0 || this.insert.conceptos[0].cantidad == ""){
             return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
         }
+        if( this.insert.conceptos[0].id_producto == 0 && this.insert.conceptos[0].id_plan == 0 ){
+            return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
         if(validacion_select(fields) == "error"){
 
           if(update){
@@ -160,7 +162,6 @@ new Vue({
 
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
-
               jQuery.fancybox.close({
                   'type'      : 'inline'
                   ,'src'      : "#modal_conceptos"
@@ -224,12 +225,13 @@ new Vue({
         if(validacion_select(fields) == "error"){return;}
         if(tuplas.length < 1){
           jQuery.fancybox.open({
-                  'type'      : 'inline'
-                  ,'src'      : identificador
-                  ,'buttons'  : ['share', 'close']
+                'type'      : 'inline'
+                ,'src'      : identificador
+                ,'buttons'  : ['share', 'close']
           });
           return toastr.warning('Debe de Ingresar al menos un concepto','Agregar conceptos');
         }
+        //console.log(this.update.pedidos);return;
         var fields = { pedidos : this.update.pedidos };
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
@@ -239,7 +241,7 @@ new Vue({
               jQuery.fancybox.close({
                   'type'      : 'inline'
                   ,'src'      : "#modal_edit_register"
-                  ,'buttons'  : ['share', 'close']
+                  ,'modal': true
               });
               this.consulta_conceptos_edit( response.data.result.id );
               
@@ -255,6 +257,7 @@ new Vue({
     ,edit_register( id ){
         var url = domain( url_edit );
         var fields = {id : id };
+        this.conceptos = [];
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
             this.edit.pedidos = response.data.result.pedidos;
@@ -281,8 +284,8 @@ new Vue({
             jQuery('#subtotal_edit').text(this.edit.cantidades.subtotal);
             jQuery('#total_edit').text(this.edit.cantidades.total);
 
-            jQuery('#edit_subtotal_').val(this.edit.cantidades.iva_);
-            jQuery('#edit_iva_').val(this.edit.cantidades.subtotal_);
+            jQuery('#edit_subtotal_').val(this.edit.cantidades.subtotal_);
+            jQuery('#edit_iva_').val(this.edit.cantidades.iva_);
             jQuery('#edit_total_').val(this.edit.cantidades.total_);
 
             display_contactos_edit(this.edit.pedidos.id_contacto);
@@ -291,8 +294,9 @@ new Vue({
             jQuery.fancybox.open({
                   'type'      : 'inline'
                   ,'src'      : "#modal_edit_register"
-                  ,'buttons'  : ['share', 'close']
+                  ,'modal': true
               });
+              //this.conceptos = [];
               //toastr.success( response.data.message , title );
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
@@ -327,7 +331,7 @@ new Vue({
         var promise = MasterController.method_master(url,fields,"delete");
         promise.then( response => {
             if(update){
-              this.consulta_conceptos_edit( jQuery('#id_pedido_edit').val() );
+              this.consulta_conceptos_edit( jQuery('#id_pedido_edit').val());
             }else{
               this.consulta_conceptos( jQuery('#id_pedido').val() );
             }
@@ -357,6 +361,8 @@ new Vue({
                   toastr.error( error.result , expired );  
             });
         }
+    }
+    ,update_pedidos(){
 
     }
     
@@ -570,7 +576,8 @@ function calcular_suma_edit(){
     jQuery('#total_concepto_edit').val(total.toFixed(2));
 }
 
-jQuery('.add').fancybox();
+//jQuery('.add').fancybox();
+jQuery(".add").fancybox({ modal: true });
 jQuery('#cmb_estatus').selectpicker();
 jQuery('#cmb_clientes').selectpicker();
 jQuery('#cmb_clientes_edit').selectpicker();
@@ -587,10 +594,9 @@ jQuery('#cmb_productos_edit').selectpicker();
 jQuery('#cmb_planes').selectpicker();
 jQuery('#cmb_planes_edit').selectpicker();
 
-
+jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1}).datepicker("setDate", new Date());
 
 jQuery('#modal_general').click(function(){
-      alert();
       var clear = [
       'rfc_receptor'
       ,'nombre_comercial'
@@ -614,10 +620,7 @@ jQuery('#modal_general').click(function(){
       ];
       clear_values_input(clear);
       clear_values_select(clear_select);
-      jQuery('#table_concepts tbody').html('');
 });
-
-
 jQuery('.add').click(function(){
     jQuery('#cmb_productos').selectpicker('val',[0]);
     jQuery('#cmb_planes').selectpicker('val',[0]);

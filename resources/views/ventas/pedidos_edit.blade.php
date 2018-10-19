@@ -281,17 +281,17 @@
                         <tr>
                             <td class="text-right" colspan="4">SUBTOTAL </td>
                             <td class="text-right" id="subtotal_edit" style="background-color:#eee">$ 0.00</td>
-                            <input type="hidden" id="edit_subtotal_">
+                            <input type="text" id="edit_subtotal_">
                         </tr>
                         <tr>
                             <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
                             <td class="text-right" id="iva_edit" style="background-color:#eee">$ 0.00</td>
-                            <input type="hidden" id="edit_iva_">
+                            <input type="text" id="edit_iva_">
                         </tr>
                         <tr>
                             <td class="text-right" colspan="4">TOTAL </td>
                             <td class="text-right" id="total_edit" style="background-color:#eee">$ 0.00</td>
-                            <input type="hidden" id="edit_total_">
+                            <input type="text" id="edit_total_">
                         </tr>
                     </tfoot>
 
@@ -340,7 +340,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Cantidad</label>
                 <div class="col-sm-9">
-                    <input type="number" id="cantidad_concepto" class="form-control" placeholder="" onblur="calcular_suma()" value="0">
+                    <input type="text" id="cantidad_concepto" class="form-control" onkeyup="numerico(this)" onblur="calcular_suma()" value="0">
                 </div>
             </div>
 
@@ -402,7 +402,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Cantidad</label>
                 <div class="col-sm-9">
-                    <input type="number" id="cantidad_concepto_edit" class="form-control" placeholder="" onblur="calcular_suma_edit()" value="0">
+                    <input type="text" id="cantidad_concepto_edit" class="form-control" onkeyup ="numerico(this)" onblur="calcular_suma_edit()" value="0">
                 </div>
             </div>
 

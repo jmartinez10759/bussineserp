@@ -683,7 +683,6 @@ function initDataTable(id) {
  * @return {[type]}             [description]
  */
 function check_status_xhr(status, title, text, type, accept) {
-
     var showMessage = false,
         title = title ? title : generalLang['error'],
         text = text ? text : xhrStatusLang['error500Msg'],
@@ -694,7 +693,6 @@ function check_status_xhr(status, title, text, type, accept) {
             showMessage = true;
             break;
     }
-
     if (showMessage) {
         swal({
             title: title,
@@ -899,7 +897,6 @@ function download_pdf_general(url, data, success) {
  *@return date
  */
 restaFechas = function (fecha1, fecha2) {
-
     var aFecha1 = fecha1.split('-');
     var aFecha2 = fecha2.split('-');
     /*formato de aaaa/mm/dd */
@@ -908,7 +905,6 @@ restaFechas = function (fecha1, fecha2) {
     var dif = fFecha2 - fFecha1;
     var dias = Math.floor(dif / (1000 * 60 * 60 * 24));
     return dias;
-
 }
 /**
  *Funcion para contar los dias trancurridos
@@ -931,16 +927,13 @@ convert_date = function (fecha) {
  *@return json
  */
 validate_date = function (fecha1, fecha2) {
-
     var fecha_inicial = new Date(fecha1);
     var fecha_fin = new Date(fecha2);
-
     if (fecha2 < fecha1) {
         return false;
     } else {
         return true;
     }
-
 }
 /**
  *Function creada para la creacion de LocalStorage y SessionStorage
@@ -973,14 +966,11 @@ $myLocalStorage = (function () {
  *@return array[description]
  */
 table_matrix = function (table, identificador) {
-
     var matrix = [];
     var conteo = 0;
-
     $('#' + table + ' tbody').find('tr').each(function () {
         var response = "";
         response += $(this).attr(identificador) + "|";
-
         $(this).find('td').each(function () {
             console.log($(this).text());
             response += $(this).text() + "|";
@@ -989,7 +979,6 @@ table_matrix = function (table, identificador) {
         conteo++;
     });
     return matrix;
-
 }
 /**
  *Se accesde a los metas de html para otener el contenido.
@@ -1015,7 +1004,6 @@ meta = function (name) {
  *@return array[description]
  */
 domain = function (url) {
-
     //var path_url = window.location.origin+window.location.pathname+"/"+url;
     var ruta_general = document.getElementsByTagName("META");
     var content = "";
@@ -1043,9 +1031,6 @@ domain = function (url) {
         //console.log(http+"//"+host+"/"+project+url);return;
         return http + "//" + host + "/" + project + url;
     }
-
-
-
 }
 /**
  *Funcion para generar una tabla dinamica por medio de un json.
@@ -1055,7 +1040,6 @@ domain = function (url) {
  *@return html[description]
  */
 data_table_general = function (json, id_table) {
-
     var tbody = '';
     $.each(json, function (key, value) {
         tbody += '<tr>';
@@ -1063,9 +1047,7 @@ data_table_general = function (json, id_table) {
             tbody += `<td class="text-center">${values}</td>`;
         });
         tbody += '</tr>';
-
     });
-
     $(`#${id_table} tbody`).html('');
     $(`#${id_table} tbody`).html(tbody);
 }
@@ -1092,25 +1074,18 @@ loader_hide_msj = function () {
  *@return numeber
  */
 number_format = function (amount, decimals) {
-
     amount += ''; // por si pasan un numero en vez de un string
     amount = parseFloat(amount.replace(/[^0-9\.]/g, '')); // elimino cualquier cosa que no sea numero o punto
-
     decimals = decimals || 0; // por si la variable no fue fue pasada
-
     // si no es un numero o es igual a cero retorno el mismo cero
     if (isNaN(amount) || amount === 0)
         return parseFloat(0).toFixed(decimals);
-
     // si es mayor o menor que cero retorno el valor formateado como numero
     amount = '' + amount.toFixed(decimals);
-
     var amount_parts = amount.split('.'),
         regexp = /(\d+)(\d{3})/;
-
     while (regexp.test(amount_parts[0]))
         amount_parts[0] = amount_parts[0].replace(regexp, '$1' + ',' + '$2');
-
     return amount_parts.join('.');
 }
 /**
@@ -1135,21 +1110,17 @@ function value_inputs(object) {
  *@return void
  */
 function mostrar_elements(mostrar, ocultar) {
-
     for (var i = 0; i < mostrar.length; i++) {
         //$('#'+mostrar[i]).toggle('slow');
         $('#' + mostrar[i]).show('slow');
         $('.' + mostrar[i]).show('slow');
-
     }
     for (var i = 0; i < ocultar.length; i++) {
         console.log(ocultar[i]);
         //$('#'+ocultar[i]).toggle('slow');
         $('#' + ocultar[i]).hide('slow');
         $('.' + ocultar[i]).hide('slow');
-
     }
-
 }
 /**
  *Metodo para mostrar y/o ocultar secciones
@@ -1171,9 +1142,7 @@ function toggle_mostrar(identificador) {
  *@return indice
  */
 addZero = function (i) {
-
     return (i < 10) ? '0' + i : i;
-
 }
 /**
  * Funcion para obtener la fecha y horas
@@ -1600,8 +1569,9 @@ register_modal_general = function (identificador, modal) {
         jQuery.fancybox.open({
             'type': 'inline',
             'src': identificador,
-            'buttons': ['share', 'close']
+            'modal': true,
         });
+
     }
 }
 /**
@@ -1685,36 +1655,36 @@ function valida_rfc( rfc ) {
 }
 
 function data_table( data ){
-            var html_result    = '';
-            var titulos        = isset(data['titulos']) ? data['titulos'] :false;
-            var registros      = isset(data['registros'])?data['registros']:false;
-            var id             = isset(data['id'])? 'id="'+data['id']+'"' : 'id="datatable"';
-            var $class         = isset(data['class'])? data['class'] : '';
-            var tbody          = '';
-            if(titulos){
-                var th = '';
-                for( var i in titulos){
-                    th += '<th>'+titulos[i]+'</th>';
-                }
-                var thead = '<thead style="background-color: rgb(51, 122, 183); color: rgb(255, 255, 255);"><tr>'+th+'</tr></thead>';
-                var tfoot = '<tfoot><tr>'+th+'</tr></tfoot>';
-            }            
-            if(registros){
-                tbody = '<tbody>';
-                for(var i in registros){
-                    tbody += '<tr>';
-                    //tbody += ( in_array('Estatus',$titulos) && !in_array('ACTIVO',$registro) )? '<tr class="danger">': '<tr>';
-                    for (var j in registros[i]){
-                        tbody += '<td>'+registros[i][j]+'</td>';
-                    }
-                    tbody += '</tr>';
-                }
-                tbody += '</tbody>';
-            }
-            html_result += '<table class="table table-striped table-response highlight table-hover '+$class+'" '+id+'>';
-            html_result += thead;
-            html_result += tbody;
-            html_result +='</table>';
-            return html_result;
-
+    var html_result    = '';
+    var titulos        = isset(data['titulos']) ? data['titulos'] :false;
+    var registros      = isset(data['registros'])?data['registros']:false;
+    var id             = isset(data['id'])? 'id="'+data['id']+'"' : 'id="datatable"';
+    var $class         = isset(data['class'])? data['class'] : '';
+    var tbody          = '';
+    if(titulos){
+        var th = '';
+        for( var i in titulos){
+            th += '<th>'+titulos[i]+'</th>';
         }
+        var thead = '<thead style="background-color: rgb(51, 122, 183); color: rgb(255, 255, 255);"><tr>'+th+'</tr></thead>';
+        var tfoot = '<tfoot><tr>'+th+'</tr></tfoot>';
+    }            
+    if(registros){
+        tbody = '<tbody>';
+        for(var i in registros){
+            tbody += '<tr>';
+            //tbody += ( in_array('Estatus',$titulos) && !in_array('ACTIVO',$registro) )? '<tr class="danger">': '<tr>';
+            for (var j in registros[i]){
+                tbody += '<td>'+registros[i][j]+'</td>';
+            }
+            tbody += '</tr>';
+        }
+        tbody += '</tbody>';
+    }
+    html_result += '<table class="table table-striped table-response highlight table-hover '+$class+'" '+id+'>';
+    html_result += thead;
+    html_result += tbody;
+    html_result +='</table>';
+    return html_result;
+}
+

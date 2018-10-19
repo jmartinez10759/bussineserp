@@ -364,7 +364,8 @@
                     if( !in_array($key, $key_value)){
                         $data[$key] = strtoupper($value);
                     }
-                }                
+                } 
+                #debuger($data);           
                 $this->_tabla_model::where(['id' => $request->pedidos['id']])->update($data);
                 $response = $this->_tabla_model::where(['id' => $request->pedidos['id']])->get()[0];
                 /*if(estaus == 5 ){

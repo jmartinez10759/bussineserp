@@ -46,6 +46,12 @@ use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
 use App\Model\Ventas\SysCotizacionModel;
 use App\Model\Admnistracion\Configuracion\SysCuentasModel;
 use App\Model\Administracion\Configuracion\SysCuentasModel;
+use App\Model\Ventas\SysFacturacionModel;
+use App\Model\Ventas\SysFacturacionVentasModel;
+use App\Model\Ventas\SysFacturacionesModel;
+
+
+
 
 
 
@@ -164,6 +170,15 @@ class UploadController extends MasterController
             break;
                case "Cuentas": 
                 $this->_tabla_model = new SysCuentasModel; 
+            break;
+               case "Facturacion": 
+                $this->_tabla_model = new SysFacturacionModel; 
+            break;
+               case "Facturacionventas": 
+                $this->_tabla_model = new SysFacturacionVentasModel; 
+            break;
+               case "Facturaciones": 
+                $this->_tabla_model = new SysFacturacionesModel; 
             break;
 
 

@@ -841,6 +841,44 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'pedidos.destroy_concepto'
         ]);
 
+################################## MODULO DE VENTAS SECCION DE FACTURACIONES ################################
+            
+        Route::get('/ventas/facturaciones', [
+            'uses'      => 'Ventas\FacturacionesController@index'
+            ,'as'       => 'ventas.facturaciones'
+        ]);
+        
+        Route::get('/facturaciones/all', [
+            'uses'      => 'Ventas\FacturacionesController@all'
+            ,'as'       => 'facturaciones.all'
+        ]);
+        
+        Route::post('/facturaciones/register', [
+            'uses'      => 'Ventas\FacturacionesController@store'
+            ,'as'       => 'facturaciones.register'
+        ]);
+
+        Route::get('/facturaciones/edit', [
+            'uses'      => 'Ventas\FacturacionesController@show'
+            ,'as'       => 'facturaciones.edit'
+        ]);
+
+        Route::put('/facturaciones/update', [
+            'uses'      => 'Ventas\FacturacionesController@update'
+            ,'as'       => 'facturaciones.update'
+        ]);
+
+        Route::delete('/facturaciones/destroy', [
+            'uses'      => 'Ventas\FacturacionesController@destroy'
+            ,'as'       => 'facturaciones.destroy'
+        ]);
+
+        Route::delete('/facturaciones/destroy_concepto', [
+            'uses'      => 'Ventas\FacturacionesController@destroy_conceptos'
+            ,'as'       => 'facturaciones.destroy_concepto'
+        ]);
+
+
 ################################## CATALOGO DE TIPO DE COMPROBANTES ################################
 
     Route::get('/configuracion/tiposcomprobantes', [
