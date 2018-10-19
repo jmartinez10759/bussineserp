@@ -24,7 +24,9 @@
                         </div>
                         <input id="search_general" class="form-control" type="text" placeholder="Buscar" aria-label="Search" onkeyup="buscador_general(this,'{{$buscador}}')" />
                         <div class="btn-group">
-                            <button type="button" class="btn btn-success" onclick="register_modal_general( '{{$agregar}}' )" {{$modal}}><i class="fa fa-plus-circle"> </i> Agregar</button>
+                            <button type="button" class="btn btn-success" id="modal_general" onclick="register_modal_general( '{{$agregar}}' )" {{$modal}}>
+                                <i class="fa fa-plus-circle"> </i> Agregar
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -720,9 +720,7 @@ function check_status_xhr(status, title, text, type, accept) {
  * @return void
  */
 function validacion_fields(validacion) {
-
     if (typeof validacion == "object") {
-
         for (var i = 0; i < validacion.length; i++) {
             var valores = jQuery('#' + validacion[i]).val();
             //if (valores == "" || valores == 0 || valores == "null") {
@@ -735,10 +733,23 @@ function validacion_fields(validacion) {
                 jQuery('#' + validacion[i]).parent().parent().removeClass('has-error');
             }
         };
-
     }
-
-
+}
+function validacion_select(validacion) {
+    if (typeof validacion == "object") {
+        for (var i = 0; i < validacion.length; i++) {
+            var valores = jQuery('#' + validacion[i]).val();
+            if (valores == "" || valores == 0 || valores == "null") {
+            //if (valores == "" || valores == "null") {
+                jQuery('#' + validacion[i]).parent().parent().addClass('has-error');
+                toastr.error('Favor de verificar los campos de color rojo!', title);
+                // pnotify('Campos Vacios','Favor de verificar los campos de color rojo!','error');
+                return 'error';
+            } else {
+                jQuery('#' + validacion[i]).parent().parent().removeClass('has-error');
+            }
+        };
+    }
 }
 /**
  *Funcion para cargar los valores de cada campo
@@ -746,25 +757,29 @@ function validacion_fields(validacion) {
  *@return void
  */
 function get_values(json) {
-
     $.each(json, function (key, values) {
         $('#' + key).val(values);
     });
-
 }
 /**
  *Funcion para cargar los valores de cada campo
  *@param array arreglo [description]
  *@return void
  */
-function clear_values(arreglo) {
-
+function clear_values_input(arreglo) {
     for (var i = 0; i < arreglo.length; i++) {
         $('#' + arreglo[i]).val('');
         $('.' + arreglo[i]).val('');
-
     }
-
+}
+function clear_values_select( arreglo ) {
+    for (var i = 0; i < arreglo.length; i++) {
+        $('#' + arreglo[i]).val(0);
+        $('.' + arreglo[i]).val(0);
+        
+        $('#' + arreglo[i]).selectpicker('val',[0]);
+        $('#' + arreglo[i]).selectpicker('val',[0]);
+    }
 }
 /**
  *Funcion para la carga de archivos al servidor por medio de dropzone

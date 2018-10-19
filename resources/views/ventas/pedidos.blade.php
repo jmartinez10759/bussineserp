@@ -2,21 +2,19 @@
 @section('content')
 @push('styles')
 @endpush
-<div id="vue-pedidos">
+<div id="vue-pedidos" v-cloak>
 
     <div class="panel-body">
         <form class="form-horizontal">
 
             <div class="form-group row">
-                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Pedido</label>
+                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
                 <div class="col-md-3">
                     <input type="text" name="daterange" id="daterange" class="form-control" readonly="">
                 </div>
-                
-                <div class="col-md-2">
+                <!-- <div class="col-md-2">
                     {!! $cmb_estatus !!}
-                </div>
-
+                </div> -->
                 <div class="col-md-2">
                     <select class="form-control" id="id_vendedor" onchange="" {{$permisos}}>
                         <option value="">Vendedor</option>
@@ -59,10 +57,14 @@
                         <td>@{{(data.id_contacto != 0)? data.contactos.nombre_completo:"" }}</td>
                         <td>@{{(data.id_cliente != 0)?data.clientes.nombre_comercial:"" }}</td>
                         <!-- <td>@{{data.usuarios[0].name}}</td> -->
-                        <td><span class="label label-warning">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span></td>
-                        <td class="text-right">@{{data.subtotal}}</td>
-                        <td class="text-right">@{{data.iva}}</td>
-                        <td class="text-right">@{{data.total}}</td>
+                        <td>
+                            <span class="label label-warning" v-if="data.id_estatus == 6">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
+                            <span class="label label-danger" v-if="data.id_estatus == 4">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
+                            <span class="label label-success" v-if="data.id_estatus == 5">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
+                        </td>
+                        <td class="text-right">$ @{{(data.subtotal)?data.subtotal.toLocaleString(): 0.00}}</td>
+                        <td class="text-right">$ @{{(data.iva)?data.iva.toLocaleString(): 0.00}}</td>
+                        <td class="text-right">$ @{{(data.total)? data.total.toLocaleString(): 0.00 }}</td>
                         <td class="text-right">
                             <div class="dropdown">
                                 <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

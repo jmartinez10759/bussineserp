@@ -836,6 +836,11 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'pedidos.destroy'
         ]);
 
+        Route::delete('/pedidos/destroy_concepto', [
+            'uses'      => 'Ventas\PedidosController@destroy_conceptos'
+            ,'as'       => 'pedidos.destroy_concepto'
+        ]);
+
 ################################## CATALOGO DE TIPO DE COMPROBANTES ################################
 
     Route::get('/configuracion/tiposcomprobantes', [

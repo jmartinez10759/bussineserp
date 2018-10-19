@@ -14,6 +14,7 @@ class SysPedidosModel extends Model
 	        ,'iva'
             ,'subtotal'
             ,'total'
+            ,'id_cotizacion'
 	        ,'id_cliente'
 	        ,'id_moneda'
 	        ,'id_contacto'
@@ -56,6 +57,10 @@ class SysPedidosModel extends Model
 
 	  public function estatus(){
 	      return $this->hasOne('App\Model\Administracion\Configuracion\SysEstatusModel','id','id_estatus');
+	  }
+
+	  public function cotizaciones(){
+	      return $this->hasOne('App\Model\Ventas\SysCotizacionModel','id','id_cotizacion');
 	  }
 
 }

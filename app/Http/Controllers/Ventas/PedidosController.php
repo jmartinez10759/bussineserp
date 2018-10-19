@@ -67,7 +67,7 @@
                 ,'name'      => 'cmb_estatus_form_edit'
                 ,'class'     => 'form-control input-sm'
                 ,'leyenda'   => 'Seleccione Opcion'
-                ,'attr'      => 'data-live-search="true" disabled'
+                ,'attr'      => 'data-live-search="true"'
                 ,'selected'  => "6"
             ]);
             
@@ -145,7 +145,7 @@
                 ,'class'     => 'form-control input-sm'
                 ,'leyenda'   => 'Seleccione Opcion'
                 ,'attr'      => 'data-live-search="true" '
-                ,'event'     => 'display_contactos()'
+                ,'event'     => 'display_contactos_edit()'
             ]);
             
             $cmb_clientes = dropdown([
@@ -296,11 +296,12 @@
         *@param Request $request [Description]
         *@return void
         */
-        public function store( Request $request){
+        public function store( Request $request ){
 
             $error = null;
             DB::beginTransaction();
             try {
+                #debuger($request->conceptos);
                 $data = [];
                 $key_value = ['id'];
                 foreach ($request->pedidos as $key => $value) {
@@ -308,25 +309,28 @@
                         $data[$key] = strtoupper($value);
                     }
                 }
-                #debuger($request->all());
                 if ( $request->pedidos['id'] == "" ) {
+                    $data['id_cotizacion'] = ( isset($request->pedidos['id_cotizacion']) )? $request->pedidos['id_cotizacion'] : 0;
                     $response_pedido = $this->_tabla_model::create($data);
                 }else{
-                    $this->_tabla_model::where(['id' => $request->pedidos['id']])->update($request->pedidos);
+                    $this->_tabla_model::where(['id' => $request->pedidos['id']])->update($data);
                     $response_pedido = $this->_tabla_model::where(['id' => $request->pedidos['id']])->get()[0];
                 }
-                $response_conceptos = SysConceptosPedidosModel::create( $request->conceptos );
-                $datos = [
-                   'id_users'       => Session::get('id')
-                  ,'id_rol'         => Session::get('id_rol')
-                  ,'id_empresa'     => Session::get('id_empresa')
-                  ,'id_sucursal'    => Session::get('id_sucursal')
-                  ,'id_menu'        => 28
-                  ,'id_pedido'      => $response_pedido->id
-                  ,'id_concepto'    => $response_conceptos->id
-                ];
-                #debuger($datos);
-                SysUsersPedidosModel::create($datos);
+                for ($i=0; $i < count($request->conceptos); $i++) {
+
+                    $response_conceptos = SysConceptosPedidosModel::create( $request->conceptos[$i] );
+                    $datos = [
+                       'id_users'       => Session::get('id')
+                      ,'id_rol'         => Session::get('id_rol')
+                      ,'id_empresa'     => Session::get('id_empresa')
+                      ,'id_sucursal'    => Session::get('id_sucursal')
+                      ,'id_menu'        => 28
+                      ,'id_pedido'      => $response_pedido->id
+                      ,'id_concepto'    => $response_conceptos->id
+                    ];
+                    SysUsersPedidosModel::create($datos);
+                    
+                }
 
             DB::commit();
             $success = true;
@@ -349,12 +353,34 @@
         *@param Request $request [Description]
         *@return void
         */
-        public function update( Request $request){
+        public function update( Request $request ){
 
             $error = null;
             DB::beginTransaction();
             try {
-                
+                $data = [];
+                $key_value = ['id'];
+                foreach ($request->pedidos as $key => $value) {
+                    if( !in_array($key, $key_value)){
+                        $data[$key] = strtoupper($value);
+                    }
+                }                
+                $this->_tabla_model::where(['id' => $request->pedidos['id']])->update($data);
+                $response = $this->_tabla_model::where(['id' => $request->pedidos['id']])->get()[0];
+                /*if(estaus == 5 ){
+
+                    $response_pedido = SysFacturacionModel::create($data);
+                    $datos = [
+                       'id_users'       => Session::get('id')
+                      ,'id_rol'         => Session::get('id_rol')
+                      ,'id_empresa'     => Session::get('id_empresa')
+                      ,'id_sucursal'    => Session::get('id_sucursal')
+                      ,'id_menu'        => 28
+                      ,'id_factura'      => $response_pedido->id
+                      ,'id_concepto'    => $response_conceptos->id
+                    ];
+                    SysUsersFacturacionModel::create($datos);
+                }*/
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -401,5 +427,34 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
+        /**
+        * Metodo para borrar el registro de conceptos
+        * @access public
+        * @param Request $request [Description]
+        * @return void
+        */
+        public function destroy_conceptos( Request $request ){
+
+            $error = null;
+            DB::beginTransaction();
+            try {
+                $response = SysConceptosPedidosModel::where(['id' => $request->id])->delete();
+                SysUsersPedidosModel::where(['id_concepto' => $request->id])->delete();
+            DB::commit();
+            $success = true;
+            } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+            }
+
+            if ($success) {
+            return $this->_message_success( 200, $response , self::$message_success );
+            }
+            return $this->show_error(6, $error, self::$message_error );
+
+        }
+
+
 
     }

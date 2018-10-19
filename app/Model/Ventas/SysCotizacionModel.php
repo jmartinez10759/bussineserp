@@ -30,5 +30,9 @@ class SysCotizacionModel extends Model
             return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_cotizaciones','id_cotizacion','id_users');
       }
 
+      public function pedidos(){
+            return $this->belongsTo('App\Model\Ventas\SysPedidosModel','id_cotizacion','id');
+      }
+
        
 }
