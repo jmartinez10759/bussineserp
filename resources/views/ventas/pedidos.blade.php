@@ -59,7 +59,7 @@
 
                     <tr v-for="data in datos">
                         <td>000@{{data.id}}</td>
-                        <td>@{{data.created_at}}</td>
+                        <td>@{{ format_date(data.created_at, 'yyyy-mm-dd') }}</td>
                         <td>@{{(data.id_contacto != 0)? data.contactos.nombre_completo:"" }}</td>
                         <td>@{{(data.id_cliente != 0)?data.clientes.nombre_comercial:"" }}</td>
                         <!-- <td>@{{data.usuarios[0].name}}</td> -->
