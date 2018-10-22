@@ -432,6 +432,7 @@ new Vue({
                     redirect(domain("/"));
                     return;
                 }
+                console.error(error);
                 toastr.error( error.result , expired );
           });
     }
@@ -449,6 +450,7 @@ new Vue({
                     redirect(domain("/"));
                     return;
                 }
+                console.error(error);
                 toastr.error( error.result  , expired );
           });
     }
@@ -466,6 +468,7 @@ new Vue({
                     redirect(domain("/"));
                     return;
                 }
+                console.error(error);
                 toastr.error( error.result  , expired );
           });
     }
@@ -483,6 +486,7 @@ new Vue({
                     redirect(domain("/"));
                     return;
                 }
+                console.error(error);
                 toastr.error( error.result  , expired );           
           });
         
@@ -500,6 +504,7 @@ new Vue({
                     redirect(domain("/"));
                     return;
                 }
+                console.error(error);
                 toastr.error( error.result  , expired );
           });
       },"warning",true,["SI","NO"]);   
