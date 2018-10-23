@@ -249,7 +249,9 @@ new Vue({
                 }
               });
               var id_cliente=jQuery('#cmb_clientes_edit').val(response.data.result.cotizacion[0].id_cliente);
+              var id_contacto=jQuery('#cmb_contactos_edit').val(response.data.result.cotizacion[0].id_contacto);
               display_contactos_edit(id_cliente);
+              parser_data_edit(response.data.result.cotizacion[0].id_contacto);
               jQuery('#cmb_formas_pagos_edit').val(response.data.result.cotizacion[0].id_forma_pago);
               jQuery('#cmb_metodos_pagos_edit').val(response.data.result.cotizacion[0].id_metodo_pago);
               jQuery('#cmb_estatus_edit').val(response.data.result.cotizacion[0].id_estatus);

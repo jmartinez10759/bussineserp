@@ -300,12 +300,15 @@ function display_contactos_edit(id_clientes){
 
 }
 
-function parser_data_edit(){
+function parser_data_edit(id_cont){
+	var id_c = id_cont;
 	var id_contacto = jQuery('#cmb_contactos_edit').val();
+	var id_c_general = (id_contacto && id_c != '') ? id_contacto:id_c;
 	var url = domain('ventas/contactos');
-	var fields = {id : id_contacto};
+	var fields = {id : id_c_general};
 	var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
+          		jQuery('#cmb_contactos_edit').val(response.data.result.id);
               	jQuery('#tel1_edit').val(response.data.result.telefono);
               	jQuery('#email_contact_edit').val(response.data.result.correo);
           		$('#cmb_clientes_edit').on('change', function() {

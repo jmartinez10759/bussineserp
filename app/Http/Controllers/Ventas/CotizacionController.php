@@ -307,7 +307,8 @@
                        sys_cotizaciones.codigo,
                        sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente,
                        sys_cotizaciones.id_moneda,sys_cotizaciones.id_contacto,sys_cotizaciones.id_metodo_pago,
-                       sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus
+                       sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus,
+                       sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
              FROM sysbussiness.sys_users_cotizaciones
              inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
              inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
@@ -317,10 +318,7 @@
                 $conc = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
                        sys_cotizaciones.codigo,sys_cotizaciones.created_at,sys_productos.descripcion as prod_desc,sys_planes.descripcion,
                        sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
-                       sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc,
-                       sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente,
-                       sys_cotizaciones.id_moneda,sys_cotizaciones.id_contacto,sys_cotizaciones.id_metodo_pago,
-                       sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus
+                       sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente
              FROM sysbussiness.sys_users_cotizaciones
              inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
              inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
@@ -329,11 +327,26 @@
 
                 $concep = DB::select($coti);
                 $conceptos = DB::select($conc);
+                
+                $subtotal = $concep[0]->total_conc;
+                $iv = Session::get('iva') / 100;
+                $iva = $subtotal * $iv;
+
+                $totales = [
+                     'iva'          => format_currency($iva,2)
+                    ,'subtotal'     => format_currency($subtotal,2)
+                    ,'total'        => format_currency($subtotal + $iva,2)
+                    ,'iva_'         => number_format($iva,2)
+                    ,'subtotal_'    => number_format($subtotal,2)
+                    ,'total_'       => number_format($subtotal + $iva,2)
+                ];
 
                 $response = [
                     'cotizacion'    => $concep
                     ,'conceptos'    => $conceptos
+                    ,'totales'      => $totales
                 ];
+                
             return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();

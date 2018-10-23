@@ -316,10 +316,7 @@
         <input type="hidden" id="id_concep_producto_edit">
         <h3>Editar Información</h3>
         <hr>
-            <pre>
-            @{{$data.edit_cotizacion}}
-                
-            </pre>
+
             <div v-for="cotiz in edit_cotizacion.cotizacion">
                 <input type="hidden" v-model="cotiz.id_cliente" id="id_cliente_edit">
                 <input type="hidden" v-model="cotiz.id_contacto" id="id_contacto_edit">
