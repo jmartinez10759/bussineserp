@@ -231,8 +231,16 @@ var mixins = {
         ,download_excel(){
           jQuery('#excel').jexcel('download');
         }
-        ,metodo_general( request){
-            console.log(request);
+        ,format_date( request, format ){
+            var d = new Date(request);
+            if( format === "yyyy-mm-dd"){
+              return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +  ("0" + d.getDate()).slice(-2);
+            }else{
+              return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
+            }
+            //var datestring = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+            //d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+            //return datestring;
         }
         // change_page( page ){
         //     this.datos.pagination.current_page = page;
