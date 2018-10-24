@@ -81,6 +81,10 @@ new Vue({
               jQuery('#edit_total_').val(response.data.result.total_);
               //mandar a llamar un metodo para la parte de actualizacion de los registros de las cantidades
               this.consulta_general();
+              if( jQuery('#cmb_estatus_form_edit').val() == 5){
+                alert();
+              }
+
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -159,14 +163,15 @@ new Vue({
           pedidos : this.insert.pedidos
           ,conceptos : this.insert.conceptos
         };
-
+        
+        jQuery.fancybox.close({
+            'type'      : 'inline'
+            ,'src'      : "#modal_conceptos"
+            ,'buttons'  : ['share', 'close']
+        });
+        //jQuery('.agregar').prop('disabled',true);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
-              jQuery.fancybox.close({
-                  'type'      : 'inline'
-                  ,'src'      : "#modal_conceptos"
-                  ,'buttons'  : ['share', 'close']
-              });
               if(update){
                 this.consulta_conceptos_edit( response.data.result.id );
               }
@@ -181,6 +186,7 @@ new Vue({
           });
     }
     ,update_register(insert){
+      jQuery('.update').prop('disabled',true);
         var url = domain( url_update );
         this.update.pedidos = {
             id                : (insert)? jQuery('#id_pedido').val(): jQuery('#id_pedido_edit').val()
@@ -235,6 +241,7 @@ new Vue({
         var fields = { pedidos : this.update.pedidos };
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
+              jQuery('.update').prop('disabled',false);
               if (insert) {
                   buildSweetAlert('# '+response.data.result.id,'Se genero el pedido con exito','success');
               }
@@ -363,9 +370,34 @@ new Vue({
         }
     }
     ,update_pedidos(){
+      var url = domain( url_update );
+      var fields = { pedidos : {
+          id        : jQuery('#id_pedido_edit').val().replace()
+          ,iva      : jQuery('#edit_iva_').val().replace(',',"")
+          ,subtotal : jQuery('#edit_subtotal_').val().replace(',',"")
+          ,total    : jQuery('#edit_total_').val().replace(',',"")
+        }
+      }
+      var promise = MasterController.method_master(url,fields,"put");
+        promise.then( response => {
+            jQuery.fancybox.close({
+                  'type'      : 'inline'
+                  ,'src'      : "#modal_edit_register"
+                  ,'modal': true
+              });
+            this.consulta_general();
+        }).catch( error => {
+            if( isset(error.response) && error.response.status == 419 ){
+              toastr.error( session_expired ); 
+              redirect(domain("/"));
+              return;
+            }
+              toastr.error( error.result , expired );  
+        });
+    }
+    ,insert_facturacion(){
 
     }
-    
     
   }
 

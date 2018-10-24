@@ -238,17 +238,23 @@ var mixins = {
             }else{
               return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
             }
-            //var datestring = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
-            //d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-            //return datestring;
         }
-        // change_page( page ){
-        //     this.datos.pagination.current_page = page;
-        //     var fields = {'page': page};
-        //     var url = domain('dashboard/show');
-        //     this.get_general( url,fields );
-        //
-        // },
+         ,suma_dias_fecha(fecha1, dias ,format = "yyyy-mm-dd") {
+            var Fecha = new Date(fecha1);
+            var sFecha = fecha || (Fecha.getDate() + "/" + (Fecha.getMonth() + 1) + "/" + Fecha.getFullYear());
+            var sep = sFecha.indexOf('/') != -1 ? '/' : '-';
+            var aFecha = sFecha.split(sep);
+            var fecha = aFecha[2] + '/' + aFecha[1] + '/' + aFecha[0];
+            fecha = new Date(fecha);
+            fecha.setDate(fecha.getDate() + parseInt(dias));
+            var anno = fecha.getFullYear();
+            var mes = fecha.getMonth() + 1;
+            var dia = fecha.getDate();
+            mes = (mes < 10) ? ("0" + mes) : mes;
+            dia = (dia < 10) ? ("0" + dia) : dia;
+            var fechaFinal = (format === "yyyy-mm-dd") ? anno + "-" + mes + "-" + dia : dia + "-" + mes + "-" + anno;
+            return (fechaFinal);
+        }
 
     }
 };
