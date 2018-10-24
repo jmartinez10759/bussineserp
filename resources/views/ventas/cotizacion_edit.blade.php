@@ -424,7 +424,7 @@
                             <hr>    
 
                             <div class="table-responsive">
-
+                                
                                 <table class="table">
                                     <tbody><tr style="background-color: #337ab7; color: #ffffff;">
                                         <th class="text-center">CÓDIGO</th>
@@ -434,7 +434,7 @@
                                         <th class="text-right">PRECIO TOTAL</th>
                                         <th></th>
                                     </tr>
-                                    <tr v-for="concep in edit_cotizacion.conceptos">
+                                    <tr v-for="concep in datos">
                                         <td class="text-center">@{{ concep.codigo }}</td>
                                         <td class="text-center">@{{ concep.cantidad }}</td>
                                         <td>@{{ concep.descripcion }}</td>
@@ -444,15 +444,15 @@
                                     </tr>            
                                     <tr>
                                         <td class="text-right" colspan="4" >SUBTOTAL </td>
-                                        <td class="text-right" style="background-color:#eee">  <p id="subtotal_edit"></p></td>
+                                        <td class="text-right" style="background-color:#eee">  @{{ edit.subtotal }}</td>
                                     </tr>
                                     <tr>
                                         <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
-                                        <td class="text-right" style="background-color:#eee">  <p id="iva_edit"></p></td>
+                                        <td class="text-right" style="background-color:#eee"> @{{ edit.iva }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-right" colspan="4">TOTAL </td>
-                                        <td class="text-right" style="background-color:#eee">  <p id="total_edit"></p></td>
+                                        <td class="text-right" style="background-color:#eee"> @{{ edit.total }} </td>
                                     </tr>
 
                                 </tbody></table>

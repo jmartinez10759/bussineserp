@@ -44,7 +44,7 @@
             $clientes = dropdown([
                  'data'       => $this->_consulta(new SysClientesModel)
                  ,'value'     => 'id'
-                 ,'text'      => 'razon_social rfc_receptor'
+                 ,'text'      => 'razon_social'
                  ,'name'      => 'cmb_clientes'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opción'
@@ -73,7 +73,7 @@
            ]); 
 
             $monedas = dropdown([
-                 'data'       => SysMonedasModel::where(['estatus' => 1 ])->orderby('descripcion', 'asc')->get()
+                 'data'       => SysMonedasModel::where(['estatus' => 1 ])->whereIn('id',['100','101','150','149'])->orderby('descripcion', 'asc')->get()
                  ,'value'     => 'id'
                  ,'text'      => 'descripcion'
                  ,'name'      => 'cmb_monedas'
@@ -261,6 +261,13 @@
                         left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
                         left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where;
 
+                $tol = "SELECT sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
+                        FROM sysbussiness.sys_users_cotizaciones
+                        inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                        inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                        left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+                        left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where.' '."group by sys_cotizaciones.id";
+
                 $sql_general = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
                                    CONCAT(sys_users.name,' ',sys_users.first_surname) as vendedor,
                                    sys_cotizaciones.codigo,DATE_FORMAT(sys_cotizaciones.created_at, '%Y-%m-%d') as created_at,
@@ -282,10 +289,29 @@
 
                 $concep = DB::select($sql);
                 $cotiz_general = DB::select($sql_general);
+                $total = DB::select($tol);
+
+                if($request->id == ''){
+                    $totales = [];
+                }else{
+                    $subtotal = $total[0]->subtotal;
+                    $iv = Session::get('iva') / 100;
+                    $iva = $subtotal * $iv;
+
+                    $totales = [
+                         'iva'          => format_currency($iva,2)
+                        ,'subtotal'     => format_currency($subtotal,2)
+                        ,'total'        => format_currency($subtotal + $iva,2)
+                        ,'iva_'         => number_format($iva,2)
+                        ,'subtotal_'    => number_format($subtotal,2)
+                        ,'total_'       => number_format($subtotal + $iva,2)
+                    ];
+                }
 
                 $response = [
                     'concep'            => $concep
                     ,'cotiz_general'    => $cotiz_general
+                    ,'totales'          => $totales
                 ];
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
@@ -621,7 +647,7 @@
                     ,'total'        => $this->truncarDecimales($subtotal + $iva,2)
                 ];
                 /*Update total.iva,subtotal*/
-                $io = SysCotizacionModel::where('id',$dl)->update($totales);
+                SysCotizacionModel::where('id',$dl)->update($totales);
                 /*Eliminacion cocepto*/
                 SysConceptosCotizacionesModel::where(['id' => $request->id])->delete();
                 $response = SysUsersCotizacionesModel::where('id_concepto',$request->input('id'))->delete();

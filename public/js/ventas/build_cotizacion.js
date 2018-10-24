@@ -26,15 +26,22 @@ new Vue({
   },
   mixins : [mixins],
   methods:{
-    consulta_general(){
+    consulta_general(id){
       //alert(jQuery('#id_concep_producto').val());
         var url = domain( url_all );
-        var fields = {id: jQuery('#id_concep_producto').val() };
+        if(jQuery('#id_concep_producto').val() == ''){
+            var id = id;
+        }else{
+            var id = jQuery('#id_concep_producto').val();
+        }
+        console.log(id);
+        var fields = {id: id };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           //console.log(response.data.result.concep);
           this.datos = response.data.result.concep;
           this.cotizacion = response.data.result.cotiz_general;
+          this.edit = response.data.result.totales;
           //console.log(response.data.result.cotiz_general);
           /* Calcular total de productos (conceptos)*/
           var msgTotal = this.datos.reduce(function(prev, cur) {
@@ -190,7 +197,7 @@ new Vue({
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
-              this.consulta_general();
+
               buildSweetAlertOptions("¡Registro agregado!", "¿Deseas seguir agregando registros?", function(){
                $.fancybox.close({
                     'type': 'inline'
@@ -198,12 +205,12 @@ new Vue({
                     ,'buttons' : ['share', 'close']
                 });
           }, 'success', true,['NO','SI'] );
-              this.consulta_general();
+
               clean_input_product_edit();
               toastr.success( response.data.message , title );
               jQuery('#id_concep_producto').val(response.data.result.id)
               console.log(response.data.result.id);
-              this.consulta_general();
+              this.consulta_general(jQuery('#id_cotizacion_edit').val());
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -261,10 +268,11 @@ new Vue({
               jQuery('#subtotal_edit').text(response.data.result.conceptos[0].subtotal);
               jQuery('#iva_edit').text(response.data.result.conceptos[0].iva);
               jQuery('#total_edit').text(response.data.result.conceptos[0].total_conc);
-              console.log(response.data.result.cotizacion[0]);
+              console.log(response.data.result);
               toastr.success( response.data.message , title );
               this.edit_cotizacion = response.data.result;
               console.log(this.edit_cotizacion);
+              this.consulta_general(response.data.result.conceptos[0].id_cotizacion);
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -338,7 +346,7 @@ new Vue({
           promise.then( response => {
               toastr.success( response.data.message , title );
               console.log(response);
-              this.consulta_general();
+              this.consulta_general(jQuery('#id_cotizacion_edit').val());
           }).catch( error => {
             
               if( isset(error.response.status) && error.response.status == 419 ){
@@ -392,3 +400,7 @@ jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();
 
 jQuery('#cmb_clientes').selectpicker();
+jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1}).datepicker("setDate", new Date());
+
+jQuery('#cmb_estatus').val(6);
+jQuery('#cmb_estatus').prop('disabled', true);
