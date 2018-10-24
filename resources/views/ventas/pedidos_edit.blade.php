@@ -43,7 +43,7 @@
                 </div>
                 <label for="email" class="col-md-1 control-label">Teléfono:</label>
                 <div class="col-md-2">
-                    <input type="email" class="form-control input-sm" id="telefono_cliente" placeholder="Telefono Cliente" readonly="">
+                    <input type="email" class="form-control input-sm" id="telefono_cliente" placeholder="Telefono Cliente" readonly="" maxlength="14">
                 </div>
             </div>
 
@@ -148,7 +148,7 @@
             <button type="button" class="btn btn-danger" data-fancybox-close v-on:click.prevent="cancel_pedido()">
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-primary" v-on:click.prevent="update_register(1)" {{$insertar}}>
+            <button type="button" class="btn btn-primary agregar" v-on:click.prevent="update_register(1)" {{$insertar}}>
                 <i class="fa fa-save"></i> Registrar
             </button>
         </div>
@@ -281,17 +281,17 @@
                         <tr>
                             <td class="text-right" colspan="4">SUBTOTAL </td>
                             <td class="text-right" id="subtotal_edit" style="background-color:#eee">$ 0.00</td>
-                            <input type="text" id="edit_subtotal_">
+                            <input type="hidden" id="edit_subtotal_">
                         </tr>
                         <tr>
                             <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
                             <td class="text-right" id="iva_edit" style="background-color:#eee">$ 0.00</td>
-                            <input type="text" id="edit_iva_">
+                            <input type="hidden" id="edit_iva_">
                         </tr>
                         <tr>
                             <td class="text-right" colspan="4">TOTAL </td>
                             <td class="text-right" id="total_edit" style="background-color:#eee">$ 0.00</td>
-                            <input type="text" id="edit_total_">
+                            <input type="hidden" id="edit_total_">
                         </tr>
                     </tfoot>
 
@@ -304,10 +304,10 @@
 
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
-            <button type="button" class="btn btn-danger" data-fancybox-close>
+            <button type="button" class="btn btn-danger" v-on:click.prevent="update_pedidos()">
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-info" v-on:click.prevent="update_register()" {{$update}}>
+            <button type="button" class="btn btn-info update" v-on:click.prevent="update_register()" {{$update}}>
                 <i class="fa fa-save"></i> Actualizar
             </button>
         </div>
@@ -340,7 +340,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Cantidad</label>
                 <div class="col-sm-9">
-                    <input type="text" id="cantidad_concepto" class="form-control" onkeyup="numerico(this)" onblur="calcular_suma()" value="0">
+                    <input type="text" id="cantidad_concepto" class="form-control" onkeyup="numerico(this)" onblur="calcular_suma()" value="0" maxlength="8">
                 </div>
             </div>
 
@@ -371,7 +371,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-info" v-on:click.prevent="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Agregar </button>
+                    <button type="button" class="btn btn-info agregar" v-on:click.prevent="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Agregar </button>
                 </div>
             </div>
 
@@ -402,7 +402,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Cantidad</label>
                 <div class="col-sm-9">
-                    <input type="text" id="cantidad_concepto_edit" class="form-control" onkeyup ="numerico(this)" onblur="calcular_suma_edit()" value="0">
+                    <input type="text" id="cantidad_concepto_edit" class="form-control" onkeyup ="numerico(this)" onblur="calcular_suma_edit()" value="0" maxlength="8">
                 </div>
             </div>
 
@@ -433,7 +433,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-info" v-on:click.prevent="insert_register(1)" {{$insertar}}><i class="fa fa-save"></i> Agregar </button>
+                    <button type="button" class="btn btn-info agregar" v-on:click.prevent="insert_register(1)" {{$insertar}}><i class="fa fa-save"></i> Agregar </button>
                 </div>
             </div>
 

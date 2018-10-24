@@ -21,6 +21,7 @@ class CreateSysPedidosTable extends Migration
             $table->double('subtotal',4)->default(0);
             $table->double('total',4)->default(0);
             $table->integer('id_cotizacion')->default(0);
+            $table->integer('id_cliente')->default(0);
             $table->integer('id_moneda')->default(1);
             $table->integer('id_contacto')->default(1);
             $table->integer('id_forma_pago')->default(1);

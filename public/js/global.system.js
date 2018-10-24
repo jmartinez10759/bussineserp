@@ -906,6 +906,12 @@ restaFechas = function (fecha1, fecha2) {
     var dias = Math.floor(dif / (1000 * 60 * 60 * 24));
     return dias;
 }
+suma_dias_fecha = function (fecha1, dias) {
+    var fecha = new Date(fecha1);
+    var dias = (dias) ? dias : 2; // Número de días a agregar
+    var fecha_actual = fecha.setDate(fecha.getDate() + dias);
+    return fecha_actual;
+}
 /**
  *Funcion para contar los dias trancurridos
  *@param fecha1
