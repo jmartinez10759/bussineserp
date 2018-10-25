@@ -644,111 +644,111 @@
  }
  /**
  * Funcion que devuelve un array con los valores:
- *	os => sistema operativo
- *	browser => navegador
- *	version => version del navegador
+ * @param os => sistema operativo
+ * @param browser => navegador
+ * @param version => version del navegador
  */
-  if(!function_exists('detect')){
-      function detect(){
-        $browser=array("IE","OPERA","MOZILLA","NETSCAPE","FIREFOX","SAFARI","CHROME");
-        $os=array("WIN","MAC","LINUX");
-        # definimos unos valores por defecto para el navegador y el sistema operativo
-        $info['browser'] = "OTHER";
-        $info['os'] = "OTHER";
-        # buscamos el navegador con su sistema operativo
-        foreach($browser as $parent){
-          $s = strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), $parent);
-          $f = $s + strlen($parent);
-          $version = substr($_SERVER['HTTP_USER_AGENT'], $f, 15);
-          $version = preg_replace('/[^0-9,.]/','',$version);
-          if ($s){
-            $info['browser'] = $parent;
-            $info['version'] = $version;
-          }
+if(!function_exists('detect')){
+    function detect(){
+      $browser=array("IE","OPERA","MOZILLA","NETSCAPE","FIREFOX","SAFARI","CHROME");
+      $os=array("WIN","MAC","LINUX");
+      # definimos unos valores por defecto para el navegador y el sistema operativo
+      $info['browser'] = "OTHER";
+      $info['os'] = "OTHER";
+      # buscamos el navegador con su sistema operativo
+      foreach($browser as $parent){
+        $s = strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), $parent);
+        $f = $s + strlen($parent);
+        $version = substr($_SERVER['HTTP_USER_AGENT'], $f, 15);
+        $version = preg_replace('/[^0-9,.]/','',$version);
+        if ($s){
+          $info['browser'] = $parent;
+          $info['version'] = $version;
         }
-        # obtenemos el sistema operativo
-        foreach($os as $val){
-          if (strpos(strtoupper($_SERVER['HTTP_USER_AGENT']),$val)!==false)
-          $info['os'] = $val;
-        }
-        $info['user_agent'] = isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']: "";
-        # devolvemos el array de valores
-        return $info;
       }
-  }
-  /**
-   *Funcion para calcular la edad con la fecha de nacimiento.
-   *@access public
-   *@param $fechaInicio string []
-   *@param $fechaFin string []
-   *@return integer
-   */
-   if(!function_exists('time_fechas')){
-
-     function time_fechas( $fechaInicio, $fechaFin ){
-            $fecha1 = new DateTime( $fechaInicio );
-            $fecha2 = new DateTime( $fechaFin );
-            $fecha = $fecha1->diff( $fecha2) ;
-            $tiempo = "";
-            //años
-            if($fecha->y > 0){
-                $tiempo .= $fecha->y;
-                if($fecha->y == 1) $tiempo .= " año, "; else $tiempo .= " años, ";
-            }
-            //meses
-            if($fecha->m > 0){
-                $tiempo .= $fecha->m;
-                if($fecha->m == 1) $tiempo .= " mes, "; else $tiempo .= " meses, ";
-            }
-            //dias
-            if($fecha->d > 0){
-                $tiempo .= $fecha->d;
-                if($fecha->d == 1) $tiempo .= " día, ";
-                else $tiempo .= " días, ";
-            }
-            //horas
-            if($fecha->h > 0){
-                $tiempo .= $fecha->h;
-                if($fecha->h == 1) $tiempo .= " hora, ";else $tiempo .= " horas, ";
-            }
-            //minutos
-            if($fecha->i > 0){
-                $tiempo .= $fecha->i;
-                if($fecha->i == 1) $tiempo .= " minuto"; else $tiempo .= " minutos";
-            }else if($fecha->i == 0) //segundos
-                $tiempo .= $fecha->s." segundos";
-            return $tiempo;
+      # obtenemos el sistema operativo
+      foreach($os as $val){
+        if (strpos(strtoupper($_SERVER['HTTP_USER_AGENT']),$val)!==false)
+        $info['os'] = $val;
+      }
+      $info['user_agent'] = isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']: "";
+      # devolvemos el array de valores
+      return $info;
+    }
+}
+/**
+ *Funcion para calcular la edad con la fecha de nacimiento.
+ *@access public
+ *@param $fechaInicio string []
+ *@param $fechaFin string []
+ *@return integer
+ */
+if(!function_exists('time_fechas')){
+ function time_fechas( $fechaInicio, $fechaFin ){
+        $fecha1 = new DateTime( $fechaInicio );
+        $fecha2 = new DateTime( $fechaFin );
+        $fecha = $fecha1->diff( $fecha2) ;
+        $tiempo = "";
+        //años
+        if($fecha->y > 0){
+            $tiempo .= $fecha->y;
+            if($fecha->y == 1) $tiempo .= " año, "; else $tiempo .= " años, ";
         }
-
+        //meses
+        if($fecha->m > 0){
+            $tiempo .= $fecha->m;
+            if($fecha->m == 1) $tiempo .= " mes, "; else $tiempo .= " meses, ";
+        }
+        //dias
+        if($fecha->d > 0){
+            $tiempo .= $fecha->d;
+            if($fecha->d == 1) $tiempo .= " día, ";
+            else $tiempo .= " días, ";
+        }
+        //horas
+        if($fecha->h > 0){
+            $tiempo .= $fecha->h;
+            if($fecha->h == 1) $tiempo .= " hora, ";else $tiempo .= " horas, ";
+        }
+        //minutos
+        if($fecha->i > 0){
+            $tiempo .= $fecha->i;
+            if($fecha->i == 1) $tiempo .= " minuto"; else $tiempo .= " minutos";
+        }else if($fecha->i == 0) //segundos
+            $tiempo .= $fecha->s." segundos";
+        return $tiempo;
     }
-  /**
-   *Funcion para calcular la edad con la fecha de nacimiento.
-   *@access public
-   *@param $fecha_nacimiento string []
-   *@return integer
-   */
-   if(!function_exists('edad')){
-
-       function edad( $fecha_nacimiento ){
-           $fecha = new DateTime( $fecha_nacimiento );
-           $hoy = new DateTime();
-           $annos = $hoy->diff($fecha);
-           return $annos->y;
-       }
-
-   }
-
-   if( !function_exists('validarRFC') ){
-     function validarRFC( $rfc ){
-        $regex = '/^[a-zA-Z]{3,4}(\d{6})((\D|\d){2,3})?$/';
-    	  return preg_match($regex, $rfc);
+}
+/**
+ *Funcion para calcular la edad con la fecha de nacimiento.
+ *@access public
+ *@param $fecha_nacimiento string []
+ *@return integer
+ */
+ if(!function_exists('edad')){
+     function edad( $fecha_nacimiento ){
+         $fecha = new DateTime( $fecha_nacimiento );
+         $hoy = new DateTime();
+         $annos = $hoy->diff($fecha);
+         return $annos->y;
      }
+ }
+if( !function_exists('validarRFC') ){
+ function validarRFC( $rfc ){
+    $regex = '/^[a-zA-Z]{3,4}(\d{6})((\D|\d){2,3})?$/';
+	  return preg_match($regex, $rfc);
+ }
 
-   }
-
-    if( !function_exists('emailValidate') ){
-        function emailValidate ( $email ){
-             $regex = '/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i';
-             return preg_match($regex, $email);
-         }
+}
+if( !function_exists('emailValidate') ){
+    function emailValidate ( $email ){
+         $regex = '/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i';
+         return preg_match($regex, $email);
+     }
+}
+if( !function_exists('end_key') ){
+    function end_key( $array ){
+      end( $array );
+      return key( $array );
     }
+}

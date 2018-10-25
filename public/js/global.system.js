@@ -430,16 +430,18 @@ function buildSweetAlertOptions(titulo, mensaje, success, type_message, status_c
     /*swal({
           title: titulo,
           text: mensaje,
-          type: "warning",
-          showCancelButton: true,
+          type: type_message,
+          showCancelButton: status_cancel_button,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'Aceptar',
-          cancelButtonText: 'Cancelar',
-          confirmButtonClass: 'btn btn-success',
+          confirmButtonText: buttonText[0],
+          cancelButtonText: buttonText[1],
+          confirmButtonClass: "btn btn-info",
           cancelButtonClass: 'btn btn-danger',
           buttonsStyling: false,
-          allowOutsideClick: false
+          allowOutsideClick: false,
+          closeOnConfirm: true,
+          closeOnCancel: true
     }).then(function () {
         success();
     }, function (dismiss) {

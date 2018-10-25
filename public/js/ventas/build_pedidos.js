@@ -22,6 +22,7 @@ new Vue({
     edit: {},
     fields: {},
     conceptos: {},
+    conceptos_edit: {},
 
   },
   mixins : [mixins],
@@ -81,9 +82,9 @@ new Vue({
               jQuery('#edit_total_').val(response.data.result.total_);
               //mandar a llamar un metodo para la parte de actualizacion de los registros de las cantidades
               this.consulta_general();
-              if( jQuery('#cmb_estatus_form_edit').val() == 5){
-                alert();
-              }
+              // if( jQuery('#cmb_estatus_form_edit').val() == 5){
+              //   alert();
+              // }
 
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
@@ -164,14 +165,23 @@ new Vue({
           ,conceptos : this.insert.conceptos
         };
         
-        jQuery.fancybox.close({
-            'type'      : 'inline'
-            ,'src'      : "#modal_conceptos"
-            ,'buttons'  : ['share', 'close']
-        });
-        //jQuery('.agregar').prop('disabled',true);
+        if(update){
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
+            });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+        jQuery('.agregar').prop('disabled',true);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
+              jQuery('.agregar').prop('disabled',false);
               if(update){
                 this.consulta_conceptos_edit( response.data.result.id );
               }

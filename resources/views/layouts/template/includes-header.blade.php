@@ -48,13 +48,17 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <style type="text/css">.scroll {width: 100%;display:block;}.scroll thead { display: inline-block; width: 100%;}.scroll tbody { height: 350px; display: inline-block; width: 100%;overflow: auto; }</style>
+ <style type="text/css">
+    .scroll {width: 100%;display:block;}
+    .scroll thead { display: inline-block; width: 100%;}
+    .scroll tbody { height: 350px; display: inline-block; width: 100%;overflow: auto; }
+  </style>
   <style type="text/css">
-    .fixed_header{width: 100%;table-layout: auto;border-collapse: collapse;}
-    .fixed_header tbody{display:block;width: 100%;overflow: auto;height: 350px;}
-    .fixed_header thead tr {display: block;}
-    .fixed_header thead {background: black;color:#fff;}
-    .fixed_header th, .fixed_header td {padding: 5px;text-align: left;width: 200px;}
+    .fixed_header{width: 100%;table-layout: auto; border-collapse: collapse; display:block;}
+    .fixed_header tbody {display:block; overflow: auto; height: 350px;}
+    .fixed_header thead {background: black;color:#fff; display: block;}
+    .fixed_header tfoot {display: block;}
+    .fixed_header th, .fixed_header td {padding: 5px;text-align: top; width: 145px;}
     .notify {
         animation: 1s ease-out 0s normal none infinite running heartbit;
         border: 5px solid #4680ff;
@@ -86,12 +90,17 @@
       .fixed_header tbody::-webkit-scrollbar-thumb:hover { background: #fff; }
       .fixed_header tbody::-webkit-scrollbar-thumb:active { background: linear-gradient(left, #22ADD4, #1E98BA);}
 
+      .scroll tbody::-webkit-scrollbar {width: 5px;background-color: #F5F5F5;}
+      .scroll tbody::-webkit-scrollbar-track {border-radius: 10px;background: rgba(0,0,0,0.1);border: 1px solid #ccc;}
+      .scroll tbody::-webkit-scrollbar-thumb {border-radius: 10px;background: linear-gradient(left, #fff, #e4e4e4);border: 1px solid #aaa;}
+      .scroll tbody::-webkit-scrollbar-thumb:hover { background: #fff; }
+      .scroll tbody::-webkit-scrollbar-thumb:active { background: linear-gradient(left, #22ADD4, #1E98BA);}
+
       .slimScrollDiv section{display:block;width: 100%;overflow: auto;height: 350px;}
       .slimScrollDiv section::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
        body{display:block;width: 100%;overflow: auto;height: 350px;}
        body::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
        [v-cloak]{display: none}
-       /* div {visibility:hidden;} */
   </style>
   <!-- estilos del desarrollador -->
    @stack('styles')
