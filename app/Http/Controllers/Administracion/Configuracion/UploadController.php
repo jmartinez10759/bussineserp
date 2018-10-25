@@ -44,11 +44,19 @@ use App\Model\Almacenes\SysAlmacenesModel;
 use App\Model\Administracion\Configuracion\SysTiposComprobantesModel;
 use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
 use App\Model\Ventas\SysCotizacionModel;
-use App\Model\Admnistracion\Configuracion\SysCuentasModel;
-use App\Model\Administracion\Configuracion\SysCuentasModel;
-use App\Model\Ventas\SysFacturacionModel;
-use App\Model\Ventas\SysFacturacionVentasModel;
 use App\Model\Ventas\SysFacturacionesModel;
+use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
+use App\Model\Administracion\Configuracion\SysUsoCfdiModel;
+use App\Model\Administracion\Configuracion\SysTipoFactorModel;
+use App\Model\Administracion\Configuracion\SysTasaModel;
+use App\Model\Administracion\Configuracion\SysImpuestoModel;
+use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
+
+
+
+
+
+
 
 
 
@@ -141,9 +149,6 @@ class UploadController extends MasterController
                case "Cuentas": 
                 $this->_tabla_model = new SysCuentasModel; 
             break;
-               case "Productos": 
-                $this->_tabla_model = new SysProductosModel; 
-            break;
                case "Proveedores": 
                 $this->_tabla_model = new SysProveedoresModel; 
             break;
@@ -165,20 +170,26 @@ class UploadController extends MasterController
                case "Cotizacion": 
                 $this->_tabla_model = new SysCotizacionModel; 
             break;
-               case "Cuentas": 
-                $this->_tabla_model = new SysCuentasModel; 
-            break;
-               case "Cuentas": 
-                $this->_tabla_model = new SysCuentasModel; 
-            break;
-               case "Facturacion": 
-                $this->_tabla_model = new SysFacturacionModel; 
-            break;
-               case "Facturacionventas": 
-                $this->_tabla_model = new SysFacturacionVentasModel; 
-            break;
                case "Facturaciones": 
                 $this->_tabla_model = new SysFacturacionesModel; 
+            break;
+               case "Regimenfiscal": 
+                $this->_tabla_model = new SysRegimenFiscalModel; 
+            break;
+               case "Usocfdi": 
+                $this->_tabla_model = new SysUsoCfdiModel; 
+            break;
+               case "Tipofactor": 
+                $this->_tabla_model = new SysTipoFactorModel; 
+            break;
+               case "Tasa": 
+                $this->_tabla_model = new SysTasaModel; 
+            break;
+               case "Impuesto": 
+                $this->_tabla_model = new SysImpuestoModel; 
+            break;
+               case "Claveprodservicio": 
+                $this->_tabla_model = new SysClaveProdServicioModel; 
             break;
 
 

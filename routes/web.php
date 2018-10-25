@@ -841,7 +841,7 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'pedidos.destroy_concepto'
         ]);
 
-################################## MODULO DE VENTAS SECCION DE FACTURACIONES ################################
+############################# MODULO DE VENTAS SECCION DE FACTURACIONES ##########################
             
         Route::get('/ventas/facturaciones', [
             'uses'      => 'Ventas\FacturacionesController@index'
@@ -910,41 +910,192 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\TiposComprobantesController@destroy'
         ,'as' => 'tiposcomprobantes.destroy'
     ]);
-################################## CATALOGO DE TIPO DE COMPROBANTES ################################
+################################## CATALOGO REGIMEN FISCAL ################################
 
-    Route::get('/configuracion/tiposcomprobantes', [
-        'uses' => 'Administracion\Configuracion\TiposComprobantesController@index'
+    Route::get('/configuracion/regimenfiscal', [
+        'uses' => 'Administracion\Configuracion\RegimenFiscalController@index'
         ,'as'  => 'configuracion.tiposcomprobantes'
     ]);
 
-    Route::get('/tiposcomprobantes/all', [
-        'uses' => 'Administracion\Configuracion\TiposComprobantesController@all'
-        ,'as'  => 'tiposcomprobantes.all'
+    Route::get('/regimenfiscal/all', [
+        'uses' => 'Administracion\Configuracion\RegimenFiscalController@all'
+        ,'as'  => 'regimenfiscal.all'
     ]);
 
-    Route::post('/tiposcomprobantes/register', [
-        'uses' => 'Administracion\Configuracion\TiposComprobantesController@store'
-        ,'as' => 'tiposcomprobantes.register'
+    Route::post('/regimenfiscal/register', [
+        'uses' => 'Administracion\Configuracion\RegimenFiscalController@store'
+        ,'as' => 'regimenfiscal.register'
     ]);
 
-    Route::get('/tiposcomprobantes/edit', [
-        'uses' => 'Administracion\Configuracion\TiposComprobantesController@show'
-        ,'as' => 'tiposcomprobantes.edit'
+    Route::get('/regimenfiscal/edit', [
+        'uses' => 'Administracion\Configuracion\RegimenFiscalController@show'
+        ,'as' => 'regimenfiscal.edit'
     ]);
 
-    Route::put('/tiposcomprobantes/update', [
-        'uses' => 'Administracion\Configuracion\TiposComprobantesController@update'
-        ,'as' => 'tiposcomprobantes.update'
+    Route::put('/regimenfiscal/update', [
+        'uses' => 'Administracion\Configuracion\RegimenFiscalController@update'
+        ,'as' => 'regimenfiscal.update'
     ]);
 
-    Route::delete('/tiposcomprobantes/destroy', [
-        'uses' => 'Administracion\Configuracion\TiposComprobantesController@destroy'
-        ,'as' => 'tiposcomprobantes.destroy'
+    Route::delete('/regimenfiscal/destroy', [
+        'uses' => 'Administracion\Configuracion\RegimenFiscalController@destroy'
+        ,'as' => 'regimenfiscal.destroy'
+    ]);
+################################## CATALOGO USOCFDI  ################################
+
+    Route::get('/configuracion/usocfdi', [
+        'uses' => 'Administracion\Configuracion\UsoCfdiController@index'
+        ,'as'  => 'configuracion.usocfdi'
     ]);
 
+    Route::get('/usocfdi/all', [
+        'uses' => 'Administracion\Configuracion\UsoCfdiController@all'
+        ,'as'  => 'usocfdi.all'
+    ]);
 
+    Route::post('/usocfdi/register', [
+        'uses' => 'Administracion\Configuracion\UsoCfdiController@store'
+        ,'as' => 'usocfdi.register'
+    ]);
 
+    Route::get('/usocfdi/edit', [
+        'uses' => 'Administracion\Configuracion\UsoCfdiController@show'
+        ,'as' => 'usocfdi.edit'
+    ]);
 
+    Route::put('/usocfdi/update', [
+        'uses' => 'Administracion\Configuracion\UsoCfdiController@update'
+        ,'as' => 'usocfdi.update'
+    ]);
+
+    Route::delete('/usocfdi/destroy', [
+        'uses' => 'Administracion\Configuracion\UsoCfdiController@destroy'
+        ,'as' => 'usocfdi.destroy'
+    ]);
+################################## CATALOGO TIPO FACTOR ################################
+
+    Route::get('/configuracion/tipofactor', [
+        'uses' => 'Administracion\Configuracion\TipoFactorController@index'
+        ,'as'  => 'configuracion.tipofactor'
+    ]);
+
+    Route::get('/tipofactor/all', [
+        'uses' => 'Administracion\Configuracion\TipoFactorController@all'
+        ,'as'  => 'tipofactor.all'
+    ]);
+
+    Route::post('/tipofactor/register', [
+        'uses' => 'Administracion\Configuracion\TipoFactorController@store'
+        ,'as' => 'tipofactor.register'
+    ]);
+
+    Route::get('/tipofactor/edit', [
+        'uses' => 'Administracion\Configuracion\TipoFactorController@show'
+        ,'as' => 'tipofactor.edit'
+    ]);
+
+    Route::put('/tipofactor/update', [
+        'uses' => 'Administracion\Configuracion\TipoFactorController@update'
+        ,'as' => 'tipofactor.update'
+    ]);
+
+    Route::delete('/tipofactor/destroy', [
+        'uses' => 'Administracion\Configuracion\TipoFactorController@destroy'
+        ,'as' => 'tipofactor.destroy'
+    ]);
+################################## CATALOGO TASA ################################
+
+    Route::get('/configuracion/tasa', [
+        'uses' => 'Administracion\Configuracion\TasaController@index'
+        ,'as'  => 'configuracion.tasa'
+    ]);
+
+    Route::get('/tasa/all', [
+        'uses' => 'Administracion\Configuracion\TasaController@all'
+        ,'as'  => 'tasa.all'
+    ]);
+
+    Route::post('/tasa/register', [
+        'uses' => 'Administracion\Configuracion\TasaController@store'
+        ,'as' => 'tasa.register'
+    ]);
+
+    Route::get('/tasa/edit', [
+        'uses' => 'Administracion\Configuracion\TasaController@show'
+        ,'as' => 'tasa.edit'
+    ]);
+
+    Route::put('/tasa/update', [
+        'uses' => 'Administracion\Configuracion\TasaController@update'
+        ,'as' => 'tasa.update'
+    ]);
+
+    Route::delete('/tasa/destroy', [
+        'uses' => 'Administracion\Configuracion\TasaController@destroy'
+        ,'as' => 'tasa.destroy'
+    ]);
+################################## CATALOGO IMPUESTO ################################
+
+    Route::get('/configuracion/impuesto', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@index'
+        ,'as'  => 'configuracion.impuesto'
+    ]);
+
+    Route::get('/impuesto/all', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@all'
+        ,'as'  => 'impuesto.all'
+    ]);
+
+    Route::post('/impuesto/register', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@store'
+        ,'as' => 'impuesto.register'
+    ]);
+
+    Route::get('/impuesto/edit', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@show'
+        ,'as' => 'impuesto.edit'
+    ]);
+
+    Route::put('/impuesto/update', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@update'
+        ,'as' => 'impuesto.update'
+    ]);
+
+    Route::delete('/impuesto/destroy', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@destroy'
+        ,'as' => 'impuesto.destroy'
+    ]);
+################################## CATALOGO CLAVE SERVICIO PRODUCTO ################################
+
+    Route::get('/configuracion/claveprodservicio', [
+        'uses' => 'Administracion\Configuracion\ClaveProdServicioController@index'
+        ,'as'  => 'configuracion.claveprodservicio'
+    ]);
+
+    Route::get('/claveprodservicio/all', [
+        'uses' => 'Administracion\Configuracion\ClaveProdServicioController@all'
+        ,'as'  => 'claveprodservicio.all'
+    ]);
+
+    Route::post('/claveprodservicio/register', [
+        'uses' => 'Administracion\Configuracion\ClaveProdServicioController@store'
+        ,'as' => 'claveprodservicio.register'
+    ]);
+
+    Route::get('/claveprodservicio/edit', [
+        'uses' => 'Administracion\Configuracion\ClaveProdServicioController@show'
+        ,'as' => 'claveprodservicio.edit'
+    ]);
+
+    Route::put('/claveprodservicio/update', [
+        'uses' => 'Administracion\Configuracion\ClaveProdServicioController@update'
+        ,'as' => 'claveprodservicio.update'
+    ]);
+
+    Route::delete('/claveprodservicio/destroy', [
+        'uses' => 'Administracion\Configuracion\ClaveProdServicioController@destroy'
+        ,'as' => 'claveprodservicio.destroy'
+    ]);
 ################################## CATALOGO DE UNIDAD DE MEDIDAS ################################
 
     Route::get('/configuracion/unidadesmedidas', [
@@ -977,9 +1128,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as' => 'unidadesmedidas.destroy'
     ]);
     
-    
     ################################## CATALOGO DE CUENTAS ################################
-
     Route::get('/configuracion/cuentas', [
         'uses' => 'Administracion\Configuracion\CuentasController@index'
         ,'as' => 'configuracion.cuentas'
@@ -1016,7 +1165,6 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
     
 ##################################### COTIZACIONES #########################################    
-
 
 Route::get('/ventas/cotizacion', [
         'uses' => 'Ventas\CotizacionController@index'
