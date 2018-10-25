@@ -26,15 +26,22 @@ new Vue({
   },
   mixins : [mixins],
   methods:{
-    consulta_general(){
+    consulta_general(id){
       //alert(jQuery('#id_concep_producto').val());
         var url = domain( url_all );
-        var fields = {id: jQuery('#id_concep_producto').val() };
+        if(jQuery('#id_concep_producto').val() == ''){
+            var id = id;
+        }else{
+            var id = jQuery('#id_concep_producto').val();
+        }
+        console.log(id);
+        var fields = {id: id };
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           //console.log(response.data.result.concep);
           this.datos = response.data.result.concep;
           this.cotizacion = response.data.result.cotiz_general;
+          this.edit = response.data.result.totales;
           //console.log(response.data.result.cotiz_general);
           /* Calcular total de productos (conceptos)*/
           var msgTotal = this.datos.reduce(function(prev, cur) {
@@ -76,6 +83,7 @@ new Vue({
                ,'iva'           : this.totales.iva
                ,'subtotal'      : this.totales.subtotal
                ,'Total'         : this.totales.Total
+               ,'upd'           : '0'
             },
             'conceptos': {
                  'id_producto'  : jQuery('#cmb_productos').val()
@@ -130,14 +138,15 @@ new Vue({
                ,'iva'           : this.totales.iva
                ,'subtotal'      : this.totales.subtotal
                ,'Total'         : this.totales.Total
-            },
+               ,'upd'           : '1'
+            }/*,
             'conceptos': {
                  'id_producto'  : jQuery('#cmb_productos').val()
                 ,'id_plan'      : jQuery('#cmb_planes').val()
                 ,'cantidad'     : jQuery('#cantidad_concepto').val()
                 ,'precio'       : jQuery('#precio_concepto').val()
                 ,'total'        : jQuery('#total_concepto').val()
-            }
+            }*/
         };
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
@@ -177,6 +186,7 @@ new Vue({
                ,'id_estatus'    : jQuery('#cmb_estatus_edit').val()
                ,'id_cliente'    : jQuery('#cmb_clientes_edit').val()
                ,'id_concep_producto': jQuery('#id_cotizacion_edit').val()
+               ,'upd'           : '0'
 
             },
             'conceptos': {
@@ -190,7 +200,7 @@ new Vue({
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
-              this.consulta_general();
+
               buildSweetAlertOptions("¡Registro agregado!", "¿Deseas seguir agregando registros?", function(){
                $.fancybox.close({
                     'type': 'inline'
@@ -198,12 +208,12 @@ new Vue({
                     ,'buttons' : ['share', 'close']
                 });
           }, 'success', true,['NO','SI'] );
-              this.consulta_general();
+
               clean_input_product_edit();
               toastr.success( response.data.message , title );
               jQuery('#id_concep_producto').val(response.data.result.id)
               console.log(response.data.result.id);
-              this.consulta_general();
+              this.consulta_general(jQuery('#id_cotizacion_edit').val());
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -216,6 +226,49 @@ new Vue({
         }else{
           this.insert_register_update();
         }
+    }
+    ,insert_register_edit_update(){
+        var url = domain( url_insert );
+        var fields = {
+            'cotizacion': {
+                'codigo'        : 'cot-1121'
+               ,'descripcion'   : jQuery('#observaciones_edit').val()
+               ,'id_moneda'     : jQuery('#cmb_monedas_edit').val()
+               ,'id_contacto'   : jQuery('#cmb_contactos_edit').val()
+               ,'id_metodo_pago': jQuery('#cmb_metodos_pagos_edit').val()
+               ,'id_forma_pago' : jQuery('#cmb_formas_pagos_edit').val()
+               ,'id_estatus'    : jQuery('#cmb_estatus_edit').val()
+               ,'id_cliente'    : jQuery('#cmb_clientes_edit').val()
+               ,'id_concep_producto': jQuery('#id_cotizacion_edit').val()
+               ,'iva'           : this.totales.iva
+               ,'subtotal'      : this.totales.subtotal
+               ,'Total'         : this.totales.Total
+               ,'upd'           : '1'
+            }
+        };
+        console.log(fields);
+        var promise = MasterController.method_master(url,fields,"post");
+          promise.then( response => {
+              
+               $.fancybox.close({
+                    'type': 'inline'
+                    ,'src': "#modal_conceptos"
+                    ,'buttons' : ['share', 'close']
+                });
+          
+              clean_input_general_edit();
+              toastr.success( response.data.message , title );
+              console.log(response.data.result.id);
+              this.consulta_general();
+              
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
     }
     ,update_register(){
         var url = domain( url_update );
@@ -249,7 +302,9 @@ new Vue({
                 }
               });
               var id_cliente=jQuery('#cmb_clientes_edit').val(response.data.result.cotizacion[0].id_cliente);
+              var id_contacto=jQuery('#cmb_contactos_edit').val(response.data.result.cotizacion[0].id_contacto);
               display_contactos_edit(id_cliente);
+              parser_data_edit(response.data.result.cotizacion[0].id_contacto);
               jQuery('#cmb_formas_pagos_edit').val(response.data.result.cotizacion[0].id_forma_pago);
               jQuery('#cmb_metodos_pagos_edit').val(response.data.result.cotizacion[0].id_metodo_pago);
               jQuery('#cmb_estatus_edit').val(response.data.result.cotizacion[0].id_estatus);
@@ -259,10 +314,11 @@ new Vue({
               jQuery('#subtotal_edit').text(response.data.result.conceptos[0].subtotal);
               jQuery('#iva_edit').text(response.data.result.conceptos[0].iva);
               jQuery('#total_edit').text(response.data.result.conceptos[0].total_conc);
-              console.log(response.data.result.cotizacion[0]);
+              console.log(response.data.result);
               toastr.success( response.data.message , title );
               this.edit_cotizacion = response.data.result;
               console.log(this.edit_cotizacion);
+              this.consulta_general(response.data.result.conceptos[0].id_cotizacion);
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -336,7 +392,7 @@ new Vue({
           promise.then( response => {
               toastr.success( response.data.message , title );
               console.log(response);
-              this.consulta_general();
+              this.consulta_general(jQuery('#id_cotizacion_edit').val());
           }).catch( error => {
             
               if( isset(error.response.status) && error.response.status == 419 ){
@@ -372,6 +428,17 @@ function clean_input_general() {
         jQuery("#cmb_monedas").val(0);
 }
 
+function clean_input_general_edit() {
+        jQuery('#id_cotizacion_edit').val('');
+        jQuery("#cmb_clientes_edit").val(0);
+        jQuery('#cmb_clientes_edit').change();
+        jQuery('#cmb_formas_pagos_edit').val(0)
+        jQuery("#cmb_metodos_pagos_edit").val(0);
+        jQuery("#cmb_estatus_edit").val(0);
+        jQuery("#observaciones_edit").val('');
+        jQuery("#cmb_monedas_edit").val(0);
+}
+
 function clean_input_product_edit() {
         jQuery('#cmb_productos_edit').val(0)
         jQuery('#cmb_planes_edit').val(0)
@@ -390,3 +457,8 @@ jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();
 
 jQuery('#cmb_clientes').selectpicker();
+jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1}).datepicker("setDate", new Date());
+
+jQuery('#cmb_estatus').val(6);
+jQuery('#cmb_estatus').prop('disabled', true);
+

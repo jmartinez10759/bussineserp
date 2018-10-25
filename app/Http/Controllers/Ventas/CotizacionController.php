@@ -44,7 +44,7 @@
             $clientes = dropdown([
                  'data'       => $this->_consulta(new SysClientesModel)
                  ,'value'     => 'id'
-                 ,'text'      => 'razon_social rfc_receptor'
+                 ,'text'      => 'razon_social'
                  ,'name'      => 'cmb_clientes'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opción'
@@ -68,12 +68,12 @@
                  ,'text'      => 'descripcion'
                  ,'name'      => 'cmb_metodos_pagos'
                  ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'leyenda'   => 'Seleccione Opción'
                  ,'attr'      => 'data-live-search="true" '               
            ]); 
 
             $monedas = dropdown([
-                 'data'       => SysMonedasModel::where(['estatus' => 1 ])->orderby('descripcion', 'asc')->get()
+                 'data'       => SysMonedasModel::where(['estatus' => 1 ])->whereIn('id',['100','101','150','149'])->orderby('descripcion', 'asc')->get()
                  ,'value'     => 'id'
                  ,'text'      => 'descripcion'
                  ,'name'      => 'cmb_monedas'
@@ -153,7 +153,7 @@
                  ,'text'      => 'descripcion'
                  ,'name'      => 'cmb_metodos_pagos_edit'
                  ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'leyenda'   => 'Seleccione Opción'
                  ,'attr'      => 'data-live-search="true" '               
            ]); 
 
@@ -261,6 +261,13 @@
                         left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
                         left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where;
 
+                $tol = "SELECT sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
+                        FROM sysbussiness.sys_users_cotizaciones
+                        inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                        inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                        left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+                        left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where.' '."group by sys_cotizaciones.id";
+
                 $sql_general = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
                                    CONCAT(sys_users.name,' ',sys_users.first_surname) as vendedor,
                                    sys_cotizaciones.codigo,DATE_FORMAT(sys_cotizaciones.created_at, '%Y-%m-%d') as created_at,
@@ -282,10 +289,29 @@
 
                 $concep = DB::select($sql);
                 $cotiz_general = DB::select($sql_general);
+                $total = DB::select($tol);
+
+                if($request->id == ''){
+                    $totales = [];
+                }else{
+                    $subtotal = $total[0]->subtotal;
+                    $iv = Session::get('iva') / 100;
+                    $iva = $subtotal * $iv;
+
+                    $totales = [
+                         'iva'          => format_currency($iva,2)
+                        ,'subtotal'     => format_currency($subtotal,2)
+                        ,'total'        => format_currency($subtotal + $iva,2)
+                        ,'iva_'         => number_format($iva,2)
+                        ,'subtotal_'    => number_format($subtotal,2)
+                        ,'total_'       => number_format($subtotal + $iva,2)
+                    ];
+                }
 
                 $response = [
                     'concep'            => $concep
                     ,'cotiz_general'    => $cotiz_general
+                    ,'totales'          => $totales
                 ];
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
@@ -307,7 +333,8 @@
                        sys_cotizaciones.codigo,
                        sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente,
                        sys_cotizaciones.id_moneda,sys_cotizaciones.id_contacto,sys_cotizaciones.id_metodo_pago,
-                       sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus
+                       sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus,
+                       sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
              FROM sysbussiness.sys_users_cotizaciones
              inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
              inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
@@ -317,10 +344,7 @@
                 $conc = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
                        sys_cotizaciones.codigo,sys_cotizaciones.created_at,sys_productos.descripcion as prod_desc,sys_planes.descripcion,
                        sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
-                       sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc,
-                       sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente,
-                       sys_cotizaciones.id_moneda,sys_cotizaciones.id_contacto,sys_cotizaciones.id_metodo_pago,
-                       sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus
+                       sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente
              FROM sysbussiness.sys_users_cotizaciones
              inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
              inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
@@ -329,11 +353,26 @@
 
                 $concep = DB::select($coti);
                 $conceptos = DB::select($conc);
+                
+                $subtotal = $concep[0]->total_conc;
+                $iv = Session::get('iva') / 100;
+                $iva = $subtotal * $iv;
+
+                $totales = [
+                     'iva'          => format_currency($iva,2)
+                    ,'subtotal'     => format_currency($subtotal,2)
+                    ,'total'        => format_currency($subtotal + $iva,2)
+                    ,'iva_'         => number_format($iva,2)
+                    ,'subtotal_'    => number_format($subtotal,2)
+                    ,'total_'       => number_format($subtotal + $iva,2)
+                ];
 
                 $response = [
                     'cotizacion'    => $concep
                     ,'conceptos'    => $conceptos
+                    ,'totales'      => $totales
                 ];
+                
             return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -406,9 +445,8 @@
                     ];
                     SysUsersCotizacionesModel::create($user_co);
 
-                } else {
+                } elseif($request->cotizacion['upd'] == 0) {
                     $cotizacion                 = SysCotizacionModel::FindOrFail($id);
-
                     $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;
                     $iv = Session::get('iva') / 100;
                     $iva = $subtotal * $iv;
@@ -440,6 +478,28 @@
                     ,'id_concepto'       => $sys_conceptos->id
                     ];
                     SysUsersCotizacionesModel::create($user_co);
+                }else {
+                    
+                    $cotizacion                 = SysCotizacionModel::FindOrFail($id);
+                    $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;
+                    $iv = Session::get('iva') / 100;
+                    $iva = $subtotal * $iv;
+                    
+                    $cotizacion->codigo         = $request->cotizacion['codigo'];
+                    $cotizacion->descripcion    = $request->cotizacion['descripcion'];
+                    $cotizacion->id_cliente     = $request->cotizacion['id_cliente'];
+                    $cotizacion->id_moneda      = $request->cotizacion['id_moneda'];
+                    $cotizacion->id_contacto    = $request->cotizacion['id_contacto'];
+                    $cotizacion->id_metodo_pago = $request->cotizacion['id_metodo_pago'];
+                    $cotizacion->id_forma_pago  = $request->cotizacion['id_forma_pago'];
+                    $cotizacion->id_estatus     = $request->cotizacion['id_estatus'];
+                    $cotizacion->iva            = $this->truncarDecimales($iva,2);
+                    $cotizacion->subtotal       = $this->truncarDecimales($subtotal,2);
+                    $cotizacion->total          = $this->truncarDecimales($subtotal + $iva,2);
+                    $cotizacion->save();
+                    /*SysCotizacionModel::where()->update();
+                    $cotizacion = SysCotizacionModel::where(['id' => $id])->get();
+*/
                 }
 
 
@@ -608,7 +668,7 @@
                     ,'total'        => $this->truncarDecimales($subtotal + $iva,2)
                 ];
                 /*Update total.iva,subtotal*/
-                $io = SysCotizacionModel::where('id',$dl)->update($totales);
+                SysCotizacionModel::where('id',$dl)->update($totales);
                 /*Eliminacion cocepto*/
                 SysConceptosCotizacionesModel::where(['id' => $request->id])->delete();
                 $response = SysUsersCotizacionesModel::where('id_concepto',$request->input('id'))->delete();
@@ -670,7 +730,7 @@
                      ,'text'      => 'nombre_completo'
                      ,'name'      => 'cmb_contactos'
                      ,'class'     => 'form-control'
-                     ,'leyenda'   => 'Seleccione Opcion'
+                     ,'leyenda'   => 'Seleccione Opción'
                      ,'attr'      => 'data-live-search="true" '
                      ,'event'      => 'parser_data()'
                ]);
@@ -714,7 +774,7 @@
                      ,'text'      => 'nombre_completo'
                      ,'name'      => 'cmb_contactos_edit'
                      ,'class'     => 'form-control'
-                     ,'leyenda'   => 'Seleccione Opcion'
+                     ,'leyenda'   => 'Seleccione Opción'
                      ,'attr'      => 'data-live-search="true" '
                      ,'event'      => 'parser_data_edit()'
                ]);

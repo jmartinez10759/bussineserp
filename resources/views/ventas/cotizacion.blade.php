@@ -7,10 +7,15 @@
 				<form class="form-horizontal" role="form" id="datos_cotizacion">
         			<input type="hidden" id="Iva" value="{{$iva}}">
 						<div class="form-group row">
-								<label for="daterange" class="col-md-1 control-label input-sm">Fecha</label>
-								<div class="col-md-3">
-									<input type="text" name="daterange" id="daterange" class="form-control" readonly="">
-								</div>
+								 <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
+				                <div class="col-md-3">
+				                    <input type="text" class="form-control fecha" readonly="" id="fecha_inicial">
+				                </div>
+
+				                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Final </label>
+				                <div class="col-md-3">
+				                    <input type="text" class="form-control fecha" readonly="" id="fecha_final">
+				                </div>
 								
 								<div class="col-md-2">
 									<select class="form-control" id="id_vendedor" onchange="load(1);" {{$permisos}} >
@@ -21,7 +26,7 @@
 									</select>
 								</div>
 								<div class="col-md-2">
-									<select class="form-control" id="estado" onchange="load(1);">
+									<select class="form-control" id="estado" {{$permisos}}>
 										<option value="">Estado</option>
 										<option value="0">Pendiente</option>
 										<option value="1">Aceptada</option>
@@ -300,12 +305,15 @@ function display_contactos_edit(id_clientes){
 
 }
 
-function parser_data_edit(){
+function parser_data_edit(id_cont){
+	var id_c = id_cont;
 	var id_contacto = jQuery('#cmb_contactos_edit').val();
+	var id_c_general = (id_contacto && id_c != '') ? id_contacto:id_c;
 	var url = domain('ventas/contactos');
-	var fields = {id : id_contacto};
+	var fields = {id : id_c_general};
 	var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
+          		jQuery('#cmb_contactos_edit').val(response.data.result.id);
               	jQuery('#tel1_edit').val(response.data.result.telefono);
               	jQuery('#email_contact_edit').val(response.data.result.correo);
           		$('#cmb_clientes_edit').on('change', function() {
