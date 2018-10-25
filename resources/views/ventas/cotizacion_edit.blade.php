@@ -40,10 +40,11 @@
                               
                               <label for="contacto" class="col-md-1 control-label">Contacto:</label>
                                 <div class="col-md-2">
-                                    <div id="div_contacto"></div>
-                                    <!-- <select class="form-control input-sm" id="contacto" name="contacto">
-                                        <option value="">Selecciona</option>
-                                    </select> -->
+                                    <div id="div_contacto">
+                                        <select class="form-control input-sm">
+                                            <option value="">Selecciona Opción</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 
                               
@@ -237,7 +238,7 @@
             <div class="pull-right">
                 <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
                         
-                <button type="button" class="btn btn-success" v-on:click.prevent="insert_register(1)" value="1"><i class="fa fa-save"></i> Agregar</button>
+                <button type="button" class="btn btn-success" v-on:click.prevent="insert_register(1)" value="1" id="reg"><i class="fa fa-save"></i> Agregar</button>
             </div>
         </div>
 
@@ -303,7 +304,7 @@
             <div class="pull-right">
                 <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
                         
-                <button type="button" class="btn btn-success" v-on:click.prevent="insert_register_edit(1)" value="1"><i class="fa fa-save"></i> Agregar</button>
+                <button type="button" class="btn btn-success" v-on:click.prevent="insert_register_edit_update()" onclick='verificar();' value="1"><i class="fa fa-save"></i> Agregar</button>
             </div>
         </div>
 
@@ -470,7 +471,7 @@
         <div class="modal-footer">
             <div class="btn-toolbar pull-right">
                 <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_registere()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button> 
+                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register_edit_update()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button> 
             </div>
         </div>
 

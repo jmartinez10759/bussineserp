@@ -83,6 +83,7 @@ new Vue({
                ,'iva'           : this.totales.iva
                ,'subtotal'      : this.totales.subtotal
                ,'Total'         : this.totales.Total
+               ,'upd'           : '0'
             },
             'conceptos': {
                  'id_producto'  : jQuery('#cmb_productos').val()
@@ -137,14 +138,15 @@ new Vue({
                ,'iva'           : this.totales.iva
                ,'subtotal'      : this.totales.subtotal
                ,'Total'         : this.totales.Total
-            },
+               ,'upd'           : '1'
+            }/*,
             'conceptos': {
                  'id_producto'  : jQuery('#cmb_productos').val()
                 ,'id_plan'      : jQuery('#cmb_planes').val()
                 ,'cantidad'     : jQuery('#cantidad_concepto').val()
                 ,'precio'       : jQuery('#precio_concepto').val()
                 ,'total'        : jQuery('#total_concepto').val()
-            }
+            }*/
         };
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
@@ -184,6 +186,7 @@ new Vue({
                ,'id_estatus'    : jQuery('#cmb_estatus_edit').val()
                ,'id_cliente'    : jQuery('#cmb_clientes_edit').val()
                ,'id_concep_producto': jQuery('#id_cotizacion_edit').val()
+               ,'upd'           : '0'
 
             },
             'conceptos': {
@@ -223,6 +226,49 @@ new Vue({
         }else{
           this.insert_register_update();
         }
+    }
+    ,insert_register_edit_update(){
+        var url = domain( url_insert );
+        var fields = {
+            'cotizacion': {
+                'codigo'        : 'cot-1121'
+               ,'descripcion'   : jQuery('#observaciones_edit').val()
+               ,'id_moneda'     : jQuery('#cmb_monedas_edit').val()
+               ,'id_contacto'   : jQuery('#cmb_contactos_edit').val()
+               ,'id_metodo_pago': jQuery('#cmb_metodos_pagos_edit').val()
+               ,'id_forma_pago' : jQuery('#cmb_formas_pagos_edit').val()
+               ,'id_estatus'    : jQuery('#cmb_estatus_edit').val()
+               ,'id_cliente'    : jQuery('#cmb_clientes_edit').val()
+               ,'id_concep_producto': jQuery('#id_cotizacion_edit').val()
+               ,'iva'           : this.totales.iva
+               ,'subtotal'      : this.totales.subtotal
+               ,'Total'         : this.totales.Total
+               ,'upd'           : '1'
+            }
+        };
+        console.log(fields);
+        var promise = MasterController.method_master(url,fields,"post");
+          promise.then( response => {
+              
+               $.fancybox.close({
+                    'type': 'inline'
+                    ,'src': "#modal_conceptos"
+                    ,'buttons' : ['share', 'close']
+                });
+          
+              clean_input_general_edit();
+              toastr.success( response.data.message , title );
+              console.log(response.data.result.id);
+              this.consulta_general();
+              
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );
+          });
     }
     ,update_register(){
         var url = domain( url_update );
@@ -382,6 +428,17 @@ function clean_input_general() {
         jQuery("#cmb_monedas").val(0);
 }
 
+function clean_input_general_edit() {
+        jQuery('#id_cotizacion_edit').val('');
+        jQuery("#cmb_clientes_edit").val(0);
+        jQuery('#cmb_clientes_edit').change();
+        jQuery('#cmb_formas_pagos_edit').val(0)
+        jQuery("#cmb_metodos_pagos_edit").val(0);
+        jQuery("#cmb_estatus_edit").val(0);
+        jQuery("#observaciones_edit").val('');
+        jQuery("#cmb_monedas_edit").val(0);
+}
+
 function clean_input_product_edit() {
         jQuery('#cmb_productos_edit').val(0)
         jQuery('#cmb_planes_edit').val(0)
@@ -404,3 +461,4 @@ jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1
 
 jQuery('#cmb_estatus').val(6);
 jQuery('#cmb_estatus').prop('disabled', true);
+

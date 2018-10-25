@@ -68,7 +68,7 @@
                  ,'text'      => 'descripcion'
                  ,'name'      => 'cmb_metodos_pagos'
                  ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'leyenda'   => 'Seleccione Opción'
                  ,'attr'      => 'data-live-search="true" '               
            ]); 
 
@@ -153,7 +153,7 @@
                  ,'text'      => 'descripcion'
                  ,'name'      => 'cmb_metodos_pagos_edit'
                  ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'leyenda'   => 'Seleccione Opción'
                  ,'attr'      => 'data-live-search="true" '               
            ]); 
 
@@ -445,9 +445,8 @@
                     ];
                     SysUsersCotizacionesModel::create($user_co);
 
-                } else {
+                } elseif($request->cotizacion['upd'] == 0) {
                     $cotizacion                 = SysCotizacionModel::FindOrFail($id);
-
                     $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;
                     $iv = Session::get('iva') / 100;
                     $iva = $subtotal * $iv;
@@ -479,6 +478,28 @@
                     ,'id_concepto'       => $sys_conceptos->id
                     ];
                     SysUsersCotizacionesModel::create($user_co);
+                }else {
+                    
+                    $cotizacion                 = SysCotizacionModel::FindOrFail($id);
+                    $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;
+                    $iv = Session::get('iva') / 100;
+                    $iva = $subtotal * $iv;
+                    
+                    $cotizacion->codigo         = $request->cotizacion['codigo'];
+                    $cotizacion->descripcion    = $request->cotizacion['descripcion'];
+                    $cotizacion->id_cliente     = $request->cotizacion['id_cliente'];
+                    $cotizacion->id_moneda      = $request->cotizacion['id_moneda'];
+                    $cotizacion->id_contacto    = $request->cotizacion['id_contacto'];
+                    $cotizacion->id_metodo_pago = $request->cotizacion['id_metodo_pago'];
+                    $cotizacion->id_forma_pago  = $request->cotizacion['id_forma_pago'];
+                    $cotizacion->id_estatus     = $request->cotizacion['id_estatus'];
+                    $cotizacion->iva            = $this->truncarDecimales($iva,2);
+                    $cotizacion->subtotal       = $this->truncarDecimales($subtotal,2);
+                    $cotizacion->total          = $this->truncarDecimales($subtotal + $iva,2);
+                    $cotizacion->save();
+                    /*SysCotizacionModel::where()->update();
+                    $cotizacion = SysCotizacionModel::where(['id' => $id])->get();
+*/
                 }
 
 
@@ -709,7 +730,7 @@
                      ,'text'      => 'nombre_completo'
                      ,'name'      => 'cmb_contactos'
                      ,'class'     => 'form-control'
-                     ,'leyenda'   => 'Seleccione Opcion'
+                     ,'leyenda'   => 'Seleccione Opción'
                      ,'attr'      => 'data-live-search="true" '
                      ,'event'      => 'parser_data()'
                ]);
@@ -753,7 +774,7 @@
                      ,'text'      => 'nombre_completo'
                      ,'name'      => 'cmb_contactos_edit'
                      ,'class'     => 'form-control'
-                     ,'leyenda'   => 'Seleccione Opcion'
+                     ,'leyenda'   => 'Seleccione Opción'
                      ,'attr'      => 'data-live-search="true" '
                      ,'event'      => 'parser_data_edit()'
                ]);
