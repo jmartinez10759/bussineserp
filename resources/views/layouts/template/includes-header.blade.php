@@ -54,11 +54,18 @@
     .scroll tbody { height: 350px; display: inline-block; width: 100%;overflow: auto; }
   </style>
   <style type="text/css">
-    .fixed_header{width: 100%;table-layout: auto; border-collapse: collapse; display:block;}
+
+    .fixed_header{width: 100%;table-layout: auto;border-collapse: collapse;}
+    .fixed_header tbody{display:block;width: 100%;overflow: auto;height: 350px;}
+    .fixed_header thead tr {display: block;}
+    .fixed_header thead {background: black;color:#fff;}
+    .fixed_header th, .fixed_header td {padding: 5px;text-align: left;width: 500px;}
+    /*.fixed_header{width: 100%;table-layout: auto; border-collapse: collapse; display:block;}
     .fixed_header tbody {display:block; overflow: auto; height: 350px;}
-    .fixed_header thead {background: black;color:#fff; display: block;}
+    .fixed_header thead {background-color: rgb(51, 122, 183);color:#fff; display: block;}
+    .fixed_header thead tr {display: block;}
     .fixed_header tfoot {display: block;}
-    .fixed_header th, .fixed_header td {padding: 5px;text-align: top; width: 145px;}
+    .fixed_header th, .fixed_header td {padding: 5px;text-align: left; width: 500px;}*/
     .notify {
         animation: 1s ease-out 0s normal none infinite running heartbit;
         border: 5px solid #4680ff;

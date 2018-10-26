@@ -33,7 +33,7 @@ class EmpresasController extends MasterController
         }
            $response = ( Session::get('id_rol') == 1 )? $this->_tabla_model::with(['contactos'])->get():$this->_consulta_employes(new SysUsersModel);
            #debuger($response);        
-           $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->get();
+           $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
            $registros = [];
            $registros_sucursales = [];
            $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
@@ -61,9 +61,9 @@ class EmpresasController extends MasterController
 
            $titulos = [ 'id','Empresa','RFC','Razón Social','Giro Comercial','Dirección','Contacto','Telefono','Estatus','','',''];
            $table = [
-             'titulos'         => $titulos
-             ,'registros'        => $registros
-             ,'id'           => "datatable"
+             'titulos'          => $titulos
+             ,'registros'       => $registros
+             ,'id'              => "datatable"
            ];
           
            #se crea el dropdown
@@ -107,19 +107,19 @@ class EmpresasController extends MasterController
 
 
            $data = [
-             'page_title'          => "Configuración"
-             ,'title'            => "Empresas"
-             ,'data_table'            =>  data_table($table)
+             'page_title'               => "Configuración"
+             ,'title'                   => "Empresas"
+             ,'data_table'              =>  data_table($table)
              ,'data_table_sucursales'   =>  data_table($table_sucursales)
              ,'estados'                 => $estados
              ,'estados_edit'            => $estados_edit
              ,'titulo_modal'            => "Registro de Empresa"
              ,'titulo_modal_edit'       => "Actualacion de Empresa"
-             ,'campo_1'             => 'Empresa'
-             ,'campo_2'             => 'Descripción'
-             ,'campo_4'             => 'RFC'
-             ,'campo_5'             => 'Razón Social'
-             ,'campo_3'             => 'Estatus'
+             ,'campo_1'                 => 'Empresa'
+             ,'campo_2'                 => 'Descripción'
+             ,'campo_4'                 => 'RFC'
+             ,'campo_5'                 => 'Razón Social'
+             ,'campo_3'                 => 'Estatus'
            ];
             #debuger($data);
          return self::_load_view( 'administracion.configuracion.empresas', $data );
@@ -195,7 +195,7 @@ class EmpresasController extends MasterController
                 return $query->where(['sys_contactos.estatus' => 1,'sys_empresas_sucursales.estatus' => 1])->get();
             },'sucursales' => function( $query ){
                 return $query->where(['sys_empresas_sucursales.estatus' => 1])->groupby('id_sucursal')->get();
-            },'clientes'])->where( $where )->get();
+            },'clientes'])->where( $where )->groupby('id')->get();
 
             return $this->_message_success( 201, $response[0] , self::$message_success );
         } catch (\Exception $e) {
@@ -340,14 +340,13 @@ class EmpresasController extends MasterController
           foreach ($request->id_empresa as $key => $value) {
               $response[] = SysEmpresasModel::with(['sucursales' => function($query){
                  return $query->groupby('id');
-              }])->where(['id' => $value])->get();
+              }])->where(['id' => $value])->groupby('id')->get();
           }
           for ($i=0; $i < count($response); $i++) {
             foreach ($response[$i] as $key => $value) {
                 $empresas[] = $value;
             }
           }
-
           return message(true,$empresas,"¡Se cargo correctamente las sucursales!");
 
       }

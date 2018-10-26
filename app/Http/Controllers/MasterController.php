@@ -940,17 +940,21 @@ abstract class MasterController extends Controller
 	 * @param Request $request [Description]
 	 * @return void
 	 */
-	protected function _consulta($table_model, $with = [] )
+	protected function _consulta($table_model, $with = [], $where = [] ,$propiedad = false )
 	{
 		$response = $table_model::with(['empresas' => function ($query) {
-			if (Session::get('id_rol') != 1) {
-				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')]);
-			}
-		}])->with($with)->orderby('id', 'desc')->get();
+		   if (Session::get('id_rol') != 1) {
+			return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
+		   }
+		}])->with($with)->where($where)->orderby('id', 'desc')->get();
 		$request = [];
 		foreach ($response as $respuesta) {
 			if (count($respuesta->empresas) > 0) {
-				$request[] = $respuesta;
+				if($propiedad){
+					$request = $respuesta->$propiedad;
+				}else{
+					$request[] = $respuesta;
+				}
 			}
 		}
 		return $request;
@@ -966,9 +970,9 @@ abstract class MasterController extends Controller
 	{
         #SysUsersModel
 		$response = $table_model::with(['empresas' => function ($query) {
-			if (Session::get('id_rol') != 1) {
-				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')]);
-			}
+		   if (Session::get('id_rol') != 1) {
+			return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
+		   }
 		}])->where(['id' => Session::get('id')])->orderby('id', 'desc')->get();
 		$request = [];
 		foreach ($response as $respuesta) {

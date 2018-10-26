@@ -801,6 +801,8 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
             url: path_url,
             maxFiles: maxfile,
             paramName: "file",
+            //timeout: 180000, /*milliseconds*/
+            //maxFilesize: 256,
             createImageThumbnails: true,
             acceptedFiles: type_file,
             dictDefaultMessage: message,
@@ -848,6 +850,7 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
                 // });
             },
             complete: function (data) {
+                console.log(data);
                 if (data.status == 'error') {
                     toastr.error('No se cargo correctamente el archivo');
                 }

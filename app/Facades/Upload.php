@@ -1,6 +1,5 @@
 <?php
 namespace App\Facades;
-
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +18,7 @@ class Upload extends Facade
    * @return array [Description]
    */
     public function upload_file( Request $request ){
+      #ini_set('upload_max_filesize', '20M');
       $files = $request->file;
       try {
         for ($i=0; $i < count( $files ) ; $i++) {

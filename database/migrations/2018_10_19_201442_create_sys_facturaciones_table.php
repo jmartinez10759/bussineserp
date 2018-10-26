@@ -23,6 +23,7 @@ class CreateSysFacturacionesTable extends Migration
             $table->integer('id_pedidos')->default(0);
             $table->integer('id_cliente')->default(0);
             $table->integer('id_moneda')->default(1);
+            $table->integer('id_tipo_comprobante')->default(1);
             $table->integer('id_contacto')->default(1);
             $table->integer('id_forma_pago')->default(1);
             $table->integer('id_metodo_pago')->default(1);
