@@ -275,7 +275,8 @@
                                    sys_clientes.nombre_comercial,
                                    sys_cotizaciones.id_estatus,
                                    sys_estatus.nombre,
-                                   sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total
+                                   sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
+                                   sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
                                  FROM sysbussiness.sys_users_cotizaciones
                                  inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
                                  left join  sysbussiness.sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente

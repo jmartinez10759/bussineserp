@@ -224,7 +224,7 @@ new Vue({
               toastr.error( error.response.data.message , expired );
           });
         }else{
-          this.insert_register_update();
+          this.insert_register_edit_update();
         }
     }
     ,insert_register_edit_update(){
