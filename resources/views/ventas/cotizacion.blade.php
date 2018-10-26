@@ -56,16 +56,16 @@
 									<th>Cliente</th>
 									<th>Vendedor</th>
 									<th>Estado</th>
-									<!-- <th class="text-right">Neto</th>
+									<th class="text-right">Subtotal</th>
 									<th class="text-right">Iva</th>
-									<th class="text-right">Total</th> -->
+									<th class="text-right">Total</th>
 									<th class="text-right">Acciones</th>
 									<!-- 								<th class="text-right">Acciones</th> -->
 
 							</tr>
 							</thead>
 							<tbody>
-
+							
 							<tr v-for="cot in cotizacion">
 								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.codigo }}
 									<!--<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>-->
@@ -75,10 +75,9 @@
 								<td>@{{ cot.vendedor }}</td>
 								<td><span class="label label-danger">@{{ cot.nombre }}</span></td>
 								<!-- <td>{!! $estatus_inicio !!}</td> -->
-								<!-- <td class="text-right">	</td>
-								<td class="text-right"> </td>
-								<td class="text-right"> @{{ cot.total }}</td> -->
-								 
+								<td class="text-right">	$ @{{(cot.subtotal)?cot.subtotal.toLocaleString(): 0.00}}</td>
+								<td class="text-right"> $ @{{(cot.iva)?cot.iva.toLocaleString(): 0.00}}</td>
+								<td class="text-right"> $ @{{(cot.total_conc)?cot.total_conc.toLocaleString(): 0.00}}</td>
 								<td class="text-right"> 
 									<div class="dropdown">
 										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
