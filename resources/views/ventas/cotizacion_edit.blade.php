@@ -110,7 +110,7 @@
                                     <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
                                      <span class="glyphicon glyphicon-plus"></span> Agregar Conceptos
                                     </button> -->
-                                    <button type="button" class="btn btn-info add" title="Agregar Producto"  href="#modal_conceptos" id="add_concepto"><i class="fa fa-plus-circle"></i> Agregar conceptos</button>
+                                    <button type="button" class="btn btn-info" title="Agregar Producto" onclick="facyadd_pro();"><i class="fa fa-plus-circle"></i> Agregar conceptos</button>
                                     <!-- <button type="submit" class="btn btn-default">
                                       <span class="glyphicon glyphicon-print"></span> Imprimir
                                     </button> -->
@@ -170,7 +170,7 @@
         <div class="modal-footer">
             <div class="btn-toolbar pull-right">
                 <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button> 
+                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()" {{$insertar}} id="insertar_add"><i class="fa fa-save"></i> Registrar </button> 
             </div>
         </div>
 
@@ -236,7 +236,7 @@
         </div>
         <div class="modal-footer">
             <div class="pull-right">
-                <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-danger" data-fancybox-close id="add_cancelar"> <i class="fa fa-times-circle"></i> Cancelar</button>
                         
                 <button type="button" class="btn btn-success" v-on:click.prevent="insert_register(1)" value="1" id="reg"><i class="fa fa-save"></i> Agregar</button>
             </div>
