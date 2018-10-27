@@ -147,7 +147,7 @@
                 ,'attr'      => 'data-live-search="true" '
                 ,'event'     => 'display_contactos_edit()'
             ]);
-            
+             
             $cmb_clientes = dropdown([
                 'data'       => $this->_consulta( new SysClientesModel )
                 ,'value'     => 'id'
@@ -234,7 +234,6 @@
         public function all( Request $request ){
 
             try {
-
                 if( Session::get('id_rol') == 1 ){
                     $response = $this->_tabla_model::with(['clientes','contactos','usuarios','estatus'])->orderby('id','desc')->get();
                 }

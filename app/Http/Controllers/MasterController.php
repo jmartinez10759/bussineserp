@@ -23,6 +23,7 @@ use App\Model\Administracion\Configuracion\SysSesionesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
+use App\Model\Administracion\Configuracion\SysNotificacionesModel;
 
 abstract class MasterController extends Controller
 {
@@ -255,37 +256,33 @@ abstract class MasterController extends Controller
 	 * @param array  $data [Description]
 	 * @return void
 	 */
-	protected static function _load_view($view = false, $parse = [])
+	protected function _load_view($view = false, $parse = [])
 	{
 		$emails = [];
-		$notificaciones = [];
+		#$notificaciones = [];
 		$response = SysUsersModel::with(['menus' => function ($query) {
 			$where = [
 				'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
 			];
 			return $query->where($where)->orderBy('orden', 'asc')->get();
 		}, 'roles' => function ($query) {
-			return $query->with(['notificaciones' => function ($query) {
+			/*return $query->with(['notificaciones' => function ($query) {
 				return $query->where(['sys_notificaciones.estatus' => 1])->orderBy('created_at', 'desc')->get();
-			}])->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');
+			}])->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');*/
 		}, 'details'])->where(['id' => Session::get('id')])->get();
-        #debuger($response[0]->roles);
+        
 		$by_users = SysCategoriasCorreosModel::where(['id_users' => Session::get('id')])->get();
 		foreach ($by_users as $correo) {
 			$condicion = ['id' => $correo->id_correo, 'estatus_recibidos' => 1, 'estatus_vistos' => 0];
 			$emails[] = SysCorreosModel::where($condicion)->get();
 		}
+		$notificaciones = $this->_consulta( new SysNotificacionesModel );
 
-		foreach ($response[0]->roles as $roles) {
-			foreach ($roles->notificaciones as $notifications) {
-				$notificaciones[] = $notifications;
-			}
-		}
-		#debuger($notificaciones	);
 		$parse['MENU_DESKTOP'] = self::menus($response);
 		self::$_titulo = (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
 		$parse['APPTITLE'] = utf8_decode( ucwords(strtolower(self::$_titulo)) );
 		$parse['IMG_PATH'] = domain() . 'images/';
+		$parse['icon'] = "img/login/buro_laboral.ico";
 		$parse['anio'] = date('Y');
 		$parse['version'] = "2.0.1";
 		$parse['base_url'] = domain();
@@ -940,13 +937,9 @@ abstract class MasterController extends Controller
 	 * @param Request $request [Description]
 	 * @return void
 	 */
-	protected function _consulta($table_model, $with = [], $where = [] ,$propiedad = false )
+	protected function _consulta( $table_model, $with = [], $where = [] ,$propiedad = false )
 	{
-		$response = $table_model::with(['empresas' => function ($query) {
-		   if (Session::get('id_rol') != 1) {
-			return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
-		   }
-		}])->with($with)->where($where)->orderby('id', 'desc')->get();
+		$response = $table_model::with(['empresas'])->with($with)->where($where)->orderby('id', 'desc')->get();
 		$request = [];
 		foreach ($response as $respuesta) {
 			if (count($respuesta->empresas) > 0) {
@@ -958,7 +951,6 @@ abstract class MasterController extends Controller
 			}
 		}
 		return $request;
-
 	}
 	/**
 	 * Metodo para obtener los registros de los productos por empresa.

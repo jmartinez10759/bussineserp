@@ -5,8 +5,8 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- obtengo la ruta de mi proyecto -->
   <meta name="ruta-general" content="{{ $_SERVER['PHP_SELF'] }}">
-  <link rel="icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
-  <link rel="shortcut icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
+  <link rel="icon" href="{{asset($icon)}}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{{asset($icon)}}" type="image/x-icon" />
    <title>{!! $APPTITLE !!} </title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">

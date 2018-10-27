@@ -18,7 +18,7 @@ class DashboardController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function index(){
+    public function index(){
       #debuger(Session::all() );
     	$data = [
     	   'page_title' => "Dashboard"
@@ -34,7 +34,7 @@ class DashboardController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function show( Request $request ){
+    public function show( Request $request ){
 
 
     }
@@ -44,7 +44,7 @@ class DashboardController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function store( Request $request){
+    public function store( Request $request){
 
 
 
@@ -55,7 +55,7 @@ class DashboardController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function update( Request $request){
+    public function update( Request $request){
 
 
     }
@@ -65,7 +65,7 @@ class DashboardController extends MasterController
      *@param $id [Description]
      *@return void
      */
-    public static function destroy( $id ){
+    public function destroy( $id ){
 
 
     }

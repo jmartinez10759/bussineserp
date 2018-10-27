@@ -106,7 +106,9 @@
                     <div class="form-group">
                         <label class="control-label col-sm-3">Giro Comercial: </label>
                         <div class="col-sm-7">
-                            <input type="text" id="giro_comercial" class="form-control" placeholder="" v-model="newKeep.giro_comercial">
+                            {!! $giro_comercial !!}
+                            <!-- <input type="text" id="giro_comercial" class="form-control" placeholder="" v-model="newKeep.giro_comercial"> -->
+                            }
                         </div>
                     </div>
                     

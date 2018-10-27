@@ -24,7 +24,7 @@ class PerfilUsersController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function index(){
+    public function index(){
         if( Session::get('permisos')['GET'] ){
           return view('errors.error');
         }
@@ -41,7 +41,7 @@ class PerfilUsersController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function show( Request $request ){
+    public function show( Request $request ){
 
       #ddebuger($request->all());
       $where = [ 'id' => Session::get('id') ];
@@ -75,7 +75,7 @@ class PerfilUsersController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function store( Request $request ){
+    public function store( Request $request ){
 
         $keys = ['foto','skills','page_title','title','subtitle','name','email','contraseña'];
         $keys_users = ['name','email','contraseña'];
@@ -136,7 +136,7 @@ class PerfilUsersController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function update( Request $request){
+    public function update( Request $request){
 
 
     }
@@ -146,7 +146,7 @@ class PerfilUsersController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function destroy( Request $request ){
+    public function destroy( Request $request ){
 
 
     }
@@ -156,7 +156,7 @@ class PerfilUsersController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function upload( Request $request ){
+    public function upload( Request $request ){
         #metodo que convierte el archivo en cadena para poder insertarlo a la base de datos.
         $file = self::upload_file($request,true);
         $where = ['id' => Session::get('id')];

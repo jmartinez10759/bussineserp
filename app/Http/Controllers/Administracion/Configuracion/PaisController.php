@@ -1,21 +1,20 @@
 <?php
-    namespace App\Http\Controllers\Ventas;
+    namespace App\Http\Controllers\Administracion\Configuracion;
 
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
-    use App\Model\Ventas\SysFacturacionesModel;
-    use App\Model\Ventas\SysConceptosFacturacionesModel;
+    use App\Model\Administracion\Configuracion\SysPaisModel;
 
-    class FacturacionesController extends MasterController
+    class PaisController extends MasterController
     {
         #se crea las propiedades
         private $_tabla_model;
 
         public function __construct(){
             parent::__construct();
-            $this->_tabla_model = new SysFacturacionesModel;
+            $this->_tabla_model = new SysPaisModel;
         }
         /**
         *Metodo para obtener la vista y cargar los datos
@@ -29,11 +28,11 @@
             }
             
             $data = [
-                "page_title" 	        => "Ventas"
-                ,"title"  		        => "Facturación"
+                "page_title" 	        => ""
+                ,"title"  		        => ""
                 ,"data_table"  		    => ""
             ];
-            return self::_load_view( "ventas.facturaciones",$data );
+            return self::_load_view( "administracion.configuracion.pais",$data );
         }
         /**
          *Metodo para obtener los datos de manera asicronica.
@@ -44,7 +43,7 @@
         public function all( Request $request ){
 
             try {
-                $response = $this->_tabla_model::with(['','',''])->get();
+
 
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
