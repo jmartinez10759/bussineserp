@@ -67,7 +67,7 @@
                 ,'name'      => 'cmb_estatus_form_edit'
                 ,'class'     => 'form-control input-sm'
                 ,'leyenda'   => 'Seleccione Opcion'
-                ,'attr'      => 'data-live-search="true"'
+                ,'attr'      => 'data-live-search="true" '
                 ,'selected'  => "6"
             ]);
             

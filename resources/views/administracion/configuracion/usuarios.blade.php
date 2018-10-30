@@ -3,10 +3,9 @@
 @push('styles')
 @endpush
 <div class="vue_usuarios">
-
   {!! $data_table !!}
   @include('administracion.configuracion.usuarios_edit')
-
+  {!! $seccion_reportes !!}
 </div>
 
 @stop

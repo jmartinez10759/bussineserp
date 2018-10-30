@@ -260,6 +260,9 @@ new Vue({
                   ,'src'      : "#modal_edit_register"
                   ,'modal': true
               });
+              if(response.data.result.id_estatus == 5){
+                  this.insert_facturacion();
+              }
               this.consulta_conceptos_edit( response.data.result.id );
               
           }).catch( error => {
@@ -408,7 +411,8 @@ new Vue({
         });
     }
     ,insert_facturacion(){
-
+        jQuery('#cmb_estatus_form_edit').attr('disabled',true);
+        alert();
     }
     
   }

@@ -13,20 +13,20 @@
       return false;
   }
  /**
-	* Imprime un arreglo formateado para debug
-	* y detiene la ejecucion del script
-	* @return array $array
-	*/
-	if(!function_exists('debuger')){
-		function debuger($array, $die = true){
-			echo '<pre>';
-			print_r( $array );
-			echo '</pre>';
-			if($die){
-				die();
-			}
-		}
-	}
+  * Imprime un arreglo formateado para debug
+  * y detiene la ejecucion del script
+  * @return array $array
+  */
+  if(!function_exists('debuger')){
+    function debuger($array, $die = true){
+      echo '<pre>';
+      print_r( $array );
+      echo '</pre>';
+      if($die){
+        die();
+      }
+    }
+  }
 
   if (!function_exists('ddebuger')) {
      function ddebuger()
@@ -37,46 +37,46 @@
        }
  }
 
-	if(!function_exists('timestamp')){
-		function timestamp(){
-	    	return date('Y-m-d H:i:s');
-	    }
-	}
+  if(!function_exists('timestamp')){
+    function timestamp(){
+        return date('Y-m-d H:i:s');
+      }
+  }
 
-	if(!function_exists('format_decimal')){
-		function format_decimal($number=0, $separador=''){
-			return number_format($number, 3, '.', $separador);
-		}
-	}
+  if(!function_exists('format_decimal')){
+    function format_decimal($number=0, $separador=''){
+      return number_format($number, 3, '.', $separador);
+    }
+  }
 
-	if(!function_exists('format_currency')){
-		function format_currency($number=0,$decimal=2 ,$sign='$'){
-			return $sign.''.number_format($number, $decimal, '.', ',');
-		}
-	}
+  if(!function_exists('format_currency')){
+    function format_currency($number=0,$decimal=2 ,$sign='$'){
+      return $sign.''.number_format($number, $decimal, '.', ',');
+    }
+  }
 
-	if(!function_exists('format_date_short')){
-		function format_date_short($date=false, $sign='-'){
-			$fdate = date('Y'.$sign.'m'.$sign.'d', strtotime($date));
-			return $fdate;
+  if(!function_exists('format_date_short')){
+    function format_date_short($date=false, $sign='-'){
+      $fdate = date('Y'.$sign.'m'.$sign.'d', strtotime($date));
+      return $fdate;
             #return date_format($fdate,"Y".$sign."m".$sign."d");
-		}
-	}
+    }
+  }
 
-	if(!function_exists('format_date_long')){
-		function format_date_long($date=false, $sign='-'){
-			$fdate = date('Y{$sign}m{$sign}d', strtotime($date));
-			return date_format($fdate,"Y{$sign}m{$sign}d H:i:s");
-		}
-	}
+  if(!function_exists('format_date_long')){
+    function format_date_long($date=false, $sign='-'){
+      $fdate = date('Y{$sign}m{$sign}d', strtotime($date));
+      return date_format($fdate,"Y{$sign}m{$sign}d H:i:s");
+    }
+  }
 
-	if(!function_exists('format_date')){
-		function format_date($date = false, $sign='-'){
-			return date("d".$sign."m".$sign."Y", strtotime($date));
-		}
-	}
+  if(!function_exists('format_date')){
+    function format_date($date = false, $sign='-'){
+      return date("d".$sign."m".$sign."Y", strtotime($date));
+    }
+  }
 
-	if(!function_exists('dropdown')){
+  if(!function_exists('dropdown')){
 
         function dropdown($params){
             $data       = (isset($params['data']))?$params['data']:'';
@@ -269,6 +269,34 @@
             }
 
     }
+    if (!function_exists('build_buttons')) {
+
+        function build_buttons( $permiso = true ,$event = false, $texto = false, $color = false, $icon = false, $attr = false)
+        {
+            $lenguaje = explode('-', $event);
+            $evento = isset($lenguaje[1]) ? $lenguaje[1] : $lenguaje[0];
+            $event = (isset($lenguaje[0])) ? 'onclick=' . $evento : '';
+            $event = (isset($lenguaje[0]) && $lenguaje[0] == "v") ? 'v-on:click.prevent=' . $evento : $event;
+            $event = (isset($lenguaje[0]) && $lenguaje[0] == "ng") ? 'ng-click=' . $evento  : $event;
+
+            $texto = ($texto) ? $texto : false;
+            $color = ($color) ? $color : false;
+            $icon = ($icon) ? $icon : false;
+            $attr = ($attr) ? $attr : false;
+
+            $acciones = '<div class="btn-group">';
+            if(!$permiso){
+                $acciones .= '
+                        <button type = "button" class="' . $color . '" ' . $event . ' ' . $attr . ' >
+                            <i class="' . $icon . '"> ' . $texto . '</i>
+                        </button>';
+            }
+            $acciones .= '</div>';
+            return $acciones;
+        }
+
+    }
+
 
     if (!function_exists('build_acciones')) {
 
@@ -573,20 +601,20 @@
         #debuger($name_complete);
         $nombre_completo = explode(" ", $name_complete );
         #debuger(count( $nombre_completo ) );
-    		$nombre = "";
-    		$apellido = [];
+        $nombre = "";
+        $apellido = [];
         if ( count( $nombre_completo ) < 2 ) { return false; }
 
         $count_name = ( count( $nombre_completo ) > 1 && count( $nombre_completo ) < 3 )? count($nombre_completo) - 1 : count($nombre_completo) - 2;
 
-    		for ($i=0; $i < $count_name ; $i++) {
-    				$nombre .= $nombre_completo[$i]." ";
-    		}
+        for ($i=0; $i < $count_name ; $i++) {
+            $nombre .= $nombre_completo[$i]." ";
+        }
         $j = $count_name;
-    		for ($i= count($nombre_completo); $i > $count_name ; $i--) {
-    				$apellido [] = $nombre_completo[$j]." ";
-    				$j ++;
-    		}
+        for ($i= count($nombre_completo); $i > $count_name ; $i--) {
+            $apellido [] = $nombre_completo[$j]." ";
+            $j ++;
+        }
 
         $datos = [
           'name' => trim(strtoupper($nombre))
@@ -644,111 +672,133 @@
  }
  /**
  * Funcion que devuelve un array con los valores:
- * @param os => sistema operativo
- * @param browser => navegador
- * @param version => version del navegador
+ *  os => sistema operativo
+ *  browser => navegador
+ *  version => version del navegador
  */
-if(!function_exists('detect')){
-    function detect(){
-      $browser=array("IE","OPERA","MOZILLA","NETSCAPE","FIREFOX","SAFARI","CHROME");
-      $os=array("WIN","MAC","LINUX");
-      # definimos unos valores por defecto para el navegador y el sistema operativo
-      $info['browser'] = "OTHER";
-      $info['os'] = "OTHER";
-      # buscamos el navegador con su sistema operativo
-      foreach($browser as $parent){
-        $s = strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), $parent);
-        $f = $s + strlen($parent);
-        $version = substr($_SERVER['HTTP_USER_AGENT'], $f, 15);
-        $version = preg_replace('/[^0-9,.]/','',$version);
-        if ($s){
-          $info['browser'] = $parent;
-          $info['version'] = $version;
+  if(!function_exists('detect')){
+      function detect(){
+        $browser=array("IE","OPERA","MOZILLA","NETSCAPE","FIREFOX","SAFARI","CHROME");
+        $os=array("WIN","MAC","LINUX");
+        # definimos unos valores por defecto para el navegador y el sistema operativo
+        $info['browser'] = "OTHER";
+        $info['os'] = "OTHER";
+        # buscamos el navegador con su sistema operativo
+        foreach($browser as $parent){
+          $s = strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), $parent);
+          $f = $s + strlen($parent);
+          $version = substr($_SERVER['HTTP_USER_AGENT'], $f, 15);
+          $version = preg_replace('/[^0-9,.]/','',$version);
+          if ($s){
+            $info['browser'] = $parent;
+            $info['version'] = $version;
+          }
         }
+        # obtenemos el sistema operativo
+        foreach($os as $val){
+          if (strpos(strtoupper($_SERVER['HTTP_USER_AGENT']),$val)!==false)
+          $info['os'] = $val;
+        }
+        $info['user_agent'] = isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']: "";
+        # devolvemos el array de valores
+        return $info;
       }
-      # obtenemos el sistema operativo
-      foreach($os as $val){
-        if (strpos(strtoupper($_SERVER['HTTP_USER_AGENT']),$val)!==false)
-        $info['os'] = $val;
-      }
-      $info['user_agent'] = isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']: "";
-      # devolvemos el array de valores
-      return $info;
-    }
-}
-/**
- *Funcion para calcular la edad con la fecha de nacimiento.
- *@access public
- *@param $fechaInicio string []
- *@param $fechaFin string []
- *@return integer
- */
-if(!function_exists('time_fechas')){
- function time_fechas( $fechaInicio, $fechaFin ){
-        $fecha1 = new DateTime( $fechaInicio );
-        $fecha2 = new DateTime( $fechaFin );
-        $fecha = $fecha1->diff( $fecha2) ;
-        $tiempo = "";
-        //años
-        if($fecha->y > 0){
-            $tiempo .= $fecha->y;
-            if($fecha->y == 1) $tiempo .= " año, "; else $tiempo .= " años, ";
-        }
-        //meses
-        if($fecha->m > 0){
-            $tiempo .= $fecha->m;
-            if($fecha->m == 1) $tiempo .= " mes, "; else $tiempo .= " meses, ";
-        }
-        //dias
-        if($fecha->d > 0){
-            $tiempo .= $fecha->d;
-            if($fecha->d == 1) $tiempo .= " día, ";
-            else $tiempo .= " días, ";
-        }
-        //horas
-        if($fecha->h > 0){
-            $tiempo .= $fecha->h;
-            if($fecha->h == 1) $tiempo .= " hora, ";else $tiempo .= " horas, ";
-        }
-        //minutos
-        if($fecha->i > 0){
-            $tiempo .= $fecha->i;
-            if($fecha->i == 1) $tiempo .= " minuto"; else $tiempo .= " minutos";
-        }else if($fecha->i == 0) //segundos
-            $tiempo .= $fecha->s." segundos";
-        return $tiempo;
-    }
-}
-/**
- *Funcion para calcular la edad con la fecha de nacimiento.
- *@access public
- *@param $fecha_nacimiento string []
- *@return integer
- */
- if(!function_exists('edad')){
-     function edad( $fecha_nacimiento ){
-         $fecha = new DateTime( $fecha_nacimiento );
-         $hoy = new DateTime();
-         $annos = $hoy->diff($fecha);
-         return $annos->y;
-     }
- }
-if( !function_exists('validarRFC') ){
- function validarRFC( $rfc ){
-    $regex = '/^[a-zA-Z]{3,4}(\d{6})((\D|\d){2,3})?$/';
-	  return preg_match($regex, $rfc);
- }
+  }
+  /**
+   *Funcion para calcular la edad con la fecha de nacimiento.
+   *@access public
+   *@param $fechaInicio string []
+   *@param $fechaFin string []
+   *@return integer
+   */
+   if(!function_exists('time_fechas')){
 
-}
-if( !function_exists('emailValidate') ){
-    function emailValidate ( $email ){
-         $regex = '/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i';
-         return preg_match($regex, $email);
-     }
-}
-if( !function_exists('end_key') ){
-    function end_key( $array ){
-      end( $array );
-      return key( $array );
+     function time_fechas( $fechaInicio, $fechaFin ){
+            $fecha1 = new DateTime( $fechaInicio );
+            $fecha2 = new DateTime( $fechaFin );
+            $fecha = $fecha1->diff( $fecha2) ;
+            $tiempo = "";
+            //años
+            if($fecha->y > 0){
+                $tiempo .= $fecha->y;
+                if($fecha->y == 1) $tiempo .= " año, "; else $tiempo .= " años, ";
+            }
+            //meses
+            if($fecha->m > 0){
+                $tiempo .= $fecha->m;
+                if($fecha->m == 1) $tiempo .= " mes, "; else $tiempo .= " meses, ";
+            }
+            //dias
+            if($fecha->d > 0){
+                $tiempo .= $fecha->d;
+                if($fecha->d == 1) $tiempo .= " día, ";
+                else $tiempo .= " días, ";
+            }
+            //horas
+            if($fecha->h > 0){
+                $tiempo .= $fecha->h;
+                if($fecha->h == 1) $tiempo .= " hora, ";else $tiempo .= " horas, ";
+            }
+            //minutos
+            if($fecha->i > 0){
+                $tiempo .= $fecha->i;
+                if($fecha->i == 1) $tiempo .= " minuto"; else $tiempo .= " minutos";
+            }else if($fecha->i == 0) //segundos
+                $tiempo .= $fecha->s." segundos";
+            return $tiempo;
+        }
+
     }
+  /**
+   *Funcion para calcular la edad con la fecha de nacimiento.
+   *@access public
+   *@param $fecha_nacimiento string []
+   *@return integer
+   */
+   if(!function_exists('edad')){
+
+       function edad( $fecha_nacimiento ){
+           $fecha = new DateTime( $fecha_nacimiento );
+           $hoy = new DateTime();
+           $annos = $hoy->diff($fecha);
+           return $annos->y;
+       }
+
+   }
+
+   if( !function_exists('validarRFC') ){
+     function validarRFC( $rfc ){
+        $regex = '/^[a-zA-Z]{3,4}(\d{6})((\D|\d){2,3})?$/';
+        return preg_match($regex, $rfc);
+     }
+
+   }
+
+    if( !function_exists('emailValidate') ){
+        function emailValidate ( $email ){
+             $regex = '/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i';
+             return preg_match($regex, $email);
+         }
+    }
+if ( !function_exists('reportes')) {
+    function reportes( $reportes = true, $excel = true){
+       $html = '';
+       $html .= '<div class="col-xs-12">';
+          $html .= '<div class="pull-right">';
+            if (!$reportes) {
+                $html .= '<div class="btn-group">';
+                    $html .= '<button type="button" class="btn btn-warning" v-on:click.prevent="generar_pdf()" title="Generar Reporte"><i class="fa fa-file-pdf-o"></i> PDF</button>';
+                $html .= '</div>';
+            }
+
+            if (!$excel) {
+                $html .= '<div class="btn-group">';
+                    $html .= '<button type="button" class="btn btn-primary" v-on:click.prevent="generar_csv()" title="Generar CSV"><i class="fa fa-file-excel-o"> </i> CSV </button>';
+                $html .= '</div>'; 
+            }
+          $html .= '</div>';
+       $html .= '</div>';
+       return $html;
+    }
+
 }
