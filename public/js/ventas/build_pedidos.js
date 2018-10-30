@@ -260,6 +260,9 @@ new Vue({
                   ,'src'      : "#modal_edit_register"
                   ,'modal': true
               });
+              if(response.data.result.id_estatus == 5){
+                  this.insert_facturacion();
+              }
               this.consulta_conceptos_edit( response.data.result.id );
               
           }).catch( error => {
@@ -368,6 +371,7 @@ new Vue({
             var fields = {id : id_pedido };
             var promise = MasterController.method_master(url,fields,"delete");
             promise.then( response => {
+                this.conceptos = [];
                 this.consulta_general();
             }).catch( error => {
                 if( isset(error.response) && error.response.status == 419 ){
@@ -395,6 +399,7 @@ new Vue({
                   ,'src'      : "#modal_edit_register"
                   ,'modal': true
               });
+            this.conceptos = [];
             this.consulta_general();
         }).catch( error => {
             if( isset(error.response) && error.response.status == 419 ){
@@ -406,7 +411,8 @@ new Vue({
         });
     }
     ,insert_facturacion(){
-
+        jQuery('#cmb_estatus_form_edit').attr('disabled',true);
+        alert();
     }
     
   }

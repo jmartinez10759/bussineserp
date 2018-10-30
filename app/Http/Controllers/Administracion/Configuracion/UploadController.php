@@ -51,6 +51,8 @@ use App\Model\Administracion\Configuracion\SysTipoFactorModel;
 use App\Model\Administracion\Configuracion\SysTasaModel;
 use App\Model\Administracion\Configuracion\SysImpuestoModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
+use App\Model\Administracion\Configuracion\SysPaisModel;
+
 
 
 
@@ -190,6 +192,9 @@ class UploadController extends MasterController
             break;
                case "Claveprodservicio": 
                 $this->_tabla_model = new SysClaveProdServicioModel; 
+            break;
+               case "Pais": 
+                $this->_tabla_model = new SysPaisModel; 
             break;
 
 

@@ -14,8 +14,15 @@ class SysNotificacionesModel extends Model
       ,'estatus'
   ];
 
-  public function roles(){
+  public function roles()
+  {
       return $this->belongsToMany('App\Model\Administracion\Configuracion\SysRolesModel','sys_rol_notificaciones','id_notificacion','id_rol')->withPivot('estatus');
   }
+
+  public function empresas()
+  {
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_rol_notificaciones','id_notificacion','id_empresa')->withPivot('estatus');
+  }
+
 
 }

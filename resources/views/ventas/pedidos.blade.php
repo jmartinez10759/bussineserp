@@ -17,7 +17,6 @@
                 <div class="col-md-3">
                     <input type="text" class="form-control fecha" readonly="" id="fecha_final">
                 </div>
-
                 <!-- <div class="col-md-2">
                     {!! $cmb_estatus !!}
                 </div> -->

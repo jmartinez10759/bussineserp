@@ -124,9 +124,8 @@ class UsuariosController extends MasterController
          ,'attr'      => 'data-live-search="true" '
          ,'multiple'  => ''
        ]);
-
        $empresas = dropdown([
-         'data'      => (Session::get('id_rol') == 1 )?SysEmpresasModel::where(['estatus' => 1])->get(): $this->_consulta_employes(new SysUsersModel)
+         'data'      => (Session::get('id_rol') == 1 )?SysEmpresasModel::where(['estatus' => 1])->get(): $this->_consulta(new SysUsersModel,[],['id' => Session::get('id')],'empresas')
          ,'value'     => 'id'
          ,'text'      => 'nombre_comercial'
          ,'name'      => 'cmb_empresas'
@@ -138,7 +137,7 @@ class UsuariosController extends MasterController
        ]);
 
        $empresas_edit = dropdown([
-         'data'      => (Session::get('id_rol') == 1 )?SysEmpresasModel::where(['estatus' => 1])->get(): $this->_consulta_employes(new SysUsersModel)
+         'data'      => (Session::get('id_rol') == 1 )?SysEmpresasModel::where(['estatus' => 1])->get(): $this->_consulta(new SysUsersModel,[],['id' => Session::get('id')],'empresas')
          ,'value'     => 'id'
          ,'text'      => 'nombre_comercial'
          ,'name'      => 'cmb_empresas_edit'
@@ -150,25 +149,24 @@ class UsuariosController extends MasterController
        ]);
 
       $data = [
-         'page_title' 	            => "Configuracion"
-         ,'title'  		            => "Usuarios"
-         ,'subtitle' 	            => "Creacion Usuarios"
-         ,'data_table'  	        =>  data_table($table)
-         ,'select_roles'  	        =>  $roles
-         ,'select_empresas'  	    =>  $empresas
-         ,'select_empresas_edit'  	=>  $empresas_edit
+         'page_title'               => "Configuracion"
+         ,'title'                 => "Usuarios"
+         ,'subtitle'              => "Creacion Usuarios"
+         ,'data_table'            =>  data_table($table)
+         ,'select_roles'            =>  $roles
+         ,'select_empresas'       =>  $empresas
+         ,'select_empresas_edit'    =>  $empresas_edit
          ,'select_roles_edit'       =>  $roles_edit
          ,'titulo_modal'            => "Agregar Usuario"
          ,'titulo_modal_edit'       => "Actualizar Usuario"
-         ,'campo_1' 		        => 'Nombre Completo'
-         ,'campo_2' 		        => 'Correo'
-         ,'campo_3' 		        => 'Contraseña'
-         ,'campo_4' 		        => 'Tipo de Rol'
-         ,'campo_5' 		        => 'Estatus'
-         ,'campo_6' 		        => 'Empresas'
-         ,'campo_7' 		        => 'Sucursales'
+         ,'campo_1'             => 'Nombre Completo'
+         ,'campo_2'             => 'Correo'
+         ,'campo_3'             => 'Contraseña'
+         ,'campo_4'             => 'Tipo de Rol'
+         ,'campo_5'             => 'Estatus'
+         ,'campo_6'             => 'Empresas'
+         ,'campo_7'             => 'Sucursales'
        ];
-
       return self::_load_view( 'administracion.configuracion.usuarios',$data );
 
 
@@ -187,9 +185,9 @@ class UsuariosController extends MasterController
           },'roles' => function( $query ){
              return $query->groupBy('sys_users_roles.id_users','sys_users_roles.id_rol');
           },'empresas' => function($query) {
-    					return $query->where(['sys_empresas.estatus' => 1 ])->groupBy('id_users','id','nombre_comercial');
+    					return $query->where(['sys_empresas.estatus' => 1 ])->groupby('id');
     		  },'sucursales' => function($query){
-            return $query->where(['sys_sucursales.estatus' => 1 ])->groupBy('id_users','id','sucursal');
+            return $query->where(['sys_sucursales.estatus' => 1 ])->groupby('id');
           },'details'])->where(['id' => $request->id ] )->get();
           #debuger($response[0]->empresas);
           $response_menu = (Session::get('id_rol') == 1)? SysMenuModel::where(['estatus' => 1])->get() : $this->_consulta_menus( new SysUsersModel);

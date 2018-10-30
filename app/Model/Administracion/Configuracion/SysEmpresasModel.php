@@ -16,8 +16,9 @@ class SysEmpresasModel extends Model
     ,'colonia'
     ,'municipio'
     ,'cp'
+    ,'id_country'
     ,'id_estado'
-    ,'giro_comercial'
+    ,'id_regimen_fiscal'
     ,'telefono'
     ,'logo'
     ,'estatus'
@@ -67,9 +68,29 @@ class SysEmpresasModel extends Model
         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel', 'sys_empresas_sucursales', 'id_empresa', 'id_cliente');
   }
 
-  public function pedidos(){
+  public function pedidos()
+  {
         return $this->belongsToMany('App\Model\Ventas\SysPedidosModel','sys_users_pedidos','id_empresa','id_pedido');
-    }
+  }
+
+  public function notificaciones()
+  {
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysNotificacionesModel','sys_rol_notificaciones','id_notificacion','id_empresa')->withPivot('estatus');
+  }
+  public function regimenes()
+  {
+      return $this->hasOne('App\Model\Administracion\Configuracion\SysRegimenFiscalModel', 'id','id_regimen_fiscal');
+  }
+  public function estados()
+  {
+      return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel', 'id','id_estado');
+  }
+  public function paises()
+  {
+      return $this->hasOne('App\Model\Administracion\Configuracion\SysRegimenFiscalModel', 'id','id_regimen_fiscal');
+  }
+
+
 
 
 }

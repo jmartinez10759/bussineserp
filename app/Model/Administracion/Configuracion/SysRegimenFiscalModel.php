@@ -16,4 +16,6 @@ class SysRegimenFiscalModel extends Model
         ,'fecha_inicio_vigencia'
         ,'fecha_final_vigencia'
       ];
+
+      
 }

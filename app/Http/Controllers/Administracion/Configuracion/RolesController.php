@@ -27,6 +27,7 @@ class RolesController extends MasterController
               return view('errors.error');
            }
          $response = (Session::get('id_rol') == 1 )? self::$_tabla_model::get() : $this->_consulta( self::$_tabla_model );
+         #debuger($response);
          $registros = [];
          $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
          foreach ($response as $respuesta) {

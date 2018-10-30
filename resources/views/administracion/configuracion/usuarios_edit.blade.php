@@ -105,7 +105,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close><i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="insert()" {{$insertar}}><i class="fa fa-save"></i> Registrar</button>
+                    {!! $button_insertar !!}
                 </div>
             </div>
         </div>
@@ -221,9 +221,7 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
                         <i class="fa fa-times-circle"></i> Cancelar
                     </button>
-                    <button type="button" class="btn btn-info" v-on:click.prevent="update()" {{$update}}>
-                        <i class="fa fa-save"></i> Actualizar
-                    </button>
+                    {!! $button_update !!}
                 </div>
             </div>
         </div>
@@ -270,8 +268,8 @@
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
             <!-- <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
-				<i class="fa fa-times-circle"></i> Cancelar
-			</button> -->
+                <i class="fa fa-times-circle"></i> Cancelar
+            </button> -->
             <!-- {{$insertar}} -->
             <button type="button" class="btn btn-primary" v-on:click.prevent="register_permisos()">
                 <i class="fa fa-save"></i> Guardar

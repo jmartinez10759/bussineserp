@@ -353,6 +353,7 @@ class '.$modelo.' extends Model
 <div id="vue-'.strtolower($vista).'">
     {!! $data_table !!}
     @include(\''.$vista_edicion.'\')
+    {!! $seccion_reportes !!}
 </div>
 @stop
 @push(\'scripts\')

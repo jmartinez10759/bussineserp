@@ -33,7 +33,7 @@ new Vue({
                     redirect(domain("/"));
                     return;
                 }
-                console.error(error);
+                console.log(error);
                 toastr.error( error.result , expired );
           });
     }

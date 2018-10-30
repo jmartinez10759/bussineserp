@@ -23,6 +23,7 @@ use App\Model\Administracion\Configuracion\SysSesionesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
+use App\Model\Administracion\Configuracion\SysNotificacionesModel;
 
 abstract class MasterController extends Controller
 {
@@ -255,37 +256,32 @@ abstract class MasterController extends Controller
 	 * @param array  $data [Description]
 	 * @return void
 	 */
-	protected static function _load_view($view = false, $parse = [])
+	protected function _load_view($view = false, $parse = [])
 	{
 		$emails = [];
-		$notificaciones = [];
 		$response = SysUsersModel::with(['menus' => function ($query) {
 			$where = [
 				'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
 			];
 			return $query->where($where)->orderBy('orden', 'asc')->get();
 		}, 'roles' => function ($query) {
-			return $query->with(['notificaciones' => function ($query) {
+			/*return $query->with(['notificaciones' => function ($query) {
 				return $query->where(['sys_notificaciones.estatus' => 1])->orderBy('created_at', 'desc')->get();
-			}])->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');
+			}])->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');*/
 		}, 'details'])->where(['id' => Session::get('id')])->get();
-        #debuger($response[0]->roles);
+
 		$by_users = SysCategoriasCorreosModel::where(['id_users' => Session::get('id')])->get();
 		foreach ($by_users as $correo) {
 			$condicion = ['id' => $correo->id_correo, 'estatus_recibidos' => 1, 'estatus_vistos' => 0];
 			$emails[] = SysCorreosModel::where($condicion)->get();
 		}
+		$notificaciones = $this->_consulta(new SysNotificacionesModel);
 
-		foreach ($response[0]->roles as $roles) {
-			foreach ($roles->notificaciones as $notifications) {
-				$notificaciones[] = $notifications;
-			}
-		}
-		#debuger($notificaciones	);
 		$parse['MENU_DESKTOP'] = self::menus($response);
 		self::$_titulo = (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
-		$parse['APPTITLE'] = utf8_decode( ucwords(strtolower(self::$_titulo)) );
+		$parse['APPTITLE'] = utf8_decode(ucwords(strtolower(self::$_titulo)));
 		$parse['IMG_PATH'] = domain() . 'images/';
+		$parse['icon'] = "img/login/buro_laboral.ico";
 		$parse['anio'] = date('Y');
 		$parse['version'] = "2.0.1";
 		$parse['base_url'] = domain();
@@ -322,24 +318,32 @@ abstract class MasterController extends Controller
 		$permisos = (isset(Session::get('permisos')['PER'])) ? Session::get('permisos')['PER'] : true;
 		$email = (isset(Session::get('permisos')['SEND'])) ? Session::get('permisos')['SEND'] : true;
 		$upload = (isset(Session::get('permisos')['UPL'])) ? Session::get('permisos')['UPL'] : true;
-
+		$impresion = (isset(Session::get('permisos')['IMP'])) ? Session::get('permisos')['IMP'] : true;
+		#debuger(build_buttons($insertar,'v-insert_register','Registrar','btn btn-success', 'fa fa-save','id="destroy"'));
 		$parse['eliminar'] = (!$eliminar) ? "style=display:block;" : "style=display:none;";
 		$parse['insertar'] = (!$insertar) ? "style=display:block;" : "style=display:none;";
+		$parse['button_insertar'] = build_buttons($insertar, 'v-insert_register', 'Registrar', 'btn btn-primary', 'fa fa-save', 'id="insert"');
 		$parse['update'] = (!$update) ? "style=display:block;" : "style=display:none;";
+		$parse['button_update'] = build_buttons($update, 'v-update_register', 'Actualizar', 'btn btn-info', 'fa fa-save', 'id="insert"');
 		$parse['select'] = (!$select) ? "style=display:block;" : "style=display:none;";
 		$parse['correos'] = (!$correos) ? "style=display:block;" : "style=display:none;";
+
 		$parse['reportes'] = (!$reportes) ? "style=display:block;" : "style=display:none;";
+		$parse['seccion_reportes'] = reportes($reportes, $excel);
 		$parse['excel'] = (!$excel) ? "style=display:block;" : "style=display:none;";
-		$parse['modal'] = (!$modal) ? "style=display:block;" : "style=display:none;";
+		
+		#$parse['modal'] = (!$modal) ? "style=display:block;" : "style=display:none;";
 		$parse['notify'] = (!$notify) ? "style=display:block;" : "style=display:none;";
 		$parse['permisos'] = (!$permisos) ? "style=display:block;" : "style=display:none;";
 		$parse['email'] = (!$email) ? "style=display:block;" : "style=display:none;";
 		$parse['upload'] = (!$upload) ? "style=display:block;" : "style=display:none;";
-
+		
 		$parse['upload_files'] = (!$upload_files) ? "style=display:block;" : "style=display:none;";
-
+		
 		$parse['agregar'] = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
 		$parse['buscador'] = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
+		
+		$parse['modal'] = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar', 'fa fa-plus-circle', 'id="modal_general"');
 		#ddebuger($parse );
 		return View($view, $parse);
 
@@ -532,7 +536,7 @@ abstract class MasterController extends Controller
 	 * @param boolean $encode_64  [Description]
 	 * @return void
 	 */
-	public static function upload_file($request, $encode_64 = false, $directorio = false )
+	public static function upload_file($request, $encode_64 = false, $directorio = false)
 	{
 		$files = $request->file('file');
 		$archivo = [];
@@ -556,11 +560,11 @@ abstract class MasterController extends Controller
 						break;
 				}
 				//$archivo['file'][] = addslashes($imagedata);
-				$archivo['file'][] = 'data:'.$file.'/' . $extension . ';base64,' . base64_encode($imagedata);;
-			}else{
+				$archivo['file'][] = 'data:' . $file . '/' . $extension . ';base64,' . base64_encode($imagedata);;
+			} else {
 				$upload = new Upload;
 				$upload->directorio = (isset($directorio) && $directorio != "") ? $directorio : "upload_file/catalogos/";
-				$archivo['file'][] = $upload->upload_file(new Request($request->all()));		
+				$archivo['file'][] = $upload->upload_file(new Request($request->all()));
 			}
 
 
@@ -940,21 +944,22 @@ abstract class MasterController extends Controller
 	 * @param Request $request [Description]
 	 * @return void
 	 */
-	protected function _consulta($table_model, $with = [] )
+	protected function _consulta($table_model, $with = [], $where = [], $where_pivot = [], $method = false)
 	{
-		$response = $table_model::with(['empresas' => function ($query) {
-			if (Session::get('id_rol') != 1) {
-				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')]);
-			}
-		}])->with($with)->orderby('id', 'desc')->get();
+		$response = $table_model::with(['empresas' => function ($query) use ($where_pivot) {
+			return $query->where($where_pivot);
+		}])->with($with)->where($where)->orderby('id', 'desc')->get();
 		$request = [];
 		foreach ($response as $respuesta) {
 			if (count($respuesta->empresas) > 0) {
-				$request[] = $respuesta;
+				if ($method) {
+					$request = $respuesta->$method;
+				} else {
+					$request[] = $respuesta;
+				}
 			}
 		}
 		return $request;
-
 	}
 	/**
 	 * Metodo para obtener los registros de los productos por empresa.
@@ -967,7 +972,7 @@ abstract class MasterController extends Controller
         #SysUsersModel
 		$response = $table_model::with(['empresas' => function ($query) {
 			if (Session::get('id_rol') != 1) {
-				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')]);
+				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
 			}
 		}])->where(['id' => Session::get('id')])->orderby('id', 'desc')->get();
 		$request = [];
@@ -998,9 +1003,7 @@ abstract class MasterController extends Controller
 		foreach ($usuarios as $menu) {
 			$response = $menu->menus;
 		}
-
 		return $response;
-
 	}
 
 
