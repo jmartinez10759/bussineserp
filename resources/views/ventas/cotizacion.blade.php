@@ -65,15 +65,18 @@
 							</tr>
 							</thead>
 							<tbody>
-							
 							<tr v-for="cot in cotizacion">
-								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.codigo }}
+								<td data-toggle="modal" data-target="#modal-detail-factura">000@{{ cot.id_cotizacion }}
 									<!--<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>-->
 								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.created_at }}</td>
 								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
 								<td>@{{ cot.nombre_comercial }}</td>
 								<td>@{{ cot.vendedor }}</td>
-								<td><span class="label label-danger">@{{ cot.nombre }}</span></td>
+								<td>
+									<span class="label label-warning" v-if="cot.id_estatus == 6">@{{(cot.id_estatus != 0 )? cot.nombre: ""}}</span>
+									<span class="label label-danger" v-if="cot.id_estatus == 4">@{{(cot.id_estatus != 0 )? cot.nombre: ""}}</span>
+									<span class="label label-success" v-if="cot.id_estatus == 5">@{{(cot.id_estatus != 0 )? cot.nombre: ""}}</span>
+								</td>
 								<!-- <td>{!! $estatus_inicio !!}</td> -->
 								<td class="text-right">	$ @{{(cot.subtotal)?cot.subtotal.toLocaleString(): 0.00}}</td>
 								<td class="text-right"> $ @{{(cot.iva)?cot.iva.toLocaleString(): 0.00}}</td>
@@ -387,10 +390,14 @@ function calcular_suma(){
 				jQuery('#cantidad_concepto').val('');
               	jQuery('#total_concepto').val('');
 			});	
+			jQuery('#cmb_planes').on('change', function() {
+				jQuery('#cantidad_concepto').val('');
+              	jQuery('#total_concepto').val('');
+			});	
 	}
 
 	var total = parseInt(cantidad) * parseFloat(precio_unitario);
-	jQuery('#total_concepto').val(total);
+	jQuery('#total_concepto').val(total.toFixed(2));
 
 }
 
@@ -406,10 +413,14 @@ function calcular_suma_edit(){
 				jQuery('#cantidad_concepto_edit').val('');
               	jQuery('#total_concepto_edit').val('');
 			});	
+			jQuery('#cmb_planes_edit').on('change', function() {
+				jQuery('#cantidad_concepto_edit').val('');
+              	jQuery('#total_concepto_edit').val('');
+			});	
 	}
 
 	var total = parseInt(cantidad) * parseFloat(precio_unitario);
-	jQuery('#total_concepto_edit').val(total);
+	jQuery('#total_concepto_edit').val(total.toFixed(2));
 
 }
 

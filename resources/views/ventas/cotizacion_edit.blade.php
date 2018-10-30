@@ -110,7 +110,7 @@
                                     <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
                                      <span class="glyphicon glyphicon-plus"></span> Agregar Conceptos
                                     </button> -->
-                                    <button type="button" class="btn btn-info add" title="Agregar Producto"  href="#modal_conceptos" id="add_concepto"><i class="fa fa-plus-circle"></i> Agregar conceptos</button>
+                                    <button type="button" class="btn btn-info" title="Agregar Producto" onclick="facyadd_pro();"><i class="fa fa-plus-circle"></i> Agregar conceptos</button>
                                     <!-- <button type="submit" class="btn btn-default">
                                       <span class="glyphicon glyphicon-print"></span> Imprimir
                                     </button> -->
@@ -125,8 +125,9 @@
                             <input type="hidden" v-model="totales.Total" id="tol">
                             <div class="table-responsive">
 
-                                <table class="table">
-                                    <tbody><tr style="background-color: #337ab7; color: #ffffff;">
+                                <table class="table table-hover" id="table_concepts">
+                                    <thead>
+                                    <tr style="background-color: #337ab7; color: #ffffff;">
                                         <th class="text-center">CÓDIGO</th>
                                         <th class="text-center">CANTIDAD</th>
                                         <th>DESCRIPCIÓN</th>
@@ -134,14 +135,18 @@
                                         <th class="text-right">PRECIO TOTAL</th>
                                         <th></th>
                                     </tr>
+                                    </thead>
+                                    <tbody>
                                     <tr v-for="data in datos">
-                                        <td class="text-center">@{{ data.codigo }}</td>
+                                        <td class="text-center">@{{ (data.cod_productos)?data.cod_productos:data.cod_planes }}</td>
                                         <td class="text-center">@{{ data.cantidad }}</td>
-                                        <td>@{{ data.descripcion }}</td>
+                                        <td>@{{ (data.descripcion)?data.descripcion:data.prod_desc }}</td>
                                         <td class="text-right">@{{ data.precio }}</td>
                                         <td class="text-right">@{{ data.total }}</td>
                                         <td class="text-center"><a href="#" v-on:click.prevent="destroy_register(data)"><i class="glyphicon glyphicon-trash"></i></a></td>
-                                    </tr>            
+                                    </tr> 
+                                    </tbody> 
+                                    <tfoot>          
                                     <tr>
                                         <td class="text-right" colspan="4" >SUBTOTAL </td>
                                         <td class="text-right" style="background-color:#eee"> @{{ totales.subtotal }} </td>
@@ -155,7 +160,7 @@
                                         <td class="text-right" style="background-color:#eee"> @{{ totales.Total }} </td>
                                     </tr>
 
-                                </tbody></table>
+                                </tfoot></table>
 
                             </div>
                               <!-- <div class="form-group">
@@ -170,7 +175,7 @@
         <div class="modal-footer">
             <div class="btn-toolbar pull-right">
                 <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button> 
+                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()" {{$insertar}} id="insertar_add"><i class="fa fa-save"></i> Registrar </button> 
             </div>
         </div>
 
@@ -204,7 +209,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Cantidad</label>
                     <div class="col-sm-9">
-                        <input type="number" id="cantidad_concepto" class="form-control" placeholder="" onkeyup="calcular_suma()">
+                        <input type="number" id="cantidad_concepto" class="form-control" placeholder="" onkeyup="calcular_suma()" onkeypress="valida_num()">
                     </div>
                 </div>
 
@@ -219,7 +224,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Descripción</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control" id="descripcion" rows="5"></textarea>
+                        <textarea class="form-control" id="descripcion" rows="5" readonly="readonly"></textarea>
                     </div>
                 </div>
 
@@ -236,7 +241,7 @@
         </div>
         <div class="modal-footer">
             <div class="pull-right">
-                <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-danger" data-fancybox-close id="add_cancelar"> <i class="fa fa-times-circle"></i> Cancelar</button>
                         
                 <button type="button" class="btn btn-success" v-on:click.prevent="insert_register(1)" value="1" id="reg"><i class="fa fa-save"></i> Agregar</button>
             </div>
@@ -270,7 +275,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Cantidad</label>
                     <div class="col-sm-9">
-                        <input type="number" id="cantidad_concepto_edit" class="form-control" placeholder="" onkeyup="calcular_suma_edit()">
+                        <input type="number" id="cantidad_concepto_edit" class="form-control" placeholder="" onkeyup="calcular_suma_edit()" onkeypress="valida_num_edit()">
                     </div>
                 </div>
 
@@ -285,7 +290,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Descripción</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control" id="descripcion_edit" rows="5"></textarea>
+                        <textarea class="form-control" id="descripcion_edit" readonly="readonly" rows="5"></textarea>
                     </div>
                 </div>
 
@@ -425,7 +430,7 @@
                             <hr>    
 
                             <div class="table-responsive">
-                                
+
                                 <table class="table">
                                     <tbody><tr style="background-color: #337ab7; color: #ffffff;">
                                         <th class="text-center">CÓDIGO</th>
@@ -436,9 +441,9 @@
                                         <th></th>
                                     </tr>
                                     <tr v-for="concep in datos">
-                                        <td class="text-center">@{{ concep.codigo }}</td>
+                                        <td class="text-center">@{{ (concep.cod_productos)?concep.cod_productos:concep.cod_planes }}</td>
                                         <td class="text-center">@{{ concep.cantidad }}</td>
-                                        <td>@{{ concep.descripcion }}</td>
+                                        <td>@{{ (concep.descripcion)?concep.descripcion:concep.prod_desc }}</td>
                                         <td class="text-right">@{{ concep.precio }}</td>
                                         <td class="text-right">@{{ concep.total }}</td>
                                         <td class="text-center"><a href="#" v-on:click.prevent="destroy_register_edit(concep)"><i class="glyphicon glyphicon-trash"></i></a></td>

@@ -247,6 +247,8 @@
 
                 $group_by_general = 'GROUP BY sys_users_cotizaciones.id_cotizacion';
 
+                $orderBy = 'order by sys_users_cotizaciones.id_cotizacion desc';
+
                 $sql = "SELECT sys_users_cotizaciones.id_cotizacion
                         ,sys_users_cotizaciones.id_concepto
                         ,sys_cotizaciones.codigo
@@ -285,7 +287,7 @@
                                  inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
                                  left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
                                  left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
-                                 left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$group_by_general;
+                                 left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$group_by_general.' '.$orderBy;
 
 
                 $concep = DB::select($sql);

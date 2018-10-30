@@ -71,7 +71,7 @@ new Vue({
         if(estatus == 1){
         var fields = {
             'cotizacion': {
-                'codigo'        : 'cot-1121'
+                'codigo'        : ''
                ,'descripcion'   : jQuery('#observaciones').val()
                ,'id_moneda'     : jQuery('#cmb_monedas').val()
                ,'id_contacto'   : jQuery('#cmb_contactos').val()
@@ -93,6 +93,31 @@ new Vue({
                 ,'total'        : jQuery('#total_concepto').val()
             }
         };
+        var field = [
+            'cmb_clientes'
+            ,'cmb_contactos'
+            ,'cmb_formas_pagos'
+            ,'cmb_metodos_pagos'
+            ,'cmb_estatus_form'
+            ,'cmb_monedas'
+          ];
+        
+        if(jQuery('#cantidad_concepto').val() == 0 || jQuery('#cantidad_concepto').val() == ""){
+            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
+        }
+        if( jQuery('#cmb_productos').val() == 0 && jQuery('#cmb_planes').val() == 0 ){
+            return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
+        if(validacion_select(field) == "error"){
+
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          
+          return toastr.warning('Sección de Cotizaciones');
+        }
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
@@ -126,7 +151,7 @@ new Vue({
         var url = domain( url_insert );
         var fields = {
             'cotizacion': {
-                'codigo'        : 'cot-1121'
+                'codigo'        : ''
                ,'descripcion'   : jQuery('#observaciones').val()
                ,'id_moneda'     : jQuery('#cmb_monedas').val()
                ,'id_contacto'   : jQuery('#cmb_contactos').val()
@@ -148,6 +173,30 @@ new Vue({
                 ,'total'        : jQuery('#total_concepto').val()
             }*/
         };
+        var tuplas = [];
+        var i = 0;
+        var identificador = '#modal_conceptos'
+        
+        var field = [
+            'cmb_clientes'
+            ,'cmb_contactos'
+            ,'cmb_formas_pagos'
+            ,'cmb_metodos_pagos'
+            ,'cmb_estatus_form'
+            ,'cmb_monedas'
+          ];
+
+          jQuery('#table_concepts tbody').find('tr').each(function(){ tuplas[i] = 1; i++; });
+
+        if(validacion_select(field) == "error"){return;}
+        if(tuplas.length < 1){
+          jQuery.fancybox.open({
+                'type'      : 'inline'
+                ,'src'      : identificador
+                ,'buttons'  : ['share', 'close']
+          });
+          return toastr.warning('Debe de Ingresar al menos un concepto','Agregar conceptos');
+        }
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
@@ -177,7 +226,7 @@ new Vue({
         if(estatus == 1){
         var fields = {
             'cotizacion': {
-                'codigo'        : 'cot-1121'
+                'codigo'        : ''
                ,'descripcion'   : jQuery('#observaciones_edit').val()
                ,'id_moneda'     : jQuery('#cmb_monedas_edit').val()
                ,'id_contacto'   : jQuery('#cmb_contactos_edit').val()
@@ -197,6 +246,31 @@ new Vue({
                 ,'total'        : jQuery('#total_concepto_edit').val()
             }
         };
+        var field = [
+            'cmb_clientes_edit'
+            ,'cmb_contactos_edit'
+            ,'cmb_formas_pagos_edit'
+            ,'cmb_metodos_pagos_edit'
+            ,'cmb_estatus_edit'
+            ,'cmb_monedas_edit'
+          ];
+        
+        if(jQuery('#cantidad_concepto_edit').val() == 0 || jQuery('#cantidad_concepto_edit').val() == ""){
+            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
+        }
+        if( jQuery('#cmb_productos_edit').val() == 0 && jQuery('#cmb_planes_edit').val() == 0 ){
+            return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
+        if(validacion_select(field) == "error"){
+
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos_editar"
+                ,'buttons'  : ['share', 'close']
+            });
+          
+          return toastr.warning('Sección de editar Cotizaciones');
+        }
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
@@ -231,7 +305,7 @@ new Vue({
         var url = domain( url_insert );
         var fields = {
             'cotizacion': {
-                'codigo'        : 'cot-1121'
+                'codigo'        : ''
                ,'descripcion'   : jQuery('#observaciones_edit').val()
                ,'id_moneda'     : jQuery('#cmb_monedas_edit').val()
                ,'id_contacto'   : jQuery('#cmb_contactos_edit').val()
@@ -255,7 +329,7 @@ new Vue({
                     ,'src': "#modal_conceptos"
                     ,'buttons' : ['share', 'close']
                 });
-          
+              
               clean_input_general_edit();
               toastr.success( response.data.message , title );
               console.log(response.data.result.id);
@@ -293,13 +367,9 @@ new Vue({
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
               $.fancybox.open({
-                src  : '#modal_edit_register',
-                type : 'inline',
-                opts : {
-                  onComplete : function() {
-                    console.info('done!');
-                  }
-                }
+                  'type'      : 'inline'
+                  ,'src'      : "#modal_edit_register"
+                  ,'modal': true
               });
               var id_cliente=jQuery('#cmb_clientes_edit').val(response.data.result.cotizacion[0].id_cliente);
               var id_contacto=jQuery('#cmb_contactos_edit').val(response.data.result.cotizacion[0].id_contacto);
@@ -453,6 +523,22 @@ function myRound(num, dec) {
     return parseInt(num * exp, 10) / exp;
 }
 
+function valida_num(){
+    $('#cantidad_concepto').on('input', function () { 
+        this.value = this.value.replace(/[^1-9]/g,'');
+        if (this.value.length > 5) 
+         this.value = this.value.slice(0,5);
+    });
+}
+
+function valida_num_edit(){
+    $('#cantidad_concepto_edit').on('input', function () { 
+        this.value = this.value.replace(/[^1-9]/g,'');
+        if (this.value.length > 5) 
+         this.value = this.value.slice(0,5);
+    });
+}
+
 jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();
 
@@ -462,3 +548,10 @@ jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1
 jQuery('#cmb_estatus').val(6);
 jQuery('#cmb_estatus').prop('disabled', true);
 
+function facyadd_pro(){
+  $.fancybox.open({
+      'type'      : 'inline'
+      ,'src'      : "#modal_conceptos"
+      ,'modal': true
+  });
+}
