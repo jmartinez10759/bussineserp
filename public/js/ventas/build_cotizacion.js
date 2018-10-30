@@ -71,7 +71,7 @@ new Vue({
         if(estatus == 1){
         var fields = {
             'cotizacion': {
-                'codigo'        : 'cot-1121'
+                'codigo'        : ''
                ,'descripcion'   : jQuery('#observaciones').val()
                ,'id_moneda'     : jQuery('#cmb_monedas').val()
                ,'id_contacto'   : jQuery('#cmb_contactos').val()
@@ -151,7 +151,7 @@ new Vue({
         var url = domain( url_insert );
         var fields = {
             'cotizacion': {
-                'codigo'        : 'cot-1121'
+                'codigo'        : ''
                ,'descripcion'   : jQuery('#observaciones').val()
                ,'id_moneda'     : jQuery('#cmb_monedas').val()
                ,'id_contacto'   : jQuery('#cmb_contactos').val()
@@ -173,6 +173,30 @@ new Vue({
                 ,'total'        : jQuery('#total_concepto').val()
             }*/
         };
+        var tuplas = [];
+        var i = 0;
+        var identificador = '#modal_conceptos'
+        
+        var field = [
+            'cmb_clientes'
+            ,'cmb_contactos'
+            ,'cmb_formas_pagos'
+            ,'cmb_metodos_pagos'
+            ,'cmb_estatus_form'
+            ,'cmb_monedas'
+          ];
+
+          jQuery('#table_concepts tbody').find('tr').each(function(){ tuplas[i] = 1; i++; });
+
+        if(validacion_select(field) == "error"){return;}
+        if(tuplas.length < 1){
+          jQuery.fancybox.open({
+                'type'      : 'inline'
+                ,'src'      : identificador
+                ,'buttons'  : ['share', 'close']
+          });
+          return toastr.warning('Debe de Ingresar al menos un concepto','Agregar conceptos');
+        }
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
@@ -202,7 +226,7 @@ new Vue({
         if(estatus == 1){
         var fields = {
             'cotizacion': {
-                'codigo'        : 'cot-1121'
+                'codigo'        : ''
                ,'descripcion'   : jQuery('#observaciones_edit').val()
                ,'id_moneda'     : jQuery('#cmb_monedas_edit').val()
                ,'id_contacto'   : jQuery('#cmb_contactos_edit').val()
@@ -281,7 +305,7 @@ new Vue({
         var url = domain( url_insert );
         var fields = {
             'cotizacion': {
-                'codigo'        : 'cot-1121'
+                'codigo'        : ''
                ,'descripcion'   : jQuery('#observaciones_edit').val()
                ,'id_moneda'     : jQuery('#cmb_monedas_edit').val()
                ,'id_contacto'   : jQuery('#cmb_contactos_edit').val()
@@ -497,6 +521,22 @@ function clean_input_product_edit() {
 function myRound(num, dec) {
     var exp = Math.pow(10, dec || 2); // 2 decimales por defecto
     return parseInt(num * exp, 10) / exp;
+}
+
+function valida_num(){
+    $('#cantidad_concepto').on('input', function () { 
+        this.value = this.value.replace(/[^1-9]/g,'');
+        if (this.value.length > 5) 
+         this.value = this.value.slice(0,5);
+    });
+}
+
+function valida_num_edit(){
+    $('#cantidad_concepto_edit').on('input', function () { 
+        this.value = this.value.replace(/[^1-9]/g,'');
+        if (this.value.length > 5) 
+         this.value = this.value.slice(0,5);
+    });
 }
 
 jQuery('#modal_dialog').css('width', '75%');
