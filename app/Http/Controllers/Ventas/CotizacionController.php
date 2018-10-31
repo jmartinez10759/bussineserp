@@ -75,7 +75,7 @@
             $monedas = dropdown([
                  'data'       => SysMonedasModel::where(['estatus' => 1 ])->whereIn('id',['100','101','150','149'])->orderby('descripcion', 'asc')->get()
                  ,'value'     => 'id'
-                 ,'text'      => 'descripcion'
+                 ,'text'      => 'nombre descripcion'
                  ,'name'      => 'cmb_monedas'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opción'
@@ -158,9 +158,9 @@
            ]); 
 
             $monedas_edit = dropdown([
-                 'data'       => SysMonedasModel::where(['estatus' => 1 ])->orderby('descripcion', 'asc')->get()
+                 'data'       => SysMonedasModel::where(['estatus' => 1 ])->whereIn('id',['100','101','150','149'])->orderby('descripcion', 'asc')->get()
                  ,'value'     => 'id'
-                 ,'text'      => 'descripcion'
+                 ,'text'      => 'nombre descripcion'
                  ,'name'      => 'cmb_monedas_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opción'
@@ -257,6 +257,7 @@
                         ,sys_conceptos_cotizaciones.cantidad
                         ,sys_conceptos_cotizaciones.precio
                         ,sys_conceptos_cotizaciones.total
+                        ,sys_productos.codigo as cod_productos,sys_planes.codigo as cod_planes
                         FROM sysbussiness.sys_users_cotizaciones
                         inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
                         inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
@@ -296,7 +297,7 @@
 
                 if($request->id == ''){
                     $totales = [];
-                }else{
+                }elseif(count($total) >= 1){
                     $subtotal = $total[0]->subtotal;
                     $iv = Session::get('iva') / 100;
                     $iva = $subtotal * $iv;
@@ -309,6 +310,8 @@
                         ,'subtotal_'    => number_format($subtotal,2)
                         ,'total_'       => number_format($subtotal + $iva,2)
                     ];
+                }else{
+                    $totales = [];
                 }
 
                 $response = [

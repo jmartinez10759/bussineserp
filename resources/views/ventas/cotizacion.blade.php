@@ -44,8 +44,7 @@
 								</div>
 
 					</form>
-					<div id="resultados"></div><!-- Carga los datos ajax -->
-					<div class='outer_div'></div><!-- Carga los datos ajax -->
+					
 					<div class="table-responsive" v-cloak>
 						<table class="table table-striped table-response highlight table-hover fixed_header" id="datatable">
 							<thead>
@@ -55,7 +54,7 @@
 									<th>Contacto</th>
 									<th>Cliente</th>
 									<th>Vendedor</th>
-									<th>Estado</th>
+									<th>Estatus</th>
 									<th class="text-right">Subtotal</th>
 									<th class="text-right">Iva</th>
 									<th class="text-right">Total</th>
@@ -66,9 +65,9 @@
 							</thead>
 							<tbody>
 							<tr v-for="cot in cotizacion">
-								<td data-toggle="modal" data-target="#modal-detail-factura">000@{{ cot.id_cotizacion }}
+								<td>000@{{ cot.id_cotizacion }}
 									<!--<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>-->
-								<td data-toggle="modal" data-target="#modal-detail-factura">@{{ cot.created_at }}</td>
+								<td>@{{ cot.created_at }}</td>
 								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
 								<td>@{{ cot.nombre_comercial }}</td>
 								<td>@{{ cot.vendedor }}</td>
@@ -83,7 +82,7 @@
 								<td class="text-right"> $ @{{(cot.total_conc)?cot.total_conc.toLocaleString(): 0.00}}</td>
 								<td class="text-right"> 
 									<div class="dropdown">
-										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 											Acciones
 											<span class="caret"></span>
 										</button>

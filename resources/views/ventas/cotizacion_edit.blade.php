@@ -419,7 +419,7 @@
                                     <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
                                      <span class="glyphicon glyphicon-plus"></span> Agregar Conceptos
                                     </button> -->
-                                    <button type="button" class="btn btn-info add" title="Agregar Producto"  href="#modal_conceptos_editar" id="add_concepto_edit"><i class="fa fa-plus-circle"></i> Agregar conceptos</button>
+                                    <button type="button" class="btn btn-info" title="Agregar Producto"  onclick="facyadd_pro_edit();" id="add_concepto_edit"><i class="fa fa-plus-circle"></i> Agregar conceptos</button>
                                     <!-- <button type="submit" class="btn btn-default">
                                       <span class="glyphicon glyphicon-print"></span> Imprimir
                                     </button> -->
@@ -431,8 +431,8 @@
 
                             <div class="table-responsive">
 
-                                <table class="table">
-                                    <tbody><tr style="background-color: #337ab7; color: #ffffff;">
+                                <table class="table table-hover" id="table_concepts_edit">
+                                    <thead><tr style="background-color: #337ab7; color: #ffffff;">
                                         <th class="text-center">CÓDIGO</th>
                                         <th class="text-center">CANTIDAD</th>
                                         <th>DESCRIPCIÓN</th>
@@ -440,6 +440,8 @@
                                         <th class="text-right">PRECIO TOTAL</th>
                                         <th></th>
                                     </tr>
+                                    </thead>
+                                    <tbody>
                                     <tr v-for="concep in datos">
                                         <td class="text-center">@{{ (concep.cod_productos)?concep.cod_productos:concep.cod_planes }}</td>
                                         <td class="text-center">@{{ concep.cantidad }}</td>
@@ -447,7 +449,9 @@
                                         <td class="text-right">@{{ concep.precio }}</td>
                                         <td class="text-right">@{{ concep.total }}</td>
                                         <td class="text-center"><a href="#" v-on:click.prevent="destroy_register_edit(concep)"><i class="glyphicon glyphicon-trash"></i></a></td>
-                                    </tr>            
+                                    </tr>   
+                                    </tbody>   
+                                    <tfoot>       
                                     <tr>
                                         <td class="text-right" colspan="4" >SUBTOTAL </td>
                                         <td class="text-right" style="background-color:#eee">  @{{ edit.subtotal }}</td>
@@ -461,7 +465,7 @@
                                         <td class="text-right" style="background-color:#eee"> @{{ edit.total }} </td>
                                     </tr>
 
-                                </tbody></table>
+                                </tfoot></table>
 
                             </div>
                               <!-- <div class="form-group">
