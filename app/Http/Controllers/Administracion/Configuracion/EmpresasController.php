@@ -37,12 +37,13 @@ class EmpresasController extends MasterController
            $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
            $registros = [];
            $registros_sucursales = [];
-           $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
+           /*$eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';*/
            $permisos = (Session::get('permisos')['PER'] == false)? 'style="display:block" ': 'style="display:none" ';
            foreach ($response as $respuesta) {
              $id['id'] = $respuesta->id;
              $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit','title="editar" ' );
-             $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash','title="borrar" '.$eliminar );
+             $borrar   = build_buttons(Session::get('permisos')['DEL'],'v-destroy($id)','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
+             /*$borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash','title="borrar" '.$eliminar );*/
              $sucursales = build_acciones_usuario($id,'v-sucursales',' Sucursales','btn btn-info','fa fa-building-o','title="Asignar Sucursales" '.$permisos );
              $registros[] = [
                 $respuesta->id
