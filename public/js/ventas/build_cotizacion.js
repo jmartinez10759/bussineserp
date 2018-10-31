@@ -278,7 +278,7 @@ new Vue({
               buildSweetAlertOptions("¡Registro agregado!", "¿Deseas seguir agregando registros?", function(){
                $.fancybox.close({
                     'type': 'inline'
-                    ,'src': "#modal_conceptos"
+                    ,'src': "#modal_conceptos_editar"
                     ,'buttons' : ['share', 'close']
                 });
           }, 'success', true,['NO','SI'] );
@@ -286,7 +286,7 @@ new Vue({
               clean_input_product_edit();
               toastr.success( response.data.message , title );
               jQuery('#id_concep_producto').val(response.data.result.id)
-              console.log(response.data.result.id);
+              //console.log(response.data.result.id);
               this.consulta_general(jQuery('#id_cotizacion_edit').val());
               
           }).catch( error => {
@@ -320,16 +320,40 @@ new Vue({
                ,'upd'           : '1'
             }
         };
+        var tuplas = [];
+        var i = 0;
+        var identificador = '#modal_conceptos_editar'
+        
+        var field = [
+            'cmb_clientes_edit'
+            ,'cmb_contactos_edit'
+            ,'cmb_formas_pagos_edit'
+            ,'cmb_metodos_pagos_edit'
+            ,'cmb_estatus_edit'
+            ,'cmb_monedas_edit'
+          ];
+
+          jQuery('#table_concepts_edit tbody').find('tr').each(function(){ tuplas[i] = 1; i++; });
+
+        if(validacion_select(field) == "error"){return;}
+        if(tuplas.length < 1){
+          jQuery.fancybox.open({
+                'type'      : 'inline'
+                ,'src'      : identificador
+                ,'buttons'  : ['share', 'close']
+          });
+          return toastr.warning('Debe de Ingresar al menos un concepto','Agregar conceptos');
+        }
         console.log(fields);
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
               
                $.fancybox.close({
                     'type': 'inline'
-                    ,'src': "#modal_conceptos"
+                    ,'src': "#modal_conceptos_editar"
                     ,'buttons' : ['share', 'close']
                 });
-              
+              jQuery('#id_cotizacion_edit').val();
               clean_input_general_edit();
               toastr.success( response.data.message , title );
               console.log(response.data.result.id);
@@ -491,9 +515,9 @@ function clean_input_general() {
         jQuery('#id_concep_producto').val('');
         jQuery("#cmb_clientes").val(0);
         jQuery('#cmb_clientes').change();
-        jQuery('#cmb_formas_pagos').val(0)
-        jQuery("#cmb_metodos_pagos").val(0);
-        jQuery("#cmb_estatus").val(0);
+        // jQuery('#cmb_formas_pagos').val(0)
+        // jQuery("#cmb_metodos_pagos").val(0);
+        // jQuery("#cmb_estatus").val(0);
         jQuery("#observaciones").val('');
         jQuery("#cmb_monedas").val(0);
 }
@@ -538,6 +562,22 @@ function valida_num_edit(){
          this.value = this.value.slice(0,5);
     });
 }
+// Abrir modales para add y modificar conceptos
+function facyadd_pro(){
+    $.fancybox.open({
+        'type'      : 'inline'
+        ,'src'      : "#modal_conceptos"
+        ,'modal': true
+    });
+  }
+  
+  function facyadd_pro_edit(){
+      $.fancybox.open({
+          'type'      : 'inline'
+          ,'src'      : "#modal_conceptos_editar"
+          ,'modal': true
+      });
+    }
 
 jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();
@@ -548,10 +588,6 @@ jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1
 jQuery('#cmb_estatus').val(6);
 jQuery('#cmb_estatus').prop('disabled', true);
 
-function facyadd_pro(){
-  $.fancybox.open({
-      'type'      : 'inline'
-      ,'src'      : "#modal_conceptos"
-      ,'modal': true
-  });
-}
+jQuery('#cmb_metodos_pagos').val(1);
+jQuery('#cmb_monedas').val(100);
+
