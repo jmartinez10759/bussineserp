@@ -20,7 +20,7 @@ class ActionsController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function index(){
+    public function index(){
 
         $response = SysAccionesModel::orderBy('id','ASC')->get();
         $registros = [];
@@ -28,7 +28,7 @@ class ActionsController extends MasterController
         foreach ($response as $respuesta) {
           $id['id'] = $respuesta->id;
           $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit','title="editar"');
-          $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash','title="borrar" '.$eliminar);
+          $borrar = build_buttons(Session::get('permisos')['DEL'],'v-destroy('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
           $registros[] = [
              $respuesta->id
             ,$respuesta->clave_corta
@@ -72,7 +72,7 @@ class ActionsController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function show( Request $request ){
+    public function show( Request $request ){
 
         $where = ['id' => $request->id];
         $response_show =self::$_model::show_model([],$where, new SysAccionesModel);
@@ -88,7 +88,7 @@ class ActionsController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function store( Request $request){
+    public function store( Request $request){
 
       $response_store = self::$_model::create_model([$request->all()], new SysAccionesModel );
       if ($response_store) {
@@ -103,7 +103,7 @@ class ActionsController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function update( Request $request){
+    public function update( Request $request){
 
         $where = ['id' => $request->id];
         $response_update = self::$_model::update_model($where, $request->all(), new SysAccionesModel );
@@ -119,7 +119,7 @@ class ActionsController extends MasterController
      *@param $id [Description]
      *@return void
      */
-    public static function destroy( $id ){
+    public function destroy( $id ){
 
       $where = ['id' => $id];
       $response_destroy = self::$_model::delete_model( $where, new SysAccionesModel );

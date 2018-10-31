@@ -87,7 +87,7 @@ class SysEmpresasModel extends Model
   }
   public function paises()
   {
-      return $this->hasOne('App\Model\Administracion\Configuracion\SysRegimenFiscalModel', 'id','id_regimen_fiscal');
+      return $this->hasOne('App\Model\Administracion\Configuracion\SysPaisModel', 'id','id_country');
   }
 
 

@@ -27,34 +27,19 @@
         *@return void
         */
         public function index(){
-            #debuger(Session::all());
+            
             if( Session::get('permisos')['GET'] ){
                 return view('errors.error');
             }
             $response = (Session::get('id_rol') != 1)? $this->_consulta( $this->_tabla_model ): $this->_tabla_model::orderby('id','desc')->get();
-            /*$response = $this->_tabla_model::with(['categorias' => function( $query ){
-                    return $query->where(['estatus' => 1])->get();
-            },'planes' => function( $query ){
-                return $query->where(['estatus' => 1])->get();
-            },'almacenes' => function( $query ){
-                return $query->where(['estatus' => 1])->get();
-            },'unidades' => function($query){
-                return $query->where(['estatus' => 1])->get();
-            }, 'empresas' => function( $query ){
-                if(Session::get('id_rol') != 1){
-                    return $query->where([ 'estatus' => 1, 'id' => Session::get('id_empresa') ]);
-                }
-            }])->orderby('id','desc')->get();*/
-            #debuger($response);
-            $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
             $permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
             $registros = [];
             foreach ($response as $respuesta) {
                 $id['id'] = $respuesta->id;
                 $editar   = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit');
-                $borrar   = build_acciones_usuario($id,'v-destroy_register','Borrar','btn btn-danger','fa fa-trash','title="Borrar" '.$eliminar);
+                $borrar   = build_buttons(Session::get('permisos')['DEL'],'v-destroy_register('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');                
                 $permiso = dropdown([
-                     'data'      => SysEmpresasModel::where(['estatus' => 1])->get()
+                     'data'      => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
                      ,'value'     => 'id'
                      ,'text'      => 'nombre_comercial'
                      ,'name'      => 'cmb_empresas_'. $respuesta->id
@@ -205,9 +190,9 @@
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            DB::rollback();
+                $success = false;
+                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+                DB::rollback();
             }
 
             if ($success) {
@@ -237,13 +222,13 @@
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            DB::rollback();
+                $success = false;
+                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+                DB::rollback();
             }
 
             if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
+                 return $this->_message_success( 201, $response , self::$message_success );
             }
             return $this->show_error(6, $error, self::$message_error );
 
@@ -286,7 +271,7 @@
             try {
                 #$sucursales = [];
                 $response = SysEmpresasModel::with(['sucursales' => function($query){
-                    return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->get();
+                    return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->groupby('id')->get();
                 }])->where(['id' => $request->id_empresa])->get();
                 $sucursales = SysPlanesProductosModel::select('id_sucursal')->where($request->all())->get();
                 #se crea la tabla 
