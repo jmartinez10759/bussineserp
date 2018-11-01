@@ -209,7 +209,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Cantidad</label>
                     <div class="col-sm-9">
-                        <input type="number" id="cantidad_concepto" class="form-control" placeholder="" onkeyup="calcular_suma()" onkeypress="valida_num()">
+                        <input type="number" id="cantidad_concepto" value='0' class="form-control" placeholder="" onkeyup="calcular_suma()" onkeypress="valida_num()">
                     </div>
                 </div>
 

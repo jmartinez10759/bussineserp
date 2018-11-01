@@ -17,6 +17,9 @@
     use App\Model\Administracion\Configuracion\SysProductosModel;
     use App\Model\Administracion\Configuracion\SysPlanesModel;
     use App\Model\Administracion\Configuracion\SysEstatusModel;
+    use App\Model\Ventas\SysPedidosModel;
+    use App\Model\Ventas\SysUsersPedidosModel;
+    use App\Model\Ventas\SysConceptosPedidosModel;
 
 
 
@@ -190,7 +193,7 @@
            ]);
             /*where(['estatus' => 1 ])->whereIn('id',['94','95','96','97'])->orderby('descripcion', 'asc')->get()*/
             $estatus_edit = dropdown([
-                 'data'       => SysEstatusModel::where(['estatus' => 1 ])->orderby('nombre', 'asc')->get()
+                 'data'       => SysEstatusModel::where(['estatus' => 1 ])->whereIn('id',['4','5','6'])->orderby('nombre', 'asc')->get()
                  ,'value'     => 'id'
                  ,'text'      => 'nombre'
                  ,'name'      => 'cmb_estatus_edit'
@@ -484,7 +487,7 @@
                     ,'id_concepto'       => $sys_conceptos->id
                     ];
                     SysUsersCotizacionesModel::create($user_co);
-                }else {
+                }elseif($request->cotizacion['id_estatus'] == 5) {
                     
                     $cotizacion                 = SysCotizacionModel::FindOrFail($id);
                     $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;
@@ -503,9 +506,93 @@
                     $cotizacion->subtotal       = $this->truncarDecimales($subtotal,2);
                     $cotizacion->total          = $this->truncarDecimales($subtotal + $iva,2);
                     $cotizacion->save();
+                    
+                    $data = [
+                        'codigo'         => $request->cotizacion['id_concep_producto']
+                        ,'descripcion'   => isset($request->cotizacion['descripcion'])?$request->cotizacion['descripcion']:0
+                        ,'iva'           =>  $this->truncarDecimales($iva,2)
+                        ,'subtotal'      =>  $this->truncarDecimales($subtotal,2)
+                        ,'total'         =>  $this->truncarDecimales($subtotal + $iva,2)
+                        ,'id_cotizacion' =>  $request->cotizacion['id_concep_producto']
+                        ,'id_cliente'    => isset($request->cotizacion['id_cliente'])?$request->cotizacion['id_cliente']:111
+                        ,'id_moneda'     => isset($request->cotizacion['id_moneda'])?$request->cotizacion['id_moneda']:0
+                        ,'id_contacto'   => isset($request->cotizacion['id_contacto'])?$request->cotizacion['id_contacto']:0
+                        ,'id_metodo_pago'=> isset($request->cotizacion['id_metodo_pago'])?$request->cotizacion['id_metodo_pago']:0
+                        ,'id_forma_pago' => isset($request->cotizacion['id_forma_pago'])?$request->cotizacion['id_forma_pago']:0
+                        ,'id_estatus'    => isset($request->cotizacion['id_estatus'])?$request->cotizacion['id_estatus']:0
+
+                    ];
+                    SysPedidosModel::firstOrCreate($data);
+                    //SysConceptosCotizacionesModel
+                    $user_cot = SysUsersCotizacionesModel::where(['id_cotizacion' => $request->cotizacion['id_concep_producto']])->get();
+                    $id_conc = [];
+                        foreach($user_cot as $key){
+                            $id_conc[] = $key->id_concepto; 
+                        }
+                    //debuger($id_conc);
+                    $id_concep = SysConceptosCotizacionesModel::whereIn('id', $id_conc)->get();
+                    //debuger($id_concep);
+                    // for($i=0; $i<count($id_concep); $i++){
+
+                    //     $data[] = 
+                    //     [
+                    //         'id_producto' => $id_concep[$i]['id_producto']
+                    //         ,'id_plan' => $id_concep[$i]['id_plan']
+                    //         ,'cantidad' => $id_concep[$i]['cantidad']
+                    //         ,'precio' => $id_concep[$i]['precio']
+                    //         ,'total' => $id_concep[$i]['total']
+                            
+                    //     ];
+                    
+                    
+                    // }
+                    // $conc_id_pr = [];
+                    // $conc_id_pl = [];
+                    // $conc_id_can = [];
+                    // $conc_pre = [];
+                    // $conc_total = [];
+                    //     foreach($id_concep as $concp){
+                    //         $data[] = 
+                    //     [
+                    //         'id_producto' => $concp->id_producto
+                    //         ,'id_plan' => $concp->id_plan
+                    //         ,'cantidad' => $concp->cantidad
+                    //         ,'precio' => $concp->precio
+                    //         ,'total' => $concp->total
+                            
+                    //     ];
+                    //     }
+                    //     //id_producto,id_plan,cantidad,precio,total
+                    // debuger($data);
+                    // // SysUsersPedidosModel::where('')
+
+                    // $con = SysConceptosPedidosModel::firstOrCreate($conc_data);
+                    // $conc_data = [];
+                    //     foreach($con as $concp){
+                    //         $conc_data[] = $concp->decripcion;
+                    //     }
+                    // debuger($conc_data);
                     /*SysCotizacionModel::where()->update();
                     $cotizacion = SysCotizacionModel::where(['id' => $id])->get();
 */
+                }else{
+                    $cotizacion                 = SysCotizacionModel::FindOrFail($id);
+                    $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;
+                    $iv = Session::get('iva') / 100;
+                    $iva = $subtotal * $iv;
+                    
+                    $cotizacion->codigo         = $request->cotizacion['codigo'];
+                    $cotizacion->descripcion    = $request->cotizacion['descripcion'];
+                    $cotizacion->id_cliente     = $request->cotizacion['id_cliente'];
+                    $cotizacion->id_moneda      = $request->cotizacion['id_moneda'];
+                    $cotizacion->id_contacto    = $request->cotizacion['id_contacto'];
+                    $cotizacion->id_metodo_pago = $request->cotizacion['id_metodo_pago'];
+                    $cotizacion->id_forma_pago  = $request->cotizacion['id_forma_pago'];
+                    $cotizacion->id_estatus     = $request->cotizacion['id_estatus'];
+                    $cotizacion->iva            = $this->truncarDecimales($iva,2);
+                    $cotizacion->subtotal       = $this->truncarDecimales($subtotal,2);
+                    $cotizacion->total          = $this->truncarDecimales($subtotal + $iva,2);
+                    $cotizacion->save();
                 }
 
 

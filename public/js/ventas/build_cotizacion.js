@@ -108,6 +108,9 @@ new Vue({
         if( jQuery('#cmb_productos').val() == 0 && jQuery('#cmb_planes').val() == 0 ){
             return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
         }
+        if( jQuery('#total_concepto').val() == 0.00 ){
+            return toastr.warning('Seleccione un Producto y/o Plan con la cantidad','Conceptos');   
+        }
         if(validacion_select(field) == "error"){
 
             jQuery.fancybox.close({
@@ -285,7 +288,7 @@ new Vue({
 
               clean_input_product_edit();
               toastr.success( response.data.message , title );
-              jQuery('#id_concep_producto').val(response.data.result.id)
+              //jQuery('#id_concep_producto').val(response.data.result.id)
               //console.log(response.data.result.id);
               this.consulta_general(jQuery('#id_cotizacion_edit').val());
               
@@ -549,7 +552,7 @@ function myRound(num, dec) {
 
 function valida_num(){
     $('#cantidad_concepto').on('input', function () { 
-        this.value = this.value.replace(/[^1-9]/g,'');
+        this.value = this.value.replace(/[^0-9]/g,'');
         if (this.value.length > 5) 
          this.value = this.value.slice(0,5);
     });
@@ -557,7 +560,7 @@ function valida_num(){
 
 function valida_num_edit(){
     $('#cantidad_concepto_edit').on('input', function () { 
-        this.value = this.value.replace(/[^1-9]/g,'');
+        this.value = this.value.replace(/[^0-9]/g,'');
         if (this.value.length > 5) 
          this.value = this.value.slice(0,5);
     });
