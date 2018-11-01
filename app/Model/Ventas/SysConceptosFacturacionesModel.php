@@ -25,4 +25,5 @@ class SysConceptosFacturacionesModel extends Model
     {
     	return $this->hasOne('App\Model\Administracion\Configuracion\SysPlanesModel','id','id_plan');
     }
+    
 }

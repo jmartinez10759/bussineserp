@@ -148,9 +148,9 @@
             <button type="button" class="btn btn-danger" data-fancybox-close v-on:click.prevent="cancel_pedido()">
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-primary agregar" v-on:click.prevent="update_register(1)" {{$insertar}}>
+            <!-- <button type="button" class="btn btn-primary agregar" v-on:click.prevent="update_register(1)" {{$insertar}}>
                 <i class="fa fa-save"></i> Registrar
-            </button>
+            </button> -->
             {!! $button_insertar!!}
         </div>
     </div>

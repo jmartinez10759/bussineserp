@@ -29,7 +29,7 @@ new Vue({
   mixins : [mixins],
   methods:{
     consulta_general(){}
-    ,insert(){
+    ,insert_register(){
         var url = domain(url_insert);
         this.newKeep.id_rol =  jQuery('#cmb_roles').val();
         this.newKeep.id_sucursal = jQuery('#cmb_sucursales').val();
@@ -52,7 +52,7 @@ new Vue({
             toastr.error( error.response.data.message, expired );
         });
     }
-    ,destroy( id ){
+    ,destroy_register( id ){
         var url = domain( url_destroy );
         var fields = {'id' : id };
          buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
@@ -73,7 +73,7 @@ new Vue({
       },'warning',true,["SI","NO"]);        
         
     }
-    ,update(){
+    ,update_register(){
         var url     = domain( url_update );
         this.fillKeep.id_rol =  jQuery('#cmb_roles_edit').val();
         this.fillKeep.id_sucursal = jQuery('#cmb_sucursal_edit').val();
@@ -91,7 +91,7 @@ new Vue({
             toastr.error( error, expired );
         });
     }
-    ,editar( id_usuario ){
+    ,editar_register( id_usuario ){
         var url = domain( url_edit );
         var fields = {'id' : id_usuario };
         var promise = MasterController.method_master(url,fields,'get');
@@ -271,4 +271,5 @@ change_sucursales = function(){
   };
   var acciones = new ChangeSelect;
   acciones.show_acciones( url,fields);
+  
  }

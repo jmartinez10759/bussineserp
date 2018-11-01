@@ -80,5 +80,9 @@ class SysUsersModel extends Model
         return $this->belongsToMany('App\Model\Ventas\SysCotizacionesModel','sys_users_cotizaciones','id_users','id_cotizacion');
     }
 
+    public function facturaciones(){
+        return $this->belongsToMany('App\Model\Ventas\SysFacturacionModel','sys_users_facturaciones','id_users','id_facturacion');
+    }
+
 
 }

@@ -8,6 +8,8 @@
     </script>
     <!-- Bootstrap 3.3.7 -->
     <script src="{{$base_url}}admintle/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap 4.0.1 -->
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> -->
     <!-- DataTables -->
     <script src="{{$base_url}}admintle/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="{{$base_url}}admintle/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>

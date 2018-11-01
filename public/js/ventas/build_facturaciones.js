@@ -25,8 +25,8 @@ new Vue({
         var fields = {};
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
-              
+            this.datos = response.data.result;
+            console.log(this.datos);
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
                     toastr.error( session_expired ); 
