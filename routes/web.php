@@ -858,6 +858,11 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'facturaciones.register'
         ]);
 
+        Route::post('/facturaciones/insert', [
+            'uses'      => 'Ventas\FacturacionesController@create'
+            ,'as'       => 'facturaciones.insert'
+        ]);
+
         Route::get('/facturaciones/edit', [
             'uses'      => 'Ventas\FacturacionesController@show'
             ,'as'       => 'facturaciones.edit'

@@ -5,10 +5,11 @@ var url_destroy  = "pedidos/destroy";
 var url_destroy_conceptos  = "pedidos/destroy_concepto";
 var url_all      = "pedidos/all";
 var redireccion  = "ventas/pedidos";
-var url_edit_clientes  = "clientes/edit";
+var url_edit_clientes   = "clientes/edit";
 var url_edit_contactos  = "contactos/edit";
 var url_edit_productos  = "productos/edit";
 var url_edit_planes     = "planes/edit";
+var url_insert_factura  = "facturaciones/insert";
 
 new Vue({
   el: "#vue-pedidos",
@@ -411,8 +412,22 @@ new Vue({
         });
     }
     ,insert_facturacion(){
-        jQuery('#cmb_estatus_form_edit').attr('disabled',true);
-        alert();
+      
+      var url = domain( url_insert_factura );
+      var fields = this.update.pedidos;
+      var promise = MasterController.method_master(url,fields,"post");
+      promise.then( response => {
+            console.log(response);
+      }).catch( error => {
+          if( isset(error.response) && error.response.status == 419 ){
+            toastr.error( session_expired ); 
+            redirect(domain("/"));
+            return;
+          }
+          console.log(error);
+            toastr.error( error.result , expired );  
+      });
+
     }
     
   }

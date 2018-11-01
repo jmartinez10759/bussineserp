@@ -49,15 +49,14 @@
                 <tbody>
 
                     <tr v-for="data in datos">
-                        <td>@{{data.id}}</td>
-                        <td>@{{ format_date(data.created_at, 'yyyy-mm-dd') }}</td>
-                        <td>@{{(data.id_contacto != 0)? data.contactos.nombre_completo:"" }}</td>
+                        <td>@{{data.serie }}@{{data.folio}}</td>
                         <td>@{{(data.id_cliente != 0)?data.clientes.rfc_receptor:"" }}</td>
-                        <!-- <td>@{{data.usuarios[0].name}}</td> -->
+                        <td>@{{(data.id_cliente != 0)?data.clientes.razon_social:"" }}</td>
+                        <td>@{{ format_date(data.created_at, 'yyyy-mm-dd') }}</td>
                         <td>
                             <span class="label label-warning" v-if="data.id_estatus == 6">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
                             <span class="label label-danger" v-if="data.id_estatus == 4">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
-                            <span class="label label-success" v-if="data.id_estatus == 8">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
+                            <span class="label label-success" v-if="data.id_estatus == 5">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
                         </td>
                         <td class="text-right">$ @{{(data.subtotal)?data.subtotal.toLocaleString(): 0.00}}</td>
                         <td class="text-right">$ @{{(data.iva)?data.iva.toLocaleString(): 0.00}}</td>

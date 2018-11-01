@@ -11,11 +11,11 @@ use App\Model\Administracion\Configuracion\SysUsersRolesModel;
 
 class RolesController extends MasterController
 {
-      private static $_tabla_model;
+      private $_tabla_model;
 
       public function __construct(){
         parent::__construct();
-        self::$_tabla_model = new SysRolesModel;
+        $this->_tabla_model = new SysRolesModel;
       }
     /**
      *Metodo para pintar la vista y cargar la informacion principal del menu
@@ -26,7 +26,7 @@ class RolesController extends MasterController
            if( Session::get('permisos')['GET'] ){
               return view('errors.error');
            }
-         $response = (Session::get('id_rol') == 1 )? self::$_tabla_model::get() : $this->_consulta( self::$_tabla_model );
+         $response = (Session::get('id_rol') == 1 )? $this->_tabla_model::get() : $this->_consulta( $this->_tabla_model,[],[],['id' => Session::get('id_empresa')],false );
          #debuger($response);
          $registros = [];
          $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';

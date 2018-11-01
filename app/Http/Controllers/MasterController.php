@@ -944,10 +944,10 @@ abstract class MasterController extends Controller
 	 * @param Request $request [Description]
 	 * @return void
 	 */
-	protected function _consulta($table_model, $with = [], $where = [], $where_pivot = [], $method = false)
+	protected function _consulta( $table_model, $with = [], $where = [], $where_pivot = [], $method = false)
 	{
 		$response = $table_model::with(['empresas' => function ($query) use ($where_pivot) {
-			return $query->where($where_pivot);
+			return $query->where($where_pivot)->get();
 		}])->with($with)->where($where)->orderby('id', 'desc')->get();
 		$request = [];
 		foreach ($response as $respuesta) {
@@ -1005,6 +1005,29 @@ abstract class MasterController extends Controller
 		}
 		return $response;
 	}
+	/**
+	 * Metodo para obtener la validacion de la consulta
+	 * @access public
+	 * @param Request $request [Description]
+	 * @return void
+	 */
+	protected function _validate_consulta( $table_model, $with = [], $where = [], $where_pivot = [] )
+	{
+		if( Session::get('id_rol') == 1 ){
+        	return $table_model::with($with)->orderBy('id','desc')->get();
+        }if( Session::get('id_rol') == 3 ){
+        	return $this->_consulta($table_model,$with,$where,$where_pivot, false );
+        }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
+            
+        }
+
+
+
+
+	}
+
+
+
 
 
 }

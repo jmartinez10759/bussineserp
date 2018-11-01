@@ -3,10 +3,12 @@
 
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\DB;
+    use App\Model\Ventas\SysPedidosModel;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Ventas\SysFacturacionesModel;
     use App\Model\Ventas\SysConceptosFacturacionesModel;
+    use App\Model\Ventas\SysUsersFacturacionesModel;
     use App\Model\Administracion\Configuracion\SysUsersModel;
     use App\Model\Administracion\Configuracion\SysPlanesModel;
     use App\Model\Administracion\Configuracion\SysMonedasModel;
@@ -33,6 +35,7 @@
         *@return void
         */
         public function index(){
+
             if( Session::get("permisos")["GET"] ){
               return view("errors.error");
             }
@@ -206,6 +209,7 @@
             $data = [
                 "page_title"            => "Ventas"
                 ,"title"                => "Facturacion"
+                ,"button_insertar"      => build_buttons(Session::get('permisos')['INS'], 'v-update_register(1)', 'Registrar', 'btn btn-primary agregar', 'fa fa-save', 'id="insert"')
                 ,"cmb_estatus"          => $cmb_estatus
                 ,"cmb_estatus_form"     => $cmb_estatus_form
                 ,"cmb_estatus_form_edit"=> $cmb_estatus_form_edit
@@ -234,9 +238,12 @@
         public function all( Request $request ){
 
             try {
-                $response = $this->_tabla_model::with(['','',''])->get();
 
-              return $this->_message_success( 201, $response , self::$message_success );
+                $response = $this->_validate_consulta( $this->_tabla_model ,['conceptos','clientes:id,rfc_receptor,razon_social','estatus:id,nombre'],[],['id' => Session::get('id_empresa')] );
+                /*$response = $this->_validate_consulta($this->_tabla_model, ,[],['id_empresa' => Session::get('id_empresa')] );*/
+                /*$response = $this->_tabla_model::with(['conceptos','clientes:id,rfc_receptor,razon_social','estatus:id,nombre'])->orderby('id','desc')->get();*/
+
+              return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -252,9 +259,8 @@
         public function show( Request $request ){
 
             try {
-
-
-            return $this->_message_success( 201, $response , self::$message_success );
+                $response = $this->_tabla_model::with(['conceptos','clientes','estatus'])->where(['id' => $request->id])->get();
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -284,6 +290,77 @@
 
             if ($success) {
             return $this->_message_success( 201, $response , self::$message_success );
+            }
+            return $this->show_error(6, $error, self::$message_error );
+
+
+        }
+        /**
+        *Metodo para
+        *@access public
+        *@param Request $request [Description]
+        *@return void
+        */
+        public function create( Request $request ){
+
+            $error = null;
+            DB::beginTransaction();
+            try {
+                $response = $this->_tabla_model::with(['conceptos'])->where(['id_pedidos' => $request->id])->get();
+                if( count($response) == 0 ){
+
+                    $data = [
+                        'serie'                         => "A"
+                        ,'descripcion'                  => $request->descripcion
+                        ,'iva'                          => $request->iva
+                        ,'subtotal'                     => $request->subtotal
+                        ,'total'                        => $request->total
+                        ,'id_pedidos'                   => $request->id
+                        ,'id_cliente'                   => $request->id_cliente
+                        ,'id_moneda'                    => $request->id_moneda
+                        #,'id_tipo_comprobante'         => 1
+                        ,'id_contacto'                  => $request->id_contacto
+                        ,'id_forma_pago'                => $request->id_forma_pago
+                        ,'id_metodo_pago'               => $request->id_metodo_pago
+                        ,'id_estatus'                   => 6
+                    ];
+                    $facturacion = $this->_tabla_model::create($data);
+                    SysFacturacionesModel::where(['id' => $facturacion->id])->update(['folio' => $facturacion->id]);
+                    $pedidos_conceptos = SysPedidosModel::with(['conceptos'])->where(['id' => $request->id])->get();
+                    foreach ($pedidos_conceptos[0]->conceptos as $conceptos) {
+                        $data_conceptos = [
+                            'id_producto'   => $conceptos->id_producto
+                            ,'id_plan'      => $conceptos->id_plan
+                            ,'cantidad'     => $conceptos->cantidad
+                            ,'precio'       => $conceptos->precio
+                            ,'total'        => $conceptos->total
+                        ];
+                        $response_conceptos = SysConceptosFacturacionesModel::create( $data_conceptos );
+                        $data_pivot = [
+                            'id_users'              => Session::get('id')
+                            ,'id_rol'               => Session::get('id_rol')
+                            ,'id_empresa'           => Session::get('id_empresa')
+                            ,'id_sucursal'          => Session::get('id_sucursal')
+                            ,'id_menu'              => 28
+                            ,'id_facturacion'       => $facturacion->id
+                            ,'id_concepto'          => $response_conceptos->id
+                        ];
+                        SysUsersFacturacionesModel::create($data_pivot);
+                    }
+                    $response = SysFacturacionesModel::with(['conceptos'])->where(['id' => $facturacion->id ])->get();
+
+                }
+
+            DB::commit();
+            $success = true;
+            } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+            }
+
+            if ($success) {
+            return $this->_message_success( 201, $response[0] , self::$message_success );
             }
             return $this->show_error(6, $error, self::$message_error );
 

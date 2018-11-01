@@ -15,7 +15,7 @@ class SysFacturacionesModel extends Model
 	        ,'iva'
             ,'subtotal'
             ,'total'
-            ,'id_pedido'
+            ,'id_pedidos'
 	        ,'id_cliente'
 	        ,'id_moneda'
 	        ,'id_tipo_comprobante'
@@ -27,17 +27,17 @@ class SysFacturacionesModel extends Model
 
 	  public function conceptos()
 	  {
-	      return $this->belongsToMany('App\Model\Ventas\SysConceptosPedidosModel','sys_users_pedidos','id_pedido','id_concepto');
+	      return $this->belongsToMany('App\Model\Ventas\SysConceptosFacturacionesModel','sys_users_facturaciones','id_facturacion','id_concepto');
 	  }
 
 	  public function usuarios()
 	  {
-	      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_pedidos','id_pedido','id_users');
+	      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_facturaciones','id_facturacion','id_users');
 	  }
 
 	  public function empresas()
 	  {
-	      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_users_pedidos','id_pedido','id_empresa');
+	      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_users_facturaciones','id_facturacion','id_empresa');
 	  }
 
 	  public function clientes()
@@ -72,7 +72,7 @@ class SysFacturacionesModel extends Model
 
 	  public function pedidos()
 	  {
-	      return $this->hasOne('App\Model\Ventas\SysPedidosModel','id','id_pedido');
+	      return $this->hasOne('App\Model\Ventas\SysPedidosModel','id','id_pedidos');
 	  }
 
 }
