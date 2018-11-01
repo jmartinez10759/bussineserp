@@ -44,12 +44,13 @@ new Vue({
           jQuery('#modal_add_register').modal('hide');
           redirect();
         }).catch( error => {
-            if( error.response.status == 419 ){
+            if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
-                redirect(domain('/'));
+                redirect(domain("/"));
                 return;
-            }
-            toastr.error( error.response.data.message, expired );
+              }
+              console.log(error);
+              toastr.error( error.result , expired );  
         });
     }
     ,destroy_register( id ){
@@ -62,13 +63,13 @@ new Vue({
               toastr.success( response.data.message , title );
               redirect();
           }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain('/'));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
-              redirect();
+              if( isset(error.response) && error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+              }
+              console.log(error);
+              toastr.error( error.result , expired );  
           });
       },'warning',true,["SI","NO"]);        
         
@@ -77,18 +78,21 @@ new Vue({
         var url     = domain( url_update );
         this.fillKeep.id_rol =  jQuery('#cmb_roles_edit').val();
         this.fillKeep.id_sucursal = jQuery('#cmb_sucursal_edit').val();
+        this.fillKeep.id_empresa  = jQuery('#cmb_empresas_edit').val();
+
         var fields = this.fillKeep;
         var promise = MasterController.method_master(url,fields,'put');
         promise.then( response => {
             toastr.info('¡Se actualizo correctamente el registro!','¡Registro Actualizado!'); //mensaje
-            redirect();
+            //redirect();
         }).catch( error => {
-            if( error.response.status == 419 ){
+            if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
-                redirect(domain('/'));
+                redirect(domain("/"));
                 return;
-            }
-            toastr.error( error, expired );
+              }
+              console.log(error);
+              toastr.error( error.result , expired );  
         });
     }
     ,editar_register( id_usuario ){

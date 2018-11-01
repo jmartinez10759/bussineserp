@@ -138,7 +138,7 @@
             ]);
             
              $cmb_clientes_edit = dropdown([
-                'data'       => $this->_consulta( new SysClientesModel )
+                'data'       => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                 ,'value'     => 'id'
                 ,'text'      => 'nombre_comercial'
                 ,'name'      => 'cmb_clientes_edit'
@@ -149,7 +149,7 @@
             ]);
              
             $cmb_clientes = dropdown([
-                'data'       => $this->_consulta( new SysClientesModel )
+                'data'       => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                 ,'value'     => 'id'
                 ,'text'      => 'nombre_comercial'
                 ,'name'      => 'cmb_clientes'
@@ -160,7 +160,7 @@
             ]);
             
             $cmb_productos = dropdown([
-                'data'       => $this->_consulta( new SysProductosModel )
+                'data'       => $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                 ,'value'     => 'id'
                 ,'text'      => 'codigo nombre'
                 ,'name'      => 'cmb_productos'
@@ -171,7 +171,7 @@
             ]);
             
             $cmb_productos_edit = dropdown([
-                'data'       => $this->_consulta( new SysProductosModel )
+                'data'       => $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                 ,'value'     => 'id'
                 ,'text'      => 'codigo nombre'
                 ,'name'      => 'cmb_productos_edit'
@@ -182,7 +182,7 @@
             ]);
             
             $cmb_planes = dropdown([
-                'data'       => $this->_consulta( new SysPlanesModel )
+                'data'       => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
                 ,'value'     => 'id'
                 ,'text'      => 'codigo nombre'
                 ,'name'      => 'cmb_planes'
@@ -193,7 +193,7 @@
             ]);
             
             $cmb_planes_edit = dropdown([
-                'data'       => $this->_consulta( new SysPlanesModel )
+                'data'       => $this->_catalogos_bussines( new SysPlanesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                 ,'value'     => 'id'
                 ,'text'      => 'codigo nombre'
                 ,'name'      => 'cmb_planes_edit'
@@ -246,7 +246,7 @@
 
                 }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
                     $data = SysUsersModel::with(['pedidos' => function($query){
-                        return $query->with(['clientes','contactos','usuarios','estatus'])->orderby('id','desc');
+                        return $query->with(['clientes','contactos','usuarios','estatus'])->groupby('id')->orderby('id','desc');
                     }])->where(['id' => Session::get('id')])->get();
                     $response = $data[0]->pedidos;
                 }

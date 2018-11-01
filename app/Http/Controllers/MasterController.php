@@ -369,16 +369,23 @@ abstract class MasterController extends Controller
 			$where = ['email' => $where->email];
 			$response = self::$_model::update_model($where, $datos, $tabla_model);
 			$condicion['api_token'] = ($response) ? $response[0]->api_token : null;
-			$consulta = $tabla_model::with(['menus' => function ($query) {
+
+			$consulta = $tabla_model::with(['menus' => function($query){
+					return $query->where(['sys_rol_menu.estatus' => 1])->groupby('id');
+			},'empresas','sucursales','roles'])->where($condicion)->get();
+			
+			#debuger(count($consulta[0]->sucursales));
+			/*$consulta = $tabla_model::with(['menus' => function ($query) {
 				return $query->where(['sys_rol_menu.estatus' => 1])->groupBy('sys_rol_menu.id_users', 'sys_rol_menu.id_menu', 'sys_rol_menu.estatus');
+
 			}, 'roles' => function ($query) {
 				return $query->where(['sys_roles.estatus' => 1])->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');
 			}, 'empresas' => function ($query) {
 				return $query->where(['sys_empresas.estatus' => 1])->groupBy('id_users', 'id', 'nombre_comercial');
 			}, 'sucursales' => function ($query) {
 				return $query->groupby('id');
-			}])->where($condicion)->get();
-        #debuger($consulta);
+			}])->where($condicion)->get();*/
+        	#debuger($consulta[0]->menus);
 			if (count($consulta) > 0) {
 				$usuarios = data_march($consulta);
 				$session = [];
@@ -391,7 +398,6 @@ abstract class MasterController extends Controller
 				foreach ($consulta as $response) {
 					$empresas = $response->empresas;
 				}
-		  #debuger(count($response->empresas));
           #se realiza la consulta a la tabla ralacional.
 				if (count($empresas) > 1) {
 					Session::put($session);
@@ -1021,11 +1027,22 @@ abstract class MasterController extends Controller
             
         }
 
-
-
+	}
+	/**
+	 * Metodo para obtener los catalogos de cada empresas
+	 * @access public
+	 * @param Request $request [Description]
+	 * @return void
+	 */
+	protected function _catalogos_bussines( $table_model, $with = [], $where = [], $where_pivot = [] )
+	{
+		if( Session::get('id_rol') == 1 ){
+        	return $table_model::with($with)->orderBy('id','desc')->get();
+        }if( Session::get('id_rol') != 1 ){
+        	return $this->_consulta($table_model,$with,$where,$where_pivot, false );
+        }
 
 	}
-
 
 
 
