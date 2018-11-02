@@ -102,11 +102,11 @@ new Vue({
             ,'cmb_monedas'
           ];
         
-        if(jQuery('#cantidad_concepto').val() == 0 || jQuery('#cantidad_concepto').val() == ""){
-            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
-        }
         if( jQuery('#cmb_productos').val() == 0 && jQuery('#cmb_planes').val() == 0 ){
             return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
+        if(jQuery('#cantidad_concepto').val() == 0 || jQuery('#cantidad_concepto').val() == ""){
+            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
         }
         if( jQuery('#total_concepto').val() == 0.00 ){
             return toastr.warning('Seleccione un Producto y/o Plan con la cantidad','Conceptos');   
@@ -258,11 +258,11 @@ new Vue({
             ,'cmb_monedas_edit'
           ];
         
-        if(jQuery('#cantidad_concepto_edit').val() == 0 || jQuery('#cantidad_concepto_edit').val() == ""){
-            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
-        }
         if( jQuery('#cmb_productos_edit').val() == 0 && jQuery('#cmb_planes_edit').val() == 0 ){
             return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
+          if(jQuery('#cantidad_concepto_edit').val() == 0 || jQuery('#cantidad_concepto_edit').val() == ""){
+            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
         }
         if(validacion_select(field) == "error"){
 

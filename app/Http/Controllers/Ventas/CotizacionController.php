@@ -246,7 +246,13 @@
                 $where = ($request->id == "") ? 'WHERE sysbussiness.sys_cotizaciones.id = 0' : 'WHERE sysbussiness.sys_cotizaciones.id = '.$request->id;
 
                 /*Consulta general de las cotizaciones*/
-                $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+                if(Session::get('id_rol') == 1){
+                    $where_general = '';
+                }if(Session::get('id_rol') == 3){
+                    $where_general = 'WHERE sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+                }else if(Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
+                    $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+                }
 
                 $group_by_general = 'GROUP BY sys_users_cotizaciones.id_cotizacion';
 
@@ -530,7 +536,7 @@
                             $id_conc[] = $key->id_concepto; 
                         }
                     //debuger($id_conc);
-                    $id_concep = SysConceptosCotizacionesModel::whereIn('id', $id_conc)->get();
+                    //$id_concep = SysConceptosCotizacionesModel::whereIn('id', $id_conc)->get();
                     //debuger($id_concep);
                     // for($i=0; $i<count($id_concep); $i++){
 
@@ -551,6 +557,7 @@
                     // $conc_id_can = [];
                     // $conc_pre = [];
                     // $conc_total = [];
+                    // $data = []; 
                     //     foreach($id_concep as $concp){
                     //         $data[] = 
                     //     [
@@ -563,10 +570,11 @@
                     //     ];
                     //     }
                     //     //id_producto,id_plan,cantidad,precio,total
-                    // debuger($data);
+                     //debuger($data);
+
                     // // SysUsersPedidosModel::where('')
 
-                    // $con = SysConceptosPedidosModel::firstOrCreate($conc_data);
+                    //$con = SysConceptosPedidosModel::firstOrCreate($data);
                     // $conc_data = [];
                     //     foreach($con as $concp){
                     //         $conc_data[] = $concp->decripcion;
