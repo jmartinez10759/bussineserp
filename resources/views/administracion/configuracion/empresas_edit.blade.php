@@ -108,7 +108,6 @@
                         <div class="col-sm-7">
                             {!! $giro_comercial !!}
                             <!-- <input type="text" id="giro_comercial" class="form-control" placeholder="" v-model="newKeep.giro_comercial"> -->
-                            }
                         </div>
                     </div>
                     

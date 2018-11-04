@@ -104,14 +104,14 @@ class UsuariosController extends MasterController
 
         $empresas = dropdown([
             'data' => (Session::get('id_rol') == 1) ? SysEmpresasModel::where(['estatus' => 1])->get() : $this->_consulta_employes(new SysUsersModel)
-            , 'value' => 'id'
-            , 'text' => 'nombre_comercial'
-            , 'name' => 'cmb_empresas'
-            , 'class' => 'form-control'
-            , 'leyenda' => 'Todas las Empresas'
-            , 'attr' => 'data-live-search="true" '
-            , 'event' => 'v-change_empresas("cmb_sucursales","cmb_empresas","div_sucursales")'
-            , 'multiple' => ''
+            , 'value'     => 'id'
+            , 'text'      => 'nombre_comercial'
+            , 'name'      => 'cmb_empresas'
+            , 'class'     => 'form-control'
+            , 'leyenda'   => 'Todas las Empresas'
+            , 'attr'      => 'data-live-search="true" '
+            , 'event'     => 'v-change_empresas("cmb_sucursales","cmb_empresas","div_sucursales")'
+            , 'multiple'  => ''
         ]);
 
         $empresas_edit = dropdown([
@@ -292,7 +292,7 @@ class UsuariosController extends MasterController
      */
     public function update(Request $request)
     {
-      debuger($request->all());
+      #debuger($request->all());
         $request_users = [];
         $claves_users = ['name', 'email'];
         foreach ($request->all() as $key => $value) {
@@ -328,12 +328,14 @@ class UsuariosController extends MasterController
             SysUsersModel::where($where)->update($request_users);
             #se debe borrar sus roles y empresas para crear unos nuevos.
             SysUsersRolesModel::where(['id_users' => $request->id])->delete();
-            $delete_permisos = SysRolMenuModel::where(['id_users' => $request->id ]);
-            for ($i=0; $i < count($request->id_empresa); $i++) { 
-                 $delete_permisos = $delete_permisos->where('id_empresa','!=',$request->id_empresa); 
+            #se borran los permisos para las empresas que se quitan.
+            $sql = "DELETE FROM sys_rol_menu WHERE id_users = ".$request->id;
+            $where = "";
+            for ($i=0; $i < count($request->id_empresa); $i++) {
+                $where .= " AND id_empresa != ".$request->id_empresa[$i];
             }
-            #$delete_permisos->delete();
-
+            $sql .= $where;
+            DB::select($sql);
             for ($i = 0; $i < count($request->id_sucursal); $i++) {
                 $data = [
                     'id_users'      => $request->id

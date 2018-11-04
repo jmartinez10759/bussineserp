@@ -87,16 +87,7 @@ new Vue ({
               toastr.error( error.response.data.message , expired );
               //redirect();
           });
-        
-        /*axios.post( url,this.fillKeep, csrf_token ).then(response => {
-          if (response.data.success == true) {
-            redirect( redireccion );
-          }else{
-             toastr.error('¡No se Actualizo correctamente el registro!','¡Ocurrio un error!'); //mensaje
-          }
-        }).catch(error => {
-            toastr.error( error, expired );
-        });*/
+          
     }
     ,editar( id ){
         var url = domain( url_edit );
@@ -191,3 +182,8 @@ new Vue ({
 
 
 });
+
+jQuery('#cmb_servicio').selectpicker();
+jQuery('#cmb_servicio_edit').selectpicker();
+jQuery('#cmb_estados').selectpicker();
+jQuery('#cmb_estados_edit').selectpicker();
