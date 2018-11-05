@@ -23,7 +23,9 @@
         *@return void
         */
         public function index(){
-
+        if( Session::get('permisos')['GET'] ){
+          return view('errors.error');
+        }
             $data = [
                 "page_title" 	        => "Configuracion"
                 ,"title"  		        => "Proveedores"
