@@ -193,6 +193,7 @@ new Vue({
                 redirect(domain("/"));
                 return;
               }
+              console.log(error);
                 toastr.error( error.result , expired );  
           });
     }

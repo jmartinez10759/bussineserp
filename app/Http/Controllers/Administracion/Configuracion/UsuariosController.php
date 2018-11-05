@@ -104,14 +104,14 @@ class UsuariosController extends MasterController
 
         $empresas = dropdown([
             'data' => (Session::get('id_rol') == 1) ? SysEmpresasModel::where(['estatus' => 1])->get() : $this->_consulta_employes(new SysUsersModel)
-            , 'value' => 'id'
-            , 'text' => 'nombre_comercial'
-            , 'name' => 'cmb_empresas'
-            , 'class' => 'form-control'
-            , 'leyenda' => 'Todas las Empresas'
-            , 'attr' => 'data-live-search="true" '
-            , 'event' => 'v-change_empresas("cmb_sucursales","cmb_empresas","div_sucursales")'
-            , 'multiple' => ''
+            , 'value'     => 'id'
+            , 'text'      => 'nombre_comercial'
+            , 'name'      => 'cmb_empresas'
+            , 'class'     => 'form-control'
+            , 'leyenda'   => 'Todas las Empresas'
+            , 'attr'      => 'data-live-search="true" '
+            , 'event'     => 'v-change_empresas("cmb_sucursales","cmb_empresas","div_sucursales")'
+            , 'multiple'  => ''
         ]);
 
         $empresas_edit = dropdown([
@@ -259,9 +259,11 @@ class UsuariosController extends MasterController
             $insert_users = SysUsersModel::create($request_users);
             #se realiza la inserccion de un id_users
             for ($i = 0; $i < count($request->id_sucursal); $i++) {
-                $id_users = $insert_users->id;
+                #$id_users = $insert_users->id;
                 $data = [
-                    'id_users' => $id_users, 'id_empresa' => self::_empresas($request->id_sucursal[$i]), 'id_sucursal' => $request->id_sucursal[$i]
+                    'id_users'     => $insert_users->id
+                    ,'id_empresa'  => self::_empresas($request->id_sucursal[$i])
+                    ,'id_sucursal' => $request->id_sucursal[$i]
                 ];
                 for ($j = 0; $j < count($request->id_rol); $j++) {
                     $data['id_rol'] = $request->id_rol[$j];
@@ -290,7 +292,7 @@ class UsuariosController extends MasterController
      */
     public function update(Request $request)
     {
-          #debuger($request->all());
+      #debuger($request->all());
         $request_users = [];
         $claves_users = ['name', 'email'];
         foreach ($request->all() as $key => $value) {
@@ -308,7 +310,6 @@ class UsuariosController extends MasterController
         $name_complete = parse_name($request->name);
         if (!$name_complete) {
             return $this->show_error(3, $name_complete);
-              #return message(false,[],"Favor de Ingresar al menos un apellido");
         }
         $request_users['name'] = $name_complete['name'];
         $request_users['first_surname'] = $name_complete['first_surname'];
@@ -327,12 +328,20 @@ class UsuariosController extends MasterController
             SysUsersModel::where($where)->update($request_users);
             #se debe borrar sus roles y empresas para crear unos nuevos.
             SysUsersRolesModel::where(['id_users' => $request->id])->delete();
+            #se borran los permisos para las empresas que se quitan.
+            $sql = "DELETE FROM sys_rol_menu WHERE id_users = ".$request->id;
+            $where = "";
+            for ($i=0; $i < count($request->id_empresa); $i++) {
+                $where .= " AND id_empresa != ".$request->id_empresa[$i];
+            }
+            $sql .= $where;
+            DB::select($sql);
             for ($i = 0; $i < count($request->id_sucursal); $i++) {
-                $id_users = $request->id;
                 $data = [
-                    'id_users' => $id_users, 'id_empresa' => self::_empresas($request->id_sucursal[$i]), 'id_sucursal' => $request->id_sucursal[$i]
+                    'id_users'      => $request->id
+                    ,'id_empresa'   => self::_empresas($request->id_sucursal[$i])
+                    ,'id_sucursal'  => $request->id_sucursal[$i]
                 ];
-                #debuger($data,true);
                 for ($j = 0; $j < count($request->id_rol); $j++) {
                     $data['id_rol'] = $request->id_rol[$j];
                     $response[] = SysUsersRolesModel::create($data);

@@ -12,6 +12,7 @@ use App\Model\Administracion\Configuracion\SysEstadosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysContactosModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
+use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
 
 class EmpresasController extends MasterController
@@ -43,7 +44,6 @@ class EmpresasController extends MasterController
              $id['id'] = $respuesta->id;
              $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit','title="editar" ' );
              $borrar   = build_buttons(Session::get('permisos')['DEL'],'v-destroy($id)','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
-             /*$borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash','title="borrar" '.$eliminar );*/
              $sucursales = build_acciones_usuario($id,'v-sucursales',' Sucursales','btn btn-info','fa fa-building-o','title="Asignar Sucursales" '.$permisos );
              $registros[] = [
                 $respuesta->id
@@ -69,26 +69,44 @@ class EmpresasController extends MasterController
            ];
           
            #se crea el dropdown
-       $estados = dropdown([
-             'data'      => SysEstadosModel::get()
-             ,'value'     => 'id'
-             ,'text'      => 'nombre'
-             ,'name'      => 'cmb_estados'
-             ,'class'     => 'form-control'
-             ,'leyenda'   => 'Seleccione Opcion'
-             ,'attr'      => 'data-live-search="true" '
-       ]);
-        $estados_edit =  dropdown([
-             'data'      => SysEstadosModel::get()
-             ,'value'     => 'id'
-             ,'text'      => 'nombre'
-             ,'name'      => 'cmb_estados_edit'
-             ,'class'     => 'form-control'
-             ,'leyenda'   => 'Seleccione Opcion'
-             ,'attr'      => 'data-live-search="true" '
-       ]);
-         
-         
+           $estados = dropdown([
+                 'data'      => SysEstadosModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_estados'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true" '
+           ]);
+            $estados_edit =  dropdown([
+                 'data'      => SysEstadosModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_estados_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true" '
+            ]);
+            $giro_comercial =  dropdown([
+                   'data'       => SysClaveProdServicioModel::get()
+                   ,'value'     => 'id'
+                   ,'text'      => 'clave descripcion'
+                   ,'name'      => 'cmb_servicio'
+                   ,'class'     => 'form-control'
+                   ,'leyenda'   => 'Seleccione Opcion'
+                   ,'attr'      => 'data-live-search="true" '
+            ]);
+            
+            $giro_comercial_edit =  dropdown([
+                 'data'       => SysClaveProdServicioModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_servicio_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true" '
+            ]);
+
            foreach ($response_sucursales as $respuesta) {
              $id['id'] = $respuesta->id;
              $checkbox = build_actions_icons($id,'id_sucursal= "'.$respuesta->id.'" ','check_sucursales');
@@ -102,9 +120,9 @@ class EmpresasController extends MasterController
 
            $titulos = [ 'id','Codigo','Sucursal',''];
            $table_sucursales = [
-             'titulos'       => $titulos
-             ,'registros'      => $registros_sucursales
-             ,'id'         => "data_table_sucursales"
+             'titulos'        => $titulos
+             ,'registros'     => $registros_sucursales
+             ,'id'            => "data_table_sucursales"
            ];
 
 
@@ -113,10 +131,12 @@ class EmpresasController extends MasterController
              ,'title'                   => "Empresas"
              ,'data_table'              =>  data_table($table)
              ,'data_table_sucursales'   =>  data_table($table_sucursales)
-             ,'estados'                 => $estados
-             ,'estados_edit'            => $estados_edit
+             ,'estados'                 =>  $estados
+             ,'estados_edit'            =>  $estados_edit
+             ,'giro_comercial'          =>  $giro_comercial
+             ,'giro_comercial_edit'     =>  $giro_comercial_edit
              ,'titulo_modal'            => "Registro de Empresa"
-             ,'titulo_modal_edit'       => "Actualacion de Empresa"
+             ,'titulo_modal_edit'       => "Actualización de Empresa"
              ,'campo_1'                 => 'Empresa'
              ,'campo_2'                 => 'Descripción'
              ,'campo_4'                 => 'RFC'

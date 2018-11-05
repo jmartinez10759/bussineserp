@@ -35,13 +35,9 @@ class ClientesController extends MasterController
           return view('errors.error');
         }
           $response = SysClientesModel::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
-          #debuger($response);
-          $response_clientes = ( Session::get('id_rol') == 1)? SysClientesModel::with(['estados'])->where(['estatus' => 1])->orderBy('id','desc')->get() : $this->_consulta( new SysClientesModel );
-            #debuger($response[0]->estados->nombre);
-        #debuger($response_clientes);
+          $response_clientes = $this->_validate_consulta($this->_tabla_model,[],['estatus' => 1 ],['id' => Session::get('id_empresa')]);
           $registros = [];
           $registros_clientes = [];
-          #debuger($permiso_class_destroy);
           $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
           $permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
           foreach ($response as $respuesta) {

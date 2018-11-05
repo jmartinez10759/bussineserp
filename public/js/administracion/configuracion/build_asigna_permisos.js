@@ -281,12 +281,13 @@ class ChangeSelect {
                      });
                   toastr.info( response.data.message , title );
               }).catch( error => {
-                  if( error.response.status == 419 ){
-                        toastr.error( session_expired ); 
-                        redirect(domain("/"));
-                        return;
-                    }
-                  toastr.error( error.response.data.message , expired );
+                  if( isset(error.response) && error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                  }
+                  console.log(error);
+                    toastr.error( error.result , expired );  
               });
           /* axios.post( url, fields, csrf_token ).then(response => {
                if (response.data.success == true) {
