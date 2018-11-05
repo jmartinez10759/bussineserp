@@ -536,27 +536,23 @@
                             $id_conc[] = $key->id_concepto; 
                         }
                     //debuger($id_conc);
-                    //$id_concep = SysConceptosCotizacionesModel::whereIn('id', $id_conc)->get();
+                    $id_concep = SysConceptosCotizacionesModel::whereIn('id', $id_conc)->get();
                     //debuger($id_concep);
-                    // for($i=0; $i<count($id_concep); $i++){
+                    $data = array();
+                     for($i=0; $i<count($id_concep); $i++){
 
-                    //     $data[] = 
-                    //     [
-                    //         'id_producto' => $id_concep[$i]['id_producto']
-                    //         ,'id_plan' => $id_concep[$i]['id_plan']
-                    //         ,'cantidad' => $id_concep[$i]['cantidad']
-                    //         ,'precio' => $id_concep[$i]['precio']
-                    //         ,'total' => $id_concep[$i]['total']
+                         $data[] = 
+                         [
+                             'id_producto' => $id_concep[$i]['id_producto']
+                             ,'id_plan' => $id_concep[$i]['id_plan']
+                             ,'cantidad' => $id_concep[$i]['cantidad']
+                             ,'precio' => $id_concep[$i]['precio']
+                             ,'total' => $id_concep[$i]['total']
                             
-                    //     ];
+                         ];
                     
                     
-                    // }
-                    // $conc_id_pr = [];
-                    // $conc_id_pl = [];
-                    // $conc_id_can = [];
-                    // $conc_pre = [];
-                    // $conc_total = [];
+                     }
                     // $data = []; 
                     //     foreach($id_concep as $concp){
                     //         $data[] = 
@@ -570,19 +566,31 @@
                     //     ];
                     //     }
                     //     //id_producto,id_plan,cantidad,precio,total
-                     //debuger($data);
+                    //debuger($data);
 
                     // // SysUsersPedidosModel::where('')
+                    //insert conceptp pedidos
+                    foreach ($data as $values) {
+                        $ins = SysConceptosPedidosModel::firstOrCreate($values);
+                    }
+                    //insert users pedidos
+                    $id_user_pe = [];
+                        foreach($user_cot as $key){
+                            $id_user_pe[] = 
+                            [
+                                'id_users'      => $key->id_users
+                                ,'id_rol'       => $key->id_rol
+                                ,'id_empresa'   => $key->id_empresa
+                                ,'id_sucursal'  => $key->id_sucursal
+                                ,'id_menu'      => $key->id_menu
+                                ,'id_pedido'    => $key->id_cotizacion
+                                ,'id_concepto'  => $key->id_concepto
+                            ]; 
+                        }
+                    foreach ($id_user_pe as $valores) {
+                        $insert = SysUsersPedidosModel::firstOrCreate($valores);
+                    }
 
-                    //$con = SysConceptosPedidosModel::firstOrCreate($data);
-                    // $conc_data = [];
-                    //     foreach($con as $concp){
-                    //         $conc_data[] = $concp->decripcion;
-                    //     }
-                    // debuger($conc_data);
-                    /*SysCotizacionModel::where()->update();
-                    $cotizacion = SysCotizacionModel::where(['id' => $id])->get();
-*/
                 }else{
                     $cotizacion                 = SysCotizacionModel::FindOrFail($id);
                     $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;

@@ -1,6 +1,6 @@
 
 <div id="modal_add_register" style="display:none;" class="col-sm-12">
-    <input type="hidden" id="id_pedido">
+    <input type="text" id="id_pedido">
     <h3>Registro de Pedidos</h3>
     <hr>
 
