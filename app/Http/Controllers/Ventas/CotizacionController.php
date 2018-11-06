@@ -20,6 +20,7 @@
     use App\Model\Ventas\SysPedidosModel;
     use App\Model\Ventas\SysUsersPedidosModel;
     use App\Model\Ventas\SysConceptosPedidosModel;
+    use PDF;
 
 
 
@@ -938,6 +939,15 @@
         {
             $truncar = 10**$digitos;
             return intval($numero * $truncar) / $truncar;
+        }
+
+        public function getIndex()
+        {
+         $data = [
+            'foo' => 'bar'
+        ];
+        $pdf = PDF::loadView('ventas.pdf.cotizacion', ['data' => $data]);
+        return $pdf->stream('pdf.generar');
         }
                  
         

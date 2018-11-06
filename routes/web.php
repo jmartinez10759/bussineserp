@@ -1231,6 +1231,12 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'cotizaciones.update'
     ]);
 
+    //PDF
+    Route::get('/pdf/cotizacion', [
+        'uses' => 'Ventas\CotizacionController@getIndex'
+        ,'as' => 'ventas.pdf.cotizacion'
+    ]);
+
     /*Route::get('/ventas/productos', [
         'uses' => 'Ventas\CotizacionController@getProducto'
         ,'as' => 'ventas.productos'
