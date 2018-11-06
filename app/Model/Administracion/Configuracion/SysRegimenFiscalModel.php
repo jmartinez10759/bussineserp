@@ -17,5 +17,10 @@ class SysRegimenFiscalModel extends Model
         ,'fecha_final_vigencia'
       ];
 
+    public function empresas()
+    {
+      return $this->belongsTo(SysEmpresasModel::class, 'id_regimen_fiscal', 'id');
+    }
+
       
 }

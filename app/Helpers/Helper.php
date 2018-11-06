@@ -118,7 +118,7 @@
                     }
                 }
                 $opc='<select name="'.$name.'" id="'.$id.'" '.$multiple.' class="chosen-select '.$class.'" '.$event.' data-campo="'.$name.'" '.$requerido.' title="'.$title.'" '.$attr.'>
-                        <option value="0" selected>'.$leyenda.'</option>
+                        <option value="0" selected >'.$leyenda.'</option>
                         '.$select.'
                       </select>';
             }else{
