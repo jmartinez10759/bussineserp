@@ -102,11 +102,11 @@ new Vue({
             ,'cmb_monedas'
           ];
         
-        if(jQuery('#cantidad_concepto').val() == 0 || jQuery('#cantidad_concepto').val() == ""){
-            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
-        }
         if( jQuery('#cmb_productos').val() == 0 && jQuery('#cmb_planes').val() == 0 ){
             return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
+        if(jQuery('#cantidad_concepto').val() == 0 || jQuery('#cantidad_concepto').val() == ""){
+            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
         }
         if( jQuery('#total_concepto').val() == 0.00 ){
             return toastr.warning('Seleccione un Producto y/o Plan con la cantidad','Conceptos');   
@@ -258,11 +258,11 @@ new Vue({
             ,'cmb_monedas_edit'
           ];
         
-        if(jQuery('#cantidad_concepto_edit').val() == 0 || jQuery('#cantidad_concepto_edit').val() == ""){
-            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
-        }
         if( jQuery('#cmb_productos_edit').val() == 0 && jQuery('#cmb_planes_edit').val() == 0 ){
             return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
+          if(jQuery('#cantidad_concepto_edit').val() == 0 || jQuery('#cantidad_concepto_edit').val() == ""){
+            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
         }
         if(validacion_select(field) == "error"){
 
@@ -500,6 +500,28 @@ new Vue({
               toastr.error( error.response.data.message , expired );
           });
     }
+    ,cancel_cotizacion(){
+        var id_cotizacion = ( jQuery('#id_concep_producto').val() )? jQuery('#id_concep_producto').val() : "";
+        if(id_cotizacion != ""){
+            var url = domain( url_destroy_cont );
+            var fields = {id : id_cotizacion };
+            var promise = MasterController.method_master(url,fields,"delete");
+            promise.then( response => {
+                clean_input_general();
+                this.datos = [];
+                this.consulta_general();
+            }).catch( error => {
+                if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+                }
+                  toastr.error( error.result , expired );  
+            });
+        }else{
+            clean_input_general();
+        }
+    }
     
   }
 
@@ -588,6 +610,7 @@ jQuery('.add').fancybox();
 jQuery('#cmb_clientes').selectpicker();
 jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1}).datepicker("setDate", new Date());
 
+jQuery('#cmb_formas_pagos').val(1);
 jQuery('#cmb_estatus').val(6);
 jQuery('#cmb_estatus').prop('disabled', true);
 

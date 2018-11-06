@@ -20,6 +20,7 @@
     use App\Model\Ventas\SysPedidosModel;
     use App\Model\Ventas\SysUsersPedidosModel;
     use App\Model\Ventas\SysConceptosPedidosModel;
+    use PDF;
 
 
 
@@ -246,7 +247,13 @@
                 $where = ($request->id == "") ? 'WHERE sysbussiness.sys_cotizaciones.id = 0' : 'WHERE sysbussiness.sys_cotizaciones.id = '.$request->id;
 
                 /*Consulta general de las cotizaciones*/
-                $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+                if(Session::get('id_rol') == 1){
+                    $where_general = '';
+                }if(Session::get('id_rol') == 3){
+                    $where_general = 'WHERE sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+                }else if(Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
+                    $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+                }
 
                 $group_by_general = 'GROUP BY sys_users_cotizaciones.id_cotizacion';
 
@@ -532,25 +539,22 @@
                     //debuger($id_conc);
                     $id_concep = SysConceptosCotizacionesModel::whereIn('id', $id_conc)->get();
                     //debuger($id_concep);
-                    // for($i=0; $i<count($id_concep); $i++){
+                    $data = array();
+                     for($i=0; $i<count($id_concep); $i++){
 
-                    //     $data[] = 
-                    //     [
-                    //         'id_producto' => $id_concep[$i]['id_producto']
-                    //         ,'id_plan' => $id_concep[$i]['id_plan']
-                    //         ,'cantidad' => $id_concep[$i]['cantidad']
-                    //         ,'precio' => $id_concep[$i]['precio']
-                    //         ,'total' => $id_concep[$i]['total']
+                         $data[] = 
+                         [
+                             'id_producto' => $id_concep[$i]['id_producto']
+                             ,'id_plan' => $id_concep[$i]['id_plan']
+                             ,'cantidad' => $id_concep[$i]['cantidad']
+                             ,'precio' => $id_concep[$i]['precio']
+                             ,'total' => $id_concep[$i]['total']
                             
-                    //     ];
+                         ];
                     
                     
-                    // }
-                    // $conc_id_pr = [];
-                    // $conc_id_pl = [];
-                    // $conc_id_can = [];
-                    // $conc_pre = [];
-                    // $conc_total = [];
+                     }
+                    // $data = []; 
                     //     foreach($id_concep as $concp){
                     //         $data[] = 
                     //     [
@@ -563,18 +567,31 @@
                     //     ];
                     //     }
                     //     //id_producto,id_plan,cantidad,precio,total
-                    // debuger($data);
-                    // // SysUsersPedidosModel::where('')
+                    //debuger($data);
 
-                    // $con = SysConceptosPedidosModel::firstOrCreate($conc_data);
-                    // $conc_data = [];
-                    //     foreach($con as $concp){
-                    //         $conc_data[] = $concp->decripcion;
-                    //     }
-                    // debuger($conc_data);
-                    /*SysCotizacionModel::where()->update();
-                    $cotizacion = SysCotizacionModel::where(['id' => $id])->get();
-*/
+                    // // SysUsersPedidosModel::where('')
+                    //insert conceptp pedidos
+                    foreach ($data as $values) {
+                        $ins = SysConceptosPedidosModel::firstOrCreate($values);
+                    }
+                    //insert users pedidos
+                    $id_user_pe = [];
+                        foreach($user_cot as $key){
+                            $id_user_pe[] = 
+                            [
+                                'id_users'      => $key->id_users
+                                ,'id_rol'       => $key->id_rol
+                                ,'id_empresa'   => $key->id_empresa
+                                ,'id_sucursal'  => $key->id_sucursal
+                                ,'id_menu'      => $key->id_menu
+                                ,'id_pedido'    => $key->id_cotizacion
+                                ,'id_concepto'  => $key->id_concepto
+                            ]; 
+                        }
+                    foreach ($id_user_pe as $valores) {
+                        $insert = SysUsersPedidosModel::firstOrCreate($valores);
+                    }
+
                 }else{
                     $cotizacion                 = SysCotizacionModel::FindOrFail($id);
                     $subtotal = $conceptos_cotizaciones['total'] + $cotizacion->subtotal;
@@ -922,6 +939,15 @@
         {
             $truncar = 10**$digitos;
             return intval($numero * $truncar) / $truncar;
+        }
+
+        public function getIndex()
+        {
+         $data = [
+            'foo' => 'bar'
+        ];
+        $pdf = PDF::loadView('ventas.pdf.cotizacion', ['data' => $data]);
+        return $pdf->stream('pdf.generar');
         }
                  
         

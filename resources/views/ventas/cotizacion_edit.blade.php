@@ -174,7 +174,7 @@
 
         <div class="modal-footer">
             <div class="btn-toolbar pull-right">
-                <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-danger" data-fancybox-close v-on:click.prevent="cancel_cotizacion()"> <i class="fa fa-times-circle"></i> Cancelar</button>
                 <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()" {{$insertar}} id="insertar_add"><i class="fa fa-save"></i> Registrar </button> 
             </div>
         </div>
