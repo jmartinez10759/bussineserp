@@ -31,7 +31,7 @@
             if( Session::get('permisos')['GET'] ){
                 return view('errors.error');
             }
-            $response = (Session::get('id_rol') != 1)? $this->_consulta( $this->_tabla_model,[],[],['id' => Session::get('id_empresa')],false ): $this->_tabla_model::orderby('id','desc')->get();
+            $response = $this->_catalogos_bussines( $this->_tabla_model, [], [], ['id' => Session::get('id_empresa')] );
             $permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
             $registros = [];
             foreach ($response as $respuesta) {

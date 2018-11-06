@@ -19,6 +19,7 @@ class SysEmpresasModel extends Model
     ,'id_country'
     ,'id_estado'
     ,'id_regimen_fiscal'
+    ,'id_servicio'
     ,'telefono'
     ,'logo'
     ,'estatus'
@@ -70,24 +71,28 @@ class SysEmpresasModel extends Model
 
   public function pedidos()
   {
-        return $this->belongsToMany('App\Model\Ventas\SysPedidosModel','sys_users_pedidos','id_empresa','id_pedido');
+    return $this->belongsToMany('App\Model\Ventas\SysPedidosModel','sys_users_pedidos','id_empresa','id_pedido');
   }
 
   public function notificaciones()
   {
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysNotificacionesModel','sys_rol_notificaciones','id_notificacion','id_empresa')->withPivot('estatus');
+    return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_notificacion','id_empresa')->withPivot('estatus');
   }
   public function regimenes()
   {
-      return $this->hasOne('App\Model\Administracion\Configuracion\SysRegimenFiscalModel', 'id','id_regimen_fiscal');
+    return $this->hasOne('App\Model\Administracion\Configuracion\SysRegimenFiscalModel', 'id','id_regimen_fiscal');
   }
   public function estados()
   {
-      return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel', 'id','id_estado');
+    return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel', 'id','id_estado');
   }
   public function paises()
   {
-      return $this->hasOne('App\Model\Administracion\Configuracion\SysPaisModel', 'id','id_country');
+    return $this->hasOne('App\Model\Administracion\Configuracion\SysPaisModel', 'id','id_country');
+  }
+  public function servicios()
+  {
+    return $this->hasOne( SysClaveProdServicioModel::class, 'id','id_servicio');
   }
 
 

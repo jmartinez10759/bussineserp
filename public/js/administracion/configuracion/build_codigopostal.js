@@ -1,12 +1,12 @@
-var url_insert  = "pais/register";
-var url_update   = "pais/update";
-var url_edit     = "pais/edit";
-var url_destroy  = "pais/destroy";
-var url_all      = "pais/all";
-var redireccion  = "configuracion/pais";
+var url_insert  = "codigopostal/register";
+var url_update   = "codigopostal/update";
+var url_edit     = "codigopostal/edit";
+var url_destroy  = "codigopostal/destroy";
+var url_all      = "codigopostal/all";
+var redireccion  = "configuracion/codigopostal";
 
 new Vue({
-  el: "#vue-pais",
+  el: "#vue-codigopostal",
   created: function () {
     this.consulta_general();
   },
@@ -115,30 +115,4 @@ new Vue({
   }
 
 
-});
-
-
-
-
-var app = angular.module('ng-pais', []).controller('PaisesController', function( $scope ) {
-    $scope.datos = [{"nombre": "John"},{"nombre":"Juan"},{"nombre":"jorge"}];
-    $scope.insert = {'cmb_nombres':"jorge"};
-    
-    $scope.consulta_general = function(){
-        var url = domain( url_all );
-        var fields = {};
-        var promise = MasterController.method_master(url,fields,"get");
-          promise.then( response => {
-          alert();
-              
-          }).catch( error => {
-              if( isset(error.response) && error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-                console.error(error);
-                toastr.error( error.result , expired );
-          });
-    }
 });

@@ -16,4 +16,11 @@ class SysPaisModel extends Model
       	,'validacion_registro'
       	,'agrupaciones'
       ];
+
+  public function empresas()
+  {
+    return $this->belongsTo( SysEmpresasModel::class,'id_country','id');
+  }
+
+
 }

@@ -18,4 +18,12 @@ class SysClaveProdServicioModel extends Model
         ,'fecha_final_vigencia'
         ,'similares'
       ];
+
+  public function empresas()
+  {
+    return $this->belongsTo( SysEmpresasModel::class,'id_servicio','id');
+  }
+
+
+
 }

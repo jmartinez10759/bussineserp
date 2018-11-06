@@ -38,7 +38,6 @@ class EmpresasController extends MasterController
            $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
            $registros = [];
            $registros_sucursales = [];
-           /*$eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';*/
            $permisos = (Session::get('permisos')['PER'] == false)? 'style="display:block" ': 'style="display:none" ';
            foreach ($response as $respuesta) {
              $id['id'] = $respuesta->id;
@@ -67,7 +66,6 @@ class EmpresasController extends MasterController
              ,'registros'       => $registros
              ,'id'              => "datatable"
            ];
-          
            #se crea el dropdown
            $estados = dropdown([
                  'data'      => SysEstadosModel::get()
@@ -76,7 +74,7 @@ class EmpresasController extends MasterController
                  ,'name'      => 'cmb_estados'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
+                 ,'attr'      => 'data-live-search="true"'
            ]);
             $estados_edit =  dropdown([
                  'data'      => SysEstadosModel::get()
@@ -104,7 +102,7 @@ class EmpresasController extends MasterController
                  ,'name'      => 'cmb_servicio_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
+                 ,'attr'      => 'data-live-search="true"'
             ]);
 
            foreach ($response_sucursales as $respuesta) {

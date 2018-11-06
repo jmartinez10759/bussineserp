@@ -5,16 +5,16 @@
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
-    use App\Model\Administracion\Configuracion\SysPaisModel;
+    use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 
-    class PaisController extends MasterController
+    class CodigoPostalController extends MasterController
     {
         #se crea las propiedades
         private $_tabla_model;
 
         public function __construct(){
             parent::__construct();
-            $this->_tabla_model = new SysPaisModel;
+            $this->_tabla_model = new SysCodigoPostalModel;
         }
         /**
         *Metodo para obtener la vista y cargar los datos
@@ -28,12 +28,11 @@
             }
             
             $data = [
-                "page_title" 	        => "Configuracion"
-                ,"title"  		        => "Paises"
+                "page_title" 	        => ""
+                ,"title"  		        => ""
                 ,"data_table"  		    => ""
-                ,'script'               => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js')
             ];
-            return self::_load_view( "administracion.configuracion.pais",$data );
+            return self::_load_view( "administracion.configuracion.codigopostal",$data );
         }
         /**
          *Metodo para obtener los datos de manera asicronica.
