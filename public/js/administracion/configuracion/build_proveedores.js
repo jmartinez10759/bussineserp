@@ -8,11 +8,11 @@ var redireccion  = "configuracion/proveedores";
 new Vue({
   el: "#vue-proveedores",
   created: function () {
-    this.consulta_general();
+    //this.consulta_general();
   },
   data: {
     datos: [],
-    insert: {},
+    insert: {'estatus':'1'},
     update: {},
     edit: {},
     fields: {},
@@ -38,7 +38,9 @@ new Vue({
     }
     ,insert_register(){
         var url = domain( url_insert );
-        var fields = {};
+        this.insert.id_estado = jQuery('#cmb_estados').val();
+        this.insert.id_regimen_fiscal = jQuery('#cmb_servicio').val();
+        var fields = this.insert;
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
           

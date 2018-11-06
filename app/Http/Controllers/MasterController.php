@@ -24,6 +24,7 @@ use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 use App\Model\Administracion\Configuracion\SysNotificacionesModel;
+use App\Model\Administracion\Configuracion\SysProveedoresModel;
 
 abstract class MasterController extends Controller
 {
