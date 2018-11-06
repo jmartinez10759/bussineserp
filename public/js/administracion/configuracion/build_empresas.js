@@ -183,7 +183,7 @@ new Vue ({
 
 });
 
-jQuery('#cmb_servicio').selectpicker();
-jQuery('#cmb_servicio_edit').selectpicker();
+jQuery('#cmb_servicio').selectpicker({width:'80%'});
+jQuery('#cmb_servicio_edit').selectpicker({width:'80%'});
 jQuery('#cmb_estados').selectpicker();
 jQuery('#cmb_estados_edit').selectpicker();

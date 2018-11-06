@@ -703,6 +703,69 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProductosController@destroy'
         ,'as'       => 'clientes.destroy'
     ]);
+############################ SECCION PAISES #######################################
+    
+    Route::get('/configuracion/pais', [
+        'uses'      => 'Administracion\Configuracion\PaisController@index'
+        ,'as'       => 'configuracion.pais'
+    ]);
+    
+    Route::get('/pais/all', [
+        'uses'      => 'Administracion\Configuracion\PaisController@all'
+        ,'as'       => 'pais.all'
+    ]);
+
+    Route::post('/pais/register', [
+        'uses'      => 'Administracion\Configuracion\PaisController@store'
+        ,'as'       => 'pais.register'
+    ]);
+    
+    Route::get('/pais/edit', [
+        'uses'      => 'Administracion\Configuracion\PaisController@show'
+        ,'as'       => 'pais.edit'
+    ]);
+    
+    Route::put('/pais/update', [
+        'uses'      => 'Administracion\Configuracion\PaisController@update'
+        ,'as'       => 'pais.update'
+    ]);
+
+    Route::delete('/pais/destroy', [
+        'uses'      => 'Administracion\Configuracion\PaisController@destroy'
+        ,'as'       => 'pais.destroy'
+    ]);
+############################ SECCION CODIGOS POSTALES #######################################
+    
+    Route::get('/configuracion/codigopostal', [
+        'uses'      => 'Administracion\Configuracion\CodigoPostalController@index'
+        ,'as'       => 'configuracion.codigopostal'
+    ]);
+    
+    Route::get('/metodospago/all', [
+        'uses'      => 'Administracion\Configuracion\CodigoPostalController@all'
+        ,'as'       => 'productos.all'
+    ]);
+
+    Route::post('/codigopostal/register', [
+        'uses'      => 'Administracion\Configuracion\CodigoPostalController@store'
+        ,'as'       => 'codigopostal.register'
+    ]);
+    
+    Route::get('/codigopostal/edit', [
+        'uses'      => 'Administracion\Configuracion\CodigoPostalController@show'
+        ,'as'       => 'codigopostal.edit'
+    ]);
+    
+    Route::put('/codigopostal/update', [
+        'uses'      => 'Administracion\Configuracion\CodigoPostalController@update'
+        ,'as'       => 'codigopostal.update'
+    ]);
+
+    Route::delete('/codigopostal/destroy', [
+        'uses'      => 'Administracion\Configuracion\CodigoPostalController@destroy'
+        ,'as'       => 'codigopostal.destroy'
+    ]);
+
     
 ############################ SECCION DE CARGA DE ARCHIVOS #######################################
     
