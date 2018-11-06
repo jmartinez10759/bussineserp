@@ -13,8 +13,8 @@ new Vue({
   data: {
     datos: [],
     insert: {'estatus':'1'},
-    update: {},
-    edit: {},
+    update: {'estatus':'1'},
+    edit: {'estatus':'1'},
     fields: {},
 
   },
@@ -37,14 +37,22 @@ new Vue({
           });
     }
     ,insert_register(){
+      var validacion = ['cmb_estados'];
+      if(validacion_fields(validacion) == "error"){return;}
+        if( !emailValidate(jQuery('#correo').val()) ){
+            jQuery('#correo').parent().parent().addClass('has-error');
+            toastr.error("Correo Incorrecto","Ocurrio un error, favior de verificar");
+        }
+        
         var url = domain( url_insert );
         this.insert.id_estado = jQuery('#cmb_estados').val();
-        this.insert.id_regimen_fiscal = jQuery('#cmb_servicio').val();
+        this.insert.giro_comercial = jQuery('#cmb_servicio').val();
         var fields = this.insert;
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
           
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion)); 
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -57,12 +65,13 @@ new Vue({
           });
     }
     ,update_register(){
-        var url = domain( url_update );
-        var fields = {};
+       var url = domain( url_update );
+        this.edit.id_estado = jQuery('#cmb_estados_edit').val();
+        var fields = this.edit;
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
-          
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion));   
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -80,7 +89,17 @@ new Vue({
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           
-              toastr.success( response.data.message , title );
+              // toastr.success( response.data.message , title );
+               this.edit = response.data.result;
+               this.edit.id = response.data.result.id;
+               if( response.data.result.contactos.length > 0 ){
+                   this.edit.contacto = response.data.result.contactos[0].nombre_completo;
+                   this.edit.departamento = response.data.result.contactos[0].departamento;
+                   this.edit.telefono = response.data.result.contactos[0].telefono;
+                   this.edit.correo = response.data.result.contactos[0].correo;
+               }
+               jQuery('#cmb_estados_edit').val(response.data.result.id_estado);
+               jQuery('#modal_edit_register').modal('show');
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -89,7 +108,7 @@ new Vue({
                     return;
                 }
               toastr.error( error.response.data.message , expired );
-              redirect();
+              //redirect();
           });
         
     }
@@ -100,6 +119,7 @@ new Vue({
           var promise = MasterController.method_master(url,fields,"delete");
           promise.then( response => {
               toastr.success( response.data.message , title );
+               
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -112,8 +132,14 @@ new Vue({
       },"warning",true,["SI","NO"]);   
     }
     
+   
+    
     
   }
 
 
 });
+jQuery('#cmb_servicio').selectpicker({width:'80%'});
+jQuery('#cmb_servicio_edit').selectpicker({width:'80%'});
+jQuery('#cmb_estados').selectpicker();
+jQuery('#cmb_estados_edit').selectpicker();

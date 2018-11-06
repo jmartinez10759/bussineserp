@@ -9,7 +9,7 @@ class SysProveedoresModel extends Model
       public $table = "sys_proveedores";
       public $fillable = [
       'id'
-    ,'rfc_emisor'
+    ,'rfc'
     ,'nombre_comercial'
     ,'razon_social'
     ,'calle'
@@ -19,6 +19,7 @@ class SysProveedoresModel extends Model
     ,'id_country'
     ,'id_estado'
     ,'id_regimen_fiscal'
+    ,'giro_comercial'
     ,'telefono'
     ,'logo'
     ,'estatus'
@@ -44,7 +45,7 @@ public function menus(){
   }
   
   public function proveedores(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_empresas_sucursales','id_empresa','id_proeedor');
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_empresas_sucursales','id_empresa','id_proveedor');
   }
   
   public function cuentas(){

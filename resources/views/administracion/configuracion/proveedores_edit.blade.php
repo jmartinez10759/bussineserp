@@ -63,7 +63,7 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">RFC: <font size="3" color="red">* </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="rfc_emisor" class="form-control" placeholder="" v-model="insert.rfc_emisor">
+                                <input type="text" id="rfc" class="form-control" placeholder="" v-model="insert.rfc">
                             </div>
 
                         </div>
@@ -203,7 +203,7 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">RFC: <font size="3" color="red">* </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="rfc_receptor" class="form-control" placeholder="" v-model="edit.rfc_emisor">
+                                <input type="text" id="rfc_receptor" class="form-control" placeholder="" v-model="edit.rfc">
                             </div>
 
                         </div>
@@ -280,7 +280,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal_sucusales_register" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="modal_proveedores_register" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
