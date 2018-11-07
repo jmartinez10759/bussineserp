@@ -52,10 +52,6 @@ use App\Model\Administracion\Configuracion\SysTasaModel;
 use App\Model\Administracion\Configuracion\SysImpuestoModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysPaisModel;
-use  App\Model\Development\SysCodigoPostalModel;
-use  App\Model\Development\SysCodigoPostalModel;
-use App\Model\Admninistrador\Configuracion\SysCodigoPostalModel;
-use App\Model\Administrador\Configuracion\SysCodigoPostalModel;
 use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 
 
@@ -205,18 +201,6 @@ class UploadController extends MasterController
             break;
                case "Pais": 
                 $this->_tabla_model = new SysPaisModel; 
-            break;
-               case "Codigopostal": 
-                $this->_tabla_model = new SysCodigoPostalModel; 
-            break;
-               case "Codigopostal": 
-                $this->_tabla_model = new SysCodigoPostalModel; 
-            break;
-               case "Codigopostal": 
-                $this->_tabla_model = new SysCodigoPostalModel; 
-            break;
-               case "Codigopostal": 
-                $this->_tabla_model = new SysCodigoPostalModel; 
             break;
                case "Codigopostal": 
                 $this->_tabla_model = new SysCodigoPostalModel; 

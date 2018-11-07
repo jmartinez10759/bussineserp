@@ -32,6 +32,7 @@
                 ,"title"  		        => "Paises"
                 ,"data_table"  		    => ""
                 ,'script'               => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js')
+                ,'script_route'              => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js')
             ];
             return self::_load_view( "administracion.configuracion.pais",$data );
         }
@@ -42,11 +43,10 @@
          *@return void
          */
         public function all( Request $request ){
-
+            #debuger($request->all());
             try {
-
-
-              return $this->_message_success( 201, $response , self::$message_success );
+                $response = $this->_tabla_model::get();
+              return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -82,8 +82,8 @@
             $error = null;
             DB::beginTransaction();
             try {
-
-
+                #debuger($request->all());
+                $response = [];
             DB::commit();
             $success = true;
             } catch (\Exception $e) {

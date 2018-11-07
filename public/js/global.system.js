@@ -802,7 +802,7 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
             maxFiles: maxfile,
             paramName: "file",
             //timeout: 180000, /*milliseconds*/
-            //maxFilesize: 256,
+            maxFilesize: 256,
             createImageThumbnails: true,
             acceptedFiles: type_file,
             dictDefaultMessage: message,
@@ -1556,16 +1556,29 @@ select_general = function (fields) {
  * @param identificador string [description]
  * @return void
  */
-buscador_general = function ($this, identificador) {
+buscador_general = function ($this, identificador, table = false ) {
 
     _this = $this;
-    jQuery.each(jQuery(identificador + " tbody>tr"), function () {
-        if (jQuery(this).text().toLowerCase().indexOf(jQuery(_this).val().toLowerCase()) === -1)
-            jQuery(this).hide();
-        else
-            jQuery(this).show();
+    if(table){
+        jQuery.each(jQuery(identificador + " li>a"), function () {
+            if (jQuery(this).text().toLowerCase().indexOf(jQuery(_this).val().toLowerCase()) === -1)
+                jQuery(this).hide();
+            else
+                jQuery(this).show();
 
-    });
+        });
+
+    }else{
+
+        jQuery.each(jQuery(identificador + " tbody>tr"), function () {
+            if (jQuery(this).text().toLowerCase().indexOf(jQuery(_this).val().toLowerCase()) === -1)
+                jQuery(this).hide();
+            else
+                jQuery(this).show();
+
+        });
+        
+    }
 
 }
 /**

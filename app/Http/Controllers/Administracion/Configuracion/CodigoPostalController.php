@@ -28,8 +28,8 @@
             }
             
             $data = [
-                "page_title" 	        => ""
-                ,"title"  		        => ""
+                "page_title" 	        => "Configuracion"
+                ,"title"  		        => "Código Postal"
                 ,"data_table"  		    => ""
             ];
             return self::_load_view( "administracion.configuracion.codigopostal",$data );
