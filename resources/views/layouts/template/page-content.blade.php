@@ -19,15 +19,11 @@
             <div class="btn-group pull-right">
                 <div class="pull-right">
                     <form class="form-inline">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-warning" {{ $upload_files }} onclick="upload_files_general()"><i class="fa fa-upload"> </i> Cargar Archivo </button>
-                        </div>
-                        <input id="search_general" class="form-control" type="text" placeholder="Buscar" aria-label="Search" onkeyup="buscador_general(this,'{{$buscador}}')" />
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-success" id="modal_general" onclick="register_modal_general( '{{$agregar}}' )" {{$modal}}>
-                                <i class="fa fa-plus-circle"> </i> Agregar
-                            </button>
-                        </div>
+                        {!! $upload_files !!}
+                        
+                        <input id="search_general" class="form-control" type="text" placeholder="Buscar" aria-label="Search" onkeyup="buscador_general(this,'{{ $buscador }}')" />
+
+                        {!! $modal !!}
                     </form>
                 </div>
             </div>
@@ -37,19 +33,7 @@
         <div class="panel-body">
 
             @yield('content')
-
-            <!-- <div class="row col-sm-12">
-					<div class="pull-right">
-
-						<div class="btn-group">
-							<button type="button" class="btn btn-warning" onclick="generar_pdf()" title="Reporte" {{$reportes}}><i class="fa fa-file-pdf-o"> </i> PDF</button>
-						</div>
-						<div class="btn-group">
-							<button type="button" class="btn btn-primary" onclick="generar_csv()" title="CSV" {{$excel}}><i class="	fa fa-file-excel-o"> </i> CSV</button>
-						</div>
-
-					</div>
-				</div> -->
+            
             <div class="" id="seccion_upload" style="display:none;">
                 <div class="modal-dialog">
                     <div class="modal-content">
