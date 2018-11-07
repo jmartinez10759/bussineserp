@@ -1295,7 +1295,7 @@ Route::get('/ventas/cotizacion', [
     ]);
 
     //PDF
-    Route::get('/pdf/cotizacion', [
+    Route::get('/pdf/cotizacion/{id}', [
         'uses' => 'Ventas\CotizacionController@getIndex'
         ,'as' => 'ventas.pdf.cotizacion'
     ]);
