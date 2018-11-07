@@ -155,21 +155,21 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Nombre: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="contacto" class="form-control" placeholder="Ingrese Nombre de contacto" v-model="edit.contacto">
+                                <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-3">Departamento: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="departamento" class="form-control" placeholder="Ingrese departamento o cargo " v-model="edit.departamento">
+                                <input type="text" id="departamento_edit" class="form-control" placeholder="Ingrese departamento o cargo " >
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-3">Teléfono: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="telefono" class="form-control" placeholder="Lada + número" v-model="edit.telefono">
+                                <input type="text" id="telefono_edit" class="form-control" placeholder="Lada + número" >
                             </div>
 
                         </div>
@@ -189,21 +189,21 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Nombre Comercial: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="nombre_comercial" class="form-control" placeholder="" v-model="edit.nombre_comercial">
+                                <input type="text" id="nombre_comercial_edit" class="form-control" placeholder="" v-model="edit.nombre_comercial">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Razón social: <font size="3" color="red">* </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="razon_social" class="form-control" placeholder="" v-model="edit.razon_social">
+                                <input type="text" id="razon_social_edit" class="form-control" placeholder="" v-model="edit.razon_social">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">RFC: <font size="3" color="red">* </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="rfc_receptor" class="form-control" placeholder="" v-model="edit.rfc">
+                                <input type="text" id="rfc_edit" class="form-control" placeholder="" v-model="edit.rfc">
                             </div>
 
                         </div>
@@ -211,27 +211,27 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Calle y Número: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="calle" class="form-control" placeholder="" v-model="edit.calle">
+                                <input type="text" id="calle_edit" class="form-control" placeholder=""{{--  v-model="edit.calle" --}}>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-3">Colonia: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="colonia" class="form-control" placeholder="" v-model="edit.colonia">
+                                <input type="text" id="colonia_edit" class="form-control" placeholder="" {{-- v-model="edit.colonia" --}}>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-3">Delegación/Municipio: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="municipio" class="form-control" placeholder="" v-model="edit.municipio">
+                                <input type="text" id="municipio_edit" class="form-control" placeholder="" {{-- v-model="edit.municipio" --}}>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Código Postal: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="cp" class="form-control" placeholder="" maxlength="5" v-model="edit.cp">
+                                <input type="text" id="cp_edit" class="form-control" placeholder="" maxlength="5" {{-- v-model="edit.cp" --}}>
                             </div>
 
                         </div>
@@ -244,9 +244,10 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Giro Comercial: </label>
+                            <label class="control-label col-sm-3">Giro Comercial : </label>
                             <div class="col-sm-7">
-                                <input type="text" id="giro_comercial" class="form-control" placeholder="" v-model="edit.giro_comercial">
+                                {{-- <input type="text" id="giro_comercial" class="form-control" placeholder="" v-model="edit.giro_comercial"> --}}
+                                {!! $giro_comercial_edit !!}
                             </div>
                         </div>
                         
@@ -270,7 +271,7 @@
                         <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
                             <i class="fa fa-times-circle"></i> Cancelar
                         </button>
-                        <button type="button" class="btn btn-info" v-on:click="update()" {{$update}}>
+                        <button type="button" class="btn btn-info" v-on:click="update_register()" {{$update}}>
                         <i class="fa fa-save"></i> Actualizar 
                         </button>
                     </div>

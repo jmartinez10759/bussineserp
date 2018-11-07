@@ -43,7 +43,8 @@
            foreach ($response as $respuesta) {
              $id['id'] = $respuesta->id;
              $editar = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit','title="editar" ' );
-             $borrar   = build_buttons(Session::get('permisos')['DEL'],'v-destroy_register($id)','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
+             $borrar   = build_acciones_usuario($id,'v-destroy_register','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
+             // $borrar   = build_buttons(Session::get('permisos')['DEL'],'v-destroy_register($id)','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
              // $proveedores = build_acciones_usuario($id,'v-proveedores',' Proveedores','btn btn-info','fa fa-building-o','title="Asignar proveedores" '.$permisos );
              $registros[] = [
                 $respuesta->id
@@ -179,13 +180,9 @@
 
             try {
                 $where = ['id' => $request->id];
-            $response = SysProveedoresModel::with( ['contactos' => function($query){
-                return $query->where(['sys_contactos.estatus' => 1,'sys_proveedores.estatus' => 1])->get();
-            },'proveedores' => function( $query ){
-                return $query->where(['sys_proveedores.estatus' => 1])->groupby('id_proveedores')->get();
-            }])->where( $where )->groupby('id')->get();
+            $response = SysProveedoresModel::where( $where )->groupby('id')->get();
                 
-            return $this->_message_success( 200, $response , self::$message_success );
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -263,7 +260,7 @@
             DB::beginTransaction();
             try {
                 $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-                $string_key_proveedores = [ 'contacto','departamento','telefono', 'correo','created_at','updated_at','contactos','sucursales' ];
+                $string_key_proveedores = [ 'rfc','nombre_comercial','razon_social','calle', 'colonia','municipio','cp','telefono','created_at','updated_at' ];
                 $string_data_proveedor = [];
                 $string_data_contactos = [];
                 foreach( $request->all() as $key => $value ){
@@ -280,22 +277,27 @@
                     
                 }
              $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_proveedor );
-            if( count($request->contactos) > 0){
-               SysContactosModel::where(['id' => $request->contactos[0]['id'] ])->update($string_data_contactos);
-            }else{
-                $response_contactos = SysContactosModel::create($string_data_contactos);
+            // if( count($request->contactos) > 0){
+            //    SysContactosModel::where(['id' => $request->contactos[0]['id'] ])->update($string_data_contactos);
+            // }else{
+                // $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
-                     'id_cuenta'        => 0
-                    ,'id_empresa'       => $request->id
-                    ,'id_sucursal'      => 0
-                    ,'id_contacto'      => $response_contactos->id
-                    ,'id_clientes'      => 0
-                    // ,'id_proveedores'   => 0
-                    ,'estatus'          => 1
+                     'id'        => $request->id
+                    ,'rfc'       => $request->rfc
+                    ,'nombre_comercial'      => $request->nombre_comercial
+                    ,'razon_social'      => $request->razon_social
+                    ,'telefono'      => $request->telefono
+                    ,'calle'   => $request->calle
+                    ,'colonia'          => $request->colonia
+                    ,'municipio'      => $request->municipio
+                    ,'cp'      => $request->cp
+                    ,'id_estado'      => $request->id_estado                    
+                    ,'giro_comercial'      => $request->giro_comercial
+                    ,'estatus' => 1 
                 ];
-               SysProveedoresModel::create($data);   
+            SysProveedoresModel::create($data);   
                 
-            }
+            // }
 
 
             DB::commit();
@@ -323,12 +325,13 @@
             $error = null;
             DB::beginTransaction();
             try {
-                $response = SysProveedoresModel::where(['id_proveedor' => $request->id])->get(); 
-                if( count($response) > 0){
-                    for($i = 0; $i < count($response); $i++){
-                        SysContactosModel::where(['id' => $response[$i]->id_contacto])->delete();
-                    }
-                }
+                // debuger($request->all());
+                $response = SysProveedoresModel::get(); 
+                // if( count($response) > 0){
+                //     for($i = 0; $i < count($response); $i++){
+                //         SysContactosModel::where(['id' => $response[$i]->id_contacto])->delete();
+                //     }
+                // }
                 $this->_tabla_model::where(['id' => $request->id])->delete();
 
 
