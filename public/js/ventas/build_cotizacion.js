@@ -522,6 +522,16 @@ new Vue({
             clean_input_general();
         }
     }
+    ,pdf_print( id ){
+        var pdf = "pdf/cotizacion/"+id.id_cotizacion;
+
+        $.fancybox.open({
+            'type': 'iframe'
+            ,'src': domain(pdf)
+            ,'buttons' : ['share', 'close']
+        });
+        return;
+    }
     
   }
 

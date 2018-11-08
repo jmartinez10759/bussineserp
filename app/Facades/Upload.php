@@ -18,7 +18,8 @@ class Upload extends Facade
    * @return array [Description]
    */
     public function upload_file( Request $request ){
-      #ini_set('upload_max_filesize', '20M');
+      ini_set('memory_limit', '-1');
+      set_time_limit(0);
       $files = $request->file;
       try {
         for ($i=0; $i < count( $files ) ; $i++) {

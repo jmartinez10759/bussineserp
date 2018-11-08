@@ -801,8 +801,10 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
             url: path_url,
             maxFiles: maxfile,
             paramName: "file",
-            //timeout: 180000, /*milliseconds*/
+            timeout: 7200000, /*milliseconds*/
             maxFilesize: 256,
+            //chunking : true,
+            forceChunking: true,
             createImageThumbnails: true,
             acceptedFiles: type_file,
             dictDefaultMessage: message,
@@ -817,7 +819,7 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
             params: fields,
             headers: {
                 'usuario': jQuery('#id_usuario').val(),
-                'token': jQuery('#token').val(),
+                'token'  : jQuery('#token').val(),
                 'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
             },
             dictRemoveFile: true,
@@ -833,11 +835,7 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
 
             },
             accept: function (file, done) {
-                if (file.name == "imagen.jpg") {
-                    done("Archivo Incorrecto");
-                } else {
-                    done();
-                }
+                if (file.name == "imagen.jpg") { done("Archivo Incorrecto"); } else { done(); }
             },
             sending: function (parmt1, parmt2, data) {
                 //data.append('datos', params );
@@ -852,9 +850,9 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
             complete: function (data) {
                 console.log(data);
                 if (data.status == 'error') {
-                    toastr.error('No se cargo correctamente el archivo');
+                    toastr.error('No se cargo correctamente el archivo, intente cargarlo nuevamente');
+                    this.removeAllFiles(true);
                 }
-                //this.removeAllFiles(true);
                 //pnotify('Archivo Cargado.!','El archivo seleccionado se cargo con exito','success');
                 /* swal(
                   'Archivo Cargado Correctamente.!',
@@ -1543,8 +1541,8 @@ select_general = function (fields) {
         opt += select;
         opt += '</select>';
     } else {
-        opt += '<select name="' + name + '" id="' + id + '" class="chosen-select ' + clase + '" ' + eventt + '">';
-        opt += '<option value="" disabled selected>Sin contenido</option>'
+        opt += '<select name="' + name + '" id="' + name + '" class="chosen-select ' + clase + '" ' + eventt + '">';
+            opt += '<option value="" disabled selected> Sin contenido </option>';
         opt += '</select>';
     }
 

@@ -4,6 +4,8 @@ var url_edit    = 'empresas/edit';
 var url_destroy = "empresas/destroy/";
 var redireccion = "configuracion/empresas";
 var url_relacion  = "empresas/insert_relacion";
+var url_edit_pais = 'pais/edit';
+var url_edit_codigos = 'codigopostal/show';
 
 new Vue ({
   el: "#vue_empresas",
@@ -178,12 +180,89 @@ new Vue ({
 
 
     }
+    ,select_estado(){
+      var url = domain( url_edit_pais );
+      var fields = {id: jQuery('#cmb_pais').val()}
+      MasterController.method_master(url,fields,"get")
+      .then( response => {
+          var estados = {
+              'data'    : response.data.result.estados
+              ,'text'   : "nombre"
+              ,'value'  : "clave"
+              ,'name'   : "cmb_estados"
+              ,'class'  : 'form-control'
+              ,'leyenda': 'Seleccione Opción'
+              ,'attr'   : 'data-live-search="true" '
+              ,'event'  : "select_codigos()"
+          };
+          jQuery('#div_cmb_estados').html('');
+          jQuery('#div_cmb_estados').html( select_general( estados ) );
+      }).catch( error => {
+          if( isset(error.response) && error.response.status == 419 ){
+            toastr.error( session_expired ); 
+            redirect(domain("/"));
+            return;
+          }
+            toastr.error( error.result , expired );  
+      });    
+
+    }    
+
   }
 
 
 });
+function select_codigos(){
+      var url = domain( url_edit_codigos );
+      var fields = {clave: jQuery('#cmb_estados').val()}
+      MasterController.method_master(url,fields,"get")
+      .then( response => {
+          var codigos = {
+              'data'    : response.data.result
+              ,'text'   : "codigo_postal"
+              ,'value'  : "id"
+              ,'name'   : "cmb_codigo_postal"
+              ,'class'  : 'form-control'
+              ,'attr'   : 'data-live-search="true" '
+              ,'leyenda': 'Seleccione Opción'
+          };
+          jQuery('#div_cmb_codigos').html('');
+          jQuery('#div_cmb_codigos').html( select_general( codigos ) );
+      }).catch( error => {
+          if( isset(error.response) && error.response.status == 419 ){
+            toastr.error( session_expired ); 
+            redirect(domain("/"));
+            return;
+          }
+            toastr.error( error.result , expired );  
+      }); 
 
-jQuery('#cmb_servicio').selectpicker({width:'80%'});
-jQuery('#cmb_servicio_edit').selectpicker({width:'80%'});
-jQuery('#cmb_estados').selectpicker();
-jQuery('#cmb_estados_edit').selectpicker();
+    }
+
+
+
+
+jQuery('#cmb_servicio').selectpicker({width:'100%', size: 5});
+jQuery('#cmb_servicio_edit').selectpicker({width:'100%', size: 5});
+jQuery('#cmb_estados').selectpicker({width:'100%', size: 5});
+jQuery('#cmb_estados_edit').selectpicker({width:'100%', size: 5});
+jQuery('#cmb_regimen_fiscal').selectpicker({width:'100%',size: 5});
+jQuery('#cmb_regimen_fiscal_edit').selectpicker({width:'100%', size: 5});
+
+jQuery('#cmb_pais').selectpicker({width:'100%', size: 5});
+jQuery('#cmb_pais_edit').selectpicker({width:'100%', size: 5});
+jQuery('#cmb_codigo_postal_edit').selectpicker({width:'100%', size: 5});
+jQuery('#cmb_codigo_postal').selectpicker({width:'100%', size: 5});
+
+
+
+var upload_url = domain('empresas/upload');
+var ids = {
+  div_content  : 'div_dropzone_file_empresa'
+  ,div_dropzone : 'dropzone_xlsx_file_empresa'
+  ,file_name    : 'file'
+};
+var message = "Dar Clic aquí o arrastrar archivo";
+upload_file('',upload_url,message,1,ids,'.jpg,.png,.jpeg',function( request ){
+    console.log(request);
+});

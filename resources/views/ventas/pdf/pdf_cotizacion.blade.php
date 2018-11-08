@@ -94,30 +94,30 @@
     <table class="tg">
         <tr>
             <th width="10%" align="left"><img src="{{ asset('img/header_buro_laboral.jpeg') }}" alt="" width="80" height="60"></th>
-            <th width="60%" align="center">Buro Laboral México <br> a.clientes@burolaboralmexico.com <br>5535355435</th>
-            <th width="15%" align="center" class="border">Cotización <br> Nº 234567<span class="text"></span></th>
+            <th width="60%" align="center">{{ $data['datos'][0]->razon_em }} <br> {{ $data['datos'][0]->calle_em }} {{ $data['datos'][0]->col_em }}<br>{{ $data['datos'][0]->tel_em }}</th>
+            <th width="15%" align="center" class="border">Cotización <br> Nº 000{{ $data['datos'][0]->id_cotizacion }}<span class="text"></span></th>
         </tr>
     </table><br>
-    <table ><tr><td width="14%" align="right"><strong>Fecha: 2018-10-12</strong></td></tr></table>
+    <table ><tr><td width="14%" align="right"><strong>{{ $data['datos'][0]->fecha_alta }}</strong></td></tr></table>
         <table width="100%" class="tabla2">
             <tr>
                 <td width="10%">Contacto:</td>
-                <td width="50%" class="linea"><span class="text">{{$data['foo']}}</span></td>
+                <td width="50%" class="linea"><span class="text">{{ $data['datos'][0]->contacto }}</span></td>
                 <td width="5%">&nbsp;</td>
                 <td width="13%">&nbsp;</td>
                 <td width="4%">&nbsp;</td>
                 <!-- <td width="1%" align="center" class=""><strong>Fecha: 2018-10-12</strong></td> -->
             </tr>
             <tr>
-                <td>Empresa:</td>
-                <td class="linea"><span class="text"></span></td>
-                <td>Telefono:</td>
-                <td width="4%" class="linea"><span class="text"></span></td>
+                <td width="10%">Empresa:</td>
+                <td width="30%" class="linea"><span class="text">{{ $data['datos'][0]->empresa }}</span></td>
+                <td width="15%">Telefono:</td>
+                <td width="18%" class="linea"><span class="text">7227272727</span></td>
                 <td>&nbsp;</td>
             </tr>
             <tr>
                 <td>Correo:</td>
-                <td class="linea"><span class="text"></span></td>
+                <td class="linea"><span class="text">{{ $data['datos'][0]->correo }}</span></td>
                 <td>&nbsp;</td>
             </tr>
         </table>
@@ -128,31 +128,31 @@
                 <td align="center" class="fondo"><strong>P. UNITARIO</strong></td>
                 <td align="center" class="fondo"><strong>IMPORTE</strong></td>
             </tr>
-            
+            @foreach($data['prod'] as $prod)
             <tr>
-                <td width="7%">&nbsp;ddd</td>
-                <td width="59%">&nbsp;de4de</td>
-                <td width="16%">&nbsp;dede</td>
-                <td width="18%" align="left">&nbsp;dede</td>
+                <td width="7%">&nbsp;{{ $prod->cantidad }}</td>
+                <td width="59%">&nbsp;{{ (isset( $prod->descripcion ) && $prod->descripcion != "")? $prod->descripcion: $prod->prod_desc }}</td>
+                <td width="16%">&nbsp;{{ $prod->precio }}</td>
+                <td width="18%" align="left">&nbsp;{{ $prod->total }}</td>
             </tr>
-
+            @endforeach
             <tr>
                 <td style="border:0;">&nbsp;</td>
                 <td style="border:0;">&nbsp;</td>
                 <td align="right"><strong>SUBTOTAL</strong></td>
-                <td align="right"><span class="text"></span></td>
+                <td align="right"><span class="text">{{ $data['totales']['subtotal'] }}</span></td>
             </tr>
             <tr>
                 <td style="border:0;">&nbsp;</td>
                 <td style="border:0;">&nbsp;</td>
                 <td align="right"><strong>IVA</strong></td>
-                <td align="right"><span class="text"></span></td>
+                <td align="right"><span class="text">{{ $data['totales']['iva'] }}</span></td>
             </tr>
             <tr>
                 <td style="border:0;">&nbsp;</td>
                 <td style="border:0;">&nbsp;</td>
                 <td align="right"><strong>TOTAL</strong></td>
-                <td align="right"><span class="text"></span></td>
+                <td align="right"><span class="text">{{ $data['totales']['total'] }}</span></td>
             </tr>
             <tr>
                     <!-- <table width="200" border="0" cellpadding="0" cellspacing="0">
@@ -167,10 +167,10 @@
         </table>
         <table width="100%" class="tabla3">
                         <tr>
-                            <td align="center" style="border:0;">Forma de pago:</td>
+                            <td align="center" style="border:0;"><strong>Forma de pago:</strong> {{ $data['datos'][0]->des_forma_p }}</td>
                         </tr>
                         <tr>
-                            <td align="center" style="border:0;">Metodo de pago:</td>
+                            <td align="center" style="border:0;"><strong>Metodo de pago:</strong> {{ $data['datos'][0]->des_metod_p }}</td>
                         </tr>
                         <!-- <tr>
                             <td align="center" style="border:0;">CANCELADO</td>

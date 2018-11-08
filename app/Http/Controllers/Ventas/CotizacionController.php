@@ -941,12 +941,78 @@
             return intval($numero * $truncar) / $truncar;
         }
 
-        public function getIndex()
+        public function getIndex( $id )
         {
-         $data = [
-            'foo' => 'bar'
-        ];
-        $pdf = PDF::loadView('ventas.pdf.cotizacion', ['data' => $data]);
+        $sql=  "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
+            CONCAT(sys_users.name,' ',sys_users.first_surname) as vendedor,
+            sys_cotizaciones.descripcion as des_cot,
+            sys_cotizaciones.codigo,DATE_FORMAT(sys_cotizaciones.created_at, '%Y-%m-%d') as fecha_alta,
+            sys_contactos.nombre_completo as contacto,
+            sys_contactos.correo as correo,
+            sys_contactos.telefono as telefono,
+            sys_clientes.nombre_comercial as empresa,
+            sys_cotizaciones.id_estatus,
+            sys_estatus.nombre,
+            sysbussiness.sys_empresas.nombre_comercial,
+            sysbussiness.sys_empresas.razon_social as razon_em,
+            sysbussiness.sys_empresas.logo, sysbussiness.sys_empresas.telefono as tel_em,
+            sysbussiness.sys_empresas.calle as calle_em,
+            sysbussiness.sys_empresas.colonia as col_em,
+            sysbussiness.sys_empresas.logo as muni_emp,
+            sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc,
+            sys_formas_pagos.descripcion as des_forma_p,sys_metodos_pagos.descripcion as des_metod_p
+          FROM sysbussiness.sys_users_cotizaciones
+          inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+          left join  sysbussiness.sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
+          left join  sysbussiness.sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
+          left join  sysbussiness.sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
+          inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+          left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+          left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
+          left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users
+          left join sysbussiness.sys_empresas on sys_empresas.id = sys_users_cotizaciones.id_empresa
+          left join sysbussiness.sys_formas_pagos on sys_formas_pagos.id = sys_cotizaciones.id_forma_pago
+          left join sysbussiness.sys_metodos_pagos on sys_metodos_pagos.id = sys_cotizaciones.id_metodo_pago
+          where sysbussiness.sys_cotizaciones.id =" .$id ." "."GROUP BY sys_users_cotizaciones.id_cotizacion";
+
+          $prod = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
+            sys_cotizaciones.codigo,sys_cotizaciones.created_at,sys_productos.descripcion as prod_desc,sys_planes.descripcion,
+            sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
+            sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente
+        FROM sysbussiness.sys_users_cotizaciones
+        inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+        inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+        left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+        left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sysbussiness.sys_cotizaciones.id =" .$id;
+          
+            $datos  = DB::select($sql);
+            $produc = DB::select($prod); 
+            $total = DB::select($sql);
+
+                if(count($total) >= 1){
+                    $subtotal = $total[0]->subtotal;
+                    $iv = Session::get('iva') / 100;
+                    $iva = $subtotal * $iv;
+
+                    $totales = [
+                         'iva'          => format_currency($iva,2)
+                        ,'subtotal'     => format_currency($subtotal,2)
+                        ,'total'        => format_currency($subtotal + $iva,2)
+                        ,'iva_'         => number_format($iva,2)
+                        ,'subtotal_'    => number_format($subtotal,2)
+                        ,'total_'       => number_format($subtotal + $iva,2)
+                    ];
+                }else{
+                    $totales = [];
+                }
+
+                $response = [
+                    'datos'             => $datos
+                    ,'prod'             => $produc
+                    ,'totales'          => $totales
+                ];
+                
+        $pdf = PDF::loadView('ventas.pdf.pdf_cotizacion', ['data' => $response]);
         return $pdf->stream('pdf.generar');
         }
                  
