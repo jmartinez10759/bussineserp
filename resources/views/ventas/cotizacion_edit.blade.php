@@ -485,3 +485,75 @@
         </div>
 
 </div>
+
+<div id="modal_send_email" style="display:none;">
+        <h3><i class="glyphicon glyphicon-envelope"></i>  Enviar Cotización</h3>
+            <hr>
+        <div class="modal-body">
+
+            <form class="form-horizontal" >
+
+                <div class="form-group">
+                    <label for="condiciones" class="col-sm-7 control-label"></label>
+                    <div class="col-sm-7">
+               
+                       
+                    </div>
+                    <label for="validez" class="col-sm-7 control-label"></label>
+                    <div class="col-sm-7">
+
+                        
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="">Para: </label>
+                    <div class="col-sm-9">
+                        <input type="text" id="destinatario_pdf" disabled class="form-control" placeholder="">
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="">Asunto: </label>
+                    <div class="col-sm-9">
+                        <input type="text" id="asunto_pdf" class="form-control" placeholder="Cotización">
+                    </div>
+
+                     <label class="control-label col-sm-3" for=""> </label>
+                    <div class="col-sm-9">
+                        <input type="hidden" id="nomb_contacto" class="form-control" placeholder="">
+                        <input type="hidden" id="id_cotzacion" class="form-control" placeholder="">
+                    </div>
+                    
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="">Mensaje: </label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="mensaje_pdf" rows="5" >Hola, buen día. Adjunto cotización solicitada</textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+				<label class="col-sm-2 control-label"></label>
+				<div class="col-sm-10">
+				  <span><i class="glyphicon glyphicon-paperclip"></i> Archivo adjunto</span>
+				</div>
+			  </div>
+
+         </form>
+
+
+        </div>
+        <div class="modal-footer">
+            <div class="pull-right">
+                <button type="button" class="btn btn-danger" data-fancybox-close id="mail_cancelar"> <i class="fa fa-times-circle"></i> Cancelar</button>
+                        
+                <button type="button" class="btn btn-success" v-on:click.prevent="send_pdf()" value="1" ><i class="glyphicon glyphicon-envelope"></i> Enviar</button>
+            </div>
+        </div>
+
+
+    </div>
