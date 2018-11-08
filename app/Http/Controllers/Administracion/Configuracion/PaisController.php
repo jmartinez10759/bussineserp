@@ -32,7 +32,7 @@
                 ,"title"  		        => "Paises"
                 ,"data_table"  		    => ""
                 ,'script'               => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js')
-                ,'script_route'              => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js')
+                ,'script_route'         => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js')
             ];
             return self::_load_view( "administracion.configuracion.pais",$data );
         }
@@ -62,9 +62,9 @@
         public function show( Request $request ){
 
             try {
-
-
-            return $this->_message_success( 201, $response , self::$message_success );
+                $response = $this->_tabla_model::with(['estados'])->where([ 'id' => $request->id ])->get();
+                
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -133,11 +133,9 @@
         * @return void
         */
         public function destroy( Request $request ){
-
             $error = null;
             DB::beginTransaction();
             try {
-
 
             DB::commit();
             $success = true;
@@ -153,5 +151,6 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
+
 
     }

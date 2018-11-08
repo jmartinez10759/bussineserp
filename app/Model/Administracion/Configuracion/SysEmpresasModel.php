@@ -15,7 +15,7 @@ class SysEmpresasModel extends Model
     ,'calle'
     ,'colonia'
     ,'municipio'
-    ,'cp'
+    ,'id_codigo'
     ,'id_country'
     ,'id_estado'
     ,'id_regimen_fiscal'
@@ -80,19 +80,23 @@ class SysEmpresasModel extends Model
   }
   public function regimenes()
   {
-    return $this->hasOne('App\Model\Administracion\Configuracion\SysRegimenFiscalModel', 'id','id_regimen_fiscal');
+    return $this->hasOne(SysRegimenFiscalModel::class, 'id','id_regimen_fiscal');
   }
   public function estados()
   {
-    return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel', 'id','id_estado');
+    return $this->hasOne(SysEstadosModel::class, 'id','id_estado');
   }
   public function paises()
   {
-    return $this->hasOne('App\Model\Administracion\Configuracion\SysPaisModel', 'id','id_country');
+    return $this->hasOne(SysPaisModel::class, 'id','id_country');
   }
   public function servicios()
   {
     return $this->hasOne( SysClaveProdServicioModel::class, 'id','id_servicio');
+  }
+  public function codigos()
+  {
+     return $this->hasOne( SysCodigoPostalModel::class, 'id','id_codigo');
   }
 
 

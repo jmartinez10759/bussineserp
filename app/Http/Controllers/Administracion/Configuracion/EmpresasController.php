@@ -12,6 +12,8 @@ use App\Model\Administracion\Configuracion\SysEstadosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysContactosModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
+use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
+use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
 
@@ -67,7 +69,7 @@ class EmpresasController extends MasterController
              ,'id'              => "datatable"
            ];
            #se crea el dropdown
-           $estados = dropdown([
+           /*$estados = dropdown([
                  'data'      => SysEstadosModel::get()
                  ,'value'     => 'id'
                  ,'text'      => 'nombre'
@@ -76,6 +78,9 @@ class EmpresasController extends MasterController
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true"'
            ]);
+
+
+
             $estados_edit =  dropdown([
                  'data'      => SysEstadosModel::get()
                  ,'value'     => 'id'
@@ -84,7 +89,71 @@ class EmpresasController extends MasterController
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true" '
+            ]);*/
+
+            $paises = dropdown([
+                 'data'      => SysPaisModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_pais'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true"'
+                 ,'event'     => 'v-select_estado()'
+                 ,'selected'  => '151'
+           ]);
+
+            $paises_edit =  dropdown([
+                 'data'      => SysPaisModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_pais_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true" '
+                 ,'event'     => 'v-select_estado_edit()'
             ]);
+            
+          /* $codigo_postal = dropdown([
+                 'data'       => SysCodigoPostalModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'codigo_postal'
+                 ,'name'      => 'cmb_codigo_postal'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true"'
+           ]);
+
+           $codigo_postal_edit = dropdown([
+                 'data'       => SysCodigoPostalModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'codigo_postal'
+                 ,'name'      => 'cmb_codigo_postal_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true"'
+           ]);*/
+
+            $regimen_fiscal =  dropdown([
+                   'data'       => SysRegimenFiscalModel::get()
+                   ,'value'     => 'id'
+                   ,'text'      => 'clave descripcion'
+                   ,'name'      => 'cmb_regimen_fiscal'
+                   ,'class'     => 'form-control'
+                   ,'leyenda'   => 'Seleccione Opcion'
+                   ,'attr'      => 'data-live-search="true" '
+            ]);
+
+            $regimen_fiscal_edit =  dropdown([
+                   'data'       => SysRegimenFiscalModel::get()
+                   ,'value'     => 'id'
+                   ,'text'      => 'clave descripcion'
+                   ,'name'      => 'cmb_regimen_fiscal_edit'
+                   ,'class'     => 'form-control'
+                   ,'leyenda'   => 'Seleccione Opcion'
+                   ,'attr'      => 'data-live-search="true" '
+            ]);
+
             $giro_comercial =  dropdown([
                    'data'       => SysClaveProdServicioModel::get()
                    ,'value'     => 'id'
@@ -129,17 +198,16 @@ class EmpresasController extends MasterController
              ,'title'                   => "Empresas"
              ,'data_table'              =>  data_table($table)
              ,'data_table_sucursales'   =>  data_table($table_sucursales)
-             ,'estados'                 =>  $estados
-             ,'estados_edit'            =>  $estados_edit
+             ,'estados'                 =>  ""
+             ,'estados_edit'            =>  ""
              ,'giro_comercial'          =>  $giro_comercial
              ,'giro_comercial_edit'     =>  $giro_comercial_edit
-             ,'titulo_modal'            => "Registro de Empresa"
-             ,'titulo_modal_edit'       => "Actualización de Empresa"
-             ,'campo_1'                 => 'Empresa'
-             ,'campo_2'                 => 'Descripción'
-             ,'campo_4'                 => 'RFC'
-             ,'campo_5'                 => 'Razón Social'
-             ,'campo_3'                 => 'Estatus'
+             ,'regimen_fiscal'          =>  $regimen_fiscal
+             ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
+             ,'codigo_postal'           =>  ""
+             ,'codigo_postal_edit'      =>  ""
+             ,'paises'                  =>  $paises
+             ,'paises_edit'             =>  $paises_edit
            ];
             #debuger($data);
          return self::_load_view( 'administracion.configuracion.empresas', $data );
@@ -381,7 +449,6 @@ class EmpresasController extends MasterController
           $error = null;
           DB::beginTransaction();
           try {
-
               for ($i=0; $i < count($request->matrix ); $i++) {
                     $matrices = explode('|',$request->matrix[$i] );
                     $id_sucursal =  $matrices[0];
@@ -401,7 +468,6 @@ class EmpresasController extends MasterController
                     }
 
               }
-
             DB::commit();
             $success = true;
           } catch (\Exception $e) {
