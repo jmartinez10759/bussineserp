@@ -1294,10 +1294,21 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'cotizaciones.update'
     ]);
 
-    //PDF
+    //PDF generar para imprimir
     Route::get('/pdf/cotizacion/{id}', [
-        'uses' => 'Ventas\CotizacionController@getIndex'
+        'uses' => 'Ventas\CotizacionController@get_pdf'
         ,'as' => 'ventas.pdf.cotizacion'
+    ]);
+
+    //Envio de pdf por correo
+    Route::post('/pdf/email', [
+        'uses' => 'Ventas\CotizacionController@send_pdf'
+        ,'as' => 'ventas.pdf.email'
+    ]);
+
+    Route::get('/cotizacion/send/email', [
+        'uses' => 'Ventas\CotizacionController@get_correo'
+        ,'as' => 'cotizacion.send.email'
     ]);
 
     /*Route::get('/ventas/productos', [

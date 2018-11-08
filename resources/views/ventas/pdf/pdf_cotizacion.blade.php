@@ -95,10 +95,10 @@
         <tr>
             <th width="10%" align="left"><img src="{{ asset('img/header_buro_laboral.jpeg') }}" alt="" width="80" height="60"></th>
             <th width="60%" align="center">{{ $data['datos'][0]->razon_em }} <br> {{ $data['datos'][0]->calle_em }} {{ $data['datos'][0]->col_em }}<br>{{ $data['datos'][0]->tel_em }}</th>
-            <th width="15%" align="center" class="border">Cotización <br> Nº 000{{ $data['datos'][0]->id_cotizacion }}<span class="text"></span></th>
+            <th width="15%" align="center" class="border">Cotización <br> Nº {{ $data['datos'][0]->id_cotizacion }}<span class="text"></span></th>
         </tr>
     </table><br>
-    <table ><tr><td width="14%" align="right"><strong>{{ $data['datos'][0]->fecha_alta }}</strong></td></tr></table>
+    <table ><tr><td width="20%" align="right"><strong>Fecha: </strong>{{ $data['datos'][0]->fecha_alta }}</td></tr></table>
         <table width="100%" class="tabla2">
             <tr>
                 <td width="10%">Contacto:</td>
@@ -112,7 +112,7 @@
                 <td width="10%">Empresa:</td>
                 <td width="30%" class="linea"><span class="text">{{ $data['datos'][0]->empresa }}</span></td>
                 <td width="15%">Telefono:</td>
-                <td width="18%" class="linea"><span class="text">7227272727</span></td>
+                <td width="18%" class="linea"><span class="text">{{ $data['datos'][0]->telefono }}</span></td>
                 <td>&nbsp;</td>
             </tr>
             <tr>
@@ -126,14 +126,14 @@
                 <td align="center" class="fondo"><strong>CANT.</strong></td>
                 <td align="center" class="fondo"><strong>DESCRIPCIÓN</strong></td>
                 <td align="center" class="fondo"><strong>P. UNITARIO</strong></td>
-                <td align="center" class="fondo"><strong>IMPORTE</strong></td>
+                <td align="center" class="fondo"><strong>P. TOTAL</strong></td>
             </tr>
             @foreach($data['prod'] as $prod)
             <tr>
-                <td width="7%">&nbsp;{{ $prod->cantidad }}</td>
-                <td width="59%">&nbsp;{{ (isset( $prod->descripcion ) && $prod->descripcion != "")? $prod->descripcion: $prod->prod_desc }}</td>
-                <td width="16%">&nbsp;{{ $prod->precio }}</td>
-                <td width="18%" align="left">&nbsp;{{ $prod->total }}</td>
+                <td width="7%" align="right">&nbsp;{{ $prod->cantidad }}</td>
+                <td width="59%" align="justify">{{ (isset( $prod->descripcion ) && $prod->descripcion != "")? $prod->descripcion: $prod->prod_desc }}</td>
+                <td width="16%" align="right">&nbsp;{{ $prod->precio }}</td>
+                <td width="18%" align="right">&nbsp;{{ $prod->total }}</td>
             </tr>
             @endforeach
             <tr>
