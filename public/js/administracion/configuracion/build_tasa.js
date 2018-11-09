@@ -8,7 +8,7 @@ var redireccion  = "configuracion/tasa";
 new Vue({
   el: "#vue-tasa",
   created: function () {
-    this.consulta_general();
+    // this.consulta_general();
   },
   data: {
     datos: [],
@@ -39,11 +39,12 @@ new Vue({
     }
     ,insert_register(){
         var url = domain( url_insert );
-        var fields = {};
+        var fields = this.insert;
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
           
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion));
               
           }).catch( error => {
                 if( isset(error.response) && error.response.status == 419 ){
@@ -57,11 +58,12 @@ new Vue({
     }
     ,update_register(){
         var url = domain( url_update );
-        var fields = {};
+        var fields = this.edit;
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
           
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion));
               
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
@@ -79,7 +81,9 @@ new Vue({
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           
-              toastr.success( response.data.message , title );
+              // toastr.success( response.data.message , title );
+              this.edit = response.data.result;
+              jQuery('#modal_edit_register').modal('show');
               
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
@@ -99,6 +103,7 @@ new Vue({
           var promise = MasterController.method_master(url,fields,"delete");
           promise.then( response => {
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion));
           }).catch( error => {
               if( isset(error.response) && error.response.status == 419 ){
                     toastr.error( session_expired ); 

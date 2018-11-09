@@ -30,7 +30,7 @@
             $data = [
                 "page_title" 	        => "Configuración"
                 ,"title"  		        => "Tipo Factor"
-                ,"data_table"  		    => ""
+                
             ];
             return self::_load_view( "administracion.configuracion.tipofactor",$data );
         }
@@ -43,9 +43,10 @@
         public function all( Request $request ){
 
             try {
+                
+                $response = $this->_tabla_model::get();
 
-
-              return $this->_message_success( 201, $response , self::$message_success );
+              return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -61,9 +62,14 @@
         public function show( Request $request ){
 
             try {
+                // $response = SysTipoFactorModel::get();
+                $where = ['id' => $request->id];
+                $response = SysTipoFactorModel::where( $where )->groupby('id')->get();
+                
+             
+             
 
-
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -78,10 +84,21 @@
         */
         public function store( Request $request){
 
+
             $error = null;
             DB::beginTransaction();
             try {
-
+                // $string_key_tipoFactor = [ 'clave','descripcion','fecha_inicio_vigencia','fecha_final_vigencia' ];
+                // $string_data_tipoFactor = [];
+                // foreach( $request->all() as $key => $value ){
+                    
+                //     if( in_array( $key, $string_key_tipoFactor) ){
+                //         $string_data_tipoFactor[$key] = $value;
+                //     };
+                    
+                // }
+                // debuger($string_data_tipoFactor);
+               $response = $this->_tabla_model::create( $request->all() );
 
             DB::commit();
             $success = true;
@@ -109,6 +126,15 @@
             $error = null;
             DB::beginTransaction();
             try {
+                $string_key_tipoFactor = [ 'clave','descripcion','fecha_inicio_vigencia','fecha_final_vigencia' ];
+                $string_data_tipoFactor = [];
+                foreach( $request->all() as $key => $value ){
+                    if( in_array( $key, $string_key_tipoFactor) ){
+                       $string_data_tipoFactor[$key] = $value; 
+                    }
+                    
+            }
+             $response = $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_tipoFactor );
 
 
             DB::commit();
@@ -136,7 +162,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = SysTipoFactorModel::where(['id' => $request->id])->delete();
 
             DB::commit();
             $success = true;
