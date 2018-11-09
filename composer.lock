@@ -4,12 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "bc66aa2cc4271392f68f8220a8647f3f",
-=======
-    "hash": "081667da668c377529a6bb15079e9599",
     "content-hash": "6ace7b61ecf5aa324afab3d4f590226f",
->>>>>>> 6466c42f131aa7fe1c79624705bb05b23749d76b
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1653,7 +1648,7 @@
                 "php",
                 "utf-8"
             ],
-            "time": "2018-10-18 11:37:12"
+            "time": "2018-10-18T11:37:12+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1701,7 +1696,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2018-06-11 23:09:50"
+            "time": "2018-06-11T23:09:50+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -1851,7 +1846,7 @@
                 "mpdf",
                 "pdf"
             ],
-            "time": "2018-04-05 13:54:13"
+            "time": "2018-04-05T13:54:13+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -2440,7 +2435,7 @@
                 "fpdi",
                 "pdf"
             ],
-            "time": "2017-05-11 14:25:49"
+            "time": "2017-05-11T14:25:49+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3859,57 +3854,6 @@
             "time": "2018-10-02T21:52:37+00:00"
         },
         {
-<<<<<<< HEAD
-            "name": "myclabs/deep-copy",
-            "version": "1.8.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "3e01bdad3e18354c3dce54466b7fbe33a9f9f7f8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/3e01bdad3e18354c3dce54466b7fbe33a9f9f7f8",
-                "reference": "3e01bdad3e18354c3dce54466b7fbe33a9f9f7f8",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1"
-            },
-            "replace": {
-                "myclabs/deep-copy": "self.version"
-            },
-            "require-dev": {
-                "doctrine/collections": "^1.0",
-                "doctrine/common": "^2.6",
-                "phpunit/phpunit": "^7.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "DeepCopy\\": "src/DeepCopy/"
-                },
-                "files": [
-                    "src/DeepCopy/deep_copy.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Create deep copies (clones) of your objects",
-            "keywords": [
-                "clone",
-                "copy",
-                "duplicate",
-                "object",
-                "object graph"
-            ],
-            "time": "2018-06-11T23:09:50+00:00"
-        },
-        {
-=======
->>>>>>> 6466c42f131aa7fe1c79624705bb05b23749d76b
             "name": "nunomaduro/collision",
             "version": "v2.1.0",
             "source": {

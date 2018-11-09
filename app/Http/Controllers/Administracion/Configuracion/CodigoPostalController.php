@@ -5,6 +5,7 @@
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
+    use App\Model\Administracion\Configuracion\SysEstadosModel;
     use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 
     class CodigoPostalController extends MasterController
@@ -160,7 +161,8 @@
         public function show_clave( Request $request ){
 
             try {
-                $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => $request->clave])->get();
+                $estado = SysEstadosModel::select('id','clave')->where(['id' => $request->id])->get();
+                $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => $estado[0]->clave])->get();
             return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();

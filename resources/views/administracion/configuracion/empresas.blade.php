@@ -2,10 +2,8 @@
 @section('content')
 @push('styles')
 @endpush
-<div id="vue_empresas">
+<div ng-app="ng-empresas" ng-controller="EmpresasController">
 	{!! $data_table !!}
-	<br><br>
-	<!--Se crea la vista del modal que se va autilizar para cargar los datos para ingresar o para editar-->
 	@include('administracion.configuracion.empresas_edit')
 </div>
 

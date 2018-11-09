@@ -4,10 +4,9 @@
  * @author Jorge Martinez Quezada.
  */
 class MasterController {
-
- constructor( url,fields,methods,headers ){
+ /*constructor( url,fields,methods,headers ){
     return this.method_master( url,fields,methods,headers );
- }
+ }*/
 /**
  * Se un metodo general donde se pueda utilizar para la conexion a backend
  * @param url {string} {description}

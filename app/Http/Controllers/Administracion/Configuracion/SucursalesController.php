@@ -12,22 +12,22 @@ use App\Model\Administracion\Configuracion\SysEmpresasModel;
 class SucursalesController extends MasterController
 {
     #se crea las propiedades
-    private static $_tabla_model;
+    private $_tabla_model;
 
     public function __construct(){
         parent::__construct();
-        self::$_tabla_model = new SysSucursalesModel;
+        $this->_tabla_model = new SysSucursalesModel;
     }
     /**
      *Metodo para pintar la vista y cargar la informacion principal del menu
      *@access public
      *@return void
      */
-     public static function index(){
+     public function index(){
          if( Session::get('permisos')['GET'] ){
           return view('errors.error');
         }
-           $response = self::$_tabla_model::all();
+           $response = $this->_tabla_model::all();
            $registros = [];
            foreach ($response as $respuesta) {
              $id['id'] = $respuesta->id;
@@ -67,7 +67,7 @@ class SucursalesController extends MasterController
       *@param Request $request [Description]
       *@return void
       */
-     public static function store( Request $request){
+     public function store( Request $request){
 
         $response_store = self::$_model::create_model([$request->all()], self::$_tabla_model );
         if ($response_store) {
@@ -82,7 +82,7 @@ class SucursalesController extends MasterController
       *@param Request $request [Description]
       *@return void
       */
-     public static function show( Request $request ){
+     public function show( Request $request ){
         $where = ['id' => $request->id];
         $response_show =self::$_model::show_model([],$where, self::$_tabla_model );
         if ($response_show) {
@@ -97,7 +97,7 @@ class SucursalesController extends MasterController
       *@param Request $request [Description]
       *@return void
       */
-     public static function update( Request $request){
+     public function update( Request $request){
        $where = ['id' => $request->id];
        $response_update = self::$_model::update_model($where, $request->all(), self::$_tabla_model );
        if ($response_update) {
@@ -112,7 +112,7 @@ class SucursalesController extends MasterController
       *@param $id [Description]
       *@return void
       */
-     public static function destroy( $id ){
+     public function destroy( $id ){
         $where = ['id' => $id];
         $response_destroy = self::$_model::delete_model( $where, self::$_tabla_model );
         if (!$response_destroy) {
@@ -127,7 +127,7 @@ class SucursalesController extends MasterController
       *@param $id [Description]
       *@return void
       */
-      public static function lista_sucursal( Request $request ){
+      public function lista_sucursal( Request $request ){
 
         Session::put(['id_empresa' => $request->id_empresa ]);
         $response = SysEmpresasModel::with(['sucursales' => function($query){
@@ -172,7 +172,7 @@ class SucursalesController extends MasterController
        *@param $id [Description]
        *@return void
        */
-      public static function load_lista_sucursal(){
+      public function load_lista_sucursal(){
 
             return view('administracion.configuracion.lista_sucursales' );
       }
@@ -182,7 +182,7 @@ class SucursalesController extends MasterController
        *@param Request $request [Description]
        *@return void
        */
-      public static function portal( Request $request ){
+      public function portal( Request $request ){
           //$sessions['id_empresa']  = Session::get('id_empresa');
           $sessions['id_sucursal']  = $request->id_sucursal;
           Session::put($sessions);
