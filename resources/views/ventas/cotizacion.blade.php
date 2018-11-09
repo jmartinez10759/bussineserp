@@ -89,7 +89,7 @@
 										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 											<li><a style="cursor: pointer;" title="Editar cotización" v-on:click.prevent="edit_register(cot);"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
 											<li><a href="#" title="Imprimir cotización" v-on:click.prevent="pdf_print(cot)"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
-											<li {{$permisos}}><a href="#" title="Enviar cotización" data-toggle="modal" data-target="#myModal" data-number="312" data-email="support@911alarmas.com"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
+											<li><a href="#" title="Enviar cotización" v-on:click.prevent="pdf_email(cot)"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
 											<li><a href="#" title="Borrar cotización" v-on:click.prevent="destroy_cotizacion(cot)"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
 										</ul>
 									</div>

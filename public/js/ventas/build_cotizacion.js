@@ -4,8 +4,10 @@ var url_edit     = "cotizacion/edit";
 var url_destroy  = "cotizacion/destroy";
 var url_destroy_cont  = "cotizacion/destroy/gen";
 var url_destroy_edit  = "cotizacion/destroy/edit";
-var url_all      = "cotizacion/all";
-var redireccion  = "ventas/cotizacion";
+var url_all           = "cotizacion/all";
+var url_email         = "cotizacion/send/email";
+var url_pdf_send      = "pdf/email";
+var redireccion       = "ventas/cotizacion";
 
 new Vue({
   el: "#vue-cotizacion",
@@ -524,7 +526,6 @@ new Vue({
     }
     ,pdf_print( id ){
         var pdf = "pdf/cotizacion/"+id.id_cotizacion;
-
         $.fancybox.open({
             'type': 'iframe'
             ,'src': domain(pdf)
@@ -532,6 +533,68 @@ new Vue({
         });
         return;
     }
+    ,pdf_email( id ){
+        var url = domain( url_email );
+        var fields = {id : id.id_cotizacion };
+        var promise = MasterController.method_master(url,fields,"get");
+          promise.then( response => {
+              $.fancybox.open({
+                  'type'      : 'inline'
+                  ,'src'      : "#modal_send_email"
+                  ,'modal': true
+              });
+
+              jQuery('#destinatario_pdf').val(response.data.result[0].correo);
+              jQuery('#nomb_contacto').val(response.data.result[0].contacto);
+              jQuery('#id_cotzacion').val(response.data.result[0].id_cotizacion);
+              
+              //toastr.success( response.data.message , title );
+              
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );              
+          });
+        
+    }
+    ,send_pdf( ){
+        var url = domain( url_pdf_send );
+        var fields = {
+               'correo'     : jQuery('#destinatario_pdf').val()
+               ,'contacto'  : jQuery('#nomb_contacto').val()
+               ,'asunto'    : jQuery('#asunto_pdf').val()
+               ,'mensaje'   : jQuery('#mensaje_pdf').val()
+               ,'id'        : jQuery('#id_cotzacion').val()
+        };
+
+        var promise = MasterController.method_master(url,fields,"post");
+          promise.then( response => {
+            
+            toastr.success( response.data.message , title );
+              $.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_send_email"
+            });
+            
+            jQuery('#destinatario_pdf').val('')
+            jQuery('#nomb_contacto').val('')
+            jQuery('#asunto_pdf').val('')
+            jQuery('#id_cotzacion').val('')
+  
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );              
+          });
+        
+    }
+
     
   }
 
