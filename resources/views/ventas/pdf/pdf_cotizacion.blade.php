@@ -39,7 +39,8 @@
         border-right: 0;
         border-bottom: 0;
         border-top: 1px dotted #000;
-        width: 200px;
+        width: 280px;
+        /*width: 200px;*/
     }
     .emisor{
         color: red;
@@ -101,16 +102,16 @@
     <table ><tr><td width="20%" align="right"><strong>Fecha: </strong>{{ $data['datos'][0]->fecha_alta }}</td></tr></table>
         <table width="100%" class="tabla2">
             <tr>
-                <td width="10%">Contacto:</td>
-                <td width="50%" class="linea"><span class="text">{{ $data['datos'][0]->contacto }}</span></td>
+                <td width="10%">Empresa:</td>
+                <td width="50%" class="linea"><span class="text">{{ $data['datos'][0]->empresa }}</span></td>
                 <td width="5%">&nbsp;</td>
                 <td width="13%">&nbsp;</td>
                 <td width="4%">&nbsp;</td>
                 <!-- <td width="1%" align="center" class=""><strong>Fecha: 2018-10-12</strong></td> -->
             </tr>
             <tr>
-                <td width="10%">Empresa:</td>
-                <td width="30%" class="linea"><span class="text">{{ $data['datos'][0]->empresa }}</span></td>
+                <td width="10%">Contacto:</td>
+                <td width="30%" class="linea"><span class="text">{{ $data['datos'][0]->contacto }}</span></td>
                 <td width="15%">Telefono:</td>
                 <td width="18%" class="linea"><span class="text">{{ $data['datos'][0]->telefono }}</span></td>
                 <td>&nbsp;</td>
@@ -176,14 +177,21 @@
                             <td align="center" style="border:0;">CANCELADO</td>
                             <td style="border:0;">&nbsp;</td>
                         </tr> -->
-                    </table> <br>
+                    </table>
         <table width="100%" class="tabla3">
+        <tr>
+                            <td align="center" style="border:0;">{{ $data['datos'][0]->vendedor }}</td>
+                            <td style="border:0;">&nbsp;</td>
+                            
+                            <td align="center" style="border:0;">{{ $data['datos'][0]->contacto }}</td>
+                        </tr>
                         <tr>
                             <td align="center" class="cancelado">Vendedor</td>
                             <td style="border:0;">&nbsp;</td>
+                            <!-- <td style="border:0;">&nbsp;</td>
                             <td align="center" class="cancelado">Cotizado</td>
-                            <td style="border:0;">&nbsp;</td>
-                            <td align="center" class="cancelado">Aceptado cliente</td>
+                            <td style="border:0;">&nbsp;</td> -->
+                            <td align="center" class="cancelado">Cliente</td>
                         </tr>
                     </table> 
     </div>

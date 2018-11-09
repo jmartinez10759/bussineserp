@@ -25,6 +25,7 @@ new Vue({
     clients: {},
     products: {},
     totales: {'iva': '', 'subtotal': '', 'Total': ''},
+    loading: false,
   },
   mixins : [mixins],
   methods:{
@@ -570,16 +571,16 @@ new Vue({
                ,'mensaje'   : jQuery('#mensaje_pdf').val()
                ,'id'        : jQuery('#id_cotzacion').val()
         };
-
+        this.loading = true;
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
             
-            toastr.success( response.data.message , title );
+            toastr.success( 'Correo enviado' , title );
               $.fancybox.close({
                 'type'      : 'inline'
                 ,'src'      : "#modal_send_email"
             });
-            
+            this.loading = false;
             jQuery('#destinatario_pdf').val('')
             jQuery('#nomb_contacto').val('')
             jQuery('#asunto_pdf').val('')

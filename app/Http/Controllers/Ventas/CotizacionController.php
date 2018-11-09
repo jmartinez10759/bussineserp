@@ -527,9 +527,15 @@
                         ,'id_contacto'   => isset($request->cotizacion['id_contacto'])?$request->cotizacion['id_contacto']:0
                         ,'id_metodo_pago'=> isset($request->cotizacion['id_metodo_pago'])?$request->cotizacion['id_metodo_pago']:0
                         ,'id_forma_pago' => isset($request->cotizacion['id_forma_pago'])?$request->cotizacion['id_forma_pago']:0
-                        ,'id_estatus'    => isset($request->cotizacion['id_estatus'])?$request->cotizacion['id_estatus']:0
+                        ,'id_estatus'    => 6
 
                     ];
+                    // $p = SysPedidosModel::where('id_cotizacion', $id)->get();
+                    // if($p->isEmpty()){
+                    //     return "insert";
+                    // }else{
+                    //     return "upda";
+                    // }
                     SysPedidosModel::firstOrCreate($data);
                     //SysConceptosCotizacionesModel
                     $user_cot = SysUsersCotizacionesModel::where(['id_cotizacion' => $request->cotizacion['id_concep_producto']])->get();
@@ -1101,8 +1107,8 @@
                     ,'totales'          => $totales
                 ];
                 $pdf = PDF::loadView('ventas.pdf.pdf_cotizacion', ['data' => $response]);
-                $message->to( $data['email'], $data['name'] )
-                        #->from('notificaciones@solicituddeempleo.com.mx','Solicitud de Empleo')
+                $message->to( 'al221211431@gmail.com', $data['name'] )
+                        ->from('notificaciones@burolaboralmexico.com.mx','BLM')
                         ->subject(  $data['asunto'] )
                         ->attachData($pdf->output(), "cotizacion.pdf");
             });
