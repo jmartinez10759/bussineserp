@@ -12,7 +12,9 @@ use App\Model\Administracion\Configuracion\SysClientesModel;
 use App\Model\Administracion\Facturacion\SysFacturacionModel;
 use App\Model\Administracion\Configuracion\SysContactosModel;
 use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
+use App\Model\Administracion\Configuracion\SysClientesEmpresasModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
+use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
 
 class ClientesController extends MasterController
 {
@@ -258,13 +260,15 @@ class ClientesController extends MasterController
             }else{
                 $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
-                    'id_empresa'       => (Session::get('id_rol') != 1)? Session::get('id_empresa') :0
-                    ,'id_sucursal'     => (Session::get('id_rol') != 1)? Session::get('id_sucursal') :0
-                    ,'id_contacto'     => $response_contactos->id
+                     'id_contacto'     => $response_contactos->id
                     ,'id_cliente'      => $request->id
-                    ,'estatus'         => 1
                 ];
-               SysEmpresasSucursalesModel::create($data);   
+               SysContactosSistemasModel::create($data);  
+               if (Session::get('id_rol') != 1) {
+                  $data['id_empresa']  = Session::get('id_empresa');
+                  $data['id_sucursal'] = Session::get('id_sucursal');
+                  SysClientesEmpresasModel::create($data); 
+               }
                 
             }
             DB::commit();
@@ -321,6 +325,7 @@ class ClientesController extends MasterController
         return $this->show_error(6,$error,self::$message_error);
 
         #return message(true,$request->all(),self::$message_success);
+    
     }
     /**
      * Metodo para borrar el registro
@@ -329,13 +334,13 @@ class ClientesController extends MasterController
      * @return void
      */
     public function display_sucursales( Request $request ){
-        
+        #debuger($request->all());
         try {
             $response = SysEmpresasModel::with(['sucursales' => function($query){
-                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->groupby('id')->get();
+                return $query->where(['sys_sucursales.estatus' => 1])->groupby('id')->get();
             }])->where(['id' => $request->id_empresa])->get();
             
-            $sucursales = SysEmpresasSucursalesModel::select('id_sucursal')->where($request->all())->get();
+            $sucursales = SysClientesEmpresasModel::select('id_sucursal')->where($request->all())->get();
             #se crea la tabla 
             $registros = [];
             foreach ($response[0]->sucursales as $respuesta) {
@@ -354,19 +359,18 @@ class ClientesController extends MasterController
             $table = [
                 'titulos' 		   => $titulos
                 ,'registros' 	   => $registros
-                ,'id' 			   => "sucursales"
+                ,'id' 			     => "sucursales"
             ];
             $data = [
                 'tabla_sucursales'  => data_table($table)
                 ,'sucursales'       => $sucursales
             ];
-            return $this->_message_success(201, $data, self::$message_success);
+            return $this->_message_success(200, $data, self::$message_success);
         } catch (\Exception $e) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
             return $this->show_error(6, $error, self::$message_error);
         }
 
-        
     }
     /**
      * Metodo para insertar los permisos de los productos
@@ -380,23 +384,20 @@ class ClientesController extends MasterController
         DB::beginTransaction();
         try {
             $id_contacto = SysClientesModel::with(['contactos'])->where(['id' => $request->id_cliente])->get();
-            SysEmpresasSucursalesModel::where(['id_cliente'=> $request->id_cliente])->delete();
+            SysClientesEmpresasModel::where(['id_cliente'=> $request->id_cliente])->delete();
             $response = [];
             for ($i=0; $i < count($request->matrix) ; $i++) { 
                 $matrices = explode('|', $request->matrix[$i] );
                 $id_sucursal = $matrices[0];
-                $estatus = ($matrices[1] == true)? 1: 0;
+                #$estatus = ($matrices[1] == true)? 1: 0;
                 #se realiza una consulta si existe un registro.
                 $data = [
-                    'id_cuenta'     => 0
-                    ,'id_empresa'   => $request->id_empresa
+                    'id_empresa'   => $request->id_empresa
                     ,'id_sucursal'  => $id_sucursal
-                    ,'id_contacto'  => isset($id_contacto[0]->contactos[0])? $id_contacto[0]->contactos[0]->id: 0
+                    //,'id_contacto'  => isset($id_contacto[0]->contactos[0])? $id_contacto[0]->contactos[0]->id: 0
                     ,'id_cliente'   => $request->id_cliente
-                    ,'id_proveedor' => 0
-                    ,'estatus'      => $estatus
                 ];
-                $response[] = SysEmpresasSucursalesModel::create($data);
+                $response[] = SysClientesEmpresasModel::create($data);
             }
 
             DB::commit();
@@ -411,7 +412,6 @@ class ClientesController extends MasterController
             return $this->_message_success(201, $response, self::$message_success);
         }
         return $this->show_error(6, $error, self::$message_error);
-
 
     }
     

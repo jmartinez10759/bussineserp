@@ -25,32 +25,32 @@ class SysClientesModel extends Model
       ,'estatus'
     ];
 
-    public function facturas(){
-      #return $this->belongsTo('App\Model\Administracion\Facturacion\SysFacturacionModel','id_cliente','id');
+    public function facturas()
+    {
       return $this->belongsToMany('App\Model\Administracion\Facturacion\SysFacturacionModel','sys_users_facturacion','id_cliente','id_factura');
     }
-
-    public function usuarios(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_facturacion','id_cliente','id_users');
+    public function usuarios()
+    {
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_facturacion','id_cliente','id_users');
     }
-    
-    public function estados(){
-        return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel','id','id_estado');
+    public function estados()
+    {
+      return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel','id','id_estado');
     }
-    
-    public function contactos(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_empresas_sucursales','id_cliente','id_contacto');
+    public function contactos()
+    {
+      return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_cliente','id_contacto');
     }
-
-    public function empresas(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_empresas_sucursales','id_cliente','id_empresa');
+    public function empresas()
+    {
+      return $this->belongsToMany(SysEmpresasModel::class,'sys_clientes_empresas','id_cliente','id_empresa');
     }
-    
-    public function sucursales(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_empresas_sucursales','id_cliente','id_sucursal');
+    public function sucursales()
+    {
+      return $this->belongsToMany(SysSucursalesModel::class,'sys_clientes_empresas','id_cliente','id_sucursal');
     }
-
-    public function pedidos(){
+    public function pedidos()
+    {
         return $this->belongsTo('App\Model\Ventas\SysPedidosModel','id','id_cliente');
     }
     

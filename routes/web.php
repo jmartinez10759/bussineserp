@@ -318,6 +318,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'configuracion.empresas'
     ]);
 
+    Route::get('/empresas/all', [
+        'uses'      => 'Administracion\Configuracion\EmpresasController@all'
+        ,'as'       => 'empresas.all'
+    ]);
+
     Route::get('empresas/edit', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@show'
         ,'as'       => 'empresas.edit'
