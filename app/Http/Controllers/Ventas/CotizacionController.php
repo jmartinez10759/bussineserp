@@ -530,20 +530,21 @@
                         ,'id_estatus'    => 6
 
                     ];
+                    ///Valido si existe id_cotizacion en la tabla syspedidos, si existe solo hace update, si no inserta
                     // $p = SysPedidosModel::where('id_cotizacion', $id)->get();
                     // if($p->isEmpty()){
-                    //     return "insert";
+                    //     SysPedidosModel::create($data);
                     // }else{
-                    //     return "upda";
+                    //     SysPedidosModel::where('id_cotizacion',$id)->update($data);
                     // }
                     SysPedidosModel::firstOrCreate($data);
-                    //SysConceptosCotizacionesModel
+                    //Obtengo los datos con el id_cotizacion y barro los id_concepto
                     $user_cot = SysUsersCotizacionesModel::where(['id_cotizacion' => $request->cotizacion['id_concep_producto']])->get();
                     $id_conc = [];
                         foreach($user_cot as $key){
                             $id_conc[] = $key->id_concepto; 
                         }
-                    //debuger($id_conc);
+                    //debuger($id_conc);  //Obtengo los datos con el id_concepto  en la tabla conceptos coti y los barro para insertar
                     $id_concep = SysConceptosCotizacionesModel::whereIn('id', $id_conc)->get();
                     //debuger($id_concep);
                     $data = array();
@@ -579,9 +580,9 @@
                     // // SysUsersPedidosModel::where('')
                     //insert conceptp pedidos
                     foreach ($data as $values) {
-                        $ins = SysConceptosPedidosModel::firstOrCreate($values);
+                        $ins = SysConceptosPedidosModel::create($values);
                     }
-                    //insert users pedidos
+                    //insert users pedidos 
                     $id_user_pe = [];
                         foreach($user_cot as $key){
                             $id_user_pe[] = 
@@ -596,7 +597,7 @@
                             ]; 
                         }
                     foreach ($id_user_pe as $valores) {
-                        $insert = SysUsersPedidosModel::firstOrCreate($valores);
+                        $insert = SysUsersPedidosModel::create($valores);
                     }
 
                 }else{
