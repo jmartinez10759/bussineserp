@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-app="ng-empresas" ng-controller="EmpresasController">
+<div ng-app="ng-empresas" ng-controller="EmpresasController" ng-init="constructor()">
 	{!! $data_table !!}
 	@include('administracion.configuracion.empresas_edit')
 </div>

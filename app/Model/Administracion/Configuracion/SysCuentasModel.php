@@ -16,20 +16,24 @@ class SysCuentasModel extends Model
         ,'estatus'
       ];
     
-      public function empresas(){
-          return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_cuentas_empresas','id_cuenta','id_empresa');
-      }
+    public function empresas()
+    {
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_cuentas_empresas','id_cuenta','id_empresa');
+    }
       
-      public function sucursales(){
-          return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_cuentas_empresas','id_cuenta','id_sucursal');
-      }
-      public function clientes(){
-         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel','sys_cuentas_empresas','id_cuenta','id_cliente');
-      }
+    public function sucursales()
+    {
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_cuentas_empresas','id_cuenta','id_sucursal');
+    }
+    public function clientes()
+    {
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel','sys_cuentas_empresas','id_cuenta','id_cliente');
+    }
     
-      public function contactos(){
-         return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_cuentas_empresas','id_cuenta','id_contacto');
-      }
+    public function contactos()
+    {
+      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_cuentas_empresas','id_cuenta','id_contacto');
+    }
     
 
 }

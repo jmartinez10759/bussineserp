@@ -30,7 +30,7 @@ class SysEmpresasModel extends Model
   }
 
   public function sucursales(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
+      return $this->belongsToMany(SysSucursalesModel::class,'sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
   }
 
   public function roles(){
@@ -45,28 +45,29 @@ class SysEmpresasModel extends Model
       return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_roles','id_empresa','id_users');
   }
   
-  public function proveedores(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_empresas_sucursales','id_empresa','id_proeedor');
+  public function proveedores()
+  {
+      return $this->belongsToMany(SysProveedoresModel::class,'sys_proveedores_empresas','id_empresa','id_proveedor');
   }
-  
-  public function cuentas(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCuentasModel','sys_empresas_sucursales','id_empresa','id_cuenta');
+  public function cuentas()
+  {
+    return $this->belongsToMany(SysCuentasModel::class,'sys_cuentas_empresas','id_empresa','id_cuenta');
   }
-  
-  public function contactos(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_empresas_sucursales','id_empresa','id_contacto');
+  public function contactos()
+  {
+    return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_empresa','id_contacto');
   }
-
-  public function productos(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel', 'sys_planes_productos', 'id_empresa', 'id_producto');
+  public function productos()
+  {
+    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel', 'sys_planes_productos', 'id_empresa', 'id_producto');
   }
-  
-   public function planes(){
+  public function planes()
+  {
     return $this->belongsToMany('App\Model\Administracion\Configuracion\SysPlanesModel', 'sys_planes_productos', 'id_empresa', 'id_plan');
   }
-    
-  public function clientes(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel', 'sys_empresas_sucursales', 'id_empresa', 'id_cliente');
+  public function clientes()
+  {
+    return $this->belongsToMany(SysClientesModel::class, 'sys_clientes_empresas', 'id_empresa', 'id_cliente');
   }
 
   public function pedidos()

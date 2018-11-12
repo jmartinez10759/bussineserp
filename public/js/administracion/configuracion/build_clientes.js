@@ -220,5 +220,6 @@ function display_sucursales(id) {
          toastr.error(error.response.data.message, expired);
 
      });
- }
+
+}
 

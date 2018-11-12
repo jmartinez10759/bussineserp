@@ -62,8 +62,7 @@
         public function show( Request $request ){
 
             try {
-                $response = $this->_tabla_model::with(['estados'])->where([ 'id' => $request->id ])->get();
-                
+                $response = $this->_tabla_model::select('id','clave','descripcion')->with(['estados:id,clave,nombre,country_id'])->where([ 'id' => $request->id ])->get();
             return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
