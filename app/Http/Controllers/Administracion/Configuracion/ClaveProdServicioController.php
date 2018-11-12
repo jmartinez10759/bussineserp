@@ -30,7 +30,7 @@
             $data = [
                 "page_title" 	        => "Configuración"
                 ,"title"  		        => "Clave Servicio"
-                ,"data_table"  		    => ""
+                
             ];
             return self::_load_view( "administracion.configuracion.claveprodservicio",$data );
         }
@@ -43,9 +43,9 @@
         public function all( Request $request ){
 
             try {
+                $response = $this->_tabla_model::get();
 
-
-              return $this->_message_success( 201, $response , self::$message_success );
+              return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -61,9 +61,10 @@
         public function show( Request $request ){
 
             try {
+                $where = ['id' => $request->id];
+                $response = SysClaveProdServicioModel::where( $where )->groupby('id')->get();
 
-
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -81,7 +82,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = $this->_tabla_model::create( $request->all() );
 
             DB::commit();
             $success = true;
@@ -109,7 +110,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
 
             DB::commit();
             $success = true;
@@ -136,7 +137,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = SysClaveProdServicioModel::where(['id' => $request->id])->delete();
 
             DB::commit();
             $success = true;

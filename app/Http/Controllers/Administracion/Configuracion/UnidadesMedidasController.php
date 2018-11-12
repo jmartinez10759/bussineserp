@@ -30,7 +30,7 @@
             $data = [
                 "page_title" 	        => "Configuración"
                 ,"title"  		        => "Unidades de Medidas"
-                ,"data_table"  		    => ""
+               
             ];
             return self::_load_view( "administracion.configuracion.unidadesmedidas",$data );
         }
@@ -43,7 +43,7 @@
         public function all( Request $request ){
 
             try {
-
+                $response = $this->_tabla_model::get();
 
               return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
@@ -80,7 +80,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                 $response = $this->_tabla_model::create( $request->all() );
 
             DB::commit();
             $success = true;
@@ -108,7 +108,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
 
             DB::commit();
             $success = true;
@@ -135,7 +135,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = SysUnidadesMedidasModel::where(['id' => $request->id])->delete();
 
             DB::commit();
             $success = true;

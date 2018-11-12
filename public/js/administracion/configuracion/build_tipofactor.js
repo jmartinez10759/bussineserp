@@ -46,6 +46,14 @@ new Vue({
               toastr.success( response.data.message , title );
               // redirect(domain(redireccion));
               this.consulta_general();
+              jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_add_register"
+                ,'modal'    : true
+                ,'width'    : 900
+                ,'height'   : 400
+                ,'autoSize' : false
+            }); 
               
           }).catch( error => {
                 if( isset(error.response) && error.response.status == 419 ){
@@ -85,7 +93,7 @@ new Vue({
           // console.log(all());
               // toastr.success( response.data.message , title );
               this.edit = response.data.result;
-              console.log(this.edit);
+              // console.log(this.edit);
               jQuery('#modal_edit_register').modal('show');      
 
           }).catch( error => {
