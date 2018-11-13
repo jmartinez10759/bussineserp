@@ -129,7 +129,7 @@ class ClientesController extends MasterController
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
-                 ,'event'     => 'select_estado()'
+                 ,'event'     => 'ng-select_estado()'
                  ,'selected'  => '151'
            ]);
 
@@ -209,7 +209,7 @@ class ClientesController extends MasterController
     public function all( Request $request ){
       try {        
         $response = $this->_tabla_model::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
-        $response_clientes = $this->_validate_consulta($this->_tabla_model,['usoCfdi','empresas'],['estatus' => 1 ],['id' => Session::get('id_empresa')],['estatus' => 1]);
+        $response_clientes = $this->_validate_consulta($this->_tabla_model,['usoCfdi','empresas','contactos:id,nombre_completo,correo,telefono'],['estatus' => 1 ],['id' => Session::get('id_empresa')],['estatus' => 1]);
         $data = [
           'prospectos' => $response
           ,'clientes'  => $response_clientes

@@ -33,8 +33,8 @@
                             <td>@{{data.razon_social }}</td>
                             <td>@{{data.rfc_receptor }}</td>
                             <td>@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
-                            <td>@{{ (data.contactos.lenght > 0)? data.contactos: ""}}</td>
-                            <td>@{{ (data.contactos.lenght > 0)? data.contactos[0].telefono: ""}}</td>
+                            <td>@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
+                            <td>@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
                             <td class="text-right">
                                 <div class="dropdown">
                                     <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -90,8 +90,8 @@
                             <td>@{{data.rfc_receptor }}</td>
                             <td>@{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}</td>
                             <td>@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
-                            <td>@{{ (data.contactos.lenght > 0)? data.contactos: ""}}</td>
-                            <td>@{{ (data.contactos.lenght > 0)? data.contactos[0].telefono: ""}}</td>
+                            <td>@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
+                            <td>@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
                             <td class="text-right">
                                 <div class="dropdown">
                                     <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
