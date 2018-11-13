@@ -155,21 +155,21 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Nombre: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto">
+                                <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto" v-model="edit.contacto">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-3">Departamento: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="departamento_edit" class="form-control" placeholder="Ingrese departamento o cargo " >
+                                <input type="text" id="departamento_edit" class="form-control" placeholder="Ingrese departamento o cargo " v-model="edit.departamento">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-3">Teléfono: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="telefono_edit" class="form-control" placeholder="Lada + número" >
+                                <input type="text" id="telefono_edit" class="form-control" placeholder="Lada + número" v-model="edit.telefono">
                             </div>
 
                         </div>
@@ -211,27 +211,31 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Calle y Número: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="calle_edit" class="form-control" placeholder=""{{--  v-model="edit.calle" --}}>
+                                <input type="text" id="calle_edit" class="form-control" placeholder="" v-model="edit.calle">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-3">Colonia: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="colonia_edit" class="form-control" placeholder="" {{-- v-model="edit.colonia" --}}>
+                                <input type="text" id="colonia_edit" class="form-control" placeholder="" v-model="edit.colonia">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-3">Delegación/Municipio: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="municipio_edit" class="form-control" placeholder="" {{-- v-model="edit.municipio" --}}>
+                                <input type="text" id="municipio_edit" class="form-control" placeholder="" v-model="edit.municipio">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Código Postal: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="cp_edit" class="form-control" placeholder="" maxlength="5" {{-- v-model="edit.cp" --}}>
+                                {{-- input type="text" id="cp_edit" class="form-control" placeholder="" maxlength="5" v-model="edit.cp"> --}}
+                                <select class="form-control" v-model="edit.id_codigo"> 
+                                    <option value="0">Selecciona Opcion</option>
+
+                                </select>
                             </div>
 
                         </div>

@@ -30,7 +30,7 @@
             $data = [
                 "page_title" 	        => "Configuración"
                 ,"title"  		        => "Impuesto"
-                ,"data_table"  		    => ""
+                
             ];
             return self::_load_view( "administracion.configuracion.impuesto",$data );
         }
@@ -43,9 +43,9 @@
         public function all( Request $request ){
 
             try {
+                $response = $this->_tabla_model::get();
 
-
-              return $this->_message_success( 201, $response , self::$message_success );
+              return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -61,9 +61,10 @@
         public function show( Request $request ){
 
             try {
+                $where = ['id' => $request->id];
+                $response = SysImpuestoModel::where( $where )->groupby('id')->get();
 
-
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -81,6 +82,9 @@
             $error = null;
             DB::beginTransaction();
             try {
+
+                // debuger($request->all());
+                $response = $this->_tabla_model::create( $request->all() );
 
 
             DB::commit();
@@ -109,7 +113,16 @@
             $error = null;
             DB::beginTransaction();
             try {
+            //     $string_key_impuesto = [ 'id','clave','descripcion','retencion','traslado','localfederal'];
+            //     $string_data_impuesto = [];
+            //     foreach( $request->all() as $key => $value ){
+            //         if( in_array( $key, $string_key_impuesto) ){
+            //            $string_data_impuesto[$key] = $value; 
+            //         }
+                    
+            // }
 
+                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
 
             DB::commit();
             $success = true;
@@ -136,7 +149,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                 $response = SysImpuestoModel::where(['id' => $request->id])->delete();
 
             DB::commit();
             $success = true;

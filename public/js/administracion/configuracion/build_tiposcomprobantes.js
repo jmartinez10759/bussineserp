@@ -8,13 +8,13 @@ var redireccion  = "configuracion/tiposcomprobantes";
 new Vue({
   el: "#vue-tiposcomprobantes",
   created: function () {
-    this.consulta_general();
+    //this.consulta_general();
   },
   data: {
     datos: [],
-    insert: {},
-    update: {},
-    edit: {},
+    insert: {'estatus':'1'},
+    update: {'estatus':'1'},
+    edit: {'estatus':'1'},
     fields: {},
 
   },
@@ -25,7 +25,7 @@ new Vue({
         var fields = {};
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
+
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -38,12 +38,13 @@ new Vue({
     }
     ,insert_register(){
         var url = domain( url_insert );
-        var fields = {};
+        var fields = this.insert;
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
           
               toastr.success( response.data.message , title );
-              
+              redirect(domain(redireccion));
+
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -55,11 +56,12 @@ new Vue({
     }
     ,update_register(){
         var url = domain( url_update );
-        var fields = {};
+        var fields = this.edit;
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
           
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion));
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -76,8 +78,9 @@ new Vue({
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           
-              toastr.success( response.data.message , title );
-              
+              // toastr.success( response.data.message , title );
+              this.edit = response.data.result;
+              jQuery('#modal_edit_register').modal('show');
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
@@ -95,6 +98,7 @@ new Vue({
           var promise = MasterController.method_master(url,fields,"delete");
           promise.then( response => {
               toastr.success( response.data.message , title );
+              location.reload();
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 

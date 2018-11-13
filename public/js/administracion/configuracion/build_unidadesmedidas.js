@@ -25,7 +25,7 @@ new Vue({
         var fields = {};
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
-          
+          this.datos = response.data.result;          
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -37,12 +37,21 @@ new Vue({
           });
     }
     ,insert_register(){
-        var url = domain( url_insert );
-        var fields = {};
+       var url = domain( url_insert );
+        var fields = this.insert;
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
           
               toastr.success( response.data.message , title );
+              this.consulta_general();
+              jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_add_register"
+                ,'modal'    : true
+                ,'width'    : 900
+                ,'height'   : 400
+                ,'autoSize' : false
+            });
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -55,11 +64,12 @@ new Vue({
     }
     ,update_register(){
         var url = domain( url_update );
-        var fields = {};
+        var fields = this.edit;
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
-          
+            jQuery('#modal_edit_register').modal('hide');   
               toastr.success( response.data.message , title );
+              this.consulta_general();
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -76,7 +86,10 @@ new Vue({
         var promise = MasterController.method_master(url,fields,"get");
           promise.then( response => {
           
-              toastr.success( response.data.message , title );
+              // toastr.success( response.data.message , title );
+              this.edit = response.data.result;
+              // console.log(this.edit);
+              jQuery('#modal_edit_register').modal('show');
               
           }).catch( error => {
               if( error.response.status == 419 ){
@@ -95,6 +108,7 @@ new Vue({
           var promise = MasterController.method_master(url,fields,"delete");
           promise.then( response => {
               toastr.success( response.data.message , title );
+              redirect(domain(redireccion));
           }).catch( error => {
               if( error.response.status == 419 ){
                     toastr.error( session_expired ); 
