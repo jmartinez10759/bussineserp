@@ -14,4 +14,9 @@ class SysCodigoPostalModel extends Model
       	,'municipio'
       	,'localidad'
       ];
+
+    public function empresas()
+    {
+      return $this->belongsTo(SysEmpresasModel::class, 'id_codigo', 'id');
+    }
 }

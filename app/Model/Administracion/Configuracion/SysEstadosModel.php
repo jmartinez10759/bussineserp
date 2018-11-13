@@ -13,20 +13,29 @@ class SysEstadosModel extends Model
       ,'nombre'
   ];
 
-    public function clientes(){
+    public function clientes()
+    {
         return $this->hasOne('App\Model\Administracion\Configuracion\SysClientesModel','id_estado','id');
     }
     
-    public function sucursales(){
+    public function sucursales()
+    {
         return $this->hasOne('App\Model\Administracion\Configuracion\SysSucursalesModel','id_estado','id');
     }
     
-    public function empresas(){
+    public function empresas()
+    {
         return $this->hasOne('App\Model\Administracion\Configuracion\SysEmpresasModel','id_estado','id');
     }
     
-    public function proveedores(){
+    public function proveedores()
+    {
         return $this->hasOne('App\Model\Administracion\Configuracion\SysProveedoresModel','id_estado','id');
     }
-    
+    public function paises()
+    {
+        return $this->belongsTo( SysPaisModel::class,'id','country_id' );
+    }
+
+
 }

@@ -109,6 +109,7 @@
        body{display:block;width: 100%;overflow: auto;height: 350px;}
        body::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
        [v-cloak]{display: none}
+       [ng-cloak]{display: none}
   </style>
   <!-- estilos del desarrollador -->
    @stack('styles')

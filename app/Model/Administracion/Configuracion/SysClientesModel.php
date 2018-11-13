@@ -9,50 +9,65 @@ class SysClientesModel extends Model
     public $table = "sys_clientes";
     public $fillable = [
       'id'
+      ,'id_uso_cfdi'
       ,'rfc_receptor'
       ,'nombre_comercial'
       ,'razon_social'
       ,'calle'
       ,'colonia'
       ,'municipio'
-      ,'cp'
+      ,'id_country'
+      ,'id_codigo'
       ,'id_estado'
-      ,'giro_comercial'
-      ,'contacto'
-      ,'departamento'
-      ,'correo'
+      ,'id_servicio'
       ,'telefono'
+      ,'logo'
       ,'estatus'
     ];
 
-    public function facturas(){
-      #return $this->belongsTo('App\Model\Administracion\Facturacion\SysFacturacionModel','id_cliente','id');
+    public function facturas()
+    {
       return $this->belongsToMany('App\Model\Administracion\Facturacion\SysFacturacionModel','sys_users_facturacion','id_cliente','id_factura');
     }
-
-    public function usuarios(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_facturacion','id_cliente','id_users');
+    public function usuarios()
+    {
+      return $this->belongsToMany(SysUsersModel::class,'sys_users_facturacion','id_cliente','id_users');
     }
-    
-    public function estados(){
-        return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel','id','id_estado');
+    public function estados()
+    {
+      return $this->hasOne(SysEstadosModel::class,'id','id_estado');
     }
-    
-    public function contactos(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_empresas_sucursales','id_cliente','id_contacto');
+    public function contactos()
+    {
+      return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_cliente','id_contacto');
     }
-
-    public function empresas(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_empresas_sucursales','id_cliente','id_empresa');
+    public function empresas()
+    {
+      return $this->belongsToMany(SysEmpresasModel::class,'sys_clientes_empresas','id_cliente','id_empresa');
     }
-    
-    public function sucursales(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_empresas_sucursales','id_cliente','id_sucursal');
+    public function sucursales()
+    {
+      return $this->belongsToMany(SysSucursalesModel::class,'sys_clientes_empresas','id_cliente','id_sucursal');
     }
-
-    public function pedidos(){
+    public function pedidos()
+    {
         return $this->belongsTo('App\Model\Ventas\SysPedidosModel','id','id_cliente');
     }
-    
+    public function usoCfdi()
+    {
+      return $this->hasOne(SysUsoCfdiModel::class,'id','id_uso_cfdi');
+    }
+    public function paises()
+    {
+      return $this->hasOne(SysPaisModel::class, 'id','id_country');
+    }
+    public function servicios()
+    {
+      return $this->hasOne( SysClaveProdServicioModel::class, 'id','id_servicio');
+    }
+    public function codigos()
+    {
+       return $this->hasOne( SysCodigoPostalModel::class, 'id','id_codigo');
+    }
 
 }

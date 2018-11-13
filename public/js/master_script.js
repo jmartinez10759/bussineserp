@@ -4,10 +4,9 @@
  * @author Jorge Martinez Quezada.
  */
 class MasterController {
-
- constructor( url,fields,methods,headers ){
+ /*constructor( url,fields,methods,headers ){
     return this.method_master( url,fields,methods,headers );
- }
+ }*/
 /**
  * Se un metodo general donde se pueda utilizar para la conexion a backend
  * @param url {string} {description}
@@ -35,6 +34,26 @@ class MasterController {
         request = {params: fields}
      }else{request = fields;}
      return axios[methods](url, request );
+
+ }
+ /**
+ * Se un metodo general donde se pueda utilizar para la conexion a backend
+ * @param url {string} {description}
+ * @param fields {object} {description}
+ * @param methods {string} {es el metodo que se utilizara por http}
+ * @param $http {object} {objeto que almacena para hacer el promise}
+ * @param headers {string} {description}
+ * @return void {description}
+ */
+ static request_http( url, fields, methods, $http ,headers ){
+    var config = [];
+    config['method']  = methods;
+    config['url']     = url;
+    config['headers'] = headers;
+     if(methods == "get" || methods == "delete"){
+        config['params'] = fields;
+     }else{ config['data'] = fields; }
+    return $http(config);
 
  }
 

@@ -5,6 +5,7 @@
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
+    use App\Model\Administracion\Configuracion\SysEstadosModel;
     use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 
     class CodigoPostalController extends MasterController
@@ -28,8 +29,8 @@
             }
             
             $data = [
-                "page_title" 	        => ""
-                ,"title"  		        => ""
+                "page_title" 	        => "Configuracion"
+                ,"title"  		        => "Código Postal"
                 ,"data_table"  		    => ""
             ];
             return self::_load_view( "administracion.configuracion.codigopostal",$data );
@@ -43,9 +44,8 @@
         public function all( Request $request ){
 
             try {
-
-
-              return $this->_message_success( 201, $response , self::$message_success );
+                $response = $this->_tabla_model::get();
+              return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -63,7 +63,7 @@
             try {
 
 
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -152,5 +152,25 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
+        /**
+        *Metodo para realizar la consulta por medio de su id
+        *@access public
+        *@param Request $request [Description]
+        *@return void
+        */
+        public function show_clave( Request $request ){
+
+            try {
+                $estado = SysEstadosModel::select('id','clave')->where(['id' => $request->id])->get();
+                $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => $estado[0]->clave])->get();
+            return $this->_message_success( 200, $response , self::$message_success );
+            } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
+            }
+
+        }
+
+
 
     }

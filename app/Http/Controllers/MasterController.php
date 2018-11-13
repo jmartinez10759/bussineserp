@@ -24,6 +24,7 @@ use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 use App\Model\Administracion\Configuracion\SysNotificacionesModel;
+use App\Model\Administracion\Configuracion\SysProveedoresModel;
 
 abstract class MasterController extends Controller
 {
@@ -332,19 +333,18 @@ abstract class MasterController extends Controller
 		$parse['seccion_reportes'] = reportes($reportes, $excel);
 		$parse['excel'] = (!$excel) ? "style=display:block;" : "style=display:none;";
 		
-		#$parse['modal'] = (!$modal) ? "style=display:block;" : "style=display:none;";
 		$parse['notify'] = (!$notify) ? "style=display:block;" : "style=display:none;";
 		$parse['permisos'] = (!$permisos) ? "style=display:block;" : "style=display:none;";
 		$parse['email'] = (!$email) ? "style=display:block;" : "style=display:none;";
 		$parse['upload'] = (!$upload) ? "style=display:block;" : "style=display:none;";
 		
-		$parse['upload_files'] = (!$upload_files) ? "style=display:block;" : "style=display:none;";
-		
 		$parse['agregar'] = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
 		$parse['buscador'] = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
+		#$parse['upload_files'] = (!$upload_files) ? "style=display:block;" : "style=display:none;";
+		$parse['upload_files'] = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
+
+		$parse['modal'] = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
 		
-		$parse['modal'] = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar', 'fa fa-plus-circle', 'id="modal_general"');
-		#ddebuger($parse );
 		return View($view, $parse);
 
 	}
@@ -965,6 +965,7 @@ abstract class MasterController extends Controller
 				}
 			}
 		}
+		#debuger($response);
 		return $request;
 	}
 	/**
@@ -1017,10 +1018,10 @@ abstract class MasterController extends Controller
 	 * @param Request $request [Description]
 	 * @return void
 	 */
-	protected function _validate_consulta( $table_model, $with = [], $where = [], $where_pivot = [] )
+	protected function _validate_consulta( $table_model, $with = [], $where = [], $where_pivot = [], $where_admin = [] )
 	{
 		if( Session::get('id_rol') == 1 ){
-        	return $table_model::with($with)->orderBy('id','desc')->get();
+        	return $table_model::with($with)->where($where_admin)->orderBy('id','desc')->get();
         }if( Session::get('id_rol') == 3 ){
         	return $this->_consulta($table_model,$with,$where,$where_pivot, false );
         }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){

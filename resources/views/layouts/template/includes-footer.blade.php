@@ -40,10 +40,14 @@
     <!-- <script src="{{$base_url}}admintle/dist/js/pages/dashboard.js"></script> -->
     <!-- AdminLTE for demo purposes -->
     <script src="{{$base_url}}admintle/dist/js/demo.js"></script>
-
     <script type="text/javascript" src="{{asset('js/axios.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/toastr.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/vue.js')}}"></script>
+    <!-- angular -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-animate.js"></script>
+
     <script type="text/javascript" src="{{asset('js/sweetalert.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>

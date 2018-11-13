@@ -318,6 +318,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'configuracion.empresas'
     ]);
 
+    Route::get('/empresas/all', [
+        'uses'      => 'Administracion\Configuracion\EmpresasController@all'
+        ,'as'       => 'empresas.all'
+    ]);
+
     Route::get('empresas/edit', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@show'
         ,'as'       => 'empresas.edit'
@@ -558,6 +563,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ClientesController@show'
         ,'as'       => 'clientes.edit'
     ]);
+
+    Route::get('/clientes/all', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@all'
+        ,'as'       => 'clientes.all'
+    ]);
     
     Route::get('/clientes/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\ClientesController@display_sucursales'
@@ -741,9 +751,9 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'configuracion.codigopostal'
     ]);
     
-    Route::get('/metodospago/all', [
+    Route::get('/codigopostal/all', [
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@all'
-        ,'as'       => 'productos.all'
+        ,'as'       => 'codigopostal.all'
     ]);
 
     Route::post('/codigopostal/register', [
@@ -754,6 +764,11 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::get('/codigopostal/edit', [
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@show'
         ,'as'       => 'codigopostal.edit'
+    ]);
+
+    Route::get('/codigopostal/show', [
+        'uses'      => 'Administracion\Configuracion\CodigoPostalController@show_clave'
+        ,'as'       => 'codigopostal.show'
     ]);
     
     Route::put('/codigopostal/update', [
