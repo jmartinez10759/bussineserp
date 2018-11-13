@@ -234,7 +234,7 @@ var mixins = {
         ,format_date( request, format ){
             var d = new Date(request);
             if( format === "yyyy-mm-dd"){
-              return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +  ("0" + d.getDate()).slice(-2);
+              return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +  ("0" +(d.getDate())).slice(-2);
             }else{
               return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
             }

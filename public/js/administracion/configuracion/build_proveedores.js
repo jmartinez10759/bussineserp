@@ -8,7 +8,7 @@ var redireccion  = "configuracion/proveedores";
 new Vue({
   el: "#vue-proveedores",
   created: function () {
-    //this.consulta_general();
+    // this.consulta_general();
   },
   data: {
     datos: [],
@@ -60,9 +60,9 @@ new Vue({
     }
     ,update_register(){
        var url = domain( url_update );
-        this.update.id_estado = jQuery('#cmb_estados_edit').val();
-        this.update.giro_comercial = jQuery('#cmb_servicio_edit').val();
-        var fields = this.update;
+        this.edit.id_estado = jQuery('#cmb_estados_edit').val();
+        this.edit.giro_comercial = jQuery('#cmb_servicio_edit').val();
+        var fields = this.edit;
         var promise = MasterController.method_master(url,fields,"put");
           promise.then( response => {
               toastr.success( response.data.message , title );
@@ -75,7 +75,7 @@ new Vue({
                     return;
                 }
               toastr.error( error.response.data.message , expired );
-              redirect();
+              // redirect();
           });
     }
     ,edit_register( id ){
@@ -89,35 +89,16 @@ new Vue({
                // console.log(this.edit);
                // return;
                //this.edit.id = response.data.result.id;
-               
-                   // this.edit.contacto = response.data.result.contacto;
-                   // this.edit.departamento = response.data.result.departamento;
-                   // this.edit.telefono = response.data.result.telefono;
-                   // this.edit.correo = response.data.result.correo;
-                   // this.edit.nombre_comercial = response.data.result.nombre_comercial;
-                   // this.edit.razon_social = response.data.razon_social;
-                   // this.edit.rfc = response.data.result.rfc;
-                   // this.edit.calle = response.data.result.calle;
-                   // this.edit.municipio = response.data.result.municipio;
-                   // this.edit.cp = response.data.result.cp;
-
-               // console.log(response.data.result);
-                  
-
-               //jQuery('#contacto_edit').val(response.data.result.calle);
-               // jQuery('#departamento_edit').val(response.data.result[0].departamento);
-               // jQuery('#telefono_edit').val(response.data.result[0].telefono);
-               // jQuery('#correo_edit').val(response.data.result[0].correo);
-               // // jQuery('#nombre_comercial_edit').val(response.data.result[0].nombre_comercial);
-               // jQuery('#razon_social_edit').val(response.data.result[0].razon_social);
-               // jQuery('#rfc_edit').val(response.data.result[0].rfc);
-               // jQuery('#calle_edit').val(response.data.result[0].calle);
-               // jQuery('#municipio_edit').val(response.data.result[0].municipio);
-               // jQuery('#cp_edit').val(response.data.result[0].cp);
+               if( response.data.result.contactos.length > 0 ){
+                   this.edit.contacto = response.data.result.contactos[0].nombre_completo;
+                   this.edit.departamento = response.data.result.contactos[0].departamento;
+                   this.edit.telefono = response.data.result.contactos[0].telefono;
+                   this.edit.correo = response.data.result.contactos[0].correo;
+               }
 
                
-               // jQuery('#cmb_estados_edit').selectpicker("val",[response.data.result.id_estado]);
-               // jQuery('#cmb_servicio_edit').selectpicker("val",[response.data.result.giro_comercial]);
+               jQuery('#cmb_estados_edit').selectpicker("val",[response.data.result.id_estado]);
+               jQuery('#cmb_servicio_edit').selectpicker("val",[response.data.result.giro_comercial]);
                jQuery('#modal_edit_register').modal('show');
                
               
