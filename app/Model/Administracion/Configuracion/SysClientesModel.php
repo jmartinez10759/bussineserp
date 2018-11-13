@@ -9,19 +9,19 @@ class SysClientesModel extends Model
     public $table = "sys_clientes";
     public $fillable = [
       'id'
+      ,'id_uso_cfdi'
       ,'rfc_receptor'
       ,'nombre_comercial'
       ,'razon_social'
       ,'calle'
       ,'colonia'
       ,'municipio'
-      ,'cp'
+      ,'id_country'
+      ,'id_codigo'
       ,'id_estado'
-      ,'giro_comercial'
-      ,'contacto'
-      ,'departamento'
-      ,'correo'
+      ,'id_servicio'
       ,'telefono'
+      ,'logo'
       ,'estatus'
     ];
 
@@ -31,11 +31,11 @@ class SysClientesModel extends Model
     }
     public function usuarios()
     {
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_facturacion','id_cliente','id_users');
+      return $this->belongsToMany(SysUsersModel::class,'sys_users_facturacion','id_cliente','id_users');
     }
     public function estados()
     {
-      return $this->hasOne('App\Model\Administracion\Configuracion\SysEstadosModel','id','id_estado');
+      return $this->hasOne(SysEstadosModel::class,'id','id_estado');
     }
     public function contactos()
     {
@@ -53,6 +53,21 @@ class SysClientesModel extends Model
     {
         return $this->belongsTo('App\Model\Ventas\SysPedidosModel','id','id_cliente');
     }
-    
+    public function usoCfdi()
+    {
+      return $this->hasOne(SysUsoCfdiModel::class,'id','id_uso_cfdi');
+    }
+    public function paises()
+    {
+      return $this->hasOne(SysPaisModel::class, 'id','id_country');
+    }
+    public function servicios()
+    {
+      return $this->hasOne( SysClaveProdServicioModel::class, 'id','id_servicio');
+    }
+    public function codigos()
+    {
+       return $this->hasOne( SysCodigoPostalModel::class, 'id','id_codigo');
+    }
 
 }

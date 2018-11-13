@@ -16,4 +16,10 @@ class SysUsoCfdiModel extends Model
         ,'fecha_inicio_vigencia'
         ,'fecha_final_vigencia'
       ];
+public function clientes()
+{
+  return $this->belongsTo(SysClientesModel::class,'id_uso_cfdi','id');
+}
+
+
 }

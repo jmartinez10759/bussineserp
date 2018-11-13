@@ -107,7 +107,11 @@
                     $texto = "";
                     for ($i=0; $i < count($text); $i++) {
                         $parametro = $text[$i];
-                        $texto .= $values->$parametro." ";
+                        if( count($text) > 1 ){
+                          $texto .= $values->$parametro." - ";
+                        }else{
+                          $texto .= $values->$parametro." ";
+                        }
                     }
                     $option_selected='';
                     if($selected){
@@ -168,7 +172,7 @@
                 $tbody = '<tbody>';
                 foreach($registros as $registro){
                     #$tbody .= '<tr>';
-                    $tbody .= ( in_array('Estatus',$titulos) && !in_array('ACTIVO',$registro) )? '<tr class="danger">': '<tr>';
+                    $tbody .= ( in_array('Estatus',$titulos) && !in_array('ACTIVO',$registro ) )? '<tr class="danger">': '<tr>';
                     foreach ($registro as $campo){
                         $tbody .= '<td>'.$campo.'</td>';
                     }
