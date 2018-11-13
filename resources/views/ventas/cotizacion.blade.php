@@ -65,7 +65,7 @@
 							</thead>
 							<tbody>
 							<tr v-for="cot in cotizacion">
-								<td>000@{{ cot.id_cotizacion }}
+								<td>@{{ cot.id_cotizacion }}
 									<!--<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>-->
 								<td>@{{ cot.created_at }}</td>
 								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>

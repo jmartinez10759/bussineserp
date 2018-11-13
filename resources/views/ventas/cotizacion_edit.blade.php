@@ -322,7 +322,6 @@
         <input type="hidden" id="id_concep_producto_edit">
         <h3>Editar Información</h3>
         <hr>
-
             <div v-for="cotiz in edit_cotizacion.cotizacion">
                 <input type="hidden" v-model="cotiz.id_cliente" id="id_cliente_edit">
                 <input type="hidden" v-model="cotiz.id_contacto" id="id_contacto_edit">
@@ -331,7 +330,7 @@
                 <input type="hidden" v-model="cotiz.id_estatus" id="id_estatus_edit"> 
                 <input type="hidden" v-model="cotiz.des_cot" id="des_cot_edit">
                 <input type="hidden" v-model="cotiz.id_moneda" id="id_moneda_edit">
-                <input type="text" v-model="cotiz.id_cotizacion" id="id_cotizacion_edit"> 
+                <input type="hidden" v-model="cotiz.id_cotizacion" id="id_cotizacion_edit"> 
             </div>
              
         
@@ -479,8 +478,8 @@
 
         <div class="modal-footer">
             <div class="btn-toolbar pull-right">
-                <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register_edit_update()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button> 
+                <button type="button" class="btn btn-danger" data-fancybox-close v-on:click.prevent="cancel_cotizacion()"> <i class="fa fa-times-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register_edit_update()" {{$insertar}} id="insertar_add_edit"><i class="fa fa-save"></i> Registrar </button> 
             </div>
         </div>
 
@@ -542,7 +541,18 @@
 				  <span><i class="glyphicon glyphicon-paperclip"></i> Archivo adjunto</span>
 				</div>
 			  </div>
-
+              <div v-if="loading == true">
+          <img src="" alt="" style="position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('https://cdn.dribbble.com/users/493409/screenshots/3070302/043_success-mail.gif') 50% 50% no-repeat rgb(249,249,249);
+    opacity: .8;"> 
+          Enviando.....
+        </div>
+        <!-- <p>https://www.dmdentalgroup.com/wp-content/uploads/2017/12/mail.gif</p> -->
          </form>
 
 

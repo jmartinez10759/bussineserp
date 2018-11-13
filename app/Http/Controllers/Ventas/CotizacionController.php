@@ -527,32 +527,61 @@
                         ,'id_contacto'   => isset($request->cotizacion['id_contacto'])?$request->cotizacion['id_contacto']:0
                         ,'id_metodo_pago'=> isset($request->cotizacion['id_metodo_pago'])?$request->cotizacion['id_metodo_pago']:0
                         ,'id_forma_pago' => isset($request->cotizacion['id_forma_pago'])?$request->cotizacion['id_forma_pago']:0
-                        ,'id_estatus'    => isset($request->cotizacion['id_estatus'])?$request->cotizacion['id_estatus']:0
+                        ,'id_estatus'    => 6
 
                     ];
-                    SysPedidosModel::firstOrCreate($data);
-                    //SysConceptosCotizacionesModel
+                    ///Valido si existe id_cotizacion en la tabla syspedidos, si existe solo hace update, si no inserta
+                    $p = SysPedidosModel::where('id_cotizacion', $id)->get();
+                    if($p->isEmpty()){
+                        $id_pedido = SysPedidosModel::create($data);
+                    }else{
+                        $id_pedido = SysPedidosModel::where('id_cotizacion',$id)->update($data);
+                          
+                        $idd = SysUsersPedidosModel::select('id_concepto')->where('id_pedido',$p[0]['id'])->get();
+                        //debuger($idd);
+                        foreach ($idd as $valuee) {
+                            $v=    $valuee->id_concepto;
+                            SysConceptosPedidosModel::where(['id' => $v])->delete();
+                        }
+            
+                        SysUsersPedidosModel::where('id_pedido',$p[0]['id'])->delete();
+
+                    }
+                    //$id_pedido =SysPedidosModel::create($data);
+                    //Obtengo los datos con el id_cotizacion y barro los id_concepto
                     $user_cot = SysUsersCotizacionesModel::where(['id_cotizacion' => $request->cotizacion['id_concep_producto']])->get();
                     $id_conc = [];
                         foreach($user_cot as $key){
                             $id_conc[] = $key->id_concepto; 
                         }
-                    //debuger($id_conc);
+                    //debuger($id_conc);  //Obtengo los datos con el id_concepto  en la tabla conceptos coti y los barro para insertar
                     $id_concep = SysConceptosCotizacionesModel::whereIn('id', $id_conc)->get();
                     //debuger($id_concep);
-                    $data = array();
-                     for($i=0; $i<count($id_concep); $i++){
+                    
+                    foreach($id_concep as $concp){
 
-                         $data[] = 
+                         $data = 
                          [
-                             'id_producto' => $id_concep[$i]['id_producto']
-                             ,'id_plan' => $id_concep[$i]['id_plan']
-                             ,'cantidad' => $id_concep[$i]['cantidad']
-                             ,'precio' => $id_concep[$i]['precio']
-                             ,'total' => $id_concep[$i]['total']
+                             'id_producto' => $concp->id_producto
+                             ,'id_plan' => $concp->id_plan
+                             ,'cantidad' => $concp->cantidad
+                             ,'precio' => $concp->precio
+                             ,'total' => $concp->total
                             
                          ];
-                    
+                         $ins = SysConceptosPedidosModel::create($data);
+                         $id_user_pe = 
+                            [
+                                'id_users'      => Session::get('id')
+                                ,'id_rol'       => Session::get('id_rol')
+                                ,'id_empresa'   => Session::get('id_empresa')
+                                ,'id_sucursal'  => Session::get('id_sucursal')
+                                ,'id_menu'      => 28
+                                ,'id_pedido'    => isset($id_pedido->id)?$id_pedido->id:$p[0]['id']
+                                ,'id_concepto'  => $ins->id
+                            ]; 
+                        
+                            $insert = SysUsersPedidosModel::create($id_user_pe);
                     
                      }
                     // $data = []; 
@@ -572,26 +601,7 @@
 
                     // // SysUsersPedidosModel::where('')
                     //insert conceptp pedidos
-                    foreach ($data as $values) {
-                        $ins = SysConceptosPedidosModel::firstOrCreate($values);
-                    }
-                    //insert users pedidos
-                    $id_user_pe = [];
-                        foreach($user_cot as $key){
-                            $id_user_pe[] = 
-                            [
-                                'id_users'      => $key->id_users
-                                ,'id_rol'       => $key->id_rol
-                                ,'id_empresa'   => $key->id_empresa
-                                ,'id_sucursal'  => $key->id_sucursal
-                                ,'id_menu'      => $key->id_menu
-                                ,'id_pedido'    => $key->id_cotizacion
-                                ,'id_concepto'  => $key->id_concepto
-                            ]; 
-                        }
-                    foreach ($id_user_pe as $valores) {
-                        $insert = SysUsersPedidosModel::firstOrCreate($valores);
-                    }
+                
 
                 }else{
                     $cotizacion                 = SysCotizacionModel::FindOrFail($id);
@@ -1101,8 +1111,8 @@
                     ,'totales'          => $totales
                 ];
                 $pdf = PDF::loadView('ventas.pdf.pdf_cotizacion', ['data' => $response]);
-                $message->to( $data['email'], $data['name'] )
-                        #->from('notificaciones@solicituddeempleo.com.mx','Solicitud de Empleo')
+                $message->to( 'al221211431@gmail.com', $data['name'] )
+                        ->from('notificaciones@burolaboralmexico.com.mx','BLM')
                         ->subject(  $data['asunto'] )
                         ->attachData($pdf->output(), "cotizacion.pdf");
             });
