@@ -5,8 +5,8 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- obtengo la ruta de mi proyecto -->
   <meta name="ruta-general" content="{{ $_SERVER['PHP_SELF'] }}">
-  <link rel="icon" href="{{asset($icon)}}" type="image/x-icon" />
-  <link rel="shortcut icon" href="{{asset($icon)}}" type="image/x-icon" />
+  <link rel="icon" href="{{asset( $icon )}}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{{asset( $icon )}}" type="image/x-icon" />
    <title>{!! $APPTITLE !!} </title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -46,7 +46,7 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
-
+  <base href="{{ $_SERVER['PHP_SELF'] }}" />
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
  <style type="text/css">

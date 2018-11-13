@@ -25,6 +25,7 @@ new Vue({
     clients: {},
     products: {},
     totales: {'iva': '', 'subtotal': '', 'Total': ''},
+    loading: false,
   },
   mixins : [mixins],
   methods:{
@@ -413,10 +414,19 @@ new Vue({
               jQuery('#subtotal_edit').text(response.data.result.conceptos[0].subtotal);
               jQuery('#iva_edit').text(response.data.result.conceptos[0].iva);
               jQuery('#total_edit').text(response.data.result.conceptos[0].total_conc);
-              console.log(response.data.result);
+              if(response.data.result.cotizacion[0].id_estatus == 5){
+                jQuery('#cmb_estatus_edit').prop('disabled', true)
+                jQuery('#add_concepto_edit').attr("disabled", true)
+                jQuery('#insertar_add_edit').attr("disabled", true)
+              }else{
+                jQuery('#cmb_estatus_edit').prop('disabled', false)
+                jQuery('#add_concepto_edit').attr("disabled", false)
+                jQuery('#insertar_add_edit').attr("disabled", false)
+              }
+              //console.log(response.data.result);
               toastr.success( response.data.message , title );
               this.edit_cotizacion = response.data.result;
-              console.log(this.edit_cotizacion);
+              //console.log(this.edit_cotizacion.cotizacion);
               this.consulta_general(response.data.result.conceptos[0].id_cotizacion);
               
           }).catch( error => {
@@ -569,16 +579,16 @@ new Vue({
                ,'mensaje'   : jQuery('#mensaje_pdf').val()
                ,'id'        : jQuery('#id_cotzacion').val()
         };
-
+        this.loading = true;
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
             
-            toastr.success( response.data.message , title );
+            toastr.success( 'Correo enviado' , title );
               $.fancybox.close({
                 'type'      : 'inline'
                 ,'src'      : "#modal_send_email"
             });
-            
+            this.loading = false;
             jQuery('#destinatario_pdf').val('')
             jQuery('#nomb_contacto').val('')
             jQuery('#asunto_pdf').val('')
@@ -617,7 +627,7 @@ function clean_input_general() {
         // jQuery("#cmb_metodos_pagos").val(0);
         // jQuery("#cmb_estatus").val(0);
         jQuery("#observaciones").val('');
-        jQuery("#cmb_monedas").val(0);
+        //jQuery("#cmb_monedas").val(0);
 }
 
 function clean_input_general_edit() {
