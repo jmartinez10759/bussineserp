@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
+use App\Model\Administracion\Configuracion\SysPaisModel;
+use App\Model\Administracion\Configuracion\SysUsoCfdiModel;
 use App\Model\Administracion\Configuracion\SysEstadosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysClientesModel;
@@ -15,6 +17,7 @@ use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
 use App\Model\Administracion\Configuracion\SysClientesEmpresasModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
+use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 
 class ClientesController extends MasterController
 {
@@ -36,8 +39,8 @@ class ClientesController extends MasterController
         if( Session::get('permisos')['GET'] ){
           return view('errors.error');
         }
-          $response = SysClientesModel::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
-          $response_clientes = $this->_validate_consulta($this->_tabla_model,[],['estatus' => 1 ],['id' => Session::get('id_empresa')]);
+         /* $response = $this->_tabla_model::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
+          $response_clientes = $this->_validate_consulta($this->_tabla_model,[],['estatus' => 1 ],['id' => Session::get('id_empresa')],['estatus' => 1]);
           $registros = [];
           $registros_clientes = [];
           $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
@@ -93,57 +96,105 @@ class ClientesController extends MasterController
           }
 
           $titulos = [
-            'RAZÓN SOCIAL'
-            ,'RFC'
-            #,'CONTACTO'
-            ,'CORREO'
-            ,'ESTADO'
-            ,'DEPARTAMENTO'
-            ,'TELEFONO'
-            ,'ESTATUS'
+            'Razón Social'
+            ,'Rfc'
+            ,'Correo'
+            ,'Estado'
+            ,'Departamento'
+            ,'Telefono'
+            ,'Estatus'
             ,''
             ,''
             ,''
           ];
           $table = [
             'titulos' 		    => $titulos
-            ,'registros' 	    => $registros
-            ,'id' 			    => "datatable"
-            ,'class'            => "fixed_header"
+            ,'registros' 	      => $registros
+            ,'id' 			         => "datatable"
+            ,'class'              => "fixed_header"
           ];
 
           $table_clientes = [
             'titulos' 		    => $titulos
-            ,'registros' 	    => $registros_clientes
-            ,'id' 			    => "datatable_clientes"
-            ,'class'            => "fixed_header"
-          ];  
+            ,'registros' 	      => $registros_clientes
+            ,'id' 			         => "datatable_clientes"
+            ,'class'              => "fixed_header"
+          ];  */
             #se crea el dropdown
-           $estados = dropdown([
-                 'data'      => SysEstadosModel::get()
+           $paises = dropdown([
+                 'data'      => SysPaisModel::get()
                  ,'value'     => 'id'
-                 ,'text'      => 'nombre'
-                 ,'name'      => 'cmb_estados'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_pais'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
+                 ,'event'     => 'select_estado()'
+                 ,'selected'  => '151'
+           ]);
+
+            $paises_edit =  dropdown([
+                 'data'      => SysPaisModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_pais_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true" ng-model="update.id_country"'
+                 ,'event'     => 'ng-select_estado_edit()'
+            ]);
+
+           $uso_cfdi = dropdown([
+                 'data'      => SysUsoCfdiModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_uso_cfdi'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true" '
            ]);
-           $estados_edit =  dropdown([
-                 'data'      => SysEstadosModel::get()
+           $uso_cfdi_edit =  dropdown([
+                 'data'      => SysUsoCfdiModel::get()
                  ,'value'     => 'id'
-                 ,'text'      => 'nombre'
-                 ,'name'      => 'cmb_estados_edit'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_uso_cfdi_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true" '
            ]);
+
+           $giro_comercial =  dropdown([
+                   'data'       => SysClaveProdServicioModel::get()
+                   ,'value'     => 'id'
+                   ,'text'      => 'clave descripcion'
+                   ,'name'      => 'cmb_servicio'
+                   ,'class'     => 'form-control'
+                   ,'leyenda'   => 'Seleccione Opcion'
+                   ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio"'
+            ]);
+            
+            $giro_comercial_edit =  dropdown([
+                 'data'       => SysClaveProdServicioModel::get()
+                 ,'value'     => 'id'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_servicio_edit'
+                 ,'class'     => 'form-control'
+                 ,'leyenda'   => 'Seleccione Opcion'
+                 ,'attr'      => 'data-live-search="true"'
+            ]);
+
+
           $data = [
-             'page_title' 	        => "Configuración"
-             ,'title'  		        => "Prospectos"
-             ,'data_table'  	    => data_table($table)
-             ,'data_table_clientes' => data_table($table_clientes)
-             ,'estados'             => $estados
-             ,'estados_edit'        => $estados_edit
+             'page_title' 	          => "Configuración"
+             ,'title'  		            => "Prospectos"
+             ,'data_table'  	        => ""
+             ,'data_table_clientes'   => ""
+             ,'country'               => $paises
+             ,'country_edit'          => $paises_edit
+             ,'uso_cfdi'              => $uso_cfdi
+             ,'uso_cfdi_edit'         => $uso_cfdi_edit
+             ,'servicios'             => $giro_comercial
+             ,'servicios_edit'        => $giro_comercial_edit
            ];
            #debuger($data);
            return self::_load_view( 'administracion.configuracion.clientes', $data );
@@ -155,11 +206,34 @@ class ClientesController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public function show( Request $request ){
+    public function all( Request $request ){
+      try {        
+        $response = $this->_tabla_model::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
+        $response_clientes = $this->_validate_consulta($this->_tabla_model,['usoCfdi','empresas'],['estatus' => 1 ],['id' => Session::get('id_empresa')],['estatus' => 1]);
+        $data = [
+          'prospectos' => $response
+          ,'clientes'  => $response_clientes
+          ,'empresas'  => SysEmpresasModel::where(['estatus' => 1])->get()
+        ];
 
+        return $this->_message_success( 200, $data , self::$message_success );
+      } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
+      }
+        
+    }
+    /**
+     *Metodo para realizar la consulta por medio de su id
+     *@access public
+     *@param Request $request [Description]
+     *@return void
+     **/ 
+    public function show( Request $request ){
+        #debuger($request->all());
         try {        
-          $response = SysClientesModel::with(['contactos'])->where(['id' => $request->id_cliente])->get();
-          return $this->_message_success( 201, $response[0] , self::$message_success );
+          $response = SysClientesModel::with(['contactos'])->where(['id' => $request->id])->get();
+          return $this->_message_success( 200, $response[0] , self::$message_success );
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -173,6 +247,7 @@ class ClientesController extends MasterController
      *@return void
      */
     public function store( Request $request){
+
           $error = null;
           DB::beginTransaction();
           try {
@@ -195,17 +270,20 @@ class ClientesController extends MasterController
                         }
                     };
                 }
+                #debuger($string_data_contactos,false);
+                #debuger($string_data_clientes);
                 $response = $this->_tabla_model::create( $string_data_clientes );
                 $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
-                    'id_empresa'       => (Session::get('id_rol') != 1)? Session::get('id_empresa') :0
+                    'id_empresa'       => (Session::get('id_rol') != 1)? Session::get('id_empresa')  :0
                     ,'id_sucursal'     => (Session::get('id_rol') != 1)? Session::get('id_sucursal') :0
-                    ,'id_contacto'     => $response_contactos->id
+                    //,'id_contacto'     => $response_contactos->id
                     ,'id_cliente'      => $response->id
-                    ,'estatus'         => 1
                 ];
-                
-               SysEmpresasSucursalesModel::create($data);    
+                SysClientesEmpresasModel::create($data); 
+                $datos['id_contacto'] = $response_contactos->id;   
+                $datos['id_cliente']  = $response->id;   
+                SysContactosSistemasModel::create($datos);
             DB::commit();
             $success = true;
           } catch (\Exception $e) {
@@ -245,15 +323,16 @@ class ClientesController extends MasterController
                             $string_data_contactos[$key] = strtoupper($value);
                         }
                     };
-                    if( !in_array( $key, $string_key_contactos) ){
+                    if( !in_array( $key, $string_key_clientes) ){
                         if( !is_array($value)){
                             $string_data_clientes[$key] = strtoupper($value);
                         }
                     };
                     
                 }
-              #debuger($string_data_contactos);
+              #debuger($string_data_contactos,false);
               #debuger($string_data_clientes);
+                #debuger($request->contactos);
              $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_clientes );
             if( count($request->contactos) > 0){
                SysContactosModel::where(['id' => $request->contactos[0]['id'] ])->update($string_data_contactos);
@@ -292,12 +371,13 @@ class ClientesController extends MasterController
      *@return void
      */
     public function destroy( Request $request ){
+        #debuger($request->all());
         $error = null;
         DB::beginTransaction();
         try {
-          $where = ['id' => $request->id_cliente];
-          $users_facturas = SysUsersFacturacionModel::where(['id_cliente' => $request->id_cliente])->get();
-          $clientes_empresas = SysEmpresasSucursalesModel::where(['id_cliente' => $request->id_cliente])->get(); 
+          $where = ['id' => $request->id];
+          $users_facturas = SysUsersFacturacionModel::where(['id_cliente' => $request->id])->get();
+          $clientes_empresas = SysClientesEmpresasModel::where(['id_cliente' => $request->id])->get(); 
             #debuger($clientes_empresas);
           if( count($users_facturas) > 0){
               foreach ($users_facturas as $tbl_factura) {
@@ -310,7 +390,9 @@ class ClientesController extends MasterController
               } 
             }
           SysClientesModel::where( $where )->delete();
-          SysEmpresasSucursalesModel::where(['id_cliente' => $request->id_cliente])->delete();
+          SysClientesEmpresasModel::where(['id_cliente' => $request->id])->delete();
+          SysContactosSistemasModel::where(['id_cliente' => $request->id])->delete();
+
           DB::commit();
           $success = true;
         } catch (\Exception $e) {
@@ -383,18 +465,16 @@ class ClientesController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-            $id_contacto = SysClientesModel::with(['contactos'])->where(['id' => $request->id_cliente])->get();
+            #$id_contacto = SysClientesModel::with(['contactos'])->where(['id' => $request->id_cliente])->get();
             SysClientesEmpresasModel::where(['id_cliente'=> $request->id_cliente])->delete();
             $response = [];
             for ($i=0; $i < count($request->matrix) ; $i++) { 
                 $matrices = explode('|', $request->matrix[$i] );
                 $id_sucursal = $matrices[0];
-                #$estatus = ($matrices[1] == true)? 1: 0;
                 #se realiza una consulta si existe un registro.
                 $data = [
-                    'id_empresa'   => $request->id_empresa
+                    'id_empresa'    => $request->id_empresa
                     ,'id_sucursal'  => $id_sucursal
-                    //,'id_contacto'  => isset($id_contacto[0]->contactos[0])? $id_contacto[0]->contactos[0]->id: 0
                     ,'id_cliente'   => $request->id_cliente
                 ];
                 $response[] = SysClientesEmpresasModel::create($data);

@@ -965,6 +965,7 @@ abstract class MasterController extends Controller
 				}
 			}
 		}
+		#debuger($response);
 		return $request;
 	}
 	/**
@@ -1017,10 +1018,10 @@ abstract class MasterController extends Controller
 	 * @param Request $request [Description]
 	 * @return void
 	 */
-	protected function _validate_consulta( $table_model, $with = [], $where = [], $where_pivot = [] )
+	protected function _validate_consulta( $table_model, $with = [], $where = [], $where_pivot = [], $where_admin = [] )
 	{
 		if( Session::get('id_rol') == 1 ){
-        	return $table_model::with($with)->orderBy('id','desc')->get();
+        	return $table_model::with($with)->where($where_admin)->orderBy('id','desc')->get();
         }if( Session::get('id_rol') == 3 ){
         	return $this->_consulta($table_model,$with,$where,$where_pivot, false );
         }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){

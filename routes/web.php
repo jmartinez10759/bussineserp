@@ -563,6 +563,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ClientesController@show'
         ,'as'       => 'clientes.edit'
     ]);
+
+    Route::get('/clientes/all', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@all'
+        ,'as'       => 'clientes.all'
+    ]);
     
     Route::get('/clientes/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\ClientesController@display_sucursales'
