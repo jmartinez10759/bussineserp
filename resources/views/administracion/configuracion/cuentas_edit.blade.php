@@ -6,42 +6,6 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal">
-
-                    <!--<div>
-                        <font size="4" color="green"> DATOS DE CONTACTO </font>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Nombre: </label>
-                        <div class="col-sm-7">
-                            <input type="text" id="contacto" class="form-control" placeholder="Ingrese Nombre de contacto" v-model="insert.contacto">
-                        </div>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Departamento: </label>
-                        <div class="col-sm-7">
-                            <input type="text" id="departamento" class="form-control" placeholder="Ingrese departamento o cargo " v-model="insert.departamento">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Teléfono: </label>
-                        <div class="col-sm-7">
-                            <input type="text" id="telefono" class="form-control" placeholder="Lada + número" v-model="insert.telefono">
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Correo: <font size="3" color="red">* </font> </label>
-                        <div class="col-sm-7">
-                            <input type="text" id="correo" class="form-control" placeholder="Ingrese un correo valido" v-model="insert.correo">
-                        </div>
-
-                    </div>-->
-
                     <div>
                         <font size="4" color="green"> DATOS DE CUENTA </font>
                     </div>
@@ -49,15 +13,15 @@
                     <div class="form-group">
                         <label class="control-label col-sm-3">Nombre Comercial: </label>
                         <div class="col-sm-7">
-                            <input type="text" id="nombre_comercial" class="form-control" placeholder="" v-model="insert.nombre_comercial">
+                            <input type="text" id="nombre_comercial" class="form-control" placeholder="" ng-model="insert.nombre_comercial">
                         </div>
 
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-3">Giro Comercial: </label>
+                        <label class="control-label col-sm-3">Servicio: </label>
                         <div class="col-sm-7">
-                            <input type="text" id="giro_comercial" class="form-control" placeholder="" v-model="insert.giro_comercial">
+                            {!! $cmb_servicios!!}
                         </div>
                     </div>
                     
@@ -107,7 +71,7 @@
                     <div class="form-group">
                         <label class="control-label col-sm-3">Estatus: </label>
                         <div class="col-sm-7">
-                            <select class="form-control" v-model="insert.estatus">
+                            <select class="form-control" ng-model="insert.estatus">
                                 <option value="0">Baja</option>
                                 <option value="1">Activo</option>
                             </select>
@@ -122,7 +86,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button>
+                    <button type="button" class="btn btn-primary" ng-click="insert_register()" {{ $insertar }}><i class="fa fa-save"></i> Registrar </button>
                 </div>
             </div>
 
@@ -141,42 +105,6 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal">
-<!--
-
-                    <div>
-                        <font size="4" color="green"> DATOS DE CONTACTO </font>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Nombre: </label>
-                        <div class="col-sm-7">
-                            <input type="text" id="contacto" class="form-control" placeholder="Ingrese Nombre de contacto" v-model="update.contacto">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Departamento: </label>
-                        <div class="col-sm-7">
-                            <input type="text" id="departamento" class="form-control" placeholder="Ingrese departamento o cargo " v-model="update.departamento">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Teléfono: </label>
-                        <div class="col-sm-7">
-                            <input type="text" id="telefono" class="form-control" placeholder="Lada + número" v-model="update.telefono">
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Correo: <font size="3" color="red">* </font> </label>
-                        <div class="col-sm-7">
-                            <input type="text" id="correo" class="form-control" placeholder="Ingrese un correo valido" v-model="update.correo">
-                        </div>
-
-                    </div>
--->
 
                     <div>
                         <font size="4" color="green"> DATOS DE CUENTA </font>
@@ -185,15 +113,15 @@
                     <div class="form-group">
                         <label class="control-label col-sm-3">Nombre Comercial: </label>
                         <div class="col-sm-7">
-                            <input type="text" id="nombre_comercial" class="form-control" placeholder="" v-model="edit.nombre_comercial">
+                            <input type="text" id="nombre_comercial" class="form-control" placeholder="" ng-model="edit.nombre_comercial">
                         </div>
 
                     </div>
                     
                     <div class="form-group">
-                        <label class="control-label col-sm-3">Giro Comercial: </label>
+                         <label class="control-label col-sm-3">Servicio: </label>
                         <div class="col-sm-7">
-                            <input type="text" id="giro_comercial" class="form-control" placeholder="" v-model="edit.giro_comercial">
+                            {!! $cmb_servicios_edit!!}
                         </div>
                     </div>
                     
@@ -243,7 +171,7 @@
                     <div class="form-group">
                         <label class="control-label col-sm-3">Estatus: </label>
                         <div class="col-sm-7">
-                            <select class="form-control" v-model="edit.estatus">
+                            <select class="form-control" id="cmb_estatus_edit">
                                 <option value="0">Baja</option>
                                 <option value="1">Activo</option>
                             </select>
@@ -258,7 +186,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-info" v-on:click="update_register()" {{$update}}>
+                    <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
                         <i class="fa fa-save"></i> Actualizar
                     </button>
                 </div>

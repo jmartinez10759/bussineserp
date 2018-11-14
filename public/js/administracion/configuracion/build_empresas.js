@@ -416,35 +416,8 @@ function select_codigos_edit(id = false,id_codigo =false){
       }); 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//jQuery('#modal_add_register').css('width', '80%');
 jQuery('#cmb_servicio').selectpicker({width:'100%', size: 8});
 jQuery('#cmb_servicio_edit').selectpicker({width:'100%', size: 8});
-/*jQuery('#cmb_estados').selectpicker({width:'100%', size: 5});
-jQuery('#cmb_estados_edit').selectpicker({width:'100%', size: 5});*/
-/*jQuery('#cmb_regimen_fiscal').selectpicker({width:'100%',size: 5});
-jQuery('#cmb_regimen_fiscal_edit').selectpicker({width:'100%', size: 5});*/
-
-/*jQuery('#cmb_pais').selectpicker({width:'100%', size: 5});
-jQuery('#cmb_pais_edit').selectpicker({width:'100%', size: 5});*/
-/*jQuery('#cmb_codigo_postal_edit').selectpicker({width:'100%', size: 5});
-jQuery('#cmb_codigo_postal').selectpicker({width:'100%', size: 5});*/
-
-
-
 var upload_url = domain('empresas/upload');
 var ids = {
   div_content  : 'div_dropzone_file_empresa'

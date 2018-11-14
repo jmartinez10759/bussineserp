@@ -191,14 +191,14 @@
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
             <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-            <button type="button" class="btn btn-primary" ng-click="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button>
+            <button type="button" class="btn btn-primary" ng-click="insert_register()" {{ $insertar }}><i class="fa fa-save"></i> Registrar </button>
         </div>
     </div>
 </div>
 
 <div class="col-sm-12" id="modal_edit_register" style="display:none;">
     <div class="modal-header">
-        <h3> Detalles de la Empresa </h3>
+        <h3> Detalles del Cliente </h3>
     </div>
     <div class="modal-body" style="overflow-y:scroll; height:500px;">
 

@@ -49,5 +49,9 @@ class SysProveedoresModel extends Model
   {
       return $this->hasOne('App\Model\Administracion\Configuracion\SysPaisModel', 'id','id_country');
   }
+  public function servicios()
+  {
+      return $this->hasOne(SysClaveProdServicioModel::class, 'id','id_servicio');
+  }
 
 }

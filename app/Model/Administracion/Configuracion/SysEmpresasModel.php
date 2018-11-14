@@ -25,24 +25,29 @@ class SysEmpresasModel extends Model
     ,'estatus'
   ];
 
-  public function menus(){
-    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysMenuModel','sys_rol_menu','id_empresa','id_menu')->withPivot('estatus');
+  public function menus()
+  {
+    return $this->belongsToMany(SysMenuModel::class,'sys_rol_menu','id_empresa','id_menu')->withPivot('estatus');
   }
 
-  public function sucursales(){
-      return $this->belongsToMany(SysSucursalesModel::class,'sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
+  public function sucursales()
+  {
+    return $this->belongsToMany(SysSucursalesModel::class,'sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
   }
 
-  public function roles(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysRolesModel','sys_users_roles','id_empresa','id_rol');
+  public function roles()
+  {
+    return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','id_empresa','id_rol');
   }
 
-  public function permisos(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysAccionesModel','sys_rol_menu','id_empresa','id_permiso');
+  public function permisos()
+  {
+    return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_empresa','id_permiso');
   }
 
-  public function usuarios(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_roles','id_empresa','id_users');
+  public function usuarios()
+  {
+    return $this->belongsToMany(SysUsersModel::class,'sys_users_roles','id_empresa','id_users');
   }
   
   public function proveedores()

@@ -17,6 +17,7 @@ use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
 use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
+use App\Model\Administracion\Configuracion\SysTipoFactorModel;
 
 class EmpresasController extends MasterController
 {

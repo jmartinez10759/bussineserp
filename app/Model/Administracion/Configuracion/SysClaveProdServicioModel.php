@@ -23,6 +23,18 @@ class SysClaveProdServicioModel extends Model
   {
     return $this->belongsTo( SysEmpresasModel::class,'id_servicio','id');
   }
+  public function cuentas()
+  {
+    return $this->belongsTo( SysCuentasModel::class,'id_servicio','id');
+  }
+  public function clientes()
+  {
+    return $this->belongsTo( SysClientesModel::class,'id_servicio','id');
+  }
+  public function proveedores()
+  {
+    return $this->belongsTo( SysProveedoresModel::class,'id_servicio','id');
+  }
 
 
 
