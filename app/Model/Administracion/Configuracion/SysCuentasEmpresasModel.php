@@ -11,6 +11,6 @@ class SysCuentasEmpresasModel extends Model
         'id_cuenta'
         ,'id_empresa'
         ,'id_sucursal'
-        ,'id_contacto'
+        ,'id_cliente'
       ];
 }

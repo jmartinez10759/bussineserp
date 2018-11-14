@@ -11,28 +11,35 @@ class SysCuentasModel extends Model
         'id'
         ,'nombre_comercial'
         ,'id_cliente'
-        ,'giro_comercial'
+        ,'id_servicio'
         ,'logo'
         ,'estatus'
       ];
     
     public function empresas()
     {
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_cuentas_empresas','id_cuenta','id_empresa');
+      return $this->belongsToMany(SysEmpresasModel::class,'sys_cuentas_empresas','id_cuenta','id_empresa');
     }
       
     public function sucursales()
     {
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_cuentas_empresas','id_cuenta','id_sucursal');
+      return $this->belongsToMany(SysSucursalesModel::class,'sys_cuentas_empresas','id_cuenta','id_sucursal');
     }
     public function clientes()
     {
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel','sys_cuentas_empresas','id_cuenta','id_cliente');
+      return $this->belongsToMany(SysClientesModel::class,'sys_cuentas_empresas','id_cuenta','id_cliente');
     }
-    
+    public function cliente()
+    {
+      return $this->hasOne(SysClientesModel::class,'id','id_cliente');
+    }
     public function contactos()
     {
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysContactosModel','sys_cuentas_empresas','id_cuenta','id_contacto');
+      return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_cuenta','id_contacto');
+    }
+    public function servicios()
+    {
+      return $this->hasOne(SysClaveProdServicioModel::class,'id','id_servicio');
     }
     
 

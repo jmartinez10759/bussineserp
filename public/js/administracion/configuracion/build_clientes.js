@@ -8,6 +8,7 @@ var url_display = "clientes/display_sucursales";
 var url_insert_permisos = "clientes/register_permisos";
 var url_edit_pais       = 'pais/edit';
 var url_edit_codigos    = 'codigopostal/show';
+
 var app = angular.module('ng-clientes', ["ngRoute"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
@@ -79,11 +80,11 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        this.insert.id_estado  = jQuery('#cmb_estados').val();
-        this.insert.id_codigo  = jQuery('#cmb_codigo_postal').val();
-        this.insert.id_uso_cfdi  = jQuery('#cmb_uso_cfdi').val();
+        $scope.insert.id_estado  = jQuery('#cmb_estados').val();
+        $scope.insert.id_codigo  = jQuery('#cmb_codigo_postal').val();
+        $scope.insert.id_uso_cfdi  = jQuery('#cmb_uso_cfdi').val();
         var url = domain( url_insert );
-        var fields = this.insert;
+        var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
