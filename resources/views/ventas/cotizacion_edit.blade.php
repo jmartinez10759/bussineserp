@@ -437,7 +437,7 @@
                                         <th>DESCRIPCIÓN</th>
                                         <th class="text-right">PRECIO UNITARIO.</th>
                                         <th class="text-right">PRECIO TOTAL</th>
-                                        <th></th>
+                                        <th ></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -447,7 +447,7 @@
                                         <td>@{{ (concep.descripcion)?concep.descripcion:concep.prod_desc }}</td>
                                         <td class="text-right">@{{ concep.precio }}</td>
                                         <td class="text-right">@{{ concep.total }}</td>
-                                        <td class="text-center"><a href="#" v-on:click.prevent="destroy_register_edit(concep)"><i class="glyphicon glyphicon-trash"></i></a></td>
+                                        <td class="text-center ocultarr"><a href="#" v-on:click.prevent="destroy_register_edit(concep)"><i class="glyphicon glyphicon-trash"></i></a></td>
                                     </tr>   
                                     </tbody>   
                                     <tfoot>       
@@ -478,7 +478,7 @@
 
         <div class="modal-footer">
             <div class="btn-toolbar pull-right">
-                <button type="button" class="btn btn-danger" data-fancybox-close v-on:click.prevent="cancel_cotizacion()"> <i class="fa fa-times-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-danger" data-fancybox-close v-on:click.prevent="cancel_cotizacion_edit()"> <i class="fa fa-times-circle"></i> Cancelar</button>
                 <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register_edit_update()" {{$insertar}} id="insertar_add_edit"><i class="fa fa-save"></i> Registrar </button> 
             </div>
         </div>

@@ -622,8 +622,17 @@
                     $cotizacion->total          = $this->truncarDecimales($subtotal + $iva,2);
                     $cotizacion->save();
                 }
-
-
+                if($request->cotizacion['id_estatus'] == 5){
+                    if($cotizacion == true){
+                        $cotizacion = [
+                            'cotizacion' => $cotizacion
+                            ,'id_pedido'  => isset($id_pedido->id)?$id_pedido->id:''
+                        ];
+                    }
+                }else{
+                    $cotizacion;
+                }
+                
                 //SysUsersCotizacionesModel::create($user_co);
 
 
