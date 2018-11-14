@@ -32,6 +32,9 @@
                 "page_title" 	        => "Configuracion"
                 ,"title"  		        => "Código Postal"
                 ,"data_table"  		    => ""
+                ,'script'               => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js')
+                ,'script_route'         => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js')
+            
             ];
             return self::_load_view( "administracion.configuracion.codigopostal",$data );
         }
@@ -61,7 +64,7 @@
         public function show( Request $request ){
 
             try {
-
+                $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
 
             return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
@@ -81,7 +84,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = $this->_tabla_model::create( $request->all() );
 
             DB::commit();
             $success = true;
@@ -109,7 +112,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
 
             DB::commit();
             $success = true;
@@ -136,7 +139,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = SysCodigoPostalModel::where(['id' => $request->id])->delete();
 
             DB::commit();
             $success = true;
@@ -163,7 +166,7 @@
             try {
                 $estado = SysEstadosModel::select('id','clave')->where(['id' => $request->id])->get();
                 $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => $estado[0]->clave])->get();
-            return $this->_message_success( 200, $response , self::$message_success );
+            return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
