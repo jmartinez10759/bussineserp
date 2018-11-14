@@ -4,12 +4,11 @@ var url_update  = 'empresas/update';
 var url_edit    = 'empresas/edit';
 var url_destroy = "empresas/destroy/";
 var redireccion = "configuracion/empresas";
-var url_relacion  = "empresas/insert_relacion";
-var url_edit_pais = 'pais/edit';
-var url_edit_codigos = 'codigopostal/show';
+var url_relacion      = "empresas/insert_relacion";
+var url_edit_pais     = 'pais/edit';
+var url_edit_codigos  = 'codigopostal/show';
 
 var app = angular.module('ng-empresas', ["ngRoute"]);
-
 app.controller('EmpresasController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
@@ -24,6 +23,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
         $scope.edit   = {};
         $scope.fields = {};
         $scope.select_estado();
+        $scope.consulta_general();
     }
 
     $scope.click = function (){
@@ -37,28 +37,6 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
-            
-            /*var registros = [];
-            var j = 0;
-            for (var i = 0; i < $scope.datos.length; i++) {
-              registros[j] = [
-                $scope.datos[i].id
-                ,$scope.datos[i].clave
-                ,$scope.datos[i].descripcion
-                ,'<button type="button" class="btn btn-primary" ng-click="edit_register('+$scope.datos[i].id+')">Editar</button>'
-                ,'<button type="button" class="btn btn-danger" ng-click="delete_register('+$scope.datos[i].id+')">Borrar</button>'
-              ];
-              j++;
-            }
-        var titulos = ['id', 'Clave','Descripción','',''];
-        var table = {
-            'titulos'         : titulos
-            ,'registros'      : registros
-            ,'id'             : "datatable"
-            ,'class'          : "fixed_header"
-          };
-          $scope.fields = data_table(table);
-          //jQuery('#data_table').html($scope.fields);*/
         }).catch(function(error){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -86,6 +64,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
         }
         this.insert.id_estado  = jQuery('#cmb_estados').val();
         this.insert.id_codigo  = jQuery('#cmb_codigo_postal').val();
+        this.insert.id_servicio_comercial  = jQuery('#cmb_servicio_comerciales').val();
         var url = domain( url_insert );
         var fields = this.insert;
         MasterController.request_http(url,fields,'post',$http, false )
@@ -99,8 +78,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             }); 
-            //redirect(domain(redireccion));
-            //$scope.consulta_general();
+            $scope.constructor();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -127,18 +105,26 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
           return;
       }
       $scope.update = $scope.edit;
-      $scope.update.id_estado  = jQuery('#cmb_estados_edit').val();
-      $scope.update.id_codigo  = jQuery('#cmb_codigo_postal_edit').val();
-      $scope.update.id_country        = jQuery('#cmb_pais_edit').val();
-      $scope.update.estatus           = jQuery('#cmb_estatus_edit').val();
-      $scope.update.id_servicio       = jQuery('#cmb_servicio_edit').val();
-      $scope.update.id_regimen_fiscal = jQuery('#cmb_regimen_fiscal_edit').val();
+      $scope.update.id_estado              = jQuery('#cmb_estados_edit').val();
+      $scope.update.id_codigo              = jQuery('#cmb_codigo_postal_edit').val();
+      $scope.update.id_country             = jQuery('#cmb_pais_edit').val();
+      $scope.update.estatus                = jQuery('#cmb_estatus_edit').val();
+      $scope.update.id_servicio_comercial  = jQuery('#cmb_servicio_comerciales_edit').val();
+      $scope.update.id_regimen_fiscal      = jQuery('#cmb_regimen_fiscal_edit').val();
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
           toastr.info( response.data.message , title );
-          redirect(domain(redireccion));
+          jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_edit_register"
+                ,'modal'    : true
+                ,'width'    : 900
+                ,'height'   : 400
+                ,'autoSize' : false
+            }); 
+          $scope.constructor();
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -174,7 +160,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
            }
            jQuery('#cmb_pais_edit').val($scope.edit.id_country);
            jQuery('#cmb_estatus_edit').val($scope.edit.estatus);
-           jQuery('#cmb_servicio_edit').selectpicker('val',[$scope.edit.id_servicio]);
+           jQuery('#cmb_servicio_comerciales_edit').val($scope.edit.id_servicio_comercial);
            jQuery('#cmb_regimen_fiscal_edit').val($scope.edit.id_regimen_fiscal);
            $scope.select_estado_edit();
            select_codigos_edit($scope.edit.id_estado,$scope.edit.id_codigo);

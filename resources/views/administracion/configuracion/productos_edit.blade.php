@@ -66,9 +66,9 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="product_code" class="col-sm-2 control-label">Clave</label>
+                                        <label for="product_code" class="col-sm-2 control-label">Clave Servicio</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="clave" ng-model="insert.clave_unidad" readonly>
+                                            {!! $servicios !!}
                                         </div>
 
 

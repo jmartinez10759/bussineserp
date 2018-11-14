@@ -10,9 +10,10 @@ use App\Model\Administracion\Configuracion\SysImpuestoModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysProductosModel;
 use App\Model\Administracion\Configuracion\SysTipoFactorModel;
-use App\Model\Administracion\Configuracion\SysPlanesProductosModel;
-use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
 use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
+use App\Model\Administracion\Configuracion\SysPlanesProductosModel;
+use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
+use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
 
 class ProductosController extends MasterController
 {
@@ -175,6 +176,27 @@ class ProductosController extends MasterController
                  ,'attr'      => 'data-live-search="true" '                 
            ]);
 
+        $servicios =  dropdown([
+           'data'       => SysClaveProdServicioModel::get()
+           ,'value'     => 'id'
+           ,'text'      => 'clave descripcion'
+           ,'name'      => 'cmb_servicio'
+           ,'class'     => 'form-control'
+           ,'leyenda'   => 'Seleccione Opcion'
+           ,'attr'      => 'style="width:400px;" ng-model="insert.id_servicio_comercial"'
+        ]);
+            
+        $servicios_edit =  dropdown([
+             'data'       => SysClaveProdServicioModel::get()
+             ,'value'     => 'id'
+             ,'text'      => 'clave descripcion'
+             ,'name'      => 'cmb_servicio_edit'
+             ,'class'     => 'form-control'
+             ,'leyenda'   => 'Seleccione Opcion'
+             ,'attr'      => 'data-live-search="true" '
+        ]);
+
+
         $data = [
             'page_title' 	         => "Configuración"
             ,'title'  		         => "Productos"
@@ -189,6 +211,8 @@ class ProductosController extends MasterController
             ,'impuesto_edit'         => $impuesto_edit
             ,'tipo_factor'           => $tipo_factor
             ,'tipo_factor_edit'      => $tipo_factor_edit
+            ,'servicios'             => $servicios
+            ,'servicios_edit'        => $servicios_edit
         ];
         return self::_load_view( "administracion.configuracion.productos",$data );
     }

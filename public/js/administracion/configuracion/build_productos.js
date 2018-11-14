@@ -252,7 +252,10 @@ app.controller('ProductosController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
-        $scope.insert = { estatus: "1" };
+        $scope.insert = { 
+           estatus: "1"
+          ,id_servicio_comercial: "0" 
+        };
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
@@ -481,6 +484,9 @@ function parse_clave_edit(){
 
 // jQuery('#cmb_categorias').selectpicker();
 // jQuery('#cmb_categorias_edit').selectpicker();
-// jQuery('#cmb_unidades').selectpicker();
 // jQuery('#cmb_unidades_edit').selectpicker();
 //jQuery('#cmb_empresas').selectpicker();
+//jQuery('#cmb_servicio').selectpicker();
+jQuery('#cmb_servicio').chosen();
+jQuery('#cmb_categorias').chosen();
+jQuery('#cmb_unidades').chosen();

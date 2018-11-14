@@ -780,6 +780,38 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@destroy'
         ,'as'       => 'codigopostal.destroy'
     ]);
+############################ SECCION PAISES #######################################
+    
+    Route::get('/configuracion/servicioscomerciales', [
+        'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@index'
+        ,'as'       => 'configuracion.servicioscomerciales'
+    ]);
+    
+    Route::get('/servicioscomerciales/all', [
+        'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@all'
+        ,'as'       => 'servicioscomerciales.all'
+    ]);
+
+    Route::post('/servicioscomerciales/register', [
+        'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@store'
+        ,'as'       => 'servicioscomerciales.register'
+    ]);
+    
+    Route::get('/servicioscomerciales/edit', [
+        'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@show'
+        ,'as'       => 'servicioscomerciales.edit'
+    ]);
+    
+    Route::put('/servicioscomerciales/update', [
+        'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@update'
+        ,'as'       => 'servicioscomerciales.update'
+    ]);
+
+    Route::delete('/servicioscomerciales/destroy', [
+        'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@destroy'
+        ,'as'       => 'servicioscomerciales.destroy'
+    ]);
+
 
     
 ############################ SECCION DE CARGA DE ARCHIVOS #######################################

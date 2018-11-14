@@ -12,12 +12,13 @@ use App\Model\Administracion\Configuracion\SysEstadosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysContactosModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
+use App\Model\Administracion\Configuracion\SysTipoFactorModel;
 use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
 use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
-use App\Model\Administracion\Configuracion\SysTipoFactorModel;
+use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
 
 class EmpresasController extends MasterController
 {
@@ -38,9 +39,9 @@ class EmpresasController extends MasterController
         if( Session::get('permisos')['GET'] ){
           return view('errors.error');
         }
-           $response = ( Session::get('id_rol') == 1 )? $this->_tabla_model::with(['contactos','servicios:id,clave,descripcion','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->get():$this->_consulta_employes(new SysUsersModel);
+           /*$response = ( Session::get('id_rol') == 1 )? $this->_tabla_model::with(['contactos','servicios:id,clave,descripcion','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->get():$this->_consulta_employes(new SysUsersModel);*/
            $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
-           $registros = [];
+           /*$registros = [];
            $registros_sucursales = [];
            $permisos = (Session::get('permisos')['PER'] == false)? 'style="display:block" ': 'style="display:none" ';
            foreach ($response as $respuesta) {
@@ -64,12 +65,12 @@ class EmpresasController extends MasterController
              ];
            }
 
-           $titulos = ['Empresa','RFC','Razón Social','Servicios','Dirección','Contacto','Telefono','Estatus','','',''];
+           $titulos = ['Empresa','RFC','Razón Social','Servicio Comercial','Dirección','Contacto','Telefono','Estatus','','',''];
            $table = [
              'titulos'          => $titulos
              ,'registros'       => $registros
              ,'id'              => "datatable"
-           ];
+           ];*/
 
             $paises = dropdown([
                  'data'      => SysPaisModel::get()
@@ -79,7 +80,7 @@ class EmpresasController extends MasterController
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
-                 ,'event'     => 'select_estado()'
+                 ,'event'     => 'ng-select_estado()'
                  ,'selected'  => '151'
            ]);
 
@@ -114,21 +115,21 @@ class EmpresasController extends MasterController
                    ,'attr'      => 'data-live-search="true"'
             ]);
 
-            $giro_comercial =  dropdown([
-                   'data'       => SysClaveProdServicioModel::get()
+            $servicios_comerciales =  dropdown([
+                   'data'       => SysServiciosComercialesModel::get()
                    ,'value'     => 'id'
-                   ,'text'      => 'clave descripcion'
-                   ,'name'      => 'cmb_servicio'
+                   ,'text'      => 'nombre'
+                   ,'name'      => 'cmb_servicio_comerciales'
                    ,'class'     => 'form-control'
                    ,'leyenda'   => 'Seleccione Opcion'
                    ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio"'
             ]);
             
-            $giro_comercial_edit =  dropdown([
-                 'data'       => SysClaveProdServicioModel::get()
+            $servicios_comerciales_edit =  dropdown([
+                 'data'       => SysServiciosComercialesModel::get()
                  ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_servicio_edit'
+                 ,'text'      => 'nombre'
+                 ,'name'      => 'cmb_servicio_comerciales_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true"'
@@ -154,18 +155,14 @@ class EmpresasController extends MasterController
 
 
            $data = [
-             'page_title'               => "Configuración"
-             ,'title'                   => "Empresas"
-             ,'data_table'              =>  data_table($table)
+             'page_title'               =>  "Configuración"
+             ,'title'                   =>  "Empresas"
+             ,'data_table'              =>  "data_table(table)"
              ,'data_table_sucursales'   =>  data_table($table_sucursales)
-             ,'estados'                 =>  ""
-             ,'estados_edit'            =>  ""
-             ,'giro_comercial'          =>  $giro_comercial
-             ,'giro_comercial_edit'     =>  $giro_comercial_edit
+             ,'giro_comercial'          =>  $servicios_comerciales
+             ,'giro_comercial_edit'     =>  $servicios_comerciales_edit
              ,'regimen_fiscal'          =>  $regimen_fiscal
              ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
-             ,'codigo_postal'           =>  ""
-             ,'codigo_postal_edit'      =>  ""
              ,'paises'                  =>  $paises
              ,'paises_edit'             =>  $paises_edit
            ];
@@ -180,8 +177,7 @@ class EmpresasController extends MasterController
   */
   public function all( Request $request ){    
    try {
-        $response = ( Session::get('id_rol') == 1 )? $this->_tabla_model::with(['contactos','servicios:id,clave,descripcion','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->get():$this->_consulta_employes(new SysUsersModel);
-        
+        $response = ( Session::get('id_rol') == 1 )? $this->_tabla_model::with(['contactos','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->get():$this->_consulta_employes(new SysUsersModel);
         return $this->_message_success( 200, $response , self::$message_success );
       } catch (\Exception $e) {
           $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -256,7 +252,7 @@ class EmpresasController extends MasterController
             return $query->where(['sys_contactos.estatus' => 1])->get();
         },'sucursales' => function( $query ){
             return $query->where(['sys_empresas_sucursales.estatus' => 1])->groupby('id_sucursal')->get();
-        },'clientes','servicios:id,clave,descripcion','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])
+        },'clientes','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])
         ->where( $where )->groupby('id')->get();
         return $this->_message_success( 200, $response[0] , self::$message_success );
       } catch (\Exception $e) {
@@ -277,7 +273,7 @@ class EmpresasController extends MasterController
       DB::beginTransaction();
       try {
               $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-              $string_key_empresas = [ 'contacto','departamento','telefono', 'correo','created_at','updated_at','contactos','sucursales','regimenes','codigos','servicios','clientes','sucursales','updated_at','created_at' ];
+              $string_key_empresas = [ 'contacto','departamento','telefono', 'correo','created_at','updated_at','contactos','sucursales','regimenes','codigos','comerciales','clientes','sucursales' ];
               $string_data_empresa = [];
               $string_data_contactos = [];
               foreach( $request->all() as $key => $value ){
@@ -343,6 +339,7 @@ class EmpresasController extends MasterController
               }
               $this->_tabla_model::where(['id' => $request->id])->delete();
               SysEmpresasSucursalesModel::where(['id_empresa' => $request->id])->delete();
+              SysContactosSistemasModel::where(['id_empresa' => $request->id])->delete();
           DB::commit();
           $success = true;
           } catch (\Exception $e) {

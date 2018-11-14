@@ -157,14 +157,14 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="subtotal" class="col-sm-2 control-label">Servicios: </label>
+                                        <label for="subtotal" class="col-sm-2 control-label">Giro Comercial: </label>
                                         <div class="col-sm-4">
                                             {!! $giro_comercial !!}
                                         </div>
 
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control" ng-model="insert.estatus">
+                                            <select class="form-control" ng-model="insert.estatus" convert-to-number>
                                                 <option value="0">Baja</option>
                                                 <option value="1">Activo</option>
                                             </select>
@@ -356,7 +356,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="subtotal" class="col-sm-2 control-label">Servicios: </label>
+                                        <label for="subtotal" class="col-sm-2 control-label">Giro Comercial: </label>
                                         <div class="col-sm-4">
                                             {!! $giro_comercial_edit !!}
                                         </div>
