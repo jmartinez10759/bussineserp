@@ -41,7 +41,7 @@
          *@return void
          */
         public function all( Request $request ){
-            #debuger($request->all());
+            // debuger($request->all());
             try {
                 $response = $this->_tabla_model::orderby('id','DESC')->get();
               return $this->_message_success( 200, $response , self::$message_success );

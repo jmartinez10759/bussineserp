@@ -166,7 +166,7 @@
             try {
                 $estado = SysEstadosModel::select('id','clave')->where(['id' => $request->id])->get();
                 $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => $estado[0]->clave])->get();
-            return $this->_message_success( 200, $response[0] , self::$message_success );
+            return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
