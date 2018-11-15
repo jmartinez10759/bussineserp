@@ -19,30 +19,35 @@ class SysEmpresasModel extends Model
     ,'id_country'
     ,'id_estado'
     ,'id_regimen_fiscal'
-    ,'id_servicio'
+    ,'id_servicio_comercial'
     ,'telefono'
     ,'logo'
     ,'estatus'
   ];
 
-  public function menus(){
-    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysMenuModel','sys_rol_menu','id_empresa','id_menu')->withPivot('estatus');
+  public function menus()
+  {
+    return $this->belongsToMany(SysMenuModel::class,'sys_rol_menu','id_empresa','id_menu')->withPivot('estatus');
   }
 
-  public function sucursales(){
-      return $this->belongsToMany(SysSucursalesModel::class,'sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
+  public function sucursales()
+  {
+    return $this->belongsToMany(SysSucursalesModel::class,'sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
   }
 
-  public function roles(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysRolesModel','sys_users_roles','id_empresa','id_rol');
+  public function roles()
+  {
+    return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','id_empresa','id_rol');
   }
 
-  public function permisos(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysAccionesModel','sys_rol_menu','id_empresa','id_permiso');
+  public function permisos()
+  {
+    return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_empresa','id_permiso');
   }
 
-  public function usuarios(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_roles','id_empresa','id_users');
+  public function usuarios()
+  {
+    return $this->belongsToMany(SysUsersModel::class,'sys_users_roles','id_empresa','id_users');
   }
   
   public function proveedores()
@@ -91,9 +96,9 @@ class SysEmpresasModel extends Model
   {
     return $this->hasOne(SysPaisModel::class, 'id','id_country');
   }
-  public function servicios()
+  public function comerciales()
   {
-    return $this->hasOne( SysClaveProdServicioModel::class, 'id','id_servicio');
+    return $this->hasOne( SysServiciosComercialesModel::class, 'id','id_servicio_comercial');
   }
   public function codigos()
   {

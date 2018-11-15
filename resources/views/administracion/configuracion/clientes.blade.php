@@ -35,6 +35,7 @@
                             <td>@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
                             <td>@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
                             <td>@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
+                            <td>@{{ (data.estatus == 1)? "Clientes":"Prospectos" }}</td>
                             <td class="text-right">
                                 <div class="dropdown">
                                     <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -92,6 +93,7 @@
                             <td>@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
                             <td>@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
                             <td>@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
+                            <!-- <td>@{{ (data.estatus == 1)? "Clientes":"Prospectos" }}</td> -->
                             <td class="text-right">
                                 <div class="dropdown">
                                     <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

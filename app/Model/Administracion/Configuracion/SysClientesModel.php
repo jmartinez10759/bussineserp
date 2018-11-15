@@ -19,7 +19,7 @@ class SysClientesModel extends Model
       ,'id_country'
       ,'id_codigo'
       ,'id_estado'
-      ,'id_servicio'
+      ,'id_servicio_comercial'
       ,'telefono'
       ,'logo'
       ,'estatus'
@@ -61,9 +61,9 @@ class SysClientesModel extends Model
     {
       return $this->hasOne(SysPaisModel::class, 'id','id_country');
     }
-    public function servicios()
+    public function comerciales()
     {
-      return $this->hasOne( SysClaveProdServicioModel::class, 'id','id_servicio');
+      return $this->hasOne( SysServiciosComercialesModel::class, 'id','id_servicio_comercial');
     }
     public function codigos()
     {

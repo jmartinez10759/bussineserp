@@ -14,7 +14,7 @@ class BuildController extends Command
      *
      * @var string
      */
-    protected $signature = 'build:mvc {file} {--config}';
+    protected $signature = 'build:mvc {file} {--config} {--angular}';
 
     /**
      * The console command description.
@@ -44,6 +44,7 @@ class BuildController extends Command
     public function handle()
     {   
         $config = $this->option('config');
+        $angular = $this->option('angular');
         $files = $this->argument('file');
         $this->line('Instalando el Controller ... ');
         $this->line('Instalando el Modelo ... ');
@@ -74,8 +75,8 @@ class BuildController extends Command
             file_put_contents("app/Http/Controllers/Development/".$controller.".php",$data);
             file_put_contents("app/Model/Development/".$models.".php",$data_model);
             $this->struct_upload( $models, str_replace('Controller','',$controller) );
-            $this->struct_view(str_replace('Controller','',$controller));
-            $this->struct_js(str_replace('Controller','',$controller));
+            $this->struct_view(str_replace('Controller','',$controller),false,$angular);
+            $this->struct_js(str_replace('Controller','',$controller),false,$angular);
         }else{
             $ruta_controller = "app/Http/Controllers/".$files.".php";
             $ruta_modelo = "App\Model\\".str_replace('/','\\',$modelo).";";
@@ -89,8 +90,8 @@ class BuildController extends Command
             file_put_contents( $ruta_controller, $data );
             file_put_contents( $ruta_modelos, $data_model );
             $this->struct_upload( $models, str_replace('Controller','',$controller), $ruta_modelo );
-            $this->struct_view(str_replace('Controller','',$controller),$ruta_views);
-            $this->struct_js(str_replace('Controller','',$controller), $ruta_script);
+            $this->struct_view(str_replace('Controller','',$controller),$ruta_views, $angular);
+            $this->struct_js(str_replace('Controller','',$controller), $ruta_script ,$angular);
             
         }
 
@@ -329,7 +330,7 @@ class '.$modelo.' extends Model
      *
      * @return mixed
      */
-    public function struct_view( $vista, $ruta_vistas = false){
+    public function struct_view( $vista, $ruta_vistas = false, $angular = false ){
         $ruta_vista = (isset($ruta_vistas) && $ruta_vistas != "" )? 'resources/views/'.$ruta_vistas."/".strtolower($vista).".blade.php" : 'resources/views/development/'.strtolower($vista).".blade.php";
         $ruta_vista_edit = (isset($ruta_vistas) && $ruta_vistas != "")? 'resources/views/'.$ruta_vistas."/".strtolower($vista)."_edit.blade.php" : 'resources/views/development/'.strtolower($vista)."_edit.blade.php";
         $ruta_script =  (isset($ruta_vistas) && $ruta_vistas != "")? $ruta_vistas."/build_".strtolower($vista).".js" : 'development/build_'.strtolower($vista).".js";
@@ -345,6 +346,56 @@ class '.$modelo.' extends Model
             fopen($ruta_vista,"w+");
             fopen($ruta_vista_edit,"w+");
         }
+        if ($angular) {
+        $data = 
+'@extends(\'layouts.template.app\')
+@section(\'content\')
+@push(\'styles\')
+@endpush
+<div ng-app="ng-'.strtolower($vista).'" ng-controller="'.strtolower($vista).'Controller" ng-init="constructor()" ng-cloak>
+    {!! $data_table !!}
+    @include(\''.$vista_edicion.'\')
+    {!! $seccion_reportes !!}
+</div>
+@stop
+@push(\'scripts\')
+<script type="text/javascript" src="{{asset(\'js/'.$ruta_script.'\')}}"></script>
+@endpush';
+        $data_edit = 
+'<div class="" id="modal_add_register" style="display:none;">
+            <div class="modal-header">
+                <h3> Registro </h3>
+            </div>
+            <div class="modal-body">
+                
+                
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-primary" ng-click="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
+                </div>
+            </div>
+    
+</div>
+
+<div class="" id="modal_edit_register" style="display:none;">
+            <div class="modal-header">
+                <h3> Detalles </h3>
+            </div>
+            <div class="modal-body">
+                
+                
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-primary" ng-click="insert_register()"><i class="fa fa-save"></i> Actualizar </button> 
+                </div>
+            </div>
+    
+</div>';
+        }else{
         $data = 
 '@extends(\'layouts.template.app\')
 @section(\'content\')
@@ -361,25 +412,41 @@ class '.$modelo.' extends Model
 @endpush';
         $data_edit = 
 '<div class="" id="modal_add_register" style="display:none;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3> Titulo modales </h3>
-            </div>
-            <div class="modal-body">
-                
-                
-            </div>
-            <div class="modal-footer">
-                <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
-                </div>
-            </div>
-
+    
+        <div class="modal-header">
+            <h3> Registro </h3>
         </div>
-    </div>
+        <div class="modal-body">
+            
+            
+        </div>
+        <div class="modal-footer">
+            <div class="btn-toolbar pull-right">
+                <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
+            </div>
+        </div>
+
+</div>
+
+<div class="" id="modal_edit_register" style="display:none;">
+    
+        <div class="modal-header">
+            <h3> Detalles </h3>
+        </div>
+        <div class="modal-body">
+            
+            
+        </div>
+        <div class="modal-footer">
+            <div class="btn-toolbar pull-right">
+                <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
+            </div>
+        </div>
+
 </div>';
+}
             file_put_contents($ruta_vista,$data);
             file_put_contents($ruta_vista_edit,$data_edit);
     }
@@ -388,7 +455,7 @@ class '.$modelo.' extends Model
      *
      * @return mixed
      */
-    public function struct_js( $vista, $ruta_js = false ){
+    public function struct_js( $vista, $ruta_js = false, $angular ){
         $ruta_script = (isset($ruta_js) && $ruta_js != "" )? 'public/js/'.$ruta_js."/build_".strtolower($vista).".js" : 'public/js/development/build_'.strtolower($vista).".js";
         $ruta_directorio = (isset($ruta_js) && $ruta_js != "" )? 'public/js/'.$ruta_js.'/' : 'public/js/development/';
         if( !file_exists($ruta_directorio)){
@@ -397,6 +464,165 @@ class '.$modelo.' extends Model
         if( !file_exists($ruta_script) ){
             fopen($ruta_script,"w+");
         }
+        if ($angular) {
+        $data = 
+'var url_insert  = "'.strtolower($vista).'/register";
+var url_update   = "'.strtolower($vista).'/update";
+var url_edit     = "'.strtolower($vista).'/edit";
+var url_destroy  = "'.strtolower($vista).'/destroy";
+var url_all      = "'.strtolower($vista).'/all";
+var redireccion  = "configuracion/'.strtolower($vista).'";
+
+var app = angular.module("ng-'.strtolower($vista).'", ["ngRoute"]);
+app.config(function( $routeProvider, $locationProvider ) {
+    $routeProvider
+    .when("/ruta1", {
+        template : "<h1></h1>",
+    })
+    .when("/ruta2", {
+        template : "<h1></h1>",
+    })
+    .when("/ruta3", {
+        templateUrl : "ruta3.html",
+        controller : ""
+    });
+    $locationProvider.html5Mode(true);
+});
+app.controller("'.strtolower($vista).'Controller", function( $scope, $http, $location ) {
+    /*se declaran las propiedades dentro del controller*/
+    $scope.constructor = function(){
+        $scope.datos  = [];
+        $scope.insert = {};
+        $scope.update = {};
+        $scope.edit   = {};
+        $scope.fields = {};
+        $scope.consulta_general();
+    }
+    $scope.consulta_general = function(){
+        var url = domain( url_all );
+        var fields = {};
+        MasterController.request_http(url,fields,"get",$http, false )
+        .then(function(response){
+            $scope.datos = response.data.result;
+            console.log($scope.datos);
+        }).catch(function(error){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error(error);
+              toastr.error( error.result , expired );
+        });
+    }
+    
+    $scope.insert_register = function(){
+
+        var url = domain( url_insert );
+        var fields = $scope.insert;
+        MasterController.request_http(url,fields,"post",$http, false )
+        .then(function( response ){
+            toastr.success( response.data.message , title );
+            jQuery.fancybox.close({
+                "type"      : "inline"
+                ,"src"      : "#modal_add_register"
+                ,"modal"    : true
+                ,"width"    : 900
+                ,"height"   : 400
+                ,"autoSize" : false
+            });
+            $scope.constructor();
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+
+    }
+
+    $scope.update_register = function(){
+
+      var url = domain( url_update );
+      var fields = $scope.update;
+      MasterController.request_http(url,fields,"put",$http, false )
+      .then(function( response ){
+          toastr.info( response.data.message , title );
+          jQuery.fancybox.close({
+                "type"      : "inline"
+                ,"src"      : "#modal_edit_register"
+                ,"modal"    : true
+                ,"width"    : 900
+                ,"height"   : 400
+                ,"autoSize" : false
+            });
+          $scope.consulta_general();
+      }).catch(function( error ){
+          if( isset(error.response) && error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+            }
+            console.error( error );
+            toastr.error( error.result , expired );
+      });
+    }
+
+    $scope.edit_register = function( id ){
+
+      var url = domain( url_edit );
+      var fields = {id : id };
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+           $scope.edit = response.data.result;
+
+          jQuery.fancybox.open({
+                "type"      : "inline"
+                ,"src"      : "#modal_edit_register"
+                ,"modal"    : true
+                ,"width"    : 900
+                ,"height"   : 400
+                ,"autoSize" : false
+            });          
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+    }
+
+    $scope.destroy_register = function( id ){
+
+      var url = domain( url_destroy );
+      var fields = {id : id };
+      buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+        MasterController.request_http(url,fields,"delete",$http, false )
+        .then(function( response ){
+            toastr.success( response.data.message , title );
+            $scope.consulta_general();
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+          
+      },"warning",true,["SI","NO"]);  
+    }
+
+});
+';
+        }else{    
 $data = 
 'var url_insert  = "'.strtolower($vista).'/register";
 var url_update   = "'.strtolower($vista).'/update";
@@ -516,10 +742,12 @@ new Vue({
 
 
 });'; 
+        }
         file_put_contents($ruta_script,$data);
         
         
         
     }
+
     
 }
