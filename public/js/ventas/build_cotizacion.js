@@ -361,7 +361,7 @@ new Vue({
                 });
                 if(jQuery('#cmb_estatus_edit').val() == 5){
                     buildSweetAlert('# '+response.data.result.id_pedido,'Se género el pedido con éxito','success');
-                    setTimeout("window.location.href='/crm/ventas/pedidos';",4000);
+                    setTimeout("window.location.href=domain('ventas/pedidos');",4000);
 
                 }
               jQuery('#id_cotizacion_edit').val();

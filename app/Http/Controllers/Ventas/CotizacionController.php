@@ -245,7 +245,7 @@
 
             try {
                 /*Consulta por id cotizacion agregar cotizacion*/
-                $where = ($request->id == "") ? 'WHERE sysbussiness.sys_cotizaciones.id = 0' : 'WHERE sysbussiness.sys_cotizaciones.id = '.$request->id;
+                $where = ($request->id == "") ? 'WHERE sys_cotizaciones.id = 0' : 'WHERE sys_cotizaciones.id = '.$request->id;
 
                 /*Consulta general de las cotizaciones*/
                 if(Session::get('id_rol') == 1){
@@ -269,18 +269,18 @@
                         ,sys_conceptos_cotizaciones.precio
                         ,sys_conceptos_cotizaciones.total
                         ,sys_productos.codigo as cod_productos,sys_planes.codigo as cod_planes
-                        FROM sysbussiness.sys_users_cotizaciones
-                        inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-                        inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-                        left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-                        left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where;
+                        FROM sys_users_cotizaciones
+                        inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                        inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                        left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+                        left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where;
 
                 $tol = "SELECT sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
-                        FROM sysbussiness.sys_users_cotizaciones
-                        inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-                        inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-                        left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-                        left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where.' '."group by sys_cotizaciones.id";
+                        FROM sys_users_cotizaciones
+                        inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                        inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                        left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+                        left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan ".$where.' '."group by sys_cotizaciones.id";
 
                 $sql_general = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
                                    CONCAT(sys_users.name,' ',sys_users.first_surname) as vendedor,
@@ -291,15 +291,15 @@
                                    sys_estatus.nombre,
                                    sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
                                    sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
-                                 FROM sysbussiness.sys_users_cotizaciones
-                                 inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-                                 left join  sysbussiness.sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
-                                 left join  sysbussiness.sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
-                                 left join  sysbussiness.sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
-                                 inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-                                 left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-                                 left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
-                                 left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$group_by_general.' '.$orderBy;
+                                 FROM sys_users_cotizaciones
+                                 inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                                 left join  sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
+                                 left join  sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
+                                 left join  sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
+                                 inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                                 left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+                                 left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
+                                 left join sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$group_by_general.' '.$orderBy;
 
 
                 $concep = DB::select($sql);
@@ -352,21 +352,21 @@
                        sys_cotizaciones.id_moneda,sys_cotizaciones.id_contacto,sys_cotizaciones.id_metodo_pago,
                        sys_cotizaciones.id_forma_pago,sys_cotizaciones.id_estatus,
                        sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
-             FROM sysbussiness.sys_users_cotizaciones
-             inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-             inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-             left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-             left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sysbussiness.sys_cotizaciones.id =".$request->id.' '."GROUP BY sys_users_cotizaciones.id_cotizacion";
+             FROM sys_users_cotizaciones
+             inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+             inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+             left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+             left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sys_cotizaciones.id =".$request->id.' '."GROUP BY sys_users_cotizaciones.id_cotizacion";
 
                 $conc = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
                        sys_cotizaciones.codigo,sys_cotizaciones.created_at,sys_productos.descripcion as prod_desc,sys_planes.descripcion,
                        sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
                        sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente
-             FROM sysbussiness.sys_users_cotizaciones
-             inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-             inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-             left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-             left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sysbussiness.sys_cotizaciones.id =".$request->id;
+             FROM sys_users_cotizaciones
+             inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+             inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+             left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+             left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sys_cotizaciones.id =".$request->id;
 
                 $concep = DB::select($coti);
                 $conceptos = DB::select($conc);
@@ -973,37 +973,37 @@
             sys_clientes.nombre_comercial as empresa,
             sys_cotizaciones.id_estatus,
             sys_estatus.nombre,
-            sysbussiness.sys_empresas.nombre_comercial,
-            sysbussiness.sys_empresas.razon_social as razon_em,
-            sysbussiness.sys_empresas.logo, sysbussiness.sys_empresas.telefono as tel_em,
-            sysbussiness.sys_empresas.calle as calle_em,
-            sysbussiness.sys_empresas.colonia as col_em,
-            sysbussiness.sys_empresas.logo as muni_emp,
+            sys_empresas.nombre_comercial,
+            sys_empresas.razon_social as razon_em,
+            sys_empresas.logo, sys_empresas.telefono as tel_em,
+            sys_empresas.calle as calle_em,
+            sys_empresas.colonia as col_em,
+            sys_empresas.logo as muni_emp,
             sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc,
             sys_formas_pagos.descripcion as des_forma_p,sys_metodos_pagos.descripcion as des_metod_p
-          FROM sysbussiness.sys_users_cotizaciones
-          inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-          left join  sysbussiness.sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
-          left join  sysbussiness.sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
-          left join  sysbussiness.sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
-          inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-          left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-          left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
-          left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users
-          left join sysbussiness.sys_empresas on sys_empresas.id = sys_users_cotizaciones.id_empresa
-          left join sysbussiness.sys_formas_pagos on sys_formas_pagos.id = sys_cotizaciones.id_forma_pago
-          left join sysbussiness.sys_metodos_pagos on sys_metodos_pagos.id = sys_cotizaciones.id_metodo_pago
-          where sysbussiness.sys_cotizaciones.id =" .$id ." "."GROUP BY sys_users_cotizaciones.id_cotizacion";
+          FROM sys_users_cotizaciones
+          inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+          left join  sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
+          left join  sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
+          left join  sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
+          inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+          left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+          left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
+          left join sys_users on sys_users.id = sys_users_cotizaciones.id_users
+          left join sys_empresas on sys_empresas.id = sys_users_cotizaciones.id_empresa
+          left join sys_formas_pagos on sys_formas_pagos.id = sys_cotizaciones.id_forma_pago
+          left join sys_metodos_pagos on sys_metodos_pagos.id = sys_cotizaciones.id_metodo_pago
+          where sys_cotizaciones.id =" .$id ." "."GROUP BY sys_users_cotizaciones.id_cotizacion";
 
           $prod = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
             sys_cotizaciones.codigo,sys_cotizaciones.created_at,sys_productos.descripcion as prod_desc,sys_planes.descripcion,
             sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
             sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente
-        FROM sysbussiness.sys_users_cotizaciones
-        inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-        inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-        left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-        left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sysbussiness.sys_cotizaciones.id =" .$id;
+        FROM sys_users_cotizaciones
+        inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+        inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+        left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+        left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sys_cotizaciones.id =" .$id;
           
             $datos  = DB::select($sql);
             $produc = DB::select($prod); 
@@ -1061,37 +1061,37 @@
             sys_clientes.nombre_comercial as empresa,
             sys_cotizaciones.id_estatus,
             sys_estatus.nombre,
-            sysbussiness.sys_empresas.nombre_comercial,
-            sysbussiness.sys_empresas.razon_social as razon_em,
-            sysbussiness.sys_empresas.logo, sysbussiness.sys_empresas.telefono as tel_em,
-            sysbussiness.sys_empresas.calle as calle_em,
-            sysbussiness.sys_empresas.colonia as col_em,
-            sysbussiness.sys_empresas.logo as muni_emp,
+            sys_empresas.nombre_comercial,
+            sys_empresas.razon_social as razon_em,
+            sys_empresas.logo, sys_empresas.telefono as tel_em,
+            sys_empresas.calle as calle_em,
+            sys_empresas.colonia as col_em,
+            sys_empresas.logo as muni_emp,
             sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc,
             sys_formas_pagos.descripcion as des_forma_p,sys_metodos_pagos.descripcion as des_metod_p
-          FROM sysbussiness.sys_users_cotizaciones
-          inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-          left join  sysbussiness.sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
-          left join  sysbussiness.sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
-          left join  sysbussiness.sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
-          inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-          left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-          left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
-          left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users
-          left join sysbussiness.sys_empresas on sys_empresas.id = sys_users_cotizaciones.id_empresa
-          left join sysbussiness.sys_formas_pagos on sys_formas_pagos.id = sys_cotizaciones.id_forma_pago
-          left join sysbussiness.sys_metodos_pagos on sys_metodos_pagos.id = sys_cotizaciones.id_metodo_pago
-          where sysbussiness.sys_cotizaciones.id =" .$data['id'] ." "."GROUP BY sys_users_cotizaciones.id_cotizacion";
+          FROM sys_users_cotizaciones
+          inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+          left join  sys_clientes on sys_clientes.id = sys_cotizaciones.id_cliente
+          left join  sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
+          left join  sys_estatus on sys_estatus.id = sys_cotizaciones.id_estatus
+          inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+          left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+          left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
+          left join sys_users on sys_users.id = sys_users_cotizaciones.id_users
+          left join sys_empresas on sys_empresas.id = sys_users_cotizaciones.id_empresa
+          left join sys_formas_pagos on sys_formas_pagos.id = sys_cotizaciones.id_forma_pago
+          left join sys_metodos_pagos on sys_metodos_pagos.id = sys_cotizaciones.id_metodo_pago
+          where sys_cotizaciones.id =" .$data['id'] ." "."GROUP BY sys_users_cotizaciones.id_cotizacion";
 
           $prod = "SELECT sys_users_cotizaciones.id_cotizacion,sys_users_cotizaciones.id_concepto,
             sys_cotizaciones.codigo,sys_cotizaciones.created_at,sys_productos.descripcion as prod_desc,sys_planes.descripcion,
             sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
             sys_cotizaciones.id,sys_cotizaciones.descripcion as des_cot,sys_cotizaciones.id_cliente
-        FROM sysbussiness.sys_users_cotizaciones
-        inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-        inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-        left join sysbussiness.sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
-        left join sysbussiness.sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sysbussiness.sys_cotizaciones.id =" .$data['id'];
+        FROM sys_users_cotizaciones
+        inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+        inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+        left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
+        left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan where sys_cotizaciones.id =" .$data['id'];
           
             $datos  = DB::select($sql);
             $produc = DB::select($prod); 
@@ -1141,13 +1141,13 @@
             $email = "SELECT sys_users_cotizaciones.id_cotizacion,
                     sys_contactos.nombre_completo as contacto,
                     sys_contactos.correo as correo,
-                    sysbussiness.sys_empresas.nombre_comercial,
-                    sysbussiness.sys_empresas.razon_social as razon_em
-                FROM sysbussiness.sys_users_cotizaciones
-                inner join sysbussiness.sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
-                left join  sysbussiness.sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
-                left join sysbussiness.sys_empresas on sys_empresas.id = sys_users_cotizaciones.id_empresa
-                where sysbussiness.sys_cotizaciones.id =" .$request->input('id').' '."GROUP BY sys_users_cotizaciones.id_cotizacion";
+                    sys_empresas.nombre_comercial,
+                    sys_empresas.razon_social as razon_em
+                FROM sys_users_cotizaciones
+                inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
+                left join  sys_contactos on sys_contactos.id = sys_cotizaciones.id_contacto
+                left join sys_empresas on sys_empresas.id = sys_users_cotizaciones.id_empresa
+                where sys_cotizaciones.id =" .$request->input('id').' '."GROUP BY sys_users_cotizaciones.id_cotizacion";
 
             $contacto = DB::select($email);
               
