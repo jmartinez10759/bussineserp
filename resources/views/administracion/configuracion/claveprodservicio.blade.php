@@ -57,9 +57,9 @@
             </table>
         </div>
     </div>
-    {!! $seccion_reportes !!}
-    @include('administracion.configuracion.claveprodservicio_edit')
     
+    @include('administracion.configuracion.claveprodservicio_edit')
+    {!! $seccion_reportes !!}
 </div>
 @stop
 @push('scripts')

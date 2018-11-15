@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div id="vue-proveedores">
+<div ng-app="ng-proveedores" ng-controller="ProveedoresController" ng-init="constructor()" ng-cloak>
     {!! $data_table !!}
     @include('administracion.configuracion.proveedores_edit')
 </div>

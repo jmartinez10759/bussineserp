@@ -28,11 +28,9 @@
             }
             
             $data = [
-                "page_title" 	        => "Configuracion"
+                "page_title" 	        => "Configuración"
                 ,"title"  		        => "Paises"
                 ,"data_table"  		    => ""
-                ,'script'               => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js')
-                ,'script_route'         => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js')
             ];
             return self::_load_view( "administracion.configuracion.pais",$data );
         }
@@ -43,9 +41,9 @@
          *@return void
          */
         public function all( Request $request ){
-            #debuger($request->all());
+            // debuger($request->all());
             try {
-                $response = $this->_tabla_model::get();
+                $response = $this->_tabla_model::orderby('id','DESC')->get();
               return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -62,7 +60,9 @@
         public function show( Request $request ){
 
             try {
-                $response = $this->_tabla_model::select('id','clave','descripcion')->with(['estados:id,clave,nombre,country_id'])->where([ 'id' => $request->id ])->get();
+                #$response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
+                $response = $this->_tabla_model::with(['estados:id,clave,nombre,country_id'])->where([ 'id' => $request->id ])->get();
+
             return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -82,7 +82,7 @@
             DB::beginTransaction();
             try {
                 #debuger($request->all());
-                $response = [];
+            $response = $this->_tabla_model::create( $request->all() );
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -109,7 +109,21 @@
             $error = null;
             DB::beginTransaction();
             try {
+                
+                $string_key_estados = [ 'clave','nombre','country_id' ];
+                $string_key_paises = [ 'descripcion','formato_codigo_postal','formato_registro','validacion_registro','agrupaciones','created_at','updated_at','clave'  ];
+                $string_data_pais = [];
+                $string_data_estado = [];
+                foreach( $request->all() as $key => $value ){
+                    
+                    if( in_array( $key, $string_key_paises) ){
+                       $string_data_pais[$key] = $value; 
+                    }
+                    
+            }
+            // debuger($string_data_pais);
 
+               $response = $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_pais );
 
             DB::commit();
             $success = true;
@@ -135,7 +149,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = SysPaisModel::where(['id' => $request->id])->delete();
             DB::commit();
             $success = true;
             } catch (\Exception $e) {

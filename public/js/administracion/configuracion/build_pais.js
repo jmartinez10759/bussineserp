@@ -140,11 +140,14 @@ var app = angular.module('ng-pais', ["ngRoute"]);
 });*/
 app.controller('PaisesController', function( $scope, $http ) {
     /*se declaran las propiedades dentro del controller*/
+    $scope.constructor = function(){
     $scope.datos  = [];
     $scope.insert = {};
     $scope.update = {};
     $scope.edit   = {};
     $scope.fields = {};
+    $scope.consulta_general();
+  }
 
     $scope.consulta_general = function(){
         var url = domain( url_all );
@@ -152,26 +155,7 @@ app.controller('PaisesController', function( $scope, $http ) {
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
-            var registros = [];
-            var j = 0;
-            for (var i = 0; i < $scope.datos.length; i++) {
-              registros[j] = [
-                $scope.datos[i].id
-                ,$scope.datos[i].clave
-                ,$scope.datos[i].descripcion
-                ,'<button type="button" class="btn btn-primary" ng-click="edit_register('+$scope.datos[i].id+')">Editar</button>'
-                ,'<button type="button" class="btn btn-danger" ng-click="delete_register('+$scope.datos[i].id+')">Borrar</button>'
-              ];
-              j++;
-            }
-        var titulos = ['id', 'Clave','Descripción','',''];
-        var table = {
-            'titulos'         : titulos
-            ,'registros'      : registros
-            ,'id'             : "datatable"
-            ,'class'          : "fixed_header"
-          };
-          $scope.fields = data_table(table);
+            
           //jQuery('#data_table').html(data_table(table));
         }).catch(function(error){
             if( isset(error.response) && error.response.status == 419 ){
@@ -183,13 +167,23 @@ app.controller('PaisesController', function( $scope, $http ) {
               toastr.error( error.message , expired );
         });
     }
+    
     $scope.insert_register = function( id ){
         var url = domain( url_insert );
-        var fields = {id: id };
+        // var fields = {id: id };
+        var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
             //$scope.consulta_general();
             toastr.success( response.data.message , title );
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_add_register"
+                ,'modal'    : true
+                ,'width'    : 900
+                ,'height'   : 400
+                ,'autoSize' : false
+            });
             $scope.consulta_general();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
@@ -202,6 +196,82 @@ app.controller('PaisesController', function( $scope, $http ) {
         });
     }
 
-    $scope.consulta_general();
+    
+    $scope.update_register = function(){
+
+      
+      $scope.update = $scope.edit;
+      
+      var url = domain( url_update );
+      var fields = $scope.update;
+      MasterController.request_http(url,fields,'put',$http, false )
+      .then(function( response ){
+          toastr.info( response.data.message , title );
+          jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_edit_register"
+                ,'modal'    : true
+                ,'width'    : 900
+                ,'height'   : 400
+                ,'autoSize' : false
+            });
+          $scope.consulta_general();
+          //redirect(domain(redireccion));
+      }).catch(function( error ){
+          if( isset(error.response) && error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+            }
+            console.error( error );
+            toastr.error( error.result , expired );
+      });
+    }
+    $scope.edit_register = function( id ){
+      var url = domain( url_edit );
+      var fields = {id : id };
+      MasterController.request_http(url,fields,'get',$http, false )
+        .then(function( response ){
+
+           $scope.edit = response.data.result;
+          
+          jQuery.fancybox.open({
+                'type'      : 'inline'
+                ,'src'      : "#modal_edit_register"
+                ,'modal': true
+            });           
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error , expired );
+        });
+    }
+    $scope.destroy_register = function( id ){
+
+      var url = domain( url_destroy );
+      var fields = {id : id };
+      buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+        MasterController.request_http(url,fields,'delete',$http, false )
+        .then(function( response ){
+            toastr.success( response.data.message , title );
+            $scope.consulta_general();
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.data.result , expired );
+        });
+          
+      },"warning",true,["SI","NO"]);  
+    }
+
+
 
 });

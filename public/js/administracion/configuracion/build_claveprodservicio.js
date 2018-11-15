@@ -141,9 +141,9 @@ new Vue({
           var reportes= [];
           var count = 0;
           var j = 0;
-          /*for (var i in registros) {
+          for (var i in registros) {
               data[registros[i].id] = [];
-          }*/
+          }
           for (var i in registros) {
               data[count] = [
                 // registros[i].id
@@ -156,16 +156,16 @@ new Vue({
               count++;
           }
           // console.log(data);
-          /*for ( var i in data) {
+          for ( var i in data) {
               reportes[j] = Object.values(data[i]);
               j++
-          }*/
+          }
           var fields = {
               'columnas' : columns
               ,'titulo'  : "ninguno"
               ,'datos'   :  data
           };
-          console.log(fields);
+          // console.log(fields);
           var options ={
               // Styling
               theme: 'striped', // 'striped', 'grid' or 'plain'
@@ -200,8 +200,8 @@ new Vue({
            var pdf = new jsPDF( {orientation: 'landscape'});
            for (var i = 0; i < fields.datos.length; i++) {
               pdf.text(20,20,fields.titulo);
-              // console.log(fields.datos[i][0]);return;
-              pdf.autoTable( fields.columnas,fields.datos[i], options );
+              // console.log(fields.datos);return;
+              pdf.autoTable( fields.columnas,fields.datos, options );
               pdf.addPage();
             }
 
@@ -211,7 +211,7 @@ new Vue({
               ,'buttons' : ['share', 'close']
             });
 
-          // this.reportes_pdf(fields,options);
+          this.reportes_pdf(fields,options);
     
     }  
   }
