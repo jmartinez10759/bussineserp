@@ -209,7 +209,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Cantidad</label>
                     <div class="col-sm-9">
-                        <input type="number" id="cantidad_concepto" value='0' class="form-control" placeholder="" onkeyup="calcular_suma()" onkeypress="valida_num()">
+                        <input type="number" id="cantidad_concepto" value='0' class="form-control" placeholder="" onkeyup="calcular_suma()" onkeypress="valida_num()" onFocus="if (this.value=='0') this.value='';">
                     </div>
                 </div>
 
@@ -437,17 +437,19 @@
                                         <th>DESCRIPCIÓN</th>
                                         <th class="text-right">PRECIO UNITARIO.</th>
                                         <th class="text-right">PRECIO TOTAL</th>
-                                        <th></th>
+                                        <th ></th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody v-if="edit_cotizacion.length >1">
                                     <tr v-for="concep in datos">
                                         <td class="text-center">@{{ (concep.cod_productos)?concep.cod_productos:concep.cod_planes }}</td>
                                         <td class="text-center">@{{ concep.cantidad }}</td>
                                         <td>@{{ (concep.descripcion)?concep.descripcion:concep.prod_desc }}</td>
                                         <td class="text-right">@{{ concep.precio }}</td>
                                         <td class="text-right">@{{ concep.total }}</td>
-                                        <td class="text-center"><a href="#" v-on:click.prevent="destroy_register_edit(concep)"><i class="glyphicon glyphicon-trash"></i></a></td>
+                                        <td class="text-center ocultarr">
+                                        <a href="#" v-on:click.prevent="destroy_register_edit(concep)" v-if="edit_cotizacion.cotizacion[0].id_estatus == 6"><i class="glyphicon glyphicon-trash"></i></a>
+                                        </td>
                                     </tr>   
                                     </tbody>   
                                     <tfoot>       
@@ -478,7 +480,7 @@
 
         <div class="modal-footer">
             <div class="btn-toolbar pull-right">
-                <button type="button" class="btn btn-danger" data-fancybox-close v-on:click.prevent="cancel_cotizacion()"> <i class="fa fa-times-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-danger" data-fancybox-close v-on:click.prevent="cancel_cotizacion_edit()"> <i class="fa fa-times-circle"></i> Cancelar</button>
                 <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register_edit_update()" {{$insertar}} id="insertar_add_edit"><i class="fa fa-save"></i> Registrar </button> 
             </div>
         </div>

@@ -212,7 +212,7 @@ new Vue({
                     ,'src': "#modal_conceptos"
                     ,'buttons' : ['share', 'close']
                 });
-          
+                buildSweetAlert('# '+response.data.result.id,'Se género la cotización con éxito','success');
               clean_input_general();
               toastr.success( response.data.message , title );
               console.log(response.data.result.id);
@@ -359,6 +359,11 @@ new Vue({
                     ,'src': "#modal_conceptos_editar"
                     ,'buttons' : ['share', 'close']
                 });
+                if(jQuery('#cmb_estatus_edit').val() == 5){
+                    buildSweetAlert('# '+response.data.result.id_pedido,'Se género el pedido con éxito','success');
+                    setTimeout("window.location.href=domain('ventas/pedidos');",4000);
+
+                }
               jQuery('#id_cotizacion_edit').val();
               clean_input_general_edit();
               toastr.success( response.data.message , title );
@@ -532,6 +537,32 @@ new Vue({
             });
         }else{
             clean_input_general();
+        }
+    }
+    ,cancel_cotizacion_edit(){
+        var id_cotizacion = ( jQuery('#id_concep_producto').val() )? jQuery('#id_concep_producto').val() : "";
+        if(id_cotizacion != ""){
+           //var url = domain( url_destroy_cont );
+            //var fields = {id : id_cotizacion };
+            //var promise = MasterController.method_master(url,fields,"delete");
+            promise.then( response => {
+                clean_input_general();
+                this.datos = [];
+                this.consulta_general();
+                alert();
+                console.log(this.datos);
+            }).catch( error => {
+                if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+                }
+                  toastr.error( error.result , expired );  
+            });
+        }else{
+            clean_input_general();
+            this.datos = [];
+            this.consulta_general();
         }
     }
     ,pdf_print( id ){
