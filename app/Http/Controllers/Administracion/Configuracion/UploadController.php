@@ -53,6 +53,8 @@ use App\Model\Administracion\Configuracion\SysImpuestoModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysPaisModel;
 use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
+use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
+
 
 
 
@@ -204,6 +206,9 @@ class UploadController extends MasterController
             break;
                case "Codigopostal": 
                 $this->_tabla_model = new SysCodigoPostalModel; 
+            break;
+               case "Servicioscomerciales": 
+                $this->_tabla_model = new SysServiciosComercialesModel; 
             break;
 
 

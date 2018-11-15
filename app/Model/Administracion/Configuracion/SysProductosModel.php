@@ -14,6 +14,7 @@ class SysProductosModel extends Model
         ,'id_tasa'
         ,'id_impuesto'
         ,'id_tipo_factor'
+        ,'id_servicio'
         ,'codigo'
         ,'nombre'
         ,'descripcion'
@@ -32,6 +33,10 @@ class SysProductosModel extends Model
     public function unidades()
     {
       return $this->hasOne(SysUnidadesMedidasModel::class, 'id', 'id_unidadmedida');
+    }
+    public function servicios()
+    {
+      return $this->hasOne(SysClaveProdServicioModel::class, 'id', 'id_servicio');
     }
     public function tasas()
     {

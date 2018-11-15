@@ -12,19 +12,17 @@ var url_edit_codigos    = 'codigopostal/show';
 var app = angular.module('ng-clientes', ["ngRoute"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
-    .when("/register", {
-        template : "<h1>Rayos esto necesita un template</h1>",
-        controller : "PruebasController"
+    .when("/ruta1", {
+        template : "<h1></h1>",
     })
-    .when("/london", {
-        template : "<h1> Bienvenidos 2</h1>",
-        //controller : "londonCtrl"
+    .when("/ruta2", {
+        template : "<h1></h1>",
     })
-    .when("/paris", {
-        templateUrl : "paris.htm",
-        controller : "parisCtrl"
+    .when("/ruta3", {
+        templateUrl : "ruta3.html",
+        controller : ""
     });
-    $locationProvider.html5Mode(true); //activamos el modo HTML5
+    $locationProvider.html5Mode(true);
 });
 app.controller('ClientesController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
