@@ -41,7 +41,7 @@
 	                        </button>
 	                        <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 	                            <li>
-	                                <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
+	                                <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data)">
 	                                    <i class="glyphicon glyphicon-edit"></i> Editar
 	                                </a>
 	                            </li>

@@ -94,7 +94,7 @@ class ProductosController extends MasterController
                  'data'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
                  ,'value'     => 'id'
                  ,'text'      => 'nombre'
-                 ,'name'      => 'cmb_categorias'
+                 ,'name'      => 'cmb_categorias_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true" '
@@ -126,7 +126,8 @@ class ProductosController extends MasterController
                  ,'name'      => 'cmb_tasas'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
+                 ,'attr'      => 'data-live-search="true" ng-model="insert.tasa"'
+                 ,'event'     => 'ng-parser_iva()'
            ]);
         $tasa_edit = dropdown([
                  'data'      => SysTasaModel::get()
@@ -135,7 +136,8 @@ class ProductosController extends MasterController
                  ,'name'      => 'cmb_tasas_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
+                 ,'attr'      => 'data-live-search="true" ng-model="edit.tasa"'                 
+                 ,'event'     => 'ng-parser_iva_edit()'                 
            ]);
 
         $impuesto = dropdown([
@@ -160,7 +162,7 @@ class ProductosController extends MasterController
         $tipo_factor = dropdown([
                  'data'      => SysTipoFactorModel::get()
                  ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
+                 ,'text'      => 'clave'
                  ,'name'      => 'cmb_tipofactor'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
@@ -183,7 +185,6 @@ class ProductosController extends MasterController
            ,'name'      => 'cmb_servicio'
            ,'class'     => 'form-control'
            ,'leyenda'   => 'Seleccione Opcion'
-           ,'attr'      => 'style="width:400px;" ng-model="insert.id_servicio_comercial"'
         ]);
             
         $servicios_edit =  dropdown([
@@ -242,7 +243,7 @@ class ProductosController extends MasterController
     public function show( Request $request ){
 
         try {
-            $response = $this->_tabla_model::where(['id' => $request->id])->get();
+            $response = $this->_tabla_model::with(['servicios:id,clave','categorias','unidades','tasas','impuestos','tipoFactor'])->where(['id' => $request->id])->get();
 
         return $this->_message_success( 201, $response[0] , self::$message_success );
         } catch (\Exception $e) {
@@ -258,7 +259,7 @@ class ProductosController extends MasterController
     *@return void
     */
     public function store( Request $request){
-
+        #debuger($request->all());
         $error = null;
         DB::beginTransaction();
         try {
@@ -270,7 +271,6 @@ class ProductosController extends MasterController
             $data = [
                 'id_empresa'      => Session::get('id_empresa')
                 ,'id_sucursal'    => Session::get('id_sucursal')
-                ,'id_plan'        => 0
                 ,'id_producto'    => $response->id
             ];
             SysPlanesProductosModel::create($data);
@@ -296,7 +296,7 @@ class ProductosController extends MasterController
     *@return void
     */
     public function update( Request $request){
-
+        debuger($request->all());
         $error = null;
         DB::beginTransaction();
         try {

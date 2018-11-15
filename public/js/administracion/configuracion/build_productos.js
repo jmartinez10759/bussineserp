@@ -232,30 +232,11 @@ var url_unidades        = 'unidadesmedidas/edit';
 });*/
 
 var app = angular.module('ng-productos', ["ngRoute"]);
-app.config(function( $routeProvider, $locationProvider ) {
-    $routeProvider
-    .when("/register", {
-        controller : "PruebasController",
-        template : "<h1>Rayos esto necesita un template</h1>",
-    })
-    .when("/london", {
-        template : "<h1> Bienvenidos 2</h1>",
-        //controller : "londonCtrl"
-    })
-    .when("/paris", {
-        templateUrl : "paris.htm",
-        controller : "parisCtrl"
-    });
-    $locationProvider.html5Mode(true); //activamos el modo HTML5
-});
 app.controller('ProductosController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
-        $scope.insert = { 
-           estatus: "1"
-          ,id_servicio_comercial: "0" 
-        };
+        $scope.insert = {};
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
@@ -280,23 +261,19 @@ app.controller('ProductosController', function( $scope, $http, $location ) {
     }
     
     $scope.insert_register = function(){
-        var validacion = ['cmb_empresas','cmb_sucursales'];
-        if(validacion_fields(validacion) == "error"){return;}
-        $scope.insert.empresa     = jQuery('#cmb_empresas').val();
-        $scope.insert.sucursal    = jQuery('#cmb_sucursales').val();
-        $scope.insert.clientes    = jQuery('#cmb_clientes_asignados').val();
-        $scope.insert.contacto    = jQuery('#cmb_contactos').val();
-        $scope.insert.id_cliente  = jQuery('#cmb_clientes').val();
-        $scope.insert.id_servicio = jQuery('#cmb_servicios').val();
+        $scope.insert.id_unidadmedida = jQuery('#cmb_unidades').val();
+        $scope.insert.id_categoria    = jQuery('#cmb_categorias').val();
+        $scope.insert.id_servicio     = jQuery('#cmb_servicio').val();
+        $scope.insert.id_impuesto     = jQuery('#cmb_impuestos').val();
         var url = domain( url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
             $scope.insert = {};
-            var values = ['cmb_empresas','cmb_sucursales','cmb_clientes_asignados','cmb_contactos','cmb_clientes','cmb_servicios'];
+            //var values = ['cmb_empresas','cmb_sucursales','cmb_clientes_asignados','cmb_contactos','cmb_clientes','cmb_servicios'];
             $scope.constructor();
-            clear_values_select(values);
+            //clear_values_select(values);
             jQuery.fancybox.close({
                 'type'      : 'inline'
                 ,'src'      : "#modal_add_register"
@@ -318,19 +295,14 @@ app.controller('ProductosController', function( $scope, $http, $location ) {
 
     $scope.update_register = function(){
 
-      var validacion = ['cmb_empresas_edit','cmb_sucursales_edit'];
-        if(validacion_fields(validacion) == "error"){return;}
-        $scope.update             = $scope.edit;
-        $scope.update.empresa     = jQuery('#cmb_empresas_edit').val();
-        $scope.update.sucursal    = jQuery('#cmb_sucursales_edit').val();
-        $scope.update.clientes    = jQuery('#cmb_clientes_asignados_edit').val();
-        $scope.update.contacto    = jQuery('#cmb_contactos_edit').val();
-        $scope.update.id_cliente  = jQuery('#cmb_clientes_edit').val();
-        $scope.update.id_servicio = jQuery('#cmb_servicios_edit').val();
-        $scope.update.estatus     = jQuery('#cmb_estatus_edit').val();
+        /*$scope.update = $scope.edit;
+        $scope.update.id_unidadmedida = jQuery('#cmb_unidades_edit').val();
+        $scope.update.id_categoria    = jQuery('#cmb_categorias_edit').val();
+        $scope.update.id_servicio     = jQuery('#cmb_servicios_edit').val();
+        $scope.update.id_impuesto     = jQuery('#cmb_impuestos_edit').val();*/
       var url = domain( url_update );
       var fields = $scope.update;
-      MasterController.request_http(url,fields,'put',$http, false )
+      MasterController.request_http(url,fields,"put",$http, false )
       .then(function( response ){
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
@@ -353,29 +325,33 @@ app.controller('ProductosController', function( $scope, $http, $location ) {
       });
     }
 
-    $scope.edit_register = function( id ){
-      var url = domain( url_edit );
+    $scope.edit_register = function( data ){
+      $scope.update = data;
+      jQuery('#cmb_unidades_edit').val($scope.update.id_unidadmedida);
+      jQuery('#cmb_categorias_edit').val($scope.update.id_categoria);
+      jQuery('#cmb_servicio_edit').val($scope.update.id_servicio);
+      jQuery('#cmb_impuestos_edit').val($scope.update.id_impuesto);
+      jQuery('#cmb_tipofactor_edit').val($scope.update.id_tipo_factor);
+      jQuery('#cmb_tasas_edit').val($scope.update.id_tasa);
+      jQuery.fancybox.open({
+                'type'      : 'inline'
+                ,'src'      : "#modal_edit_register"
+                ,'modal'    : true
+            });
+      console.log($scope.update);
+      /*var url = domain( url_edit );
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
-          $scope.edit = response.data.result;           
-          jQuery('#cmb_empresas_edit').selectpicker('val',[$scope.edit.empresas[0].id]);
-          jQuery('#cmb_estatus_edit').val($scope.edit.estatus);
-          jQuery('#cmb_servicios_edit').val($scope.edit.id_servicio);
-          var clientes = [];
-          var j = 0;
-          if($scope.edit.clientes.length > 0){
-            for (var i in $scope.edit.clientes) {
-              clientes[j] = $scope.edit.clientes[i].id;
-              j++;
-            }
-          }
-          display_clientes_edit( $scope.edit.sucursales[0].id, clientes , $scope.edit.id_cliente, $scope.edit.contactos[0].id);
+          $scope.edit = response.data.result;
           jQuery.fancybox.open({
-              'type'      : 'inline'
-              ,'src'      : "#modal_edit_register"
-              ,'modal'    : true
-          });
+                'type'      : 'inline'
+                ,'src'      : "#modal_edit_register"
+                ,'modal'    : true
+                ,'width'    : 900
+                ,'height'   : 400
+                ,'autoSize' : false
+            });
 
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
@@ -385,7 +361,7 @@ app.controller('ProductosController', function( $scope, $http, $location ) {
               }
               console.error( error );
               toastr.error( error , expired );
-        });
+        });*/
     }
 
     $scope.destroy_register = function( id ){
@@ -409,6 +385,32 @@ app.controller('ProductosController', function( $scope, $http, $location ) {
           
       },"warning",true,["SI","NO"]);  
     }
+
+    $scope.total_concepto = function(){
+        var iva = ($scope.insert.iva) ? $scope.insert.iva : 0;
+        var subtotal = ($scope.insert.subtotal) ? $scope.insert.subtotal : 0;
+        //var impuesto = parseFloat( subtotal * iva / 100);
+        console.log(iva);
+        console.log(subtotal);
+        var impuesto = parseFloat( subtotal * iva );
+        $scope.insert.total = parseFloat(parseFloat( subtotal ) + parseFloat(impuesto)).toFixed(2);
+        console.log($scope.insert.total);
+    },
+
+    $scope.total_concepto_edit = function() {
+        var iva = (this.update.iva) ? this.update.iva : 0;
+        var subtotal = (this.update.subtotal) ? this.update.subtotal : 0;
+        var impuesto = parseFloat(subtotal * iva );
+        this.update.total = parseFloat(parseFloat(subtotal) + parseFloat(impuesto)).toFixed(2);
+        console.log(this.update.total);
+    }
+
+    $scope.parser_iva = function(){
+      console.log($scope.insert.tasa);
+    }
+
+
+
 });
 
 function display_sucursales(id) {
@@ -481,12 +483,6 @@ function parse_clave_edit(){
       });
 
 }*/
-
-// jQuery('#cmb_categorias').selectpicker();
-// jQuery('#cmb_categorias_edit').selectpicker();
-// jQuery('#cmb_unidades_edit').selectpicker();
-//jQuery('#cmb_empresas').selectpicker();
-//jQuery('#cmb_servicio').selectpicker();
-jQuery('#cmb_servicio').chosen();
-jQuery('#cmb_categorias').chosen();
-jQuery('#cmb_unidades').chosen();
+jQuery('#cmb_servicio').chosen({width: "100%"}).trigger("chosen:updated");;
+jQuery('#cmb_categorias').chosen({width: "100%"}).trigger("chosen:updated");;
+jQuery('#cmb_unidades').chosen({width: "100%"}).trigger("chosen:updated");;
