@@ -21,7 +21,7 @@
 	            </tr>
 	        </thead>
 	        <tbody>
-	            <tr ng-repeat="data in datos">
+	            <tr ng-repeat="data in datos.response">
 	                <td>@{{(data.categorias !== null )? data.categorias : "" }}</td>
 	                <td>@{{ data.codigo }}</td>
 	                <td>@{{(data.unidades !== null )? data.unidades.clave+" - "+data.unidades.descripcion : "" }}</td>
@@ -31,11 +31,11 @@
 	                <td>$ @{{ data.total.toLocaleString()}} </td>
 	                <td>
 	                	<span class="label label-success" ng-if="data.estatus == 1">Activo</span>
-	                	<span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
+	                	<span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>
 	                </td>
 	                <td class="text-right">
 	                    <div class="dropdown">
-	                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 	                            Acciones
 	                            <span class="caret"></span>
 	                        </button>

@@ -50,7 +50,7 @@
 
                                         <label for="modelo" class="col-sm-2 control-label">Stock</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="stock" ng-model="insert.stock" readonly="">
+                                            <input type="text" class="form-control" id="stock" ng-model="insert.stock">
                                         </div>
                                         
                                         <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
@@ -142,10 +142,10 @@
 
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
 
-                                        <div class="col-sm-4">
-                                            <select class="form-control select_chosen" id="estatus" ng-model="insert.estatus">
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
+                                        <div class="col-sm-4">  
+                                            <select class="form-control" 
+                                            ng-model="insert.estatus" 
+                                            ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
                                             </select>
                                         </div>
 
@@ -190,7 +190,7 @@
                             </div>
 
                             <div class="col-sm-10"></div>
-                            <input type="text" class="form-control" id="logo" ng-model="update.logo">
+                            <input type="text" class="form-control" id="logo_edit" ng-model="update.logo">
 
                         </div>
                         <!-- /.box-body -->
@@ -203,12 +203,12 @@
 
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs">
-                                <li class="active"><a href="#details" data-toggle="tab" aria-expanded="false">Detalles del Producto</a></li>
+                                <li class="active"><a href="#details_edit" data-toggle="tab" aria-expanded="false">Detalles del Producto</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div id="resultados_ajax"></div>
 
-                                <div class="tab-pane active" id="details">
+                                <div class="tab-pane active" id="details_edit">
 
                                     <div class="form-group ">
                                         <label for="model" class="col-sm-2 control-label">Código</label>
@@ -226,7 +226,7 @@
 
                                         <label for="modelo" class="col-sm-2 control-label">Stock</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="stock" ng-model="update.stock" readonly="">
+                                            <input type="text" class="form-control" id="stock" ng-model="update.stock" >
                                         </div>
                                         
                                         <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
@@ -287,7 +287,7 @@
                                                 <div class="input-group-addon">
                                                     <i class="fa fa-usd"></i>
                                                 </div>
-                                                <input type="text" class="form-control" id="subtotal" ng-model="update.subtotal" ng-blur="total_concepto()">
+                                                <input type="text" class="form-control" id="subtotal" ng-model="update.subtotal" ng-blur="total_concepto_edit()">
                                             </div>
                                         </div>
                                         <label for="iva" class="col-sm-2 control-label">IVA</label>
@@ -297,7 +297,7 @@
                                                 <div class="input-group-addon">
                                                     <strong>%</strong>
                                                 </div>
-                                                <input type="text" class="form-control" id="iva" ng-model="update.iva" ng-blur="total_concepto()" >
+                                                <input type="text" class="form-control" id="iva" ng-model="update.iva" ng-blur="total_concepto_edit()" >
                                             </div>
                                         </div>
 
@@ -319,9 +319,9 @@
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
 
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen" id="estatus" ng-model="update.estatus">
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
+                                            <select class="form-control" 
+                                            ng-model="update.estatus" 
+                                            ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
                                             </select>
                                         </div>
 
@@ -365,7 +365,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="insert_permisos()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button>
+                    <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button>
                 </div>
             </div>
 

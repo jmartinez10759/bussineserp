@@ -3,6 +3,7 @@
 
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\Cache;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysEstadosModel;
@@ -162,11 +163,16 @@
         *@return void
         */
         public function show_clave( Request $request ){
-
+            
             try {
+               if ( Cache::has("cod_".$request->id ) ){
+                  return $this->_message_success( 200, Cache::store('file')->get("cod_".$request->id ) , self::$message_success );
+               }else{
                 $estado = SysEstadosModel::select('id','clave')->where(['id' => $request->id])->get();
                 $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => $estado[0]->clave])->get();
-            return $this->_message_success( 200, $response , self::$message_success );
+                Cache::put("cod_".$request->id, $response , 5 );
+                return $this->_message_success( 201, $response , self::$message_success );
+               }
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
