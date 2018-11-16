@@ -19,7 +19,7 @@ class SysProveedoresModel extends Model
     ,'id_country'
     ,'id_estado'
     ,'id_regimen_fiscal'
-    ,'id_servicio'
+    ,'id_servicio_comercial'
     ,'telefono'
     ,'logo'
     ,'estatus'
@@ -51,7 +51,7 @@ class SysProveedoresModel extends Model
   }
   public function servicios()
   {
-      return $this->hasOne(SysClaveProdServicioModel::class, 'id','id_servicio');
+      return $this->hasOne(SysClaveProdServicioModel::class, 'id','id_servicio_comercial');
   }
 
 }
