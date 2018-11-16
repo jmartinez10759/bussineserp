@@ -237,7 +237,7 @@
 
             <div class="form-group row">
                 <div class="pull-right col-sm-2">
-                    <button type="button" class="btn btn-warning add" title="Agregar Producto" href="#modal_conceptos_edit">
+                    <button type="button" class="btn btn-warning add" title="Agregar Producto" href="#modal_conceptos_edit" v-if="edit.pedidos.id_estatus != 5">
                         <i class="fa fa-plus-circle"></i> Conceptos
                     </button>
                 </div>
@@ -259,9 +259,8 @@
                             <th></th>
                         </tr>
                     </thead>
-
+                    
                     <tbody>
-
                         <tr v-for="(concepto,key) in conceptos">
                             <td class="text-center">@{{ (concepto.id_producto == 0)? concepto.planes.codigo :concepto.productos.codigo}}</td>
                             <td class="text-center">@{{concepto.cantidad}}</td>
@@ -269,7 +268,7 @@
                             <td class="text-right">$ @{{concepto.precio.toLocaleString()}} </td>
                             <td class="text-right">$ @{{concepto.total.toLocaleString()}}</td>
                             <td class="text-center">
-                                <a href="#" v-on:click.prevent="destroy_concepto(concepto.id, 1 )" {{$eliminar}}>
+                                <a href="#" v-on:click.prevent="destroy_concepto(concepto.id, 1 )" {{$eliminar}} v-if="edit.pedidos.id_estatus != 5">
                                     <i class="glyphicon glyphicon-trash"></i>
                                 </a>
                             </td>
@@ -307,7 +306,7 @@
             <button type="button" class="btn btn-danger" v-on:click.prevent="update_pedidos()">
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-info update" v-on:click.prevent="update_register()" {{$update}}>
+            <button type="button" class="btn btn-info update" v-on:click.prevent="update_register()" {{$update}} v-if="edit.pedidos.id_estatus != 5">
                 <i class="fa fa-save"></i> Actualizar
             </button>
         </div>

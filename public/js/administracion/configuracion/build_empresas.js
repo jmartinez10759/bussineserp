@@ -257,7 +257,8 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
             redirect(domain("/"));
             return;
           }
-            toastr.error( error.data.result , expired );   
+          console.log(error);
+            toastr.error( error.result , expired );   
       });    
     } 
 
@@ -351,9 +352,9 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
 });
 
 function select_codigos(){
-      var url = domain( url_edit_codigos );
-      var fields = {id: jQuery('#cmb_estados').val()}
-      MasterController.method_master(url,fields,"get")
+    var url = domain( url_edit_codigos );
+    var fields = {id: jQuery('#cmb_estados').val()}
+    MasterController.method_master(url,fields,"get")
       .then( response => {
           var codigos = {
               'data'    : response.data.result
@@ -373,8 +374,10 @@ function select_codigos(){
             redirect(domain("/"));
             return;
           }
-            toastr.error( error.data.result , expired );  
-      }); 
+            console.log(error);
+            toastr.error( error.result , expired );    
+      });
+
 }
 
 function select_codigos_edit(id = false,id_codigo =false){
@@ -402,7 +405,8 @@ function select_codigos_edit(id = false,id_codigo =false){
             redirect(domain("/"));
             return;
           }
-            toastr.error( error , expired );  
+            console.log(error);
+            toastr.error( error.result , expired );   
       }); 
 }
 

@@ -20,7 +20,7 @@ new Vue({
     datos: [],
     insert: {},
     update: {},
-    edit: {},
+    edit: { pedidos:{ id_estatus: 6 } },
     fields: {},
     conceptos: {},
     conceptos_edit: {},
@@ -40,6 +40,7 @@ new Vue({
                 redirect(domain("/"));
                 return;
               }
+              console.log(error);
                 toastr.error( error.result , expired );  
           });
     }
@@ -418,7 +419,9 @@ new Vue({
       var fields = this.update.pedidos;
       var promise = MasterController.method_master(url,fields,"post");
       promise.then( response => {
-            console.log(response);
+          buildSweetAlertOptions("Serie: A Folio: "+response.data.result.id,"Se genero la factura lista para timbrar",function(){
+              redirect(domain("ventas/facturaciones"));
+          },"success",false,["OK",""]);   
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
@@ -433,14 +436,13 @@ new Vue({
     
   }
 
-
 });
 
 
 function display_contactos(){
     
     var url = domain( url_edit_clientes );
-    var fields = {id_cliente : jQuery('#cmb_clientes').val() };
+    var fields = {id : jQuery('#cmb_clientes').val() };
     jQuery('#correo_contacto').val('');
     jQuery('#telefono_contacto').val('');
     var promise = MasterController.method_master(url,fields,"get");
@@ -475,7 +477,7 @@ function display_contactos(){
 }
 function display_contactos_edit(id_contacto){
     var url = domain( url_edit_clientes );
-    var fields = {id_cliente : jQuery('#cmb_clientes_edit').val() };
+    var fields = {id : jQuery('#cmb_clientes_edit').val() };
     jQuery('#correo_contacto_edit').val('');
     jQuery('#telefono_contacto_edit').val('');
     var promise = MasterController.method_master(url,fields,"get");
