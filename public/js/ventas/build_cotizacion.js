@@ -8,6 +8,7 @@ var url_all           = "cotizacion/all";
 var url_email         = "cotizacion/send/email";
 var url_pdf_send      = "pdf/email";
 var redireccion       = "ventas/cotizacion";
+var filtrar       = "cotizacion/filter";
 
 new Vue({
   el: "#vue-cotizacion",
@@ -360,8 +361,11 @@ new Vue({
                     ,'buttons' : ['share', 'close']
                 });
                 if(jQuery('#cmb_estatus_edit').val() == 5){
-                    buildSweetAlert('# '+response.data.result.id_pedido,'Se género el pedido con éxito','success');
-                    setTimeout("window.location.href=domain('ventas/pedidos');",4000);
+                    buildSweetAlertOptions('# '+response.data.result.id_pedido,'Se género el pedido con éxito',function(){
+                            redirect(domain('ventas/pedidos'))
+                            
+                        },"success",false,["OK",""]); 
+                    
 
                 }
               jQuery('#id_cotizacion_edit').val();
@@ -635,7 +639,33 @@ new Vue({
           });
         
     }
+    ,date_filters( ){
+        var url = domain( filtrar );
+        var fields = {
+            'fecha_inicial' : jQuery('#fecha_inicial').val()
+            ,'fecha_final'  : jQuery('#fecha_final').val()
+            ,'estatus'      : jQuery('#cmb_estatus_ini').val()
+        };
+        var promise = MasterController.method_master(url,fields,"post");
+          promise.then( response => {
 
+              //console.log(response.data.result);
+              //toastr.success( response.data.message , title );
+              this.cotizacion = response.data.result.cotiz_general;
+              //console.log(this.edit_cotizacion.cotizacion);
+              //this.consulta_general();
+              
+          }).catch( error => {
+              if( error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+              toastr.error( error.response.data.message , expired );              
+          });
+        
+    }
+  
     
   }
 
@@ -722,7 +752,8 @@ jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();
 
 jQuery('#cmb_clientes').selectpicker();
-jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1}).datepicker("setDate", new Date());
+jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
+//jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1}).datepicker("setDate", new Date());
 
 jQuery('#cmb_formas_pagos').val(1);
 jQuery('#cmb_estatus').val(6);
