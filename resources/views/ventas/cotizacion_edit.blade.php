@@ -440,7 +440,7 @@
                                         <th ></th>
                                     </tr>
                                     </thead>
-                                    <tbody v-if="edit_cotizacion.length >1">
+                                    <tbody>
                                     <tr v-for="concep in datos">
                                         <td class="text-center">@{{ (concep.cod_productos)?concep.cod_productos:concep.cod_planes }}</td>
                                         <td class="text-center">@{{ concep.cantidad }}</td>
@@ -448,7 +448,7 @@
                                         <td class="text-right">@{{ concep.precio }}</td>
                                         <td class="text-right">@{{ concep.total }}</td>
                                         <td class="text-center ocultarr">
-                                        <a href="#" v-on:click.prevent="destroy_register_edit(concep)" v-if="edit_cotizacion.cotizacion[0].id_estatus == 6"><i class="glyphicon glyphicon-trash"></i></a>
+                                        <a href="#" v-on:click.prevent="destroy_register_edit(concep)" v-if="datos[0].id_estatus != 5"><i class="glyphicon glyphicon-trash"></i></a>
                                         </td>
                                     </tr>   
                                     </tbody>   

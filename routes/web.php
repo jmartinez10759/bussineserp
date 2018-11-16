@@ -1358,6 +1358,11 @@ Route::get('/ventas/cotizacion', [
         ,'as' => 'cotizacion.send.email'
     ]);
 
+    Route::post('/cotizacion/filter', [
+        'uses' => 'Ventas\CotizacionController@all'
+        ,'as' => 'cotizacion.filter'
+    ]);
+
     /*Route::get('/ventas/productos', [
         'uses' => 'Ventas\CotizacionController@getProducto'
         ,'as' => 'ventas.productos'

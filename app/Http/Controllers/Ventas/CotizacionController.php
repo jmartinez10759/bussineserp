@@ -203,6 +203,15 @@
                  ,'leyenda'   => 'Seleccione Opción'
                  ,'attr'      => 'data-live-search="true" '                
            ]);
+           $estatus_in = dropdown([
+            'data'       => SysEstatusModel::where(['estatus' => 1 ])->whereIn('id',['4','5','6'])->orderby('nombre', 'asc')->get()
+            ,'value'     => 'id'
+            ,'text'      => 'nombre'
+            ,'name'      => 'cmb_estatus_ini'
+            ,'class'     => 'form-control'
+            ,'leyenda'   => 'Seleccione Opción'
+            ,'attr'      => 'data-live-search="true" '                
+      ]);
             /*$response = SysClientesModel::with(['contactos'])
                 ->where(['estatus' => 1,'id' => $request->input('id')])
                 ->orderby('id','asc')
@@ -232,6 +241,7 @@
                 ,'productos_edit'       => $productos_edit
                 ,'planes_edit'          => $planes_edit
                 ,'estatus_edit'         => $estatus_edit
+                ,'estatus_in'           => $estatus_in
             ];
             return self::_load_view( "ventas.cotizacion",$data );
         }
@@ -244,6 +254,7 @@
         public function all( Request $request ){
 
             try {
+                #debuger($request->all());
                 /*Consulta por id cotizacion agregar cotizacion*/
                 $where = ($request->id == "") ? 'WHERE sys_cotizaciones.id = 0' : 'WHERE sys_cotizaciones.id = '.$request->id;
 
@@ -254,6 +265,25 @@
                     $where_general = 'WHERE sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
                 }else if(Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
                     $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
+                }
+                
+                //filtro por fechar y estatus
+                if(isset($request->estatus, $request->fecha_inicial, $request->fecha_final) && $request->estatus != 0 ){
+                    $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$request->fecha_final'  ";
+                } elseif (isset($request->estatus, $request->fecha_inicial) && $request->estatus != 0) {
+                        $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_cotizaciones.created_at = '$request->fecha_inicial' ";
+                } elseif (isset($request->estatus, $request->fecha_final) && $request->estatus != 0) {
+                        $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_cotizaciones.created_at = '$request->fecha_final' ";
+                }elseif (isset($request->estatus) && $request->estatus != 0 ) {
+                        $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' ";
+                } elseif (isset($request->fecha_inicial, $request->fecha_final)) {
+                        $slq_q = " AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$request->fecha_final' ";
+                } elseif (isset($request->fecha_inicial)) {
+                        $slq_q = " AND sys_cotizaciones.created_at = '$request->fecha_inicial' ";
+                } elseif (isset($request->fecha_final)) {
+                        $slq_q = " AND sys_cotizaciones.created_at = '$request->fecha_final'  ";
+                }else {
+                        $slq_q = "";
                 }
 
                 $group_by_general = 'GROUP BY sys_users_cotizaciones.id_cotizacion';
@@ -269,6 +299,7 @@
                         ,sys_conceptos_cotizaciones.precio
                         ,sys_conceptos_cotizaciones.total
                         ,sys_productos.codigo as cod_productos,sys_planes.codigo as cod_planes
+                        ,sys_cotizaciones.id_estatus
                         FROM sys_users_cotizaciones
                         inner join sys_cotizaciones on sys_cotizaciones.id = sys_users_cotizaciones.id_cotizacion
                         inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
@@ -299,7 +330,7 @@
                                  inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
                                  left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
                                  left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
-                                 left join sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$group_by_general.' '.$orderBy;
+                                 left join sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$slq_q.' '.$group_by_general.' '.$orderBy;
 
 
                 $concep = DB::select($sql);

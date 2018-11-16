@@ -8,38 +8,35 @@
         			<input type="hidden" id="Iva" value="{{$iva}}">
 						<div class="form-group row">
 								 <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
-				                <div class="col-md-3">
+				                <div class="col-md-2">
 				                    <input type="text" class="form-control fecha" readonly="" id="fecha_inicial">
 				                </div>
 
 				                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Final </label>
-				                <div class="col-md-3">
+				                <div class="col-md-2">
 				                    <input type="text" class="form-control fecha" readonly="" id="fecha_final">
 				                </div>
 								
+								<!-- <label for="daterange" class="col-md-1 control-label input-sm">Vendedor </label>
 								<div class="col-md-2">
-									<select class="form-control" id="id_vendedor" onchange="load(1);" {{$permisos}} >
+									<select class="form-control" id="id_vendedor" onchange="load(1);" >
 										<option value="">Vendedor</option>
 										<option value="1">Joaquin Alvarado</option>
 										<option value="2">Obed Gomez Alvarado</option>
 
 									</select>
-								</div>
+								</div> -->
+								<label for="estatus_in" class="col-md-1 control-label input-sm">Estatus </label>
 								<div class="col-md-2">
-									<select class="form-control" id="estado" {{$permisos}}>
-										<option value="">Estado</option>
-										<option value="0">Pendiente</option>
-										<option value="1">Aceptada</option>
-										<option value="2"> Rechazada</option>
-									</select>
+									{!! $estatus_in !!}
 								</div>
-								<!-- <label for="q" class="col-md-1 control-label input-sm">Buscar:</label>
-								<div class="col-md-3">
+								
+								<div class="col-md-2">
 									<div class="input-group">
-										<input type="text" class="form-control" id="q" placeholder="Atención ó Empresa" onkeyup="load(1);">
-										<span class="btn btn-default input-group-addon" onclick="load(1);"><i class="glyphicon glyphicon-search"></i></span>
+									<button type = "button" class = "btn btn-primary" id = "btn_search" v-on:click.prevent="date_filters();" title="Buscar"><span class = "glyphicon glyphicon-search"></span></button> 
+									<button type = "button" id = "reset" v-on:click.prevent="consulta_general();" class = "btn btn-success" title="Actualizar"><span class = "glyphicon glyphicon-refresh"><span></button>	
 									</div>	
-								</div> -->		
+								</div>		
 										
 								</div>
 
