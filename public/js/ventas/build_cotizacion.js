@@ -665,6 +665,12 @@ new Vue({
           });
         
     }
+    ,actualizar_general(){
+        jQuery('#fecha_inicial').val('');
+        jQuery('#fecha_final').val('');
+        jQuery('#cmb_estatus_ini').val(0);
+        this.consulta_general();
+    }
   
     
   }

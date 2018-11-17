@@ -519,7 +519,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="">Asunto: </label>
                     <div class="col-sm-9">
-                        <input type="text" id="asunto_pdf" class="form-control" placeholder="Cotización">
+                        <input type="text" id="asunto_pdf" class="form-control" placeholder="Cotización" value="Cotización">
                     </div>
 
                      <label class="control-label col-sm-3" for=""> </label>

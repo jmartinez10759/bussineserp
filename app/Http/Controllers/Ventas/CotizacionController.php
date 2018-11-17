@@ -1151,7 +1151,7 @@
                     ,'totales'          => $totales
                 ];
                 $pdf = PDF::loadView('ventas.pdf.pdf_cotizacion', ['data' => $response]);
-                $message->to( 'al221211431@gmail.com', $data['name'] )
+                $message->to( $data['email'], $data['name'] )
                         ->from('notificaciones@burolaboralmexico.com.mx','BLM')
                         ->subject(  $data['asunto'] )
                         ->attachData($pdf->output(), "cotizacion.pdf");

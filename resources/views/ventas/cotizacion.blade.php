@@ -33,8 +33,8 @@
 								
 								<div class="col-md-2">
 									<div class="input-group">
-									<button type = "button" class = "btn btn-primary" id = "btn_search" v-on:click.prevent="date_filters();" title="Buscar"><span class = "glyphicon glyphicon-search"></span></button> 
-									<button type = "button" id = "reset" v-on:click.prevent="consulta_general();" class = "btn btn-success" title="Actualizar"><span class = "glyphicon glyphicon-refresh"><span></button>	
+									<button type = "button" class = "btn btn-primary" id = "btn_search" v-on:click.prevent="date_filters();" title="Buscar"><span class = "glyphicon glyphicon-search"></span></button>&nbsp;
+									<button type = "button" id = "reset" v-on:click.prevent="actualizar_general();" class = "btn btn-success" title="Actualizar"><span class = "glyphicon glyphicon-refresh"><span></button>	
 									</div>	
 								</div>		
 										
@@ -87,7 +87,7 @@
 											<li><a style="cursor: pointer;" title="Editar cotización" v-on:click.prevent="edit_register(cot);"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
 											<li><a href="#" title="Imprimir cotización" v-on:click.prevent="pdf_print(cot)"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
 											<li><a href="#" title="Enviar cotización" v-on:click.prevent="pdf_email(cot)"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
-											<li><a href="#" title="Borrar cotización" v-on:click.prevent="destroy_cotizacion(cot)"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
+											<li><a href="#" title="Borrar cotización" v-on:click.prevent="destroy_cotizacion(cot)" v-if="cot.id_estatus != 5"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>
 										</ul>
 									</div>
 								</td>					
