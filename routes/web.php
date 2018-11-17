@@ -1149,6 +1149,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\TasaController@destroy'
         ,'as' => 'tasa.destroy'
     ]);
+
+    Route::get('/tasa/factor_tasa', [
+        'uses' => 'Administracion\Configuracion\TasaController@factor_tasa'
+        ,'as' => 'tasa.factor_tasa'
+    ]);
+    
 ################################## CATALOGO IMPUESTO ################################
 
     Route::get('/configuracion/impuesto', [
@@ -1159,6 +1165,11 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::get('/impuesto/all', [
         'uses' => 'Administracion\Configuracion\ImpuestoController@all'
         ,'as'  => 'impuesto.all'
+    ]);
+
+    Route::get('/impuesto/clave_impuesto', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@clave_impuesto'
+        ,'as'  => 'impuesto.clave_impuesto'
     ]);
 
     Route::post('/impuesto/register', [

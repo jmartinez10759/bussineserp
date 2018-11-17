@@ -7,6 +7,8 @@ var redireccion  = "configuracion/productos";
 var url_display         = "productos/display_sucursales";
 var url_insert_permisos = "productos/register_permisos";
 var url_unidades        = 'unidadesmedidas/edit';
+var url_edit_tipo       = "tasa/factor_tasa";
+var url_edit_tasa       = "impuesto/clave_impuesto";
 
 var app = angular.module('ng-productos', ["ngRoute"]);
 app.controller('ProductosController', function( $scope, $http, $location ) {
@@ -244,81 +246,8 @@ app.controller('ProductosController', function( $scope, $http, $location ) {
         });
 
     }
-
-
-
 });
 
-/*function display_sucursales(id) {
-     var id_empresa = jQuery('#cmb_empresas_' + id).val();
-     var id_producto = id;
-     var url = domain(url_display);
-     var fields = {
-         id_empresa : id_empresa
-         ,id_producto: id_producto
-        };
-        jQuery('#id_producto').val(id);
-        jQuery('#id_empresa').val(id_empresa);
-     var promise = MasterController.method_master(url, fields, "get");
-     promise.then(response => {
-            jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
-         jQuery.fancybox.open({
-             'type': 'inline',
-             'src': "#permisos",
-             'buttons': ['share', 'close']
-         });
-         for (var i = 0; i < response.data.result.sucursales.length; i++) {
-             console.log(response.data.result.sucursales[i].id_sucursal);
-             jQuery(`#${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
-         };
-     }).catch(error => {
-         if (error.response.status == 419) {
-             toastr.error(session_expired);
-             redirect(domain("/"));
-             return;
-         }
-         toastr.error(error.response.data.message, expired);
-
-     });
- 
-}*/
-/*function parse_clave(){
-   var url = domain( url_unidades );
-    var fields = {id : jQuery('#cmb_unidades').val() };
-    var promise = MasterController.method_master(url,fields,"get");
-      promise.then( response => {
-          var clave = response.data.result.clave
-          jQuery('#clave').val(clave);
-      }).catch( error => {
-          if( error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-          toastr.error( error.response.data.message , expired );
-
-      });
-    
-}
-
-function parse_clave_edit(){
-    var url = domain( url_unidades );
-    var fields = {id : jQuery('#cmb_unidades_edit').val() };
-    var promise = MasterController.method_master(url,fields,"get");
-      promise.then( response => {
-         var clave = response.data.result.clave
-          jQuery('#clave_edit').val(clave);
-      }).catch( error => {
-          if( error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-          toastr.error( error.response.data.message , expired );
-
-      });
-
-}*/
 jQuery('#cmb_servicio').chosen({width: "100%"}).trigger("chosen:updated");;
 jQuery('#cmb_servicio_edit').chosen({width: "100%"}).trigger("chosen:updated");;
 jQuery('#cmb_categorias').chosen({width: "100%"}).trigger("chosen:updated");;

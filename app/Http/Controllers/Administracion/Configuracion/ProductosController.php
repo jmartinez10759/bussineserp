@@ -182,7 +182,7 @@ class ProductosController extends MasterController
     public function all( Request $request ){
 
         try {
-           $response = $this->_catalogos_bussines( $this->_tabla_model, ['empresas','categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
+           $response = $this->_validate_consulta( $this->_tabla_model, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
            $data = [
              'response' => $response
              ,'empresas' => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()

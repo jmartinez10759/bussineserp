@@ -974,14 +974,14 @@ abstract class MasterController extends Controller
 	 * @param Request $request [Description]
 	 * @return void
 	 */
-	protected function _consulta_employes($table_model)
+	protected function _consulta_employes($table_model, $with = [])
 	{
         #SysUsersModel
 		$response = $table_model::with(['empresas' => function ($query) {
 			if (Session::get('id_rol') != 1) {
-				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
+				return $qusery->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
 			}
-		}])->where(['id' => Session::get('id')])->orderby('id', 'desc')->get();
+		}])->with($with)->where(['id' => Session::get('id')])->orderby('id', 'desc')->get();
 		$request = [];
 		foreach ($response as $respuesta) {
 			if (count($respuesta->empresas) > 0) {
