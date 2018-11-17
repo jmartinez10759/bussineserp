@@ -36,50 +36,6 @@ class ProductosController extends MasterController
             return view('errors.error');
         }
 
-        /*$response = $this->_catalogos_bussines( $this->_tabla_model, [], [], ['id' => Session::get('id_empresa')] );
-        $permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
-        $registros = [];
-        foreach ($response as $respuesta) {
-            $id['id'] = $respuesta->id;
-            $editar   = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit');
-            $borrar   = build_buttons(Session::get('permisos')['DEL'],'v-destroy_register('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');                
-            $permiso = dropdown([
-                 'data'      => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'nombre_comercial'
-                 ,'name'      => 'cmb_empresas_'. $respuesta->id
-                 ,'class'     => 'form-control'
-                 ,'selected'  => isset($respuesta->empresas[0] )? $respuesta->empresas[0]->id : 0
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '. $permisos
-                 ,'event'     => 'display_sucursales('. $respuesta->id .')'
-            ]);
-            if( count($respuesta->empresas) > 0 || Session::get('id_rol') == 1){
-                $registros[] = [
-                     $respuesta->codigo
-                    ,isset($respuesta->categoria->nombre)? $respuesta->categoria->nombre :""
-                    ,isset($respuesta->unidades->nombre)? $respuesta->unidades->nombre :""
-                    ,$respuesta->clave_unidad
-                    ,$respuesta->nombre
-                    , format_currency($respuesta->subtotal,2)
-                    , format_currency($respuesta->total,2)                   
-                    ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-                    ,$editar
-                    ,$permiso
-                    ,$borrar
-                ];
-
-            }
-
-        }
-        $titulos = ['Código','Categoria','Unidad de Medida','Clave','Producto', 'SubTotal','Total','Estatus','','','',''];
-        $table = [
-            'titulos' 		   => $titulos
-            ,'registros' 	   => $registros
-            ,'id' 			   => "datatable"
-            ,'class'           => "fixed_header"
-        ];*/
-
         $categorias = dropdown([
                 'data'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
                 ,'value'     => 'id'
@@ -126,8 +82,8 @@ class ProductosController extends MasterController
                  ,'name'      => 'cmb_tasas'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" ng-model="insert.tasa"'
-                 ,'event'     => 'ng-parser_iva()'
+                 ,'attr'      => 'data-live-search="true"'
+                 ,'event'     => 'parser_iva()'
            ]);
         $tasa_edit = dropdown([
                  'data'      => SysTasaModel::get()
@@ -136,8 +92,8 @@ class ProductosController extends MasterController
                  ,'name'      => 'cmb_tasas_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" ng-model="edit.tasa"'                 
-                 ,'event'     => 'ng-parser_iva_edit()'                 
+                 ,'attr'      => 'data-live-search="true"'                 
+                 ,'event'     => 'parser_iva_edit()'                 
            ]);
 
         $impuesto = dropdown([
@@ -171,7 +127,7 @@ class ProductosController extends MasterController
         $tipo_factor_edit = dropdown([
                  'data'      => SysTipoFactorModel::get()
                  ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
+                 ,'text'      => 'clave'
                  ,'name'      => 'cmb_tipofactor_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
@@ -226,8 +182,12 @@ class ProductosController extends MasterController
     public function all( Request $request ){
 
         try {
-           $response = $this->_catalogos_bussines( $this->_tabla_model, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
-          return $this->_message_success( 200, $response , self::$message_success );
+           $response = $this->_catalogos_bussines( $this->_tabla_model, ['empresas','categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
+           $data = [
+             'response' => $response
+             ,'empresas' => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
+           ];
+          return $this->_message_success( 200, $data , self::$message_success );
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -244,7 +204,6 @@ class ProductosController extends MasterController
 
         try {
             $response = $this->_tabla_model::with(['servicios:id,clave','categorias','unidades','tasas','impuestos','tipoFactor'])->where(['id' => $request->id])->get();
-
         return $this->_message_success( 201, $response[0] , self::$message_success );
         } catch (\Exception $e) {
         $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -296,7 +255,6 @@ class ProductosController extends MasterController
     *@return void
     */
     public function update( Request $request){
-        debuger($request->all());
         $error = null;
         DB::beginTransaction();
         try {
@@ -304,8 +262,8 @@ class ProductosController extends MasterController
             foreach ($request->all() as $key => $value) {
                 $registros[$key] = strtoupper($value);
             }
-            $response = $this->_tabla_model::where(['id' => $request->id])->update($registros);
-
+            $this->_tabla_model::where(['id' => $request->id])->update($registros);
+            $response = $this->_tabla_model::where(['id' => $request->id])->get();
         DB::commit();
         $success = true;
         } catch (\Exception $e) {
@@ -315,7 +273,7 @@ class ProductosController extends MasterController
         }
 
         if ($success) {
-             return $this->_message_success( 201, $response , self::$message_success );
+             return $this->_message_success( 201, $response[0] , self::$message_success );
         }
         return $this->show_error(6, $error, self::$message_error );
 
@@ -347,12 +305,12 @@ class ProductosController extends MasterController
         return $this->show_error(6, $error, self::$message_error );
 
     }
-    /**
-     * Metodo para borrar el registro
-     * @access public
-     * @param Request $request [Description]
-     * @return void
-     */
+/**
+ * Metodo para borrar el registro
+ * @access public
+ * @param Request $request [Description]
+ * @return void
+ */
     public function display_sucursales( Request $request ){
         #debuger($request->all());
         try {
@@ -392,7 +350,6 @@ class ProductosController extends MasterController
             return $this->show_error(6, $error, self::$message_error);
         }
 
-    
     }
 /**
  * Metodo para insertar los permisos de los productos
@@ -401,27 +358,19 @@ class ProductosController extends MasterController
  * @return void
  */
 public function register_permisos(Request $request){
-
+    #debuger($request->all());
     $error = null;
     DB::beginTransaction();
     try {
         
-        $response_producto = SysPlanesProductosModel::where([
-            'id_empresa'   => Session::get('id_empresa')
-            ,'id_sucursal' => Session::get('id_sucursal')
-            #,'id_producto' => $request->id_producto 
-            ] )->get();
+        $response_producto = SysPlanesProductosModel::where(['id_empresa'   => Session::get('id_empresa') ,'id_sucursal' => Session::get('id_sucursal')] )->get();
         if( count($response_producto) > 0){
-            SysPlanesProductosModel::where([
-                'id_empresa'   => Session::get('id_empresa')
-                ,'id_sucursal' => Session::get('id_sucursal')
-                #,'id_producto' => $request->id_producto 
-            ])->delete();
+            SysPlanesProductosModel::where(['id_empresa'   => Session::get('id_empresa'),'id_sucursal' => Session::get('id_sucursal')])->delete();
         }
         SysPlanesProductosModel::where([
-             #'id_empresa'   => $request->id_empresa
-            'id_producto'    => $request->id_producto 
-            ])->delete();
+            'id_producto' => $request->id_producto 
+            #,'id_empresa'  => $request->id_empresa
+        ])->delete();
         $response = [];
         for ($i=0; $i < count($request->matrix) ; $i++) { 
             $matrices = explode('|', $request->matrix[$i] );
@@ -430,12 +379,10 @@ public function register_permisos(Request $request){
             $data = [
                 'id_empresa'      => $request->id_empresa
                 ,'id_sucursal'    => $id_sucursal
-                ,'id_plan'        => 0
                 ,'id_producto'    => $request->id_producto
             ];
             $response[] = SysPlanesProductosModel::create($data);
         }
-
         DB::commit();
         $success = true;
     } catch (\Exception $e) {

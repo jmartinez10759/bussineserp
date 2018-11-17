@@ -14,6 +14,7 @@
     use App\Model\Administracion\Configuracion\SysProveedoresEmpresasModel;
     use App\Model\Administracion\Configuracion\SysEmpresasModel;
     use App\Model\Administracion\Configuracion\SysSucursalesModel;
+    use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
 
 
     class ProveedoresController extends MasterController
@@ -47,10 +48,10 @@
            foreach ($response as $respuesta) {
              $id['id'] = $respuesta->id;
 
-             $editar = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit','title="editar" ' );
-             // $borrar   = build_acciones_usuario($id,'v-destroy_register','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
-             $borrar   = build_buttons(Session::get('permisos')['DEL'],'v-destroy_register('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
-             // $proveedores = build_acciones_usuario($id,'v-proveedores',' Proveedores','btn btn-info','fa fa-building-o','title="Asignar proveedores" '.$permisos );
+             $editar = build_acciones_usuario($id,'ng-edit_register','Editar','btn btn-primary','fa fa-edit','title="editar" ' );
+             
+             $borrar   = build_buttons(Session::get('permisos')['DEL'],'ng-destroy_register('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
+             
              $registros[] = [
                 $respuesta->id
                ,$respuesta->razon_social
@@ -75,24 +76,49 @@
            ];
           
            #se crea el dropdown
-           $estados = dropdown([
-                 'data'      => SysEstadosModel::get()
+           $paises = dropdown([
+                 'data'      => SysPaisModel::get()
                  ,'value'     => 'id'
-                 ,'text'      => 'nombre'
-                 ,'name'      => 'cmb_estados'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_pais'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
+                 ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
+                 ,'event'     => 'ng-select_estado()'
+                 ,'selected'  => '151'
            ]);
-            $estados_edit =  dropdown([
-                 'data'      => SysEstadosModel::get()
+
+            $paises_edit =  dropdown([
+                 'data'      => SysPaisModel::get()
                  ,'value'     => 'id'
-                 ,'text'      => 'nombre'
-                 ,'name'      => 'cmb_estados_edit'
+                 ,'text'      => 'clave descripcion'
+                 ,'name'      => 'cmb_pais_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
+                 ,'attr'      => 'data-live-search="true" ng-model="update.id_country"'
+                 ,'event'     => 'ng-select_estado_edit()'
             ]);
+
+            $regimen_fiscal =  dropdown([
+                   'data'       => SysRegimenFiscalModel::get()
+                   ,'value'     => 'id'
+                   ,'text'      => 'clave descripcion'
+                   ,'name'      => 'cmb_regimen_fiscal'
+                   ,'class'     => 'form-control'
+                   ,'leyenda'   => 'Seleccione Opcion'
+                   ,'attr'      => 'data-live-search="true" ng-model="insert.id_regimen_fiscal"'
+            ]);
+
+            $regimen_fiscal_edit =  dropdown([
+                   'data'       => SysRegimenFiscalModel::get()
+                   ,'value'     => 'id'
+                   ,'text'      => 'clave descripcion'
+                   ,'name'      => 'cmb_regimen_fiscal_edit'
+                   ,'class'     => 'form-control'
+                   ,'leyenda'   => 'Seleccione Opcion'
+                   ,'attr'      => 'data-live-search="true"'
+            ]);
+
             $giro_comercial =  dropdown([
                    'data'       => SysClaveProdServicioModel::get()
                    ,'value'     => 'id'
@@ -100,7 +126,7 @@
                    ,'name'      => 'cmb_servicio'
                    ,'class'     => 'form-control'
                    ,'leyenda'   => 'Seleccione Opcion'
-                   ,'attr'      => 'data-live-search="true" '
+                   ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio_comercial"'
             ]);
             
             $giro_comercial_edit =  dropdown([
@@ -110,44 +136,24 @@
                  ,'name'      => 'cmb_servicio_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
+                 ,'attr'      => 'data-live-search="true"'
             ]);
-
-           // foreach ($response_proveedores as $respuesta) {
-           //   $id['id'] = $respuesta->id;
-           //   $checkbox = build_actions_icons($id,'id_proveedor= "'.$respuesta->id.'" ','check_proveedores');
-           //   $registros_proveedores[] = [
-           //      $respuesta->id
-           //     ,$respuesta->codigo
-           //     ,$respuesta->sucursal
-           //     ,$checkbox
-           //   ];
-           // }
-
-           // $titulos = [ 'id','Codigo','Proveedor',''];
-           // $table_proveedores = [
-           //   'titulos'        => $titulos
-           //   ,'registros'     => $registros_proveedores
-           //   ,'id'            => "data_table_proveedores"
-           // ];
-
 
                 $data = [
              "page_title" 	        => "Configuracion"
              ,"title"  		        => "Proveedores"
              ,"data_table"  		        => data_table($table)
               ,'data_table_proveedores'   =>  ''
-             ,'estados'                 =>  $estados
-             ,'estados_edit'            =>  $estados_edit
+             ,'estados'                 =>  ''
+             ,'estados_edit'            =>  ''
              ,'giro_comercial'          =>  $giro_comercial
              ,'giro_comercial_edit'     =>  $giro_comercial_edit
-             ,'titulo_modal'            => "Registro de Proveedor"
-             ,'titulo_modal_edit'       => "Actualización de Proveedor"
-             ,'campo_1'                 => 'Proveedor'
-             ,'campo_2'                 => 'Descripción'
-             ,'campo_4'                 => 'RFC'
-             ,'campo_5'                 => 'Razón Social'
-             ,'campo_3'                 => 'Estatus'
+             ,'regimen_fiscal'          =>  $regimen_fiscal
+             ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
+             ,'codigo_postal'           =>  ""
+             ,'codigo_postal_edit'      =>  ""
+             ,'paises'                  =>  $paises
+             ,'paises_edit'             =>  $paises_edit
            ];
                 
                 return self::_load_view( "administracion.configuracion.proveedores",$data );
@@ -165,9 +171,9 @@
         public function all( Request $request ){
 
             try {
+                $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
 
-
-              return $this->_message_success( 201, $response , self::$message_success );
+              return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -221,7 +227,7 @@
                     
                 }
                 
-                #debuger(session::all());
+                // debuger($string_data_proveedor);
                $response = $this->_tabla_model::create( $string_data_proveedor );
                $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
@@ -261,7 +267,7 @@
             DB::beginTransaction();
             try {
                 $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-                $string_key_proveedores = [ 'rfc','nombre_comercial','razon_social','calle', 'colonia','municipio','id_codigo','estatus','giro_comercial','id_estado' ];
+                $string_key_proveedores = [ 'rfc','nombre_comercial','razon_social','calle', 'colonia','municipio','id_codigo','estatus','id_estado','id_servicio_comercial ','id_regimen_fiscal' ];
                 $string_data_proveedor = [];
                 $string_data_contactos = [];
                 foreach( $request->all() as $key => $value ){

@@ -3,6 +3,7 @@
 
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\Cache;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysEstadosModel;
@@ -32,6 +33,9 @@
                 "page_title" 	        => "Configuracion"
                 ,"title"  		        => "Código Postal"
                 ,"data_table"  		    => ""
+                ,'script'               => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js')
+                ,'script_route'         => incJs('https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js')
+            
             ];
             return self::_load_view( "administracion.configuracion.codigopostal",$data );
         }
@@ -61,7 +65,7 @@
         public function show( Request $request ){
 
             try {
-
+                $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
 
             return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
@@ -81,7 +85,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = $this->_tabla_model::create( $request->all() );
 
             DB::commit();
             $success = true;
@@ -109,7 +113,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
 
             DB::commit();
             $success = true;
@@ -136,7 +140,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = SysCodigoPostalModel::where(['id' => $request->id])->delete();
 
             DB::commit();
             $success = true;
@@ -159,11 +163,16 @@
         *@return void
         */
         public function show_clave( Request $request ){
-
+            
             try {
+               if ( Cache::has("cod_".$request->id ) ){
+                  return $this->_message_success( 200, Cache::store('file')->get("cod_".$request->id ) , self::$message_success );
+               }else{
                 $estado = SysEstadosModel::select('id','clave')->where(['id' => $request->id])->get();
                 $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => $estado[0]->clave])->get();
-            return $this->_message_success( 200, $response , self::$message_success );
+                Cache::put("cod_".$request->id, $response , 5 );
+                return $this->_message_success( 201, $response , self::$message_success );
+               }
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );

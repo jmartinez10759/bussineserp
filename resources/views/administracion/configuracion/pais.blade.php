@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-app="ng-pais" ng-controller="PaisesController">
+<div ng-app="ng-pais" ng-controller="PaisesController" ng-init="constructor()" ng-cloak>
 
 	<div class="table-responsive">
             <table class="table highlight table-hover fixed_header" id="datatable">
@@ -67,7 +67,5 @@
 </div>
 @stop
 @push('scripts')
- {!!$script!!}
- {!!$script_route!!}
 <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_pais.js')}}"></script>
 @endpush

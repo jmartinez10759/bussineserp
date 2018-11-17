@@ -36,138 +36,107 @@ class EmpresasController extends MasterController
  */
   public function index(){
 
-        if( Session::get('permisos')['GET'] ){
-          return view('errors.error');
-        }
-           /*$response = ( Session::get('id_rol') == 1 )? $this->_tabla_model::with(['contactos','servicios:id,clave,descripcion','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->get():$this->_consulta_employes(new SysUsersModel);*/
-           $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
-           /*$registros = [];
-           $registros_sucursales = [];
-           $permisos = (Session::get('permisos')['PER'] == false)? 'style="display:block" ': 'style="display:none" ';
-           foreach ($response as $respuesta) {
-             $id['id'] = $respuesta->id;
-             $editar   = build_acciones_usuario($id,'ng-edit_register','Editar','btn btn-primary','fa fa-edit','title="editar" ');
-             $borrar   = build_buttons(Session::get('permisos')['DEL'],'ng-destroy_register('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
-             $sucursales = build_acciones_usuario($id,'ng-sucursales',' Sucursales','btn btn-info','fa fa-building-o','title="Asignar Sucursales" '. $permisos );
-             $registros[] = [
-                //$respuesta->id
-               $respuesta->nombre_comercial
-               ,$respuesta->rfc_emisor
-               ,$respuesta->razon_social
-               ,isset($respuesta->servicios)? $respuesta->servicios->descripcion : ""
-               ,$respuesta->calle." ".$respuesta->colonia." ".$respuesta->municipio
-               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo : ""      
-               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->telefono : ""      
-               ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-               ,$editar
-               ,$borrar
-               ,$sucursales
-             ];
-           }
+    if( Session::get('permisos')['GET'] ){
+      return view('errors.error');
+    }    
+    $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
+    $paises = dropdown([
+         'data'      => SysPaisModel::get()
+         ,'value'     => 'id'
+         ,'text'      => 'clave descripcion'
+         ,'name'      => 'cmb_pais'
+         ,'class'     => 'form-control'
+         ,'leyenda'   => 'Seleccione Opcion'
+         ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
+         ,'event'     => 'ng-select_estado()'
+         ,'selected'  => '151'
+   ]);
 
-           $titulos = ['Empresa','RFC','Razón Social','Servicio Comercial','Dirección','Contacto','Telefono','Estatus','','',''];
-           $table = [
-             'titulos'          => $titulos
-             ,'registros'       => $registros
-             ,'id'              => "datatable"
-           ];*/
+    $paises_edit =  dropdown([
+         'data'      => SysPaisModel::get()
+         ,'value'     => 'id'
+         ,'text'      => 'clave descripcion'
+         ,'name'      => 'cmb_pais_edit'
+         ,'class'     => 'form-control'
+         ,'leyenda'   => 'Seleccione Opcion'
+         ,'attr'      => 'data-live-search="true" ng-model="update.id_country"'
+         ,'event'     => 'ng-select_estado_edit()'
+    ]);
 
-            $paises = dropdown([
-                 'data'      => SysPaisModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_pais'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
-                 ,'event'     => 'ng-select_estado()'
-                 ,'selected'  => '151'
-           ]);
+    $regimen_fiscal =  dropdown([
+           'data'       => SysRegimenFiscalModel::get()
+           ,'value'     => 'id'
+           ,'text'      => 'clave descripcion'
+           ,'name'      => 'cmb_regimen_fiscal'
+           ,'class'     => 'form-control'
+           ,'leyenda'   => 'Seleccione Opcion'
+           ,'attr'      => 'data-live-search="true" ng-model="insert.id_regimen_fiscal"'
+    ]);
 
-            $paises_edit =  dropdown([
-                 'data'      => SysPaisModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_pais_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" ng-model="update.id_country"'
-                 ,'event'     => 'ng-select_estado_edit()'
-            ]);
+    $regimen_fiscal_edit =  dropdown([
+           'data'       => SysRegimenFiscalModel::get()
+           ,'value'     => 'id'
+           ,'text'      => 'clave descripcion'
+           ,'name'      => 'cmb_regimen_fiscal_edit'
+           ,'class'     => 'form-control'
+           ,'leyenda'   => 'Seleccione Opcion'
+           ,'attr'      => 'data-live-search="true"'
+    ]);
 
-            $regimen_fiscal =  dropdown([
-                   'data'       => SysRegimenFiscalModel::get()
-                   ,'value'     => 'id'
-                   ,'text'      => 'clave descripcion'
-                   ,'name'      => 'cmb_regimen_fiscal'
-                   ,'class'     => 'form-control'
-                   ,'leyenda'   => 'Seleccione Opcion'
-                   ,'attr'      => 'data-live-search="true" ng-model="insert.id_regimen_fiscal"'
-            ]);
+    $servicios_comerciales =  dropdown([
+           'data'       => SysServiciosComercialesModel::get()
+           ,'value'     => 'id'
+           ,'text'      => 'nombre'
+           ,'name'      => 'cmb_servicio_comerciales'
+           ,'class'     => 'form-control'
+           ,'leyenda'   => 'Seleccione Opcion'
+           ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio"'
+    ]);
+    
+    $servicios_comerciales_edit =  dropdown([
+         'data'       => SysServiciosComercialesModel::get()
+         ,'value'     => 'id'
+         ,'text'      => 'nombre'
+         ,'name'      => 'cmb_servicio_comerciales_edit'
+         ,'class'     => 'form-control'
+         ,'leyenda'   => 'Seleccione Opcion'
+         ,'attr'      => 'data-live-search="true"'
+    ]);
 
-            $regimen_fiscal_edit =  dropdown([
-                   'data'       => SysRegimenFiscalModel::get()
-                   ,'value'     => 'id'
-                   ,'text'      => 'clave descripcion'
-                   ,'name'      => 'cmb_regimen_fiscal_edit'
-                   ,'class'     => 'form-control'
-                   ,'leyenda'   => 'Seleccione Opcion'
-                   ,'attr'      => 'data-live-search="true"'
-            ]);
+   foreach ($response_sucursales as $respuesta) {
+     $id['id'] = $respuesta->id;
+     $checkbox = build_actions_icons($id,'id_sucursal= "'.$respuesta->id.'" ','check_sucursales');
+     $registros_sucursales[] = [
+        $respuesta->id
+       ,$respuesta->codigo
+       ,$respuesta->sucursal
+       ,$checkbox
+     ];
+   }
 
-            $servicios_comerciales =  dropdown([
-                   'data'       => SysServiciosComercialesModel::get()
-                   ,'value'     => 'id'
-                   ,'text'      => 'nombre'
-                   ,'name'      => 'cmb_servicio_comerciales'
-                   ,'class'     => 'form-control'
-                   ,'leyenda'   => 'Seleccione Opcion'
-                   ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio"'
-            ]);
-            
-            $servicios_comerciales_edit =  dropdown([
-                 'data'       => SysServiciosComercialesModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'nombre'
-                 ,'name'      => 'cmb_servicio_comerciales_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true"'
-            ]);
-
-           foreach ($response_sucursales as $respuesta) {
-             $id['id'] = $respuesta->id;
-             $checkbox = build_actions_icons($id,'id_sucursal= "'.$respuesta->id.'" ','check_sucursales');
-             $registros_sucursales[] = [
-                $respuesta->id
-               ,$respuesta->codigo
-               ,$respuesta->sucursal
-               ,$checkbox
-             ];
-           }
-
-           $titulos = [ 'id','Codigo','Sucursal',''];
-           $table_sucursales = [
-             'titulos'        => $titulos
-             ,'registros'     => $registros_sucursales
-             ,'id'            => "data_table_sucursales"
-           ];
+   $titulos = [ 'id','Codigo','Sucursal',''];
+   $table_sucursales = [
+     'titulos'        => $titulos
+     ,'registros'     => $registros_sucursales
+     ,'id'            => "data_table_sucursales"
+   ];
 
 
-           $data = [
-             'page_title'               =>  "Configuración"
-             ,'title'                   =>  "Empresas"
-             ,'data_table'              =>  "data_table(table)"
-             ,'data_table_sucursales'   =>  data_table($table_sucursales)
-             ,'giro_comercial'          =>  $servicios_comerciales
-             ,'giro_comercial_edit'     =>  $servicios_comerciales_edit
-             ,'regimen_fiscal'          =>  $regimen_fiscal
-             ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
-             ,'paises'                  =>  $paises
-             ,'paises_edit'             =>  $paises_edit
-           ];
-            #debuger($data);
-         return self::_load_view( 'administracion.configuracion.empresas', $data );
+   $data = [
+     'page_title'               =>  "Configuración"
+     ,'title'                   =>  "Empresas"
+     ,'data_table'              =>  "data_table(table)"
+     ,'data_table_sucursales'   =>  data_table($table_sucursales)
+     ,'giro_comercial'          =>  $servicios_comerciales
+     ,'giro_comercial_edit'     =>  $servicios_comerciales_edit
+     ,'regimen_fiscal'          =>  $regimen_fiscal
+     ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
+     ,'paises'                  =>  $paises
+     ,'paises_edit'             =>  $paises_edit
+   ];
+    #debuger($data);
+    return self::_load_view( 'administracion.configuracion.empresas', $data );
+  
   }
   /**
   *Metodo para realizar la consulta por medio de su id
@@ -245,8 +214,9 @@ class EmpresasController extends MasterController
   *@param Request $request [Description]
   *@return void
   */
-  public function show( Request $request ){    
-   try {
+  public function show( Request $request ){
+
+      try {
         $where = ['id' => $request->id];
         $response = SysEmpresasModel::with( ['contactos' => function($query){
             return $query->where(['sys_contactos.estatus' => 1])->get();
