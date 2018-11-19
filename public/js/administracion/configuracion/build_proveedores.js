@@ -341,7 +341,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
 
     $scope.select_estado_edit = function(){
-      console.log(jQuery('#cmb_pais_edit').val());
+      // console.log(jQuery('#cmb_pais_edit').val());
       var url = domain( url_edit_pais );
       var fields = { id: jQuery('#cmb_pais_edit').val() };
       MasterController.request_http(url,fields,"get",$http,false)

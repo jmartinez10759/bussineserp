@@ -234,7 +234,7 @@
                 
                SysProveedoresEmpresasModel::create($data);    
 
-                debuger($request->all());
+                // debuger($request->all());
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -281,8 +281,8 @@
                     }
                     
             }
-            debuger($string_data_proveedor);
-            echo "string";die();
+            // debuger($string_data_proveedor);
+            // echo "string";die();
 
             // debuger($);
 
