@@ -38,117 +38,115 @@
         }
 
 
-        $response = $this->_tabla_model::with(['contactos','estados'])->get();
+        // $response = $this->_tabla_model::with(['contactos','estados'])->get();
            #debuger($response);        
            // $response_proveedores = SysProveedoresModel::where(['estatus' => 1 ])->groupby('id')->get();
-           $registros = [];
-           $registros_proveedores = [];
+           // $registros = [];
+           // $registros_proveedores = [];
            /*$eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';*/
-           $permisos = (Session::get('permisos')['PER'] == false)? 'style="display:block" ': 'style="display:none" ';
-           foreach ($response as $respuesta) {
-             $id['id'] = $respuesta->id;
+           // $permisos = (Session::get('permisos')['PER'] == false)? 'style="display:block" ': 'style="display:none" ';
+           // foreach ($response as $respuesta) {
+           //   $id['id'] = $respuesta->id;
 
-             $editar = build_acciones_usuario($id,'ng-edit_register','Editar','btn btn-primary','fa fa-edit','title="editar" ' );
+           //   $editar = build_acciones_usuario($id,'ng-edit_register','Editar','btn btn-primary','fa fa-edit','title="editar" ' );
              
-             $borrar   = build_buttons(Session::get('permisos')['DEL'],'ng-destroy_register('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
+           //   $borrar   = build_buttons(Session::get('permisos')['DEL'],'ng-destroy_register('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
              
-             $registros[] = [
-                $respuesta->id
-               ,$respuesta->razon_social
-               ,$respuesta->rfc
-               ,$respuesta->calle               
-               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo : ""      
-               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->correo : ""      
-               ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->telefono : ""      
-               ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-               ,$editar
-               ,$borrar
-               // ,$proveedores
-             ];
-           }
-
-           // $titulos = [ 'id','proveedor','RFC','Razón Social','Giro Comercial','Dirección','Contacto','Telefono','Estatus','','',''];
-           $titulos = [ 'id','Proveedor','RFC','Direccion','Contacto','Correo','Telefono','Estatus','','',''];
-           $table = [
-             'titulos'          => $titulos
-             ,'registros'       => $registros
-             ,'id'              => "datatable"
-           ];
+           //   $registros[] = [
+           //      $respuesta->id
+           //     ,$respuesta->razon_social
+           //     ,$respuesta->rfc
+           //     ,$respuesta->calle               
+           //     ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->nombre_completo : ""      
+           //     ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->correo : ""      
+           //     ,isset($respuesta->contactos[0])?$respuesta->contactos[0]->telefono : ""      
+           //     ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
+           //     ,$editar
+           //     ,$borrar
+               
+           //   ];
+           // }
+           // $titulos = [ 'id','Proveedor','RFC','Direccion','Contacto','Correo','Telefono','Estatus','','',''];
+           // $table = [
+           //   'titulos'          => $titulos
+           //   ,'registros'       => $registros
+           //   ,'id'              => "datatable"
+           // ];
           
            #se crea el dropdown
-           $paises = dropdown([
-                 'data'      => SysPaisModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_pais'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
-                 ,'event'     => 'ng-select_estado()'
-                 ,'selected'  => '151'
-           ]);
+           // $paises = dropdown([
+           //       'data'      => SysPaisModel::get()
+           //       ,'value'     => 'id'
+           //       ,'text'      => 'clave descripcion'
+           //       ,'name'      => 'cmb_pais'
+           //       ,'class'     => 'form-control'
+           //       ,'leyenda'   => 'Seleccione Opcion'
+           //       ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
+           //       ,'event'     => 'ng-select_estado()'
+           //       ,'selected'  => '151'
+           // ]);
 
-            $paises_edit =  dropdown([
-                 'data'      => SysPaisModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_pais_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" ng-model="update.id_country"'
-                 ,'event'     => 'ng-select_estado_edit()'
-            ]);
+           //  $paises_edit =  dropdown([
+           //       'data'      => SysPaisModel::get()
+           //       ,'value'     => 'id'
+           //       ,'text'      => 'clave descripcion'
+           //       ,'name'      => 'cmb_pais_edit'
+           //       ,'class'     => 'form-control'
+           //       ,'leyenda'   => 'Seleccione Opcion'
+           //       ,'attr'      => 'data-live-search="true" ng-model="update.id_country"'
+           //       ,'event'     => 'ng-select_estado_edit()'
+           //  ]);
 
-            $regimen_fiscal =  dropdown([
-                   'data'       => SysRegimenFiscalModel::get()
-                   ,'value'     => 'id'
-                   ,'text'      => 'clave descripcion'
-                   ,'name'      => 'cmb_regimen_fiscal'
-                   ,'class'     => 'form-control'
-                   ,'leyenda'   => 'Seleccione Opcion'
-                   ,'attr'      => 'data-live-search="true" ng-model="insert.id_regimen_fiscal"'
-            ]);
+           //  $regimen_fiscal =  dropdown([
+           //         'data'       => SysRegimenFiscalModel::get()
+           //         ,'value'     => 'id'
+           //         ,'text'      => 'clave descripcion'
+           //         ,'name'      => 'cmb_regimen_fiscal'
+           //         ,'class'     => 'form-control'
+           //         ,'leyenda'   => 'Seleccione Opcion'
+           //         ,'attr'      => 'data-live-search="true" ng-model="insert.id_regimen_fiscal"'
+           //  ]);
 
-            $regimen_fiscal_edit =  dropdown([
-                   'data'       => SysRegimenFiscalModel::get()
-                   ,'value'     => 'id'
-                   ,'text'      => 'clave descripcion'
-                   ,'name'      => 'cmb_regimen_fiscal_edit'
-                   ,'class'     => 'form-control'
-                   ,'leyenda'   => 'Seleccione Opcion'
-                   ,'attr'      => 'data-live-search="true"'
-            ]);
+           //  $regimen_fiscal_edit =  dropdown([
+           //         'data'       => SysRegimenFiscalModel::get()
+           //         ,'value'     => 'id'
+           //         ,'text'      => 'clave descripcion'
+           //         ,'name'      => 'cmb_regimen_fiscal_edit'
+           //         ,'class'     => 'form-control'
+           //         ,'leyenda'   => 'Seleccione Opcion'
+           //         ,'attr'      => 'data-live-search="true"'
+           //  ]);
 
-            $servicio_comerciales =  dropdown([
-                   'data'       => SysClaveProdServicioModel::get()
-                   ,'value'     => 'id'
-                   ,'text'      => 'clave descripcion'
-                   ,'name'      => 'cmb_servicio_comerciales'
-                   ,'class'     => 'form-control'
-                   ,'leyenda'   => 'Seleccione Opcion'
-                   ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio_comercial"'
-            ]);
+           //  $servicio_comerciales =  dropdown([
+           //         'data'       => SysClaveProdServicioModel::get()
+           //         ,'value'     => 'id'
+           //         ,'text'      => 'clave descripcion'
+           //         ,'name'      => 'cmb_servicio_comerciales'
+           //         ,'class'     => 'form-control'
+           //         ,'leyenda'   => 'Seleccione Opcion'
+           //         ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio_comercial"'
+           //  ]);
             
-            $servicio_comerciales_edit =  dropdown([
-                 'data'       => SysClaveProdServicioModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_servicio_comerciales_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true"'
-            ]);
+           //  $servicio_comerciales_edit =  dropdown([
+           //       'data'       => SysClaveProdServicioModel::get()
+           //       ,'value'     => 'id'
+           //       ,'text'      => 'clave descripcion'
+           //       ,'name'      => 'cmb_servicio_comerciales_edit'
+           //       ,'class'     => 'form-control'
+           //       ,'leyenda'   => 'Seleccione Opcion'
+           //       ,'attr'      => 'data-live-search="true"'
+           //  ]);
 
                 $data = [
-             "page_title" 	        => "Configuracion"
+             "page_title" 	        => "Almacen"
              ,"title"  		        => "Proveedores"
-             ,"data_table"  		        => data_table($table)
-             ,'giro_comercial'          =>  $servicio_comerciales
-             ,'giro_comercial_edit'     =>  $servicio_comerciales_edit
-             ,'regimen_fiscal'          =>  $regimen_fiscal
-             ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
-             ,'paises'                  =>  $paises
-             ,'paises_edit'             =>  $paises_edit
+             // ,"data_table"  		        => data_table($table)
+             // ,'giro_comercial'          =>  $servicio_comerciales
+             // ,'giro_comercial_edit'     =>  $servicio_comerciales_edit
+             // ,'regimen_fiscal'          =>  $regimen_fiscal
+             // ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
+             // ,'paises'                  =>  $paises
+             // ,'paises_edit'             =>  $paises_edit
            ];
                 
                 return self::_load_view( "administracion.configuracion.proveedores",$data );
@@ -166,7 +164,14 @@
         public function all( Request $request ){
 
             try {
-                $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
+                // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
+                $response = $this->_tabla_model::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
+        $data = [
+          'proveedores'            => $response
+          ,'paises'               => SysPaisModel::get()
+          ,'servicio_comercial'   => SysClaveProdServicioModel::get()
+          ,'regimen_fiscal'             => SysRegimenFiscalModel::get()
+        ];
 
               return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
@@ -185,7 +190,7 @@
 
             try {
                 $where = ['id' => $request->id];
-            $response = SysProveedoresModel::with(['contactos','estados'])->where( $where )->groupby('id')->get();
+            $response = SysProveedoresModel::with(['contactos'])->where(['id' => $request->id])->get();
                 
             return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {
