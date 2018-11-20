@@ -22,14 +22,14 @@
 	        <tbody>
 
 	            <tr ng-repeat="data in datos">
-	                <td>@{{data.nombre_comercial}}</td>
-	                <td>@{{data.razon_social }}</td>
-	                <td>@{{data.rfc_emisor }}</td>
-	                <td>@{{(data.comerciales  !== null )? data.comerciales.nombre: "" }}</td>
-	                <td>@{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}</td>
-	                <td>@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
-	                <td>@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
-	                <td>@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.nombre_comercial}}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.razon_social }}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.rfc_emisor }}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{(data.comerciales  !== null )? data.comerciales.nombre: "" }}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
 	                <td>
 		                <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
 	                	<span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
@@ -41,11 +41,11 @@
 	                            <span class="caret"></span>
 	                        </button>
 	                        <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-	                            <li>
+	                            <!-- <li>
 	                                <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
 	                                    <i class="glyphicon glyphicon-edit"></i> Editar
 	                                </a>
-	                            </li>
+	                            </li> -->
 	                            
 	                            <li {{$eliminar}}>
 	                                <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >

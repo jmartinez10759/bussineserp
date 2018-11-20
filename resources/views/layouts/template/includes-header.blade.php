@@ -112,6 +112,7 @@
        body::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
        [v-cloak]{display: none}
        [ng-cloak]{display: none}
+       .uppercase{ text-transform: uppercase; }
   </style>
   <!-- estilos del desarrollador -->
    @stack('styles')

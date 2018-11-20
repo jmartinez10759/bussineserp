@@ -124,7 +124,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             }); 
-          $scope.constructor();
+          $scope.consulta_general();
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -189,8 +189,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
-            redirect(domain(redireccion));
-            //$scope.consulta_general();
+            $scope.consulta_general();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -336,7 +335,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             }); 
-
+            $scope.consulta_general();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 

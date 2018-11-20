@@ -29,13 +29,15 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
-          estatus: "1"
-          ,id_servicio: "0"
-          ,id_country: "151"
+          estatus: 0
+          ,id_servicio_comercial: 0
+          ,id_country: 151
+          ,id_servicio_comercial: null
         };
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
+        $scope.cmb_estatus = [{id:0 ,nombre:"Prospectos"}, {id:1, nombre:"Clientes"}];
         $scope.select_estado();
         $scope.consulta_general();
         //$scope.display_sucursales();
@@ -78,9 +80,6 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        $scope.insert.id_estado  = jQuery('#cmb_estados').val();
-        $scope.insert.id_codigo  = jQuery('#cmb_codigo_postal').val();
-        $scope.insert.id_uso_cfdi  = jQuery('#cmb_uso_cfdi').val();
         var url = domain( url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
@@ -94,12 +93,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             });
-            $scope.insert = {};
-            jQuery('#cmb_uso_cfdi').val(0);
-            jQuery('#cmb_codigo_postal').val(0);
-            jQuery('#cmb_codigo_postal').prop('disabled',true);
             $scope.consulta_general();
-            $scope.constructor();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -126,13 +120,6 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
           toastr.error("RFC Incorrecto","Ocurrio un error, favior de verificar");
           return;
       }
-      $scope.update = $scope.edit;
-      $scope.update.id_estado  = jQuery('#cmb_estados_edit').val();
-      $scope.update.id_codigo  = jQuery('#cmb_codigo_postal_edit').val();
-      $scope.update.id_country    = jQuery('#cmb_pais_edit').val();
-      $scope.update.estatus       = jQuery('#cmb_estatus_edit').val();
-      $scope.update.id_servicio   = jQuery('#cmb_servicio_edit').val();
-      $scope.update.id_uso_cfdi   = jQuery('#cmb_uso_cfdi_edit').val();
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
@@ -147,6 +134,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
                 ,'autoSize' : false
             });
           $scope.consulta_general();
+          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           //redirect(domain(redireccion));
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
@@ -164,7 +152,6 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
-
          /* var id_edit = {
               div_content  : 'div_dropzone_file_empresa_dit'
               ,div_dropzone : 'dropzone_xlsx_file_empresa_edit'
@@ -173,21 +160,16 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
             upload_file('',upload_url,message,1,id_edit,'.jpg,.png,.jpeg',function( request ){
                 console.log(request);
             });*/
-
-           $scope.edit = response.data.result;
+            var datos = ['updated_at','created_at'];
+            $scope.update = iterar_object(response.data.result,datos);
            if( response.data.result.contactos.length > 0 ){
-               $scope.edit.contacto     = response.data.result.contactos[0].nombre_completo;
-               $scope.edit.departamento = response.data.result.contactos[0].departamento;
-               $scope.edit.telefono     = response.data.result.contactos[0].telefono;
-               $scope.edit.correo       = response.data.result.contactos[0].correo;
+               $scope.update.contacto     = response.data.result.contactos[0].nombre_completo;
+               $scope.update.departamento = response.data.result.contactos[0].departamento;
+               $scope.update.telefono     = response.data.result.contactos[0].telefono;
+               $scope.update.correo       = response.data.result.contactos[0].correo;
            }
-           jQuery('#cmb_pais_edit').val($scope.edit.id_country);
-           jQuery('#cmb_uso_cfdi_edit').val($scope.edit.id_uso_cfdi);
-           jQuery('#cmb_servicio_edit').selectpicker('val',[$scope.edit.id_servicio]);
-           jQuery('#cmb_regimen_fiscal_edit').val($scope.edit.id_regimen_fiscal);
-           $scope.select_estado_edit();
-           select_codigos_edit($scope.edit.id_estado,$scope.edit.id_codigo);
-
+           $scope.select_estado(1);
+           $scope.select_codigos(1);
           jQuery.fancybox.open({
                 'type'      : 'inline'
                 ,'src'      : "#modal_edit_register"
@@ -226,61 +208,41 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
       },"warning",true,["SI","NO"]);  
     }
 
-    $scope.select_estado = function(){
+    $scope.select_estado = function( update = false){
       var url = domain( url_edit_pais );
-      var fields = { id: jQuery('#cmb_pais').val() };
+      var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
-          var estados = {
-              'data'    : response.data.result.estados
-              ,'text'   : "nombre"
-              ,'value'  : "id"
-              ,'name'   : "cmb_estados"
-              ,'class'  : 'form-control'
-              ,'leyenda': 'Seleccione Opción'
-              ,'attr'   : 'data-live-search="true" '
-              ,'event'  : "select_codigos()"
-          };
-          jQuery('#div_cmb_estados').html('');
-          jQuery('#div_cmb_estados').html( select_general( estados ) );
+          $scope.cmb_estados = response.data.result.estados;
+          console.log($scope.cmb_estados);
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
             redirect(domain("/"));
             return;
           }
-            toastr.error( error.data.result , expired );   
+          console.log(error);
+            toastr.error( error.result , expired );   
       });    
     }
 
-    $scope.select_estado_edit = function(){
-      var url = domain( url_edit_pais );
-      var fields = { id: jQuery('#cmb_pais_edit').val() };
-      MasterController.request_http(url,fields,"get",$http,false)
+    $scope.select_codigos = function( update = false ){
+      var url = domain( url_edit_codigos );
+      var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
+      MasterController.method_master(url,fields,"get")
       .then( response => {
-          var estados = {
-              'data'    : response.data.result.estados
-              ,'text'   : "nombre"
-              ,'value'  : "id"
-              ,'name'   : "cmb_estados_edit"
-              ,'class'  : 'form-control'
-              ,'leyenda': 'Seleccione Opción'
-              ,'attr'   : 'data-live-search="true" '
-              ,'event'  : "select_codigos_edit()"
-          };
-          jQuery('#div_cmb_estados_edit').html('');
-          jQuery('#div_cmb_estados_edit').html( select_general( estados ) );
-          jQuery('#cmb_estados_edit').val($scope.edit.id_estado);
+          $scope.cmb_codigos = response.data.result;
+          console.log($scope.cmb_codigos);
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
             redirect(domain("/"));
             return;
           }
-            toastr.error( error.data.result , expired );   
-      });    
-    } 
-
+            toastr.error( error.data.result , expired );  
+      }); 
+    }
+    
     $scope.display_sucursales = function( id ) {
        var id_empresa = jQuery('#cmb_empresas_'+id).val().replace('number:','');
        var url = domain( url_display );
@@ -356,18 +318,6 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
 
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
 //jQuery('#cmb_estados').selectpicker();
 //jQuery('#cmb_estados_edit').selectpicker();
 jQuery('#clientes_tabs').click(function(){
@@ -383,7 +333,7 @@ jQuery('#prospectos_tabs').click(function(){
    jQuery('#search_general').keyup();
 });
 
-
+/*
 function select_codigos(){
       var url = domain( url_edit_codigos );
       var fields = {id: jQuery('#cmb_estados').val()}
@@ -437,3 +387,4 @@ function select_codigos_edit(id = false, id_codigo =false){
             toastr.error( error , expired );  
       }); 
 }
+*/
