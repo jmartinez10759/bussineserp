@@ -1,6 +1,6 @@
 <?php
     namespace App\Http\Controllers\Administracion\Configuracion;
-
+    use File;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Cache;
@@ -163,16 +163,12 @@
         *@return void
         */
         public function show_clave( Request $request ){
-            
+            #debuger($request->all());
             try {
-               if ( Cache::has("cod_".$request->id ) ){
-                  return $this->_message_success( 200, Cache::store('file')->get("cod_".$request->id ) , self::$message_success );
-               }else{
                 $estado = SysEstadosModel::select('id','clave')->where(['id' => $request->id])->get();
-                $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => $estado[0]->clave])->get();
-                Cache::put("cod_".$request->id, $response , 5 );
+                $response = $this->_tabla_model::select('id','codigo_postal')->where(['estado' => isset($estado[0])? $estado[0]->clave: 0 ])->get();
                 return $this->_message_success( 201, $response , self::$message_success );
-               }
+
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );

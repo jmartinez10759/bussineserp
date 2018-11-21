@@ -5,25 +5,28 @@
     <div class="modal-body" style="overflow-y:scroll; height:500px;">
         <section class="content">
             <div class="row">
-                <div class="col-md-3">
+                <!-- <div class="col-sm-3"> -->
                     <!-- Profile Image -->
-                    <div class="box box-primary">
-                        <div class="box-body box-profile">
-                            <div id="load_img">
-                                <img class=" img-responsive" src="" alt="Bussines profile picture">
-                            </div>
-
-                            <div class="col-sm-12">
-                                <div id="div_dropzone_file_clientes"></div> 
-                            </div>
-                            <input type="text" class="form-control" id="logo" ng-model="insert.logo">
+                    <!-- <div class="box box-primary"> -->
+                        <!-- <center>
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-primary" ng-click="upload_file()">
+                                <i class="fa fa-upload"></i> Subir Imagen  
+                            </button>
                         </div>
+                        <div class="box-body box-profile">
+                            <div id="load_img" class="col-sm-12">
+                                <div id="imagen"></div>
+                            </div>
+                            <input type="hidden" class="form-control" ng-model="insert.logo">
+                        </div>
+                        </center> -->
                         <!-- /.box-body -->
-                    </div>
+                    <!-- </div> -->
                     <!-- /.box -->
-                </div>
+                <!-- </div> -->
                 <!-- /.col -->
-                <div class="col-md-9">
+                <div class="col-sm-12">
                     <form class="form-horizontal">
 
                         <div class="nav-tabs-custom">
@@ -48,11 +51,11 @@
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Nombre:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="contacto" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="insert.contacto" ng-change="insert.contacto = (insert.contacto | uppercase)">
+                                            <input type="text" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="insert.contacto" capitalize>
                                         </div>
                                         <label for="model" class="col-sm-2 control-label">Departamento:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="departamento" class="form-control" placeholder="Ingrese departamento o cargo " ng-model="insert.departamento" ng-change="insert.departamento = (insert.departamento | uppercase)">
+                                            <input type="text" class="form-control" placeholder="Ingrese departamento o cargo " ng-model="insert.departamento" capitalize>
                                         </div>
                                     </div>
 
@@ -60,12 +63,12 @@
                                         <label for="producto" class="col-sm-2 control-label">Teléfono:</label>
 
                                         <div class="col-sm-4">
-                                            <input type="text" id="telefono" class="form-control" placeholder="Lada + número" ng-model="insert.telefono" maxlength="15">
+                                            <input type="text" class="form-control" placeholder="Lada + número" ng-model="insert.telefono" maxlength="15">
                                         </div>
                                         
                                         <label for="modelo" class="col-sm-2 control-label">Correo:<font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="correo" class="form-control" placeholder="Ingrese un correo valido" ng-model="insert.correo" >
+                                            <input type="text" class="form-control" placeholder="Ingrese un correo valido" ng-model="insert.correo" >
                                         </div>
                                     </div>
                                     <!-- <div class="form-group">
@@ -80,39 +83,34 @@
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Nombre Comercial: </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="nombre_comercial" class="form-control" placeholder="" ng-model="insert.nombre_comercial" ng-change="insert.nombre_comercial = (insert.nombre_comercial | uppercase)">
+                                            <input type="text" class="form-control" placeholder="" ng-model="insert.nombre_comercial" capitalize>
                                         </div>
                                         <label for="model" class="col-sm-2 control-label">Razón Social: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="razon_social" class="form-control" placeholder="" ng-model="insert.razon_social" ng-change="insert.razon_social = (insert.razon_social | uppercase)">
+                                            <input type="text" class="form-control" placeholder="" ng-model="insert.razon_social" capitalize>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="producto" class="col-sm-2 control-label">RFC: <font size="3" color="red">* </font> </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="rfc_receptor" class="form-control" placeholder="" ng-model="insert.rfc_receptor" ng-change="insert.rfc_receptor = (insert.rfc_receptor | uppercase)">
+                                            <input type="text" class="form-control" placeholder="" ng-model="insert.rfc_receptor" capitalize>
                                         </div>
                                         <label for="modelo" class="col-sm-2 control-label">Calle y Número: </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="calle" class="form-control" ng-model="insert.calle" ng-change="insert.calle = (insert.calle | uppercase)">
+                                            <input type="text" class="form-control" ng-model="insert.calle" capitalize>
                                         </div>
                                     </div>
-                                    <!-- <div class="form-group">
-                                        <label for="note" class="col-sm-2 control-label">Descripción</label>
-                                        <div class="col-sm-10">
-                                            <textarea class="form-control .uppercase" id="descripcion"></textarea>
-                                        </div>
-                                    </div> -->
+                                    
                                     <div class="form-group">
                                         <label for="unidad_medida" class="col-sm-2 control-label">Colonia: </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="colonia" class="form-control .uppercase" placeholder="" ng-model="insert.colonia" ng-change="insert.colonia = (insert.colonia | uppercase)">
+                                            <input type="text" class="form-control .uppercase" placeholder="" ng-model="insert.colonia" capitalize>
                                         </div>
 
                                         <label for="categoria" class="col-sm-2 control-label">Delegación/ Municipio: </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="municipio" class="form-control .uppercase" placeholder="" ng-model="insert.municipio" ng-change="insert.municipio = (insert.municipio | uppercase)">
+                                            <input type="text" class="form-control .uppercase" placeholder="" ng-model="insert.municipio" capitalize>
                                         </div>
 
                                     </div>
@@ -121,7 +119,8 @@
                                         
                                         <label for="iva" class="col-sm-2 control-label">Pais: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control"
+                                            <select class="form-control select_chosen"
+                                            chosen
                                             ng-change="select_estado()" 
                                             ng-model="insert.id_country" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.paises">
@@ -131,7 +130,8 @@
                                         
                                         <label for="iva" class="col-sm-2 control-label">Estado: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control"
+                                            <select class="form-control select_chosen"
+                                            chosen
                                             ng-change="select_codigos()" 
                                             ng-model="insert.id_estado" 
                                             ng-options="value.id as value.nombre for (key, value) in cmb_estados">
@@ -145,8 +145,8 @@
 
                                         <label for="subtotal" class="col-sm-2 control-label">Código Postal: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control"
-                                            chosen="codigo_postal" 
+                                            <select class="form-control select_chosen"
+                                            chosen 
                                             ng-model="insert.id_codigo" 
                                             ng-options="value.id as value.codigo_postal for (key, value) in cmb_codigos"> 
                                             <option value="">--Seleccione Opcion--</option> 
@@ -155,10 +155,11 @@
 
                                         <label for="subtotal" class="col-sm-2 control-label">Servicio Comercial: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control" 
+                                            <select class="form-control select_chosen"
+                                            chosen 
                                             ng-model="insert.id_servicio_comercial" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
-                                            <option value="">--Seleccione Opcion--</option> 
+                                                <option value="">--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
 
@@ -168,7 +169,8 @@
 
                                         <label for="subtotal" class="col-sm-2 control-label">Uso CFDI: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control" 
+                                            <select class="form-control select_chosen"
+                                            chosen 
                                             ng-model="insert.id_uso_cfdi" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.uso_cfdi">
                                                 <option value="">--Seleccione Opcion--</option> 
@@ -177,9 +179,10 @@
 
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
                                         <div class="col-sm-4">
-                                             <select class="form-control" 
-                                            ng-model="insert.estatus" 
-                                            ng-options="value.id as value.nombre for (key, value) in cmb_estatus"> 
+                                             <select class="form-control select_chosen"
+                                             chosen 
+                                             ng-model="insert.estatus" 
+                                             ng-options="value.id as value.nombre for (key, value) in cmb_estatus"> 
                                             </select>
                                         </div>
 
@@ -222,16 +225,19 @@
                 <div class="col-md-3">
                     <!-- Profile Image -->
                     <div class="box box-primary">
+                        <center>
+                        <!-- <div class="col-sm-12">
+                            <button type="button" class="btn btn-primary" ng-click="upload_file(1)">
+                                <i class="fa fa-upload"></i> Subir Imagen  
+                            </button>
+                        </div> -->
                         <div class="box-body box-profile">
-                            <div id="load_img">
-                                <img class=" img-responsive" src="" alt="Bussines profile picture">
+                            <div id="load_img" class="col-sm-12">
+                                <div id="imagen_edit"></div>
                             </div>
-
-                            <div class="col-sm-12">
-                                <div id="div_dropzone_file_clientes_dit"></div> 
-                            </div>
-                            <input type="text" class="form-control" id="logo_edit" ng-model="update.logo">
+                            <input type="hidden" class="form-control" ng-model="update.logo">
                         </div>
+                        </center>
                         <!-- /.box-body -->
                     </div>
                     <!-- /.box -->
@@ -262,11 +268,11 @@
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Nombre:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" ng-change="update.contacto = (update.contacto | uppercase)">
+                                            <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" capitalize>
                                         </div>
                                         <label for="model" class="col-sm-2 control-label">Departamento:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="departamento_edit" class="form-control" placeholder="Ingrese departamento o cargo " ng-model="update.departamento" ng-change="update.departamento = (update.departamento | uppercase)">
+                                            <input type="text" id="departamento_edit" class="form-control" placeholder="Ingrese departamento o cargo " ng-model="update.departamento" capitalize>
                                         </div>
                                     </div>
 
@@ -274,11 +280,11 @@
                                         <label for="producto" class="col-sm-2 control-label">Teléfono:</label>
 
                                         <div class="col-sm-4">
-                                            <input type="text" id="telefono_edit" class="form-control .uppercase" placeholder="Lada + número" ng-model="update.telefono" maxlength="15">
+                                            <input type="text" class="form-control" placeholder="Lada + número" ng-model="update.telefono" maxlength="15">
                                         </div>
                                         <label for="modelo" class="col-sm-2 control-label">Correo:<font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="correo_edit" class="form-control .uppercase" placeholder="Ingrese un correo valido" ng-model="update.correo">
+                                            <input type="text" id="correo_edit" class="form-control" placeholder="Ingrese un correo valido" ng-model="update.correo">
                                         </div>
                                     </div>
                                     <!-- <div class="form-group">
@@ -293,39 +299,34 @@
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Nombre Comercial: </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="nombre_comercial_edit" class="form-control" placeholder="" ng-model="update.nombre_comercial" ng-change="update.nombre_comercial=(update.nombre_comercial|uppercase)">
+                                            <input type="text" class="form-control" placeholder="" ng-model="update.nombre_comercial" capitalize>
                                         </div>
                                         <label for="model" class="col-sm-2 control-label">Razón Social: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="razon_social_edit" class="form-control" placeholder="" ng-model="update.razon_social" ng-change="update.razon_social=(update.razon_social|uppercase)">
+                                            <input type="text" class="form-control" placeholder="" ng-model="update.razon_social" capitalize>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="producto" class="col-sm-2 control-label">RFC: <font size="3" color="red">* </font> </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="rfc_receptor_edit" class="form-control" placeholder="" ng-model="update.rfc_receptor" ng-change="update.rfc_receptor=(update.rfc_receptor|uppercase)">
+                                            <input type="text" class="form-control" placeholder="" ng-model="update.rfc_receptor" capitalize>
                                         </div>
                                         <label for="modelo" class="col-sm-2 control-label">Calle y Número: </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="calle_edit" class="form-control" placeholder="" ng-model="update.calle" ng-change="update.calle=(update.calle|uppercase)">
+                                            <input type="text" class="form-control" placeholder="" ng-model="update.calle" capitalize>
                                         </div>
                                     </div>
-                                    <!-- <div class="form-group">
-                                        <label for="note" class="col-sm-2 control-label">Descripción</label>
-                                        <div class="col-sm-10">
-                                            <textarea class="form-control .uppercase" id="descripcion"></textarea>
-                                        </div>
-                                    </div> -->
+                                    
                                     <div class="form-group">
                                         <label for="unidad_medida" class="col-sm-2 control-label">Colonia: </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="colonia_edit" class="form-control .uppercase" placeholder="" ng-model="update.colonia" ng-change="update.colonia=(update.colonia|uppercase)">
+                                            <input type="text" id="colonia_edit" class="form-control " placeholder="" ng-model="update.colonia" capitalize>
                                         </div>
 
                                         <label for="categoria" class="col-sm-2 control-label">Delegación/ Municipio: </label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="municipio_edit" class="form-control .uppercase" placeholder="" ng-model="update.municipio" ng-change="update.municipio=(update.municipio|uppercase)">
+                                            <input type="text" id="municipio_edit" class="form-control" placeholder="" ng-model="update.municipio" capitalize>
                                         </div>
 
                                     </div>
@@ -334,21 +335,23 @@
                                         
                                         <label for="iva" class="col-sm-2 control-label">Pais: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control"
+                                            <select class="form-control select_chosen"
+                                            chosen
                                             ng-change="select_estado(1)" 
                                             ng-model="update.id_country" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.paises">
-                                            <option value="">--Seleccione Opcion--</option>  
+                                                <option value="">--Seleccione Opcion--</option>  
                                             </select>  
                                         </div>
                                         
                                         <label for="iva" class="col-sm-2 control-label">Estado: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control"
+                                            <select class="form-control select_chosen"
+                                            chosen
                                             ng-change="select_codigos(1)" 
                                             ng-model="update.id_estado" 
                                             ng-options="value.id as value.nombre for (key, value) in cmb_estados">
-                                            <option value="">--Seleccione Opcion--</option>  
+                                                <option value="">--Seleccione Opcion--</option>  
                                             </select>  
                                         </div>
 
@@ -358,8 +361,8 @@
 
                                         <label for="subtotal" class="col-sm-2 control-label">Código Postal: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control"
-                                            chosen="codigo_postal" 
+                                            <select class="form-control select_chosen"
+                                            chosen 
                                             ng-model="update.id_codigo" 
                                             ng-options="value.id as value.codigo_postal for (key, value) in cmb_codigos"> 
                                             <option value="">--Seleccione Opcion--</option> 
@@ -368,10 +371,11 @@
 
                                         <label for="subtotal" class="col-sm-2 control-label">Servicio Comercial: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control" 
+                                            <select class="form-control select_chosen"
+                                            chosen 
                                             ng-model="update.id_servicio_comercial" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
-                                            <option value="">--Seleccione Opcion--</option> 
+                                                <option value="">--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
 
@@ -381,7 +385,8 @@
 
                                         <label for="subtotal" class="col-sm-2 control-label">Uso CFDI: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control" 
+                                            <select class="form-control select_chosen"
+                                            chosen 
                                             ng-model="update.id_uso_cfdi" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.uso_cfdi">
                                                 <option value="">--Seleccione Opcion--</option> 
@@ -390,13 +395,24 @@
 
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
                                         <div class="col-sm-4">
-                                             <select class="form-control" 
-                                            ng-model="update.estatus" 
-                                            ng-options="value.id as value.nombre for (key, value) in cmb_estatus"> 
+                                             <select class="form-control select_chosen"
+                                              chosen 
+                                              ng-model="update.estatus" 
+                                              ng-options="value.id as value.nombre for (key, value) in cmb_estatus"> 
                                             </select>
                                         </div>
 
                                     </div>
+
+                                    <div class="form-group">
+
+                                        <button type="button" class="btn btn-info" ng-click="upload_file(1)">
+                                            <i class="fa fa-upload"></i> Subir Imagen  
+                                        </button>
+
+                                    </div>
+
+                                    
 
                                 </div>
                                 <!-- /.tab-pane -->
@@ -445,6 +461,31 @@
                     <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}>
                         <i class="fa fa-save"></i> Registrar 
                     </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="" id="upload_file" style="display:none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Subir Imagen </h3>
+            </div>
+            <div class="modal-body">
+                <div id="div_dropzone_file_clientes"></div> 
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-success" data-fancybox-close>
+                        <i class="fa fa-times-circle"></i> Aceptar
+                    </button>
+                    <!-- <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}>
+                        <i class="fa fa-save"></i> Aceptar 
+                    </button> -->
                 </div>
             </div>
 

@@ -21,14 +21,14 @@
 	            </tr>
 	        </thead>
 	        <tbody>
-	            <tr ng-repeat="data in datos.response">
-	                <td>@{{ data.codigo }}</td>
-	                <td>@{{(data.unidades !== null )? data.unidades.clave+" - "+data.unidades.descripcion : "" }}</td>
-	                <td>@{{ data.nombre }}</td>
-	                <td>@{{ data.stock }}</td>
-	                <td>$ @{{ data.subtotal.toLocaleString() }}</td>
-	                <td>$ @{{ data.total.toLocaleString()}} </td>
-	                <td>
+	            <tr ng-repeat="data in datos.response" id="tr_@{{data.id}}">
+	                <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ data.codigo }}</td>
+	                <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{(data.unidades !== null )? data.unidades.clave+" - "+data.unidades.descripcion : "" }}</td>
+	                <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ data.nombre }}</td>
+	                <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ data.stock }}</td>
+	                <td style="cursor:pointer;" ng-click="edit_register(data)" >$ @{{ data.subtotal.toLocaleString() }}</td>
+	                <td style="cursor:pointer;" ng-click="edit_register(data)" >$ @{{ data.total.toLocaleString()}} </td>
+	                <td style="cursor:pointer;" ng-click="edit_register(data)" >
 	                	<span class="label label-success" ng-if="data.estatus == 1">Activo</span>
 	                	<span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>
 	                </td>
@@ -39,11 +39,11 @@
 	                            <span class="caret"></span>
 	                        </button>
 	                        <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-	                            <li>
+	                            <!-- <li>
 	                                <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data)">
 	                                    <i class="glyphicon glyphicon-edit"></i> Editar
 	                                </a>
-	                            </li>
+	                            </li> -->
 	                            
 	                            <li>
 	                                <a title="Asignar Producto" style="cursor:pointer;" ng-click="asignar_producto(data.id)">

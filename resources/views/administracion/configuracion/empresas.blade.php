@@ -21,7 +21,7 @@
 	        </thead>
 	        <tbody>
 
-	            <tr ng-repeat="data in datos">
+	            <tr ng-repeat="data in datos" id="tr_@{{data.id}}">
 	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.nombre_comercial}}</td>
 	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.razon_social }}</td>
 	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.rfc_emisor }}</td>

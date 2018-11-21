@@ -37,12 +37,12 @@
                                     <div class="form-group ">
                                         <label for="model" class="col-sm-2 control-label">Código</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="codigo" ng-model="insert.codigo">
+                                            <input type="text" class="form-control" ng-model="insert.codigo" ng-change="insert.codigo = (insert.codigo | uppercase)">
                                         </div>
                                         
                                         <label for="producto" class="col-sm-2 control-label">Producto</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="producto" ng-model="insert.nombre">
+                                            <input type="text" class="form-control" id="producto" ng-model="insert.nombre" ng-change="insert.nombre = (insert.nombre | uppercase)">
                                         </div>
                                     </div>
 
@@ -62,7 +62,7 @@
                                     <div class="form-group">
                                         <label for="note" class="col-sm-2 control-label">Descripción</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="descripcion" ng-model="insert.descripcion"></textarea>
+                                            <textarea class="form-control" id="descripcion" ng-model="insert.descripcion" ng-change="insert.descripcion = (insert.descripcion | uppercase)"></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -217,12 +217,12 @@
                                     <div class="form-group ">
                                         <label for="model" class="col-sm-2 control-label">Código</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="codigo" ng-model="update.codigo">
+                                            <input type="text" class="form-control" ng-model="update.codigo" ng-change="update.codigo = (update.codigo | uppercase)">
                                         </div>
                                         
                                         <label for="producto" class="col-sm-2 control-label">Producto</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="producto" ng-model="update.nombre">
+                                            <input type="text" class="form-control" id="producto" ng-model="update.nombre" ng-change="update.nombre = (update.nombre | uppercase)">
                                         </div>
                                     </div>
 
@@ -230,7 +230,7 @@
 
                                         <label for="modelo" class="col-sm-2 control-label">Stock</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="stock" ng-model="update.stock" >
+                                            <input type="text" class="form-control" id="stock" ng-model="update.stock" ng-change="update.stock = (update.stock | uppercase)">
                                         </div>
                                         
                                         <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
@@ -242,7 +242,7 @@
                                     <div class="form-group">
                                         <label for="note" class="col-sm-2 control-label">Descripción</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="descripcion" ng-model="update.descripcion"></textarea>
+                                            <textarea class="form-control" id="descripcion" ng-model="update.descripcion" ng-change="update.descripcion = (update.descripcion | uppercase)"></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -303,7 +303,7 @@
                                                 <div class="input-group-addon">
                                                     <strong>%</strong>
                                                 </div>
-                                                <input type="text" class="form-control" id="iva" ng-model="update.iva" ng-blur="total_concepto_edit()" >
+                                                <input type="text" class="form-control" id="iva" ng-model="update.iva" ng-blur="total_concepto_edit()" readonly="" >
                                             </div>
                                         </div>
 

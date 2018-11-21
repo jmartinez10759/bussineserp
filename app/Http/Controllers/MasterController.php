@@ -979,7 +979,7 @@ abstract class MasterController extends Controller
         #SysUsersModel
 		$response = $table_model::with(['empresas' => function ($query) {
 			if (Session::get('id_rol') != 1) {
-				return $qusery->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
+				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
 			}
 		}])->with($with)->where(['id' => Session::get('id')])->orderby('id', 'desc')->get();
 		$request = [];
