@@ -332,7 +332,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
           if(update){
             $scope.update.logo = domain(request.result);
             var html = '';
-            html = '<img class="img-responsive" src="'+$scope.update.logo+'" height="268px" width="200px">'
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
             jQuery('#imagen_edit').html("");        
             jQuery('#imagen_edit').html(html);        
           }else{
