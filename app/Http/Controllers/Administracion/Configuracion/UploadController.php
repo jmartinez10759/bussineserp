@@ -287,9 +287,26 @@ class UploadController extends MasterController
          }
 
      }
+    /**
+     * Metodo para subir los archivos.
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+     public function uploads_files( Request $request ){
+         try { 
+             $response = self::upload_file($request ,false, "upload_file/archivos/");
+             #debuger($response['file']);
+             if($response['file'][0]->success == false){
+                return $this->show_error(6, $response['file'][0]->result , $response['file'][0]->message );    
+             }
+             return $this->_message_success( 201, $response['file'][0]->result , $response['file'][0]->message );
+         } catch (\Exception $e) {
+             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+             return $this->show_error(6, $error, self::$message_error );
+         }
 
-    
-    
+     }
     
 
 }

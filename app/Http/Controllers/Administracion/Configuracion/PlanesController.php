@@ -73,8 +73,6 @@ class PlanesController extends MasterController
              ,'leyenda'   => 'Seleccione Opcion'
              ,'attr'      => 'data-live-search="true" '
         ]);
-
-
         #$productos = $this->_validate_consulta( new SysProductosModel ,[], [], [], []);
         $productos = $this->_validate_consulta( new SysProductosModel, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
         #debuger($productos[0]->empresas[0]->razon_social);

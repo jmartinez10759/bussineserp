@@ -115,7 +115,11 @@ class ClientesController extends MasterController
                     };
                     if( !in_array( $key, $string_key_contactos) ){
                         if( !is_array($value)){
-                            $string_data_clientes[$key] = strtoupper($value);
+                            if($key == "logo"){
+                              $string_data_clientes[$key] = (trim($value));
+                            }else{
+                              $string_data_clientes[$key] = strtoupper($value);
+                            }
                         }
                     };
                 }
@@ -174,7 +178,11 @@ class ClientesController extends MasterController
                     };
                     if( !in_array( $key, $string_key_clientes) ){
                         if( !is_array($value)){
-                            $string_data_clientes[$key] = strtoupper($value);
+                            if($key == "logo"){
+                              $string_data_clientes[$key] = (trim($value));
+                            }else{
+                              $string_data_clientes[$key] = strtoupper($value);
+                            }
                         }
                     };
                     

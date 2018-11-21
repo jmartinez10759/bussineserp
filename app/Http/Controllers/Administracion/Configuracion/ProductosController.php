@@ -36,46 +36,7 @@ class ProductosController extends MasterController
             return view('errors.error');
         }
 
-        $categorias = dropdown([
-                'data'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
-                ,'value'     => 'id'
-                ,'text'      => 'nombre'
-                ,'name'      => 'cmb_categorias'
-                ,'class'     => 'form-control'
-                ,'leyenda'   => 'Seleccione Opcion'
-                ,'attr'      => 'data-live-search="true" '
-        ]);
-
-        $categorias_edit = dropdown([
-                 'data'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'nombre'
-                 ,'name'      => 'cmb_categorias_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-
-        $unidades = dropdown([
-                 'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave nombre'
-                 ,'name'      => 'cmb_unidades'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-
-        $unidades_edit = dropdown([
-                 'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave nombre'
-                 ,'name'      => 'cmb_unidades_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-        $tasa = dropdown([
+        /*$tasa = dropdown([
                  'data'      => SysTasaModel::get()
                  ,'value'     => 'id'
                  ,'text'      => 'clave valor_maximo'
@@ -152,24 +113,12 @@ class ProductosController extends MasterController
              ,'leyenda'   => 'Seleccione Opcion'
              ,'attr'      => 'data-live-search="true" '
         ]);
-
+*/
 
         $data = [
             'page_title' 	         => "Configuración"
             ,'title'  		         => "Productos"
             ,'data_table'  		     => "data_table(table)"
-            ,'categorias'            => $categorias
-            ,'categorias_edit'       => $categorias_edit
-            ,'unidades'              => $unidades
-            ,'unidades_edit'         => $unidades_edit
-            ,'tasa'                  => $tasa
-            ,'tasa_edit'             => $tasa_edit
-            ,'impuesto'              => $impuesto
-            ,'impuesto_edit'         => $impuesto_edit
-            ,'tipo_factor'           => $tipo_factor
-            ,'tipo_factor_edit'      => $tipo_factor_edit
-            ,'servicios'             => $servicios
-            ,'servicios_edit'        => $servicios_edit
         ];
         return self::_load_view( "administracion.configuracion.productos",$data );
     }
@@ -184,8 +133,12 @@ class ProductosController extends MasterController
         try {
            $response = $this->_validate_consulta( $this->_tabla_model, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
            $data = [
-             'response' => $response
-             ,'empresas' => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
+             'response'         => $response
+             ,'empresas'        => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
+             ,'unidad_medida'   => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
+             ,'categorias'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
+             ,'servicios'       => SysClaveProdServicioModel::get()
+             ,'tipo_factor'     => SysTipoFactorModel::get()
            ];
           return $this->_message_success( 200, $data , self::$message_success );
         } catch (\Exception $e) {

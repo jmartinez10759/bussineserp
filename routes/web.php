@@ -585,6 +585,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'clientes.destroy'
     ]);
 
+    Route::post('/upload/register', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@store'
+        ,'as'       => 'clientes.register'
+    ]);
+
+
     ############################ SECCION DE CONTACTOS ###################################
     Route::get('/configuracion/contactos', [
         'uses'      => 'Administracion\Configuracion\ContactosController@index'
@@ -819,6 +825,11 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::post('/upload/catalogos', [
         'uses'      => 'Administracion\Configuracion\UploadController@upload_catalogos'
         ,'as'       => 'upload.catalogos'
+    ]);
+
+    Route::post('/upload/files', [
+        'uses'      => 'Administracion\Configuracion\UploadController@uploads_files'
+        ,'as'       => 'upload.files'
     ]);
 
     #SE REALIZA UNA URL DINAMICA

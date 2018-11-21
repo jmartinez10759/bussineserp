@@ -27,16 +27,17 @@ class Upload extends Facade
             $name_temp    	= $files[$i]->getClientOriginalName();
             $ext      		  = strtolower($files[$i]->getClientOriginalExtension());
             $type 			    = $files[$i]->getMimeType();
+            $tipo = explode('/', $type);
             #$dir = dirname( getcwd() );
             $dir  = public_path();
-            $archivo        = $name_temp;
+            $archivo        = (isset($request->nombre))? $request->nombre.".".$tipo[1] : $name_temp;
             $path           = $dir."/".$this->directorio;
             $ruta_file[]    = $path.$archivo;
             $ruta_update    = $this->directorio.$archivo;
             File::makeDirectory($path, 0777, true, true);
             $files[$i]->move($path,$archivo);
         }
-        return json_to_object(message(true,$ruta_file,"Los archivos se subieron correctamente"));
+        return json_to_object(message(true,$ruta_update,"Los archivos se subieron correctamente"));
       } catch (Exception $e) {
           $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
           return json_to_object(message(false,$error,"Ocurrio Un Error al Subir el Archivo"));
