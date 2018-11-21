@@ -226,11 +226,6 @@
                     <!-- Profile Image -->
                     <div class="box box-primary">
                         <center>
-                        <!-- <div class="col-sm-12">
-                            <button type="button" class="btn btn-primary" ng-click="upload_file(1)">
-                                <i class="fa fa-upload"></i> Subir Imagen  
-                            </button>
-                        </div> -->
                         <div class="box-body box-profile">
                             <div id="load_img" class="col-sm-12">
                                 <div id="imagen_edit"></div>
@@ -238,7 +233,6 @@
                             <input type="hidden" class="form-control" ng-model="update.logo">
                         </div>
                         </center>
-                        <!-- /.box-body -->
                     </div>
                     <!-- /.box -->
                 </div>
@@ -406,7 +400,7 @@
 
                                     <div class="form-group">
 
-                                        <button type="button" class="btn btn-info" ng-click="upload_file(1)">
+                                        <button type="button" class="btn btn-warning" ng-click="upload_file(1)" {{$upload}}>
                                             <i class="fa fa-upload"></i> Subir Imagen  
                                         </button>
 
@@ -480,8 +474,8 @@
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-success" data-fancybox-close>
-                        <i class="fa fa-times-circle"></i> Aceptar
+                    <button type="button" class="btn btn-danger" data-fancybox-close>
+                        <i class="fa fa-times-circle"></i> Cerrar
                     </button>
                     <!-- <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}>
                         <i class="fa fa-save"></i> Aceptar 

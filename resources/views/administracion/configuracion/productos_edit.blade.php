@@ -5,24 +5,22 @@
     <div class="modal-body" style="overflow-y:scroll; height:500px;">
         <section class="content">
             <div class="row">
-                <div class="col-md-3">
                     <!-- Profile Image -->
-                    <div class="box box-primary">
+                <!-- <div class="col-md-3">
+                     <div class="box box-primary">
                         <div class="box-body box-profile">
                             <div id="load_img">
-                                <!--<img class=" img-responsive" src="img/productos/product.png" alt="Bussines profile picture">-->
                             </div>
 
                             <div class="col-sm-10"></div>
                             <input type="text" class="form-control" id="logo" ng-model="insert.logo">
 
                         </div>
-                        <!-- /.box-body -->
-                    </div>
+                    </div> 
+                </div>-->
                     <!-- /.box -->
-                </div>
                 <!-- /.col -->
-                <div class="col-md-9">
+                <div class="col-sm-12">
                     <form class="form-horizontal">
 
                         <div class="nav-tabs-custom">
@@ -55,7 +53,8 @@
                                         
                                         <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="insert.id_unidadmedida" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.unidad_medida">
@@ -67,13 +66,14 @@
                                     <div class="form-group">
                                         <label for="note" class="col-sm-2 control-label">Descripción</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="descripcion" ng-model="insert.descripcion" capitalize></textarea>
+                                            <textarea class="form-control" ng-model="insert.descripcion" capitalize></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="product_code" class="col-sm-2 control-label">Clave Servicio</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="insert.id_servicio" 
                                             ng-options="value.id as value.clave for (key, value) in datos.servicios">
@@ -84,7 +84,8 @@
 
                                         <label for="categoria" class="col-sm-2 control-label">Categoría</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="insert.id_categoria" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.categorias">
@@ -98,7 +99,8 @@
 
                                         <label for="product_code" class="col-sm-2 control-label">Tipo Factor</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-change="tipo_factor()"
                                             ng-model="insert.id_tipo_factor" 
@@ -110,7 +112,8 @@
 
                                         <label for="categoria" class="col-sm-2 control-label">Tasa</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-change="clave_impuesto()"
                                             ng-model="insert.id_tasa" 
@@ -125,7 +128,8 @@
                                         
                                         <label for="product_code" class="col-sm-2 control-label">Impuestos</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="insert.id_impuesto" 
                                             ng-options="value.id as value.clave for (key, value) in cmb_impuestos">
@@ -175,7 +179,8 @@
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
 
                                         <div class="col-sm-4">  
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="insert.estatus" 
                                             ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
@@ -214,24 +219,22 @@
     <div class="modal-body" style="overflow-y:scroll; height:500px;">
         <section class="content">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-sm-3">
                     <!-- Profile Image -->
                     <div class="box box-primary">
+                        <center>
                         <div class="box-body box-profile">
-                            <div id="load_img">
-                                <!--<img class=" img-responsive" src="img/productos/product.png" alt="Bussines profile picture">-->
+                            <div id="load_img" class="col-sm-12">
+                                <div id="imagen_edit"></div>
                             </div>
-
-                            <div class="col-sm-10"></div>
-                            <input type="text" class="form-control" id="logo_edit" ng-model="update.logo">
-
+                            <input type="hidden" class="form-control" ng-model="update.logo">
                         </div>
-                        <!-- /.box-body -->
+                        </center>
                     </div>
                     <!-- /.box -->
                 </div>
                 <!-- /.col -->
-                <div class="col-md-9">
+                <div class="col-sm-9">
                     <form class="form-horizontal">
 
                         <div class="nav-tabs-custom">
@@ -264,7 +267,8 @@
                                         
                                         <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="update.id_unidadmedida" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.unidad_medida">
@@ -282,7 +286,8 @@
                                     <div class="form-group">
                                         <label for="product_code" class="col-sm-2 control-label">Clave Servicio</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="update.id_servicio" 
                                             ng-options="value.id as value.clave for (key, value) in datos.servicios">
@@ -293,7 +298,8 @@
 
                                         <label for="categoria" class="col-sm-2 control-label">Categoría</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="update.id_categoria" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.categorias">
@@ -307,7 +313,8 @@
 
                                         <label for="product_code" class="col-sm-2 control-label">Tipo Factor</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-change="tipo_factor(1)"
                                             ng-model="update.id_tipo_factor" 
@@ -319,7 +326,8 @@
 
                                         <label for="categoria" class="col-sm-2 control-label">Tasa</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-change="clave_impuesto(1)"
                                             ng-model="update.id_tasa" 
@@ -334,7 +342,8 @@
                                         
                                         <label for="product_code" class="col-sm-2 control-label">Impuestos</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="update.id_impuesto" 
                                             ng-options="value.id as value.clave for (key, value) in cmb_impuestos">
@@ -384,7 +393,8 @@
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
 
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
+                                            width="'100%'"
                                             chosen
                                             ng-model="update.estatus" 
                                             ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
@@ -392,6 +402,15 @@
                                         </div>
 
                                     </div>
+
+                                    <div class="form-group">
+
+                                        <button type="button" class="btn btn-warning" ng-click="upload_file(1)" {{$upload}} >
+                                            <i class="fa fa-upload"></i> Subir Imagen  
+                                        </button>
+
+                                    </div>
+
 
                                 </div>
                                 <!-- /.tab-pane -->
@@ -432,6 +451,31 @@
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
                     <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="" id="upload_file" style="display:none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Subir Imagen </h3>
+            </div>
+            <div class="modal-body">
+                <div id="div_dropzone_file_productos"></div> 
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close>
+                        <i class="fa fa-times-circle"></i> Cerrar
+                    </button>
+                    <!-- <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}>
+                        <i class="fa fa-save"></i> Aceptar 
+                    </button> -->
                 </div>
             </div>
 

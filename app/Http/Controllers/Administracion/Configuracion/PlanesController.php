@@ -36,43 +36,6 @@ class PlanesController extends MasterController
         if( Session::get('permisos')['GET'] ){
             return view('errors.error');
         }
-        $unidades = dropdown([
-                 'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave nombre'
-                 ,'name'      => 'cmb_unidades'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-
-        $unidades_edit = dropdown([
-                 'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave nombre'
-                 ,'name'      => 'cmb_unidades_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-        $servicios =  dropdown([
-           'data'       => SysClaveProdServicioModel::get()
-           ,'value'     => 'id'
-           ,'text'      => 'clave descripcion'
-           ,'name'      => 'cmb_servicio'
-           ,'class'     => 'form-control'
-           ,'leyenda'   => 'Seleccione Opcion'
-        ]);
-            
-        $servicios_edit =  dropdown([
-             'data'       => SysClaveProdServicioModel::get()
-             ,'value'     => 'id'
-             ,'text'      => 'clave descripcion'
-             ,'name'      => 'cmb_servicio_edit'
-             ,'class'     => 'form-control'
-             ,'leyenda'   => 'Seleccione Opcion'
-             ,'attr'      => 'data-live-search="true" '
-        ]);
         #$productos = $this->_validate_consulta( new SysProductosModel ,[], [], [], []);
         $productos = $this->_validate_consulta( new SysProductosModel, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
         #debuger($productos[0]->empresas[0]->razon_social);
@@ -102,10 +65,6 @@ class PlanesController extends MasterController
             ,"title"  		        => "Planes"
             ,"data_table"  		    => "data_table(table)"
             ,"data_table_producto"  => data_table($table_producto)
-            ,'unidades'              => $unidades
-            ,'unidades_edit'         => $unidades_edit
-            ,'servicios'             => $servicios
-            ,'servicios_edit'        => $servicios_edit
         ];
         return self::_load_view( "administracion.configuracion.planes",$data );
     }
@@ -123,7 +82,9 @@ class PlanesController extends MasterController
            $data = [
              'response'             => $response
              ,'empresas'            => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
-             ,'cmb_tipo_factor'     => SysTipoFactorModel::get()
+             ,'unidad_medida'       => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
+             ,'servicios'           => SysClaveProdServicioModel::get()
+             ,'tipo_factor'         => SysTipoFactorModel::get()
            ];
           return $this->_message_success( 200, $data , self::$message_success );
         } catch (\Exception $e) {
@@ -163,7 +124,11 @@ class PlanesController extends MasterController
             #debuger($request->all());
             $registros = [];
             foreach ($request->all() as $key => $value) {
-                $registros[$key] = strtoupper($value);
+                if($key == "logo"){
+                  $registros[$key] = ($value);
+                }else{
+                  $registros[$key] = strtoupper($value);
+                }
             }
             $response = $this->_tabla_model::create( $registros );
             $data = [
@@ -202,7 +167,11 @@ class PlanesController extends MasterController
             $keys = ['created_at','updated_at','unidades'];
             foreach ($request->all() as $key => $value) {
                 if( !in_array($key,$keys)){
-                    $registros[$key] = strtoupper($value);
+                    if($key == "logo"){
+                      $registros[$key] = ($value);
+                    }else{
+                      $registros[$key] = strtoupper($value);
+                    }
                 }
             }
             #debuger($registros);
@@ -318,11 +287,11 @@ class PlanesController extends MasterController
      */
     public function display_sucursales( Request $request ){
         try {
-            #$sucursales = [];
             $response = SysEmpresasModel::with(['sucursales' => function($query){
-                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->get();
+                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->groupby('id')->get();
             }])->where(['id' => $request->id_empresa])->get();
             $sucursales = SysPlanesProductosModel::select('id_sucursal')->where($request->all())->get();
+            #debuger($sucursales);
             #se crea la tabla 
             $registros = [];
             foreach ($response[0]->sucursales as $respuesta) {
@@ -344,8 +313,8 @@ class PlanesController extends MasterController
                 ,'id' 			   => "sucursales"
             ];
             $data = [
-                'tabla_sucursales' => data_table($table)
-                ,'sucursales'   => $sucursales
+                'tabla_sucursales'  => data_table($table)
+                ,'sucursales'       => $sucursales
             ];
             return $this->_message_success(201, $data, self::$message_success);
         } catch (\Exception $e) {
@@ -375,7 +344,7 @@ class PlanesController extends MasterController
             if( count($response_producto) > 0){
                 SysPlanesProductosModel::where($where)->delete();
             }
-            SysPlanesProductosModel::where(['id_plan'    => $request->id_plan ])->delete();
+            SysPlanesProductosModel::where(['id_plan' => $request->id_plan ])->delete();
             $response = [];
             for ($i=0; $i < count($request->matrix) ; $i++) { 
                 $matrices = explode('|', $request->matrix[$i] );

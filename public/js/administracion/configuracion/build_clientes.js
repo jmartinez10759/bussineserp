@@ -328,7 +328,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
       };
       var message = "Dar Clíc aquí o arrastrar archivo";
       $scope.update.logo = "";
-      upload_file({'nombre': 'cliente_'+$scope.update.id },upload_url,message,1,identificador,'.jpg,.png,.jpeg',function( request ){
+      upload_file({'nombre': 'cliente_'+$scope.update.id },upload_url,message,1,identificador,'.png',function( request ){
           if(update){
             $scope.update.logo = domain(request.result);
             var html = '';
