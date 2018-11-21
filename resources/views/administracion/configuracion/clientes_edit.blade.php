@@ -119,8 +119,9 @@
                                         
                                         <label for="iva" class="col-sm-2 control-label">Pais: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
                                             chosen
+                                            width="'100%'"
                                             ng-change="select_estado()" 
                                             ng-model="insert.id_country" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.paises">
@@ -130,12 +131,13 @@
                                         
                                         <label for="iva" class="col-sm-2 control-label">Estado: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
                                             chosen
+                                            width="'100%'"
                                             ng-change="select_codigos()" 
                                             ng-model="insert.id_estado" 
                                             ng-options="value.id as value.nombre for (key, value) in cmb_estados">
-                                            <option value="">--Seleccione Opcion--</option>  
+                                                <option value="">--Seleccione Opcion--</option>  
                                             </select>  
                                         </div>
 
@@ -145,18 +147,20 @@
 
                                         <label for="subtotal" class="col-sm-2 control-label">Código Postal: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
-                                            chosen 
+                                            <select class="form-control"
+                                            chosen
+                                            width="'100%'"
                                             ng-model="insert.id_codigo" 
                                             ng-options="value.id as value.codigo_postal for (key, value) in cmb_codigos"> 
-                                            <option value="">--Seleccione Opcion--</option> 
+                                                <option value="">--Seleccione Opcion--</option> 
                                             </select>    
                                         </div>
 
                                         <label for="subtotal" class="col-sm-2 control-label">Servicio Comercial: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
-                                            chosen 
+                                            <select class="form-control"
+                                            chosen
+                                            width="'100%'" 
                                             ng-model="insert.id_servicio_comercial" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
                                                 <option value="">--Seleccione Opcion--</option> 
@@ -170,7 +174,8 @@
                                         <label for="subtotal" class="col-sm-2 control-label">Uso CFDI: </label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
-                                            chosen 
+                                            chosen
+                                            width="'100%'" 
                                             ng-model="insert.id_uso_cfdi" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.uso_cfdi">
                                                 <option value="">--Seleccione Opcion--</option> 
@@ -179,8 +184,9 @@
 
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
                                         <div class="col-sm-4">
-                                             <select class="form-control select_chosen"
-                                             chosen 
+                                             <select class="form-control"
+                                             chosen
+                                             width="'100%'" 
                                              ng-model="insert.estatus" 
                                              ng-options="value.id as value.nombre for (key, value) in cmb_estatus"> 
                                             </select>
@@ -222,7 +228,7 @@
 
         <section class="content">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-sm-3">
                     <!-- Profile Image -->
                     <div class="box box-primary">
                         <center>
@@ -237,7 +243,7 @@
                     <!-- /.box -->
                 </div>
                 <!-- /.col -->
-                <div class="col-md-9">
+                <div class="col-sm-9">
                     <form class="form-horizontal">
 
                         <div class="nav-tabs-custom">

@@ -1285,11 +1285,6 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\CuentasController@show'
         ,'as' => 'cuentas.edit'
     ]);
-    
-    /*Route::get('/cuentas/display_clientes', [
-        'uses' => 'Administracion\Configuracion\CuentasController@display_clientes'
-        ,'as' => 'cuentas.display_clientes'
-    ]);*/
 
     Route::put('/cuentas/update', [
         'uses' => 'Administracion\Configuracion\CuentasController@update'
@@ -1300,7 +1295,37 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\CuentasController@destroy'
         ,'as' => 'cuentas.destroy'
     ]);
-    
+    ################################## CATALOGO DE CATEGORIAS ################################
+    Route::get('/configuracion/categoriasproductos', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@index'
+        ,'as' => 'configuracion.categoriasproductos'
+    ]);
+
+    Route::get('/categoriasproductos/all', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@all'
+        ,'as' => 'categoriasproductos.all'
+    ]);
+
+    Route::post('/categoriasproductos/register', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@store'
+        ,'as' => 'categoriasproductos.register'
+    ]);
+
+    Route::get('/categoriasproductos/edit', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@show'
+        ,'as' => 'categoriasproductos.edit'
+    ]);
+
+    Route::put('/categoriasproductos/update', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@update'
+        ,'as' => 'categoriasproductos.update'
+    ]);
+
+    Route::delete('/categoriasproductos/destroy', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@destroy'
+        ,'as' => 'categoriasproductos.destroy'
+    ]);
+
 ##################################### COTIZACIONES #########################################    
 
 Route::get('/ventas/cotizacion', [
