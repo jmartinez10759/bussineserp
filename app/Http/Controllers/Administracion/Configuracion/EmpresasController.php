@@ -40,68 +40,6 @@ class EmpresasController extends MasterController
       return view('errors.error');
     }    
     $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
-    $paises = dropdown([
-         'data'      => SysPaisModel::get()
-         ,'value'     => 'id'
-         ,'text'      => 'clave descripcion'
-         ,'name'      => 'cmb_pais'
-         ,'class'     => 'form-control'
-         ,'leyenda'   => 'Seleccione Opcion'
-         ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
-         ,'event'     => 'ng-select_estado()'
-         ,'selected'  => '151'
-   ]);
-
-    $paises_edit =  dropdown([
-         'data'      => SysPaisModel::get()
-         ,'value'     => 'id'
-         ,'text'      => 'clave descripcion'
-         ,'name'      => 'cmb_pais_edit'
-         ,'class'     => 'form-control'
-         ,'leyenda'   => 'Seleccione Opcion'
-         ,'attr'      => 'data-live-search="true" ng-model="update.id_country"'
-         ,'event'     => 'ng-select_estado_edit()'
-    ]);
-
-    $regimen_fiscal =  dropdown([
-           'data'       => SysRegimenFiscalModel::get()
-           ,'value'     => 'id'
-           ,'text'      => 'clave descripcion'
-           ,'name'      => 'cmb_regimen_fiscal'
-           ,'class'     => 'form-control'
-           ,'leyenda'   => 'Seleccione Opcion'
-           ,'attr'      => 'data-live-search="true" ng-model="insert.id_regimen_fiscal"'
-    ]);
-
-    $regimen_fiscal_edit =  dropdown([
-           'data'       => SysRegimenFiscalModel::get()
-           ,'value'     => 'id'
-           ,'text'      => 'clave descripcion'
-           ,'name'      => 'cmb_regimen_fiscal_edit'
-           ,'class'     => 'form-control'
-           ,'leyenda'   => 'Seleccione Opcion'
-           ,'attr'      => 'data-live-search="true"'
-    ]);
-
-    $servicios_comerciales =  dropdown([
-           'data'       => SysServiciosComercialesModel::get()
-           ,'value'     => 'id'
-           ,'text'      => 'nombre'
-           ,'name'      => 'cmb_servicio_comerciales'
-           ,'class'     => 'form-control'
-           ,'leyenda'   => 'Seleccione Opcion'
-           ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio"'
-    ]);
-    
-    $servicios_comerciales_edit =  dropdown([
-         'data'       => SysServiciosComercialesModel::get()
-         ,'value'     => 'id'
-         ,'text'      => 'nombre'
-         ,'name'      => 'cmb_servicio_comerciales_edit'
-         ,'class'     => 'form-control'
-         ,'leyenda'   => 'Seleccione Opcion'
-         ,'attr'      => 'data-live-search="true"'
-    ]);
 
    foreach ($response_sucursales as $respuesta) {
      $id['id'] = $respuesta->id;
@@ -127,12 +65,6 @@ class EmpresasController extends MasterController
      ,'title'                   =>  "Empresas"
      ,'data_table'              =>  "data_table(table)"
      ,'data_table_sucursales'   =>  data_table($table_sucursales)
-     ,'giro_comercial'          =>  $servicios_comerciales
-     ,'giro_comercial_edit'     =>  $servicios_comerciales_edit
-     ,'regimen_fiscal'          =>  $regimen_fiscal
-     ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
-     ,'paises'                  =>  $paises
-     ,'paises_edit'             =>  $paises_edit
    ];
     #debuger($data);
     return self::_load_view( 'administracion.configuracion.empresas', $data );
@@ -146,8 +78,18 @@ class EmpresasController extends MasterController
   */
   public function all( Request $request ){    
    try {
-        $response = ( Session::get('id_rol') == 1 )? $this->_tabla_model::with(['contactos','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->get():$this->_consulta_employes(new SysUsersModel);
-        return $this->_message_success( 200, $response , self::$message_success );
+        $response = ( Session::get('id_rol') == 1 )? 
+        $this->_tabla_model::with(['contactos','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->orderby('id','desc')->get()
+        :$this->_consulta(new SysUsersModel,[],[],['id' => Session::get('id_empresa')],'empresas',['contactos','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion']);
+
+        $data = [
+          'response'                 => $response  
+          ,'paises'                  => SysPaisModel::get()
+          ,'servicio_comercial'      => SysServiciosComercialesModel::get()
+          ,'regimen_fiscal'          => SysRegimenFiscalModel::get()
+        ];
+
+        return $this->_message_success( 200, $data , self::$message_success );
       } catch (\Exception $e) {
           $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
           return $this->show_error(6, $error, self::$message_error );
@@ -161,7 +103,7 @@ class EmpresasController extends MasterController
   *@return void
   */
   public function store( Request $request){
-        #debuger($request->all());
+       #debuger($request->all());
        $error = null;
           DB::beginTransaction();
           try {
@@ -181,11 +123,14 @@ class EmpresasController extends MasterController
                       }
                   };
                   if( !in_array( $key, $string_key_contactos) ){
-                      $string_data_empresa[$key] = strtoupper($value);
+                      if($key == "logo"){
+                        $string_data_empresa[$key] = (trim($value));
+                      }else{
+                        $string_data_empresa[$key] = strtoupper($value);
+                      }
                   };
                   
               }
-
              $response = $this->_tabla_model::create( $string_data_empresa );
              $response_contactos = SysContactosModel::create($string_data_contactos);
               $data = [
@@ -243,7 +188,7 @@ class EmpresasController extends MasterController
       DB::beginTransaction();
       try {
               $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-              $string_key_empresas = [ 'contacto','departamento','telefono', 'correo','created_at','updated_at','contactos','sucursales','regimenes','codigos','comerciales','clientes','sucursales' ];
+              $string_key_empresas = [ 'contacto','departamento','telefono', 'correo','contactos' ];
               $string_data_empresa = [];
               $string_data_contactos = [];
               foreach( $request->all() as $key => $value ){
@@ -254,12 +199,16 @@ class EmpresasController extends MasterController
                           if($key != "correo"){
                             $string_data_contactos[$key] = strtoupper($value);
                           }else{
-                            $string_data_contactos[$key] = $value;
+                            $string_data_contactos[$key] = strtolower($value);
                           }
                       }
                   };
                   if( !in_array( $key, $string_key_empresas) ){
-                      $string_data_empresa[$key] = strtoupper($value);
+                      if($key == "logo"){
+                        $string_data_empresa[$key] = (trim($value));
+                      }else{
+                        $string_data_empresa[$key] = strtoupper($value);
+                      }
                   };
                   
               }

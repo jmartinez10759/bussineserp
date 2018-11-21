@@ -35,86 +35,6 @@ class ProductosController extends MasterController
         if( Session::get('permisos')['GET'] ){
             return view('errors.error');
         }
-
-        /*$tasa = dropdown([
-                 'data'      => SysTasaModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave valor_maximo'
-                 ,'name'      => 'cmb_tasas'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true"'
-                 ,'event'     => 'parser_iva()'
-           ]);
-        $tasa_edit = dropdown([
-                 'data'      => SysTasaModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave valor_maximo'
-                 ,'name'      => 'cmb_tasas_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true"'                 
-                 ,'event'     => 'parser_iva_edit()'                 
-           ]);
-
-        $impuesto = dropdown([
-                 'data'      => SysImpuestoModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_impuestos'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
-           ]);
-
-        $impuesto_edit = dropdown([
-                 'data'      => SysImpuestoModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_impuestos_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
-           ]);
-        $tipo_factor = dropdown([
-                 'data'      => SysTipoFactorModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave'
-                 ,'name'      => 'cmb_tipofactor'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
-           ]);
-        $tipo_factor_edit = dropdown([
-                 'data'      => SysTipoFactorModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave'
-                 ,'name'      => 'cmb_tipofactor_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
-           ]);
-
-        $servicios =  dropdown([
-           'data'       => SysClaveProdServicioModel::get()
-           ,'value'     => 'id'
-           ,'text'      => 'clave descripcion'
-           ,'name'      => 'cmb_servicio'
-           ,'class'     => 'form-control'
-           ,'leyenda'   => 'Seleccione Opcion'
-        ]);
-            
-        $servicios_edit =  dropdown([
-             'data'       => SysClaveProdServicioModel::get()
-             ,'value'     => 'id'
-             ,'text'      => 'clave descripcion'
-             ,'name'      => 'cmb_servicio_edit'
-             ,'class'     => 'form-control'
-             ,'leyenda'   => 'Seleccione Opcion'
-             ,'attr'      => 'data-live-search="true" '
-        ]);
-*/
-
         $data = [
             'page_title' 	         => "Configuración"
             ,'title'  		         => "Productos"
@@ -177,7 +97,11 @@ class ProductosController extends MasterController
         try {
             $registros = [];
             foreach ($request->all() as $key => $value) {
-                $registros[$key] = strtoupper($value);
+                if($key == "logo"){
+                  $registros[$key] = ($value);
+                }else{
+                  $registros[$key] = strtoupper($value);
+                }
             }
             $response = $this->_tabla_model::create( $registros );
             $data = [
@@ -213,7 +137,11 @@ class ProductosController extends MasterController
         try {
             $registros = [];
             foreach ($request->all() as $key => $value) {
-                $registros[$key] = strtoupper($value);
+                if($key == "logo"){
+                  $registros[$key] = ($value);
+                }else{
+                  $registros[$key] = strtoupper($value);
+                }
             }
             $this->_tabla_model::where(['id' => $request->id])->update($registros);
             $response = $this->_tabla_model::where(['id' => $request->id])->get();

@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysAccionesModel;
-use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
 use App\Model\Administracion\Configuracion\SysClientesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
@@ -54,6 +53,8 @@ use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysPaisModel;
 use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
+use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
+
 
 
 
@@ -209,6 +210,9 @@ class UploadController extends MasterController
             break;
                case "Servicioscomerciales": 
                 $this->_tabla_model = new SysServiciosComercialesModel; 
+            break;
+               case "Categoriasproductos": 
+                $this->_tabla_model = new SysCategoriasProductosModel; 
             break;
 
 

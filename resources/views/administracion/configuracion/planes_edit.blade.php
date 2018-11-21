@@ -5,24 +5,8 @@
     <div class="modal-body" style="overflow-y:scroll; height:500px;">
         <section class="content">
             <div class="row">
-                <div class="col-md-3">
-                    <!-- Profile Image -->
-                    <div class="box box-primary">
-                        <div class="box-body box-profile">
-                            <div id="load_img">
-                                <!--<img class=" img-responsive" src="img/productos/product.png" alt="Bussines profile picture">-->
-                            </div>
-
-                            <div class="col-sm-10"></div>
-                            <input type="text" class="form-control" id="logo" ng-model="insert.logo">
-
-                        </div>
-                        <!-- /.box-body -->
-                    </div>
-                    <!-- /.box -->
-                </div>
-                <!-- /.col -->
-                <div class="col-md-9">
+                
+                <div class="col-sm-12">
                     <form class="form-horizontal">
 
                         <div class="nav-tabs-custom">
@@ -37,12 +21,12 @@
                                     <div class="form-group ">
                                         <label for="model" class="col-sm-2 control-label">Código</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" ng-model="insert.codigo" ng-change="insert.codigo = (insert.codigo | uppercase)">
+                                            <input type="text" class="form-control" ng-model="insert.codigo" capitalize>
                                         </div>
                                         
                                         <label for="producto" class="col-sm-2 control-label">Producto</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="producto" ng-model="insert.nombre" ng-change="insert.nombre = (insert.nombre | uppercase)">
+                                            <input type="text" class="form-control" ng-model="insert.nombre" capitalize>
                                         </div>
                                     </div>
 
@@ -50,34 +34,50 @@
 
                                         <label for="modelo" class="col-sm-2 control-label">Stock</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="stock" ng-model="insert.stock">
+                                            <input type="number" class="form-control" id="stock" ng-model="insert.stock">
                                         </div>
                                         
                                         <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
                                         <div class="col-sm-4">
-                                            {!! $unidades !!}
+                                            <select class="form-control"
+                                            chosen
+                                            width="'100%'"
+                                            ng-model="insert.id_unidadmedida" 
+                                            ng-options="value.id as value.nombre for (key, value) in datos.unidad_medida">
+                                                <option value="">--Seleccione Opcion--</option>  
+                                            </select>  
                                         </div>
                                         
                                     </div>
                                     <div class="form-group">
                                         <label for="note" class="col-sm-2 control-label">Descripción</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="descripcion" ng-model="insert.descripcion" ng-change="insert.descripcion = (insert.descripcion | uppercase)"></textarea>
+                                            <textarea class="form-control" ng-model="insert.descripcion" capitalize></textarea>
                                         </div>
                                     </div>
+
                                     <div class="form-group">
                                         <label for="product_code" class="col-sm-2 control-label">Clave Servicio</label>
                                         <div class="col-sm-4">
-                                            {!! $servicios !!}
+                                            <select class="form-control"
+                                            chosen
+                                            width="'100%'"
+                                            ng-model="insert.id_servicio" 
+                                            ng-options="value.id as value.clave for (key, value) in datos.servicios">
+                                                <option value="">--Seleccione Opcion--</option>  
+                                            </select> 
                                         </div>
 
                                         <label for="product_code" class="col-sm-2 control-label">Tipo Factor</label>
                                         <div class="col-sm-4">
                                             
-                                            <select class="form-control" 
+                                            <select class="form-control"
+                                            chosen 
+                                            width="'100%'"
                                             ng-change="tipo_factor()"
                                             ng-model="insert.id_tipo_factor" 
-                                            ng-options="value.id as value.clave for (key, value) in datos.cmb_tipo_factor"> 
+                                            ng-options="value.id as value.clave for (key, value) in datos.tipo_factor"> 
+                                                <option value="">--Seleccione Opcion--</option> 
                                             </select>
 
                                         </div>
@@ -88,19 +88,25 @@
 
                                         <label for="categoria" class="col-sm-2 control-label">Tasa</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control" 
+                                            <select class="form-control"
+                                            chosen 
+                                            width="'100%'"
                                             ng-change="clave_impuesto()"
                                             ng-model="insert.id_tasa" 
-                                            ng-options="value.id as value.clave for (key, value) in cmb_tasas"> 
+                                            ng-options="value.id as value.clave for (key, value) in cmb_tasas">
+                                                <option value="">--Seleccione Opcion--</option>   
                                             </select>
                                         </div>
 
                                         <label for="product_code" class="col-sm-2 control-label">Impuestos</label>
                                         <div class="col-sm-4">
 
-                                            <select class="form-control cmb_impuestos"  
+                                            <select class="form-control"
+                                            chosen  
+                                            width="'100%'"
                                             ng-model="insert.id_impuesto" 
-                                            ng-options="value.id as value.descripcion for (key, value) in cmb_impuestos" disabled=""> 
+                                            ng-options="value.id as value.descripcion for (key, value) in cmb_impuestos">
+                                                <option value="">--Seleccione Opcion--</option>   
                                             </select>
                                             
                                         </div>
@@ -147,7 +153,9 @@
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
 
                                         <div class="col-sm-4">  
-                                            <select class="form-control" 
+                                            <select class="form-control"
+                                            chosen 
+                                            width="'100%'"
                                             ng-model="insert.estatus" 
                                             ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
                                             </select>
@@ -185,24 +193,22 @@
     <div class="modal-body" style="overflow-y:scroll; height:500px;">
         <section class="content">
             <div class="row">
-                <div class="col-md-3">
+                 <div class="col-sm-3">
                     <!-- Profile Image -->
                     <div class="box box-primary">
+                        <center>
                         <div class="box-body box-profile">
-                            <div id="load_img">
-                                <!--<img class=" img-responsive" src="img/productos/product.png" alt="Bussines profile picture">-->
+                            <div id="load_img" class="col-sm-12">
+                                <div id="imagen_edit"></div>
                             </div>
-
-                            <div class="col-sm-10"></div>
-                            <input type="text" class="form-control" id="logo_edit" ng-model="update.logo">
-
+                            <input type="hidden" class="form-control" ng-model="update.logo">
                         </div>
-                        <!-- /.box-body -->
+                        </center>
                     </div>
                     <!-- /.box -->
                 </div>
                 <!-- /.col -->
-                <div class="col-md-9">
+                <div class="col-sm-9">
                     <form class="form-horizontal">
 
                         <div class="nav-tabs-custom">
@@ -217,12 +223,12 @@
                                     <div class="form-group ">
                                         <label for="model" class="col-sm-2 control-label">Código</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" ng-model="update.codigo" ng-change="update.codigo = (update.codigo | uppercase)">
+                                            <input type="text" class="form-control" ng-model="update.codigo" capitalize>
                                         </div>
                                         
                                         <label for="producto" class="col-sm-2 control-label">Producto</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="producto" ng-model="update.nombre" ng-change="update.nombre = (update.nombre | uppercase)">
+                                            <input type="text" class="form-control" ng-model="update.nombre" capitalize>
                                         </div>
                                     </div>
 
@@ -230,36 +236,53 @@
 
                                         <label for="modelo" class="col-sm-2 control-label">Stock</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="stock" ng-model="update.stock" ng-change="update.stock = (update.stock | uppercase)">
+                                            <input type="number" class="form-control" ng-model="update.stock" capitalize>
                                         </div>
                                         
                                         <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
                                         <div class="col-sm-4">
-                                            {!! $unidades_edit !!}
+                                            <select class="form-control"
+                                            chosen
+                                            width="'100%'"
+                                            ng-model="update.id_unidadmedida" 
+                                            ng-options="value.id as value.nombre for (key, value) in datos.unidad_medida">
+                                                <option value="">--Seleccione Opcion--</option>  
+                                            </select>  
                                         </div>
                                         
                                     </div>
                                     <div class="form-group">
                                         <label for="note" class="col-sm-2 control-label">Descripción</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="descripcion" ng-model="update.descripcion" ng-change="update.descripcion = (update.descripcion | uppercase)"></textarea>
+                                            <textarea class="form-control" ng-model="update.descripcion" capitalize></textarea>
                                         </div>
                                     </div>
+
                                     <div class="form-group">
                                         <label for="product_code" class="col-sm-2 control-label">Clave Servicio</label>
                                         <div class="col-sm-4">
-                                            {!! $servicios_edit !!}
+                                            <select class="form-control"
+                                            chosen
+                                            width="'100%'"
+                                            ng-model="update.id_servicio" 
+                                            ng-options="value.id as value.clave for (key, value) in datos.servicios">
+                                                <option value="">--Seleccione Opcion--</option>  
+                                            </select> 
                                         </div>
 
                                         <label for="product_code" class="col-sm-2 control-label">Tipo Factor</label>
                                         <div class="col-sm-4">
+                                            
                                             <select class="form-control"
-                                            ng-change="tipo_factor_edit()" 
+                                            chosen 
+                                            width="'100%'"
+                                            ng-change="tipo_factor(1)"
                                             ng-model="update.id_tipo_factor" 
-                                            ng-options="value.id as value.clave for (key, value) in datos.cmb_tipo_factor">
+                                            ng-options="value.id as value.clave for (key, value) in datos.tipo_factor">
+                                                <option value="">--Seleccione Opcion--</option>   
                                             </select>
+
                                         </div>
-                                        
 
                                     </div>
 
@@ -267,21 +290,28 @@
 
                                         <label for="categoria" class="col-sm-2 control-label">Tasa</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control" 
-                                            ng-change="clave_impuesto_edit()"
+                                            <select class="form-control"
+                                            chosen 
+                                            width="'100%'"
+                                            ng-change="clave_impuesto(1)"
                                             ng-model="update.id_tasa" 
-                                            ng-options="value.id as value.clave for (key, value) in cmb_tasas"> 
+                                            ng-options="value.id as value.clave for (key, value) in cmb_tasas">
+                                                <option value="">--Seleccione Opcion--</option>   
                                             </select>
                                         </div>
 
                                         <label for="product_code" class="col-sm-2 control-label">Impuestos</label>
                                         <div class="col-sm-4">
-                                            <select class="form-control cmb_impuestos" 
-                                            ng-model="update.id_impuesto" 
-                                            ng-options="value.id as value.descripcion for (key, value) in cmb_impuestos" disabled=""> 
-                                            </select>
-                                        </div>
 
+                                            <select class="form-control"
+                                            chosen  
+                                            width="'100%'"
+                                            ng-model="update.id_impuesto" 
+                                            ng-options="value.id as value.descripcion for (key, value) in cmb_impuestos" >
+                                                <option value="">--Seleccione Opcion--</option>   
+                                            </select>
+                                            
+                                        </div>
 
                                     </div>
 
@@ -325,13 +355,24 @@
                                         <label for="estatus" class="col-sm-2 control-label">Estatus</label>
 
                                         <div class="col-sm-4">
-                                            <select class="form-control" 
+                                            <select class="form-control"
+                                            chosen 
+                                            width="'100%'"
                                             ng-model="update.estatus" 
                                             ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
                                             </select>
                                         </div>
 
                                     </div>
+
+                                    <div class="form-group">
+
+                                        <button type="button" class="btn btn-warning" ng-click="upload_file(1)" {{$upload}} >
+                                            <i class="fa fa-upload"></i> Subir Imagen  
+                                        </button>
+
+                                    </div>
+
 
                                 </div>
                                 <!-- /.tab-pane -->
@@ -394,6 +435,31 @@
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
                     <button type="button" class="btn btn-primary" ng-click="save_asign_producto()"><i class="fa fa-save"></i> Registrar </button> 
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="" id="upload_file" style="display:none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Subir Imagen </h3>
+            </div>
+            <div class="modal-body">
+                <div id="div_dropzone_file_planes"></div> 
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close>
+                        <i class="fa fa-times-circle"></i> Cerrar
+                    </button>
+                    <!-- <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}>
+                        <i class="fa fa-save"></i> Aceptar 
+                    </button> -->
                 </div>
             </div>
 

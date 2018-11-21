@@ -60,8 +60,18 @@
 	                    </div>
 	                </td>
 	                <td>
-                        <select class="form-control" ng-model="data.empresas[0].id" ng-options="value.id as value.nombre_comercial for (key, value) in datos.empresas" ng-change="display_sucursales(data.id )" id="cmb_empresas_@{{data.id}}" {{$permisos}}>
-                        </select>
+                        <div {{$permisos}}>
+	                        <select class="form-control"
+	                        width="'80%'"
+	                        chosen
+	                        ng-model="data.empresas[0].id" 
+	                        ng-options="value.id as value.nombre_comercial for (key, value) in datos.empresas" 
+	                        ng-change="display_sucursales(data.id )" 
+	                        id="cmb_empresas_@{{data.id}}">
+	                        	<option value="">--Seleccione Opcion--</option>
+	                        </select>
+                        </div>
+
                     </td>
 	                </tr>
 
