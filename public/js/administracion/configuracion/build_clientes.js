@@ -8,9 +8,11 @@ var url_display = "clientes/display_sucursales";
 var url_insert_permisos = "clientes/register_permisos";
 var url_edit_pais       = 'pais/edit';
 var url_edit_codigos    = 'codigopostal/show';
+var url_upload          = 'upload/files';
 
-var app = angular.module('ng-clientes', ["ngRoute"]);
-app.config(function( $routeProvider, $locationProvider ) {
+var app = angular.module('ng-clientes', ["ngRoute",'components','localytics.directives']);
+
+/*app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
     .when("/ruta1", {
         template : "<h1></h1>",
@@ -23,7 +25,7 @@ app.config(function( $routeProvider, $locationProvider ) {
         controller : ""
     });
     $locationProvider.html5Mode(true);
-});
+});*/
 app.controller('ClientesController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
@@ -39,16 +41,15 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
         $scope.fields = {};
         $scope.cmb_estatus = [{id:0 ,nombre:"Prospectos"}, {id:1, nombre:"Clientes"}];
         $scope.select_estado();
-        $scope.consulta_general();
-        //$scope.display_sucursales();
+        $scope.index();
     }
 
     $scope.click = function (){
       $location.path("/register");
-      //$scope.consulta_general();
+      //$scope.index();
     }
 
-    $scope.consulta_general = function(){
+    $scope.index = function(){
         var url = domain( url_all );
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
@@ -68,15 +69,17 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
     
     $scope.insert_register = function(){
 
-        var validacion = ['correo','razon_social','rfc_receptor'];
-        if(validacion_fields(validacion) == "error"){return;}
-        if( !emailValidate(jQuery('#correo').val()) ){  
-            jQuery('#correo').parent().addClass('has-error');
+        var validacion = {
+             'CORREO'       : $scope.insert.correo
+            ,'RAZON SOCIAL' : $scope.insert.razon_social
+            ,'RFC'          : $scope.insert.rfc_receptor
+          };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.insert.correo ) ){  
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        if( !valida_rfc(jQuery('#rfc_receptor').val()) ){
-            jQuery('#rfc_receptor').parent().addClass('has-error');
+        if( !valida_rfc($scope.insert.rfc_receptor) ){
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
@@ -93,7 +96,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             });
-            $scope.consulta_general();
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -108,18 +111,20 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
 
     $scope.update_register = function(){
 
-      var validacion = ['correo_edit','razon_social_edit','rfc_receptor_edit'];
-      if(validacion_fields(validacion) == "error"){return;}
-      if( !emailValidate(jQuery('#correo_edit').val()) ){  
-          jQuery('#correo_edit').parent().addClass('has-error');
-          toastr.error("Correo Incorrecto","Ocurrio un error, favior de verificar");
-          return;
-      }
-      if( !valida_rfc(jQuery('#rfc_receptor_edit').val()) ){
-          jQuery('#rfc_receptor_edit').parent().addClass('has-error');
-          toastr.error("RFC Incorrecto","Ocurrio un error, favior de verificar");
-          return;
-      }
+      var validacion = {
+             'CORREO'       : $scope.update.correo
+            ,'RAZON SOCIAL' : $scope.update.razon_social
+            ,'RFC'          : $scope.update.rfc_receptor
+          };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.update.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        if( !valida_rfc($scope.update.rfc_receptor) ){
+            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
@@ -133,7 +138,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             });
-          $scope.consulta_general();
+          $scope.index();
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           //redirect(domain(redireccion));
       }).catch(function( error ){
@@ -152,14 +157,6 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
-         /* var id_edit = {
-              div_content  : 'div_dropzone_file_empresa_dit'
-              ,div_dropzone : 'dropzone_xlsx_file_empresa_edit'
-              ,file_name    : 'file'
-            };
-            upload_file('',upload_url,message,1,id_edit,'.jpg,.png,.jpeg',function( request ){
-                console.log(request);
-            });*/
             var datos = ['updated_at','created_at'];
             $scope.update = iterar_object(response.data.result,datos);
            if( response.data.result.contactos.length > 0 ){
@@ -170,6 +167,11 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
            }
            $scope.select_estado(1);
            $scope.select_codigos(1);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html); 
+
           jQuery.fancybox.open({
                 'type'      : 'inline'
                 ,'src'      : "#modal_edit_register"
@@ -194,7 +196,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
-            $scope.consulta_general();
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -213,6 +215,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
+          $scope.cmb_estados = {};
           $scope.cmb_estados = response.data.result.estados;
           console.log($scope.cmb_estados);
       }).catch( error => {
@@ -229,7 +232,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
     $scope.select_codigos = function( update = false ){
       var url = domain( url_edit_codigos );
       var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
-      MasterController.method_master(url,fields,"get")
+      MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
           $scope.cmb_codigos = response.data.result;
           console.log($scope.cmb_codigos);
@@ -252,8 +255,6 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
        };
        $scope.fields.id_empresa = id_empresa;
        $scope.fields.id_cliente = id;
-          /*jQuery('#id_cliente').val(id);
-          jQuery('#id_empresa').val(id_empresa);*/
        MasterController.request_http(url, fields, "get", $http ,false)
        .then(response => {
            jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
@@ -303,7 +304,8 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
                 'src': "#permisos",
                 'buttons': ['share', 'close']
             });
-            $scope.consulta_general();
+            jQuery('#tr_'+$scope.fields.id_cliente).effect("highlight",{},5000);
+            $scope.index();
         }).catch(error => {
             if( isset(error.response) && error.response.status == 419 ){
               toastr.error( session_expired ); 
@@ -316,75 +318,59 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
 
     }
 
+    $scope.upload_file = function(update){
+
+      var upload_url = domain( url_upload );
+      var identificador = {
+         div_content   : 'div_dropzone_file_clientes'
+        ,div_dropzone  : 'dropzone_xlsx_file_clientes'
+        ,file_name     : 'file'
+      };
+      var message = "Dar Clíc aquí o arrastrar archivo";
+      $scope.update.logo = "";
+      upload_file({'nombre': 'cliente_'+$scope.update.id },upload_url,message,1,identificador,'.jpg,.png,.jpeg',function( request ){
+          if(update){
+            $scope.update.logo = domain(request.result);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html);        
+          }else{
+            $scope.insert.logo = domain(request.result);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.insert.logo+'" height="268px" width="200px">'
+            jQuery('#imagen').html("");        
+            jQuery('#imagen').html(html);        
+            
+          }
+          jQuery.fancybox.close({
+              'type'      : 'inline'
+              ,'src'      : "#upload_file"
+              ,'modal'    : true
+          });
+      });
+
+      jQuery.fancybox.open({
+          'type'      : 'inline'
+          ,'src'      : "#upload_file"
+          ,'modal'    : true
+      });
+
+    }
+
 });
 
 //jQuery('#cmb_estados').selectpicker();
 //jQuery('#cmb_estados_edit').selectpicker();
 jQuery('#clientes_tabs').click(function(){
-   jQuery('#search_general').removeAttr('onkeyup');
-   jQuery('#search_general').attr("onkeyup","buscador_general(this,'#datatable_clientes',false)");
-   jQuery('#search_general').val("");
-   jQuery('#search_general').keyup();
+   jQuery('#form_general > #search_general').removeAttr('onkeyup');
+   jQuery('#form_general > #search_general').attr("onkeyup","buscador_general(this,'#datatable_clientes',false)");
+   jQuery('#form_general > #search_general').val("");
+   jQuery('#form_general > #search_general').keyup();
 });
 jQuery('#prospectos_tabs').click(function(){
-   jQuery('#search_general').removeAttr('onkeyup');
-   jQuery('#search_general').attr("onkeyup","buscador_general(this,'#datatable')");
-   jQuery('#search_general').val("");
-   jQuery('#search_general').keyup();
+   jQuery('#form_general > #search_general').removeAttr('onkeyup');
+   jQuery('#form_general > #search_general').attr("onkeyup","buscador_general(this,'#datatable')");
+   jQuery('#form_general > #search_general').val("");
+   jQuery('#form_general > #search_general').keyup();
 });
-
-/*
-function select_codigos(){
-      var url = domain( url_edit_codigos );
-      var fields = {id: jQuery('#cmb_estados').val()}
-      MasterController.method_master(url,fields,"get")
-      .then( response => {
-          var codigos = {
-              'data'    : response.data.result
-              ,'text'   : "codigo_postal"
-              ,'value'  : "id"
-              ,'name'   : "cmb_codigo_postal"
-              ,'class'  : 'form-control'
-              ,'attr'   : 'data-live-search="true" '
-              ,'leyenda': 'Seleccione Opción'
-          };
-          jQuery('#div_cmb_codigos').html('');
-          jQuery('#div_cmb_codigos').html( select_general( codigos ) );
-      }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            toastr.error( error.data.result , expired );  
-      }); 
-}
-
-function select_codigos_edit(id = false, id_codigo =false){
-      var id_estado = (id)? id : jQuery('#cmb_estados_edit').val();
-      var url = domain( url_edit_codigos );
-      var fields = {id: id_estado}
-      MasterController.method_master(url,fields,"get")
-      .then( response => {
-          var codigos = {
-              'data'    : response.data.result
-              ,'text'   : "codigo_postal"
-              ,'value'  : "id"
-              ,'name'   : "cmb_codigo_postal_edit"
-              ,'class'  : 'form-control'
-              ,'attr'   : 'data-live-search="true" '
-              ,'leyenda': 'Seleccione Opción'
-          };
-          jQuery('#div_cmb_codigos_edit').html('');
-          jQuery('#div_cmb_codigos_edit').html( select_general( codigos ) );
-          jQuery('#cmb_codigo_postal_edit').val( id_codigo );
-      }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            toastr.error( error , expired );  
-      }); 
-}
-*/

@@ -735,12 +735,20 @@ function validacion_fields(validacion) {
         };
     }
 }
+function validaciones_fields( validacion ){
+    for(var i in validacion ){
+        var valores = validacion[i];
+        if( valores == "" || valores == "null" || valores === undefined ){
+            toastr.error('Verificar campo '+ i +' para poder continuar' , title );
+            return true;
+        }
+    }
+}
 function validacion_select(validacion) {
     if (typeof validacion == "object") {
         for (var i = 0; i < validacion.length; i++) {
             var valores = jQuery('#' + validacion[i]).val();
             if (valores == "" || valores == 0 || valores == "null") {
-            //if (valores == "" || valores == "null") {
                 jQuery('#' + validacion[i]).parent().parent().addClass('has-error');
                 toastr.error('Favor de verificar los campos de color rojo!', title);
                 // pnotify('Campos Vacios','Favor de verificar los campos de color rojo!','error');
@@ -1334,12 +1342,15 @@ curpValida = function (curp) {
  *{{@return}} {{ void }}
  */
 emailValidate = function (email) {
-    const re = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
-    var valido = email.match(re);
-    if (!valido) {
-        return false
+    if (email) {
+        const re = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
+        var valido = email.match(re);
+        if (!valido) {
+            return false
+        }
+        return true;
     }
-    return true;
+    return false;
 }
 /**
  *Se crea una funcion de autocomplete

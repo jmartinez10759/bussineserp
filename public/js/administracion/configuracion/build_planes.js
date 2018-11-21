@@ -99,6 +99,7 @@ app.controller('planesController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             });
+          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           $scope.index();
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
@@ -393,7 +394,7 @@ app.controller('planesController', function( $scope, $http, $location ) {
 
 
 
-jQuery('#cmb_servicio').chosen({width: "100%"}).trigger("chosen:updated");
+/*jQuery('#cmb_servicio').chosen({width: "100%"}).trigger("chosen:updated");
 jQuery('#cmb_servicio_edit').chosen({width: "100%"}).trigger("chosen:updated");
 jQuery('#cmb_unidades').chosen({width: "100%"}).trigger("chosen:updated");
-jQuery('#cmb_unidades_edit').chosen({width: "100%"}).trigger("chosen:updated");
+jQuery('#cmb_unidades_edit').chosen({width: "100%"}).trigger("chosen:updated");*/

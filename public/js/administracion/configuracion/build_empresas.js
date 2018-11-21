@@ -123,7 +123,8 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
                 ,'width'    : 900
                 ,'height'   : 400
                 ,'autoSize' : false
-            }); 
+            });
+          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           $scope.consulta_general();
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
@@ -334,7 +335,8 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
                 ,'width'    : 900
                 ,'height'   : 400
                 ,'autoSize' : false
-            }); 
+            });
+            jQuery('#tr_'+id_empresa).effect("highlight",{},5000);
             $scope.consulta_general();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
