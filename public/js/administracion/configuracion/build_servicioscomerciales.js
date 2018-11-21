@@ -5,7 +5,7 @@ var url_destroy  = "servicioscomerciales/destroy";
 var url_all      = "servicioscomerciales/all";
 var redireccion  = "configuracion/servicioscomerciales";
 
-var app = angular.module("ng-servicioscomerciales", ["ngRoute"]);
+var app = angular.module("ng-servicioscomerciales", ["ngRoute","localytics.directives","components"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
     .when("/ruta1", {

@@ -4,8 +4,9 @@ var url_edit     = "proveedores/edit";
 var url_destroy  = "proveedores/destroy";
 var url_all      = "proveedores/all";
 var redireccion  = "configuracion/proveedores";
-var url_edit_pais = 'pais/edit';
-var url_edit_codigos = 'codigopostal/show';
+var url_edit_pais       = 'pais/edit';
+var url_edit_codigos    = 'codigopostal/show';
+var url_upload          = 'upload/files';
 
 // new Vue({
 //   el: "#vue-proveedores",
@@ -142,31 +143,16 @@ var url_edit_codigos = 'codigopostal/show';
 
 
 // });
-var app = angular.module('ng-proveedores', ["ngRoute"])
-app.config(function( $routeProvider, $locationProvider ) {
-    $routeProvider
-    .when("/ruta1", {
-        template : "<h1></h1>",
-    })
-    .when("/ruta2", {
-        template : "<h1></h1>",
-    })
-    .when("/ruta3", {
-        templateUrl : "ruta3.html",
-        controller : ""
-    });
-    $locationProvider.html5Mode(true);
-})
-
+var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
 app.controller('ProveedoresController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
-          estatus: "1"
-          ,id_regimen_fiscal: "0"
-          ,id_country: "151"
-          ,id_servicio_comercial: "0"
+          estatus: '1'
+          ,id_regimen_fiscal: 0
+          ,id_country: 151
+          ,id_servicio_comercial: 0
         };
         $scope.update = {};
         $scope.edit   = {};
@@ -260,14 +246,6 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
-         /* var id_edit = {
-              div_content  : 'div_dropzone_file_empresa_dit'
-              ,div_dropzone : 'dropzone_xlsx_file_empresa_edit'
-              ,file_name    : 'file'
-            };
-            upload_file('',upload_url,message,1,id_edit,'.jpg,.png,.jpeg',function( request ){
-                console.log(request);
-            });*/
             var datos = ['updated_at','created_at'];
             $scope.update = iterar_object(response.data.result,datos);
            if( response.data.result.contactos.length > 0 ){
@@ -278,6 +256,11 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
            }
            $scope.select_estado(1);
            $scope.select_codigos(1);
+           var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()
+            +'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html); 
           jQuery.fancybox.open({
                 'type'      : 'inline'
                 ,'src'      : "#modal_edit_register"
@@ -316,8 +299,6 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           
       },"warning",true,["SI","NO"]);  
     }
-
-    // 
     $scope.select_estado = function( update = false){
       var url = domain( url_edit_pais );
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
@@ -351,75 +332,45 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error( error.data.result , expired );  
       }); 
     }
+    $scope.upload_file = function(update){
+
+      var upload_url = domain( url_upload );
+      var identificador = {
+         div_content   : 'div_dropzone_file_proveedores'
+        ,div_dropzone  : 'dropzone_xlsx_file_proveedores'
+        ,file_name     : 'file'
+      };
+      var message = "Dar Clíc aquí o arrastrar archivo";
+      $scope.update.logo = "";
+      upload_file({'nombre': 'proveedor_'+$scope.update.id },upload_url,message,1,identificador,'.jpg,.png,.jpeg',function( request ){
+          if(update){
+            $scope.update.logo = domain(request.result);
+            var html = '';
+             html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()
+            +'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html);        
+          }else{
+            $scope.insert.logo = domain(request.result);
+            var html = '';
+             html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()
+            +'" height="268px" width="200px">'
+            jQuery('#imagen').html("");        
+            jQuery('#imagen').html(html);        
+            
+          }
+          jQuery.fancybox.close({
+              'type'      : 'inline'
+              ,'src'      : "#upload_file"
+              ,'modal'    : true
+          });
+      });
+
+      jQuery.fancybox.open({
+          'type'      : 'inline'
+          ,'src'      : "#upload_file"
+          ,'modal'    : true
+      });
+
+    }
   });
-// function select_codigos(){
-//       var url = domain( url_edit_codigos );
-//       var fields = {id: jQuery('#cmb_estados').val()}
-//       MasterController.method_master(url,fields,"get")
-//       .then( response => {
-//           var codigos = {
-//               'data'    : response.data.result
-//               ,'text'   : "codigo_postal"
-//               ,'value'  : "id"
-//               ,'name'   : "cmb_codigo_postal"
-//               ,'class'  : 'form-control'
-//               ,'attr'   : 'data-live-search="true" '
-//               ,'leyenda': 'Seleccione Opción'
-//           };
-//           jQuery('#div_cmb_codigos').html('');
-//           jQuery('#div_cmb_codigos').html( select_general( codigos ) );
-//       }).catch( error => {
-//           if( isset(error.response) && error.response.status == 419 ){
-//             toastr.error( session_expired ); 
-//             redirect(domain("/"));
-//             return;
-//           }
-//             toastr.error( error.data.result , expired );  
-//       }); 
-// }
-
-// function select_codigos_edit(id = false,id_codigo =false){
-//       var id_estado = (id)? id : jQuery('#cmb_estados_edit').val();
-//       var url = domain( url_edit_codigos );
-//       var fields = {id: id_estado}
-//       MasterController.method_master(url,fields,"get")
-//       .then( response => {
-//           var codigos = {
-//               'data'    : response.data.result
-//               ,'text'   : "codigo_postal"
-//               ,'value'  : "id"
-//               ,'name'   : "cmb_codigo_postal_edit"
-//               ,'class'  : 'form-control'
-//               ,'attr'   : 'data-live-search="true" '
-//               ,'leyenda': 'Seleccione Opción'
-//           };
-//           jQuery('#div_cmb_codigos_edit').html('');
-//           jQuery('#div_cmb_codigos_edit').html( select_general( codigos ) );
-//           jQuery('#cmb_codigo_postal_edit').chosen({width: "100%"});
-//           jQuery('#cmb_codigo_postal_edit').val( id_codigo ).trigger("chosen:updated");
-//       }).catch( error => {
-//           if( isset(error.response) && error.response.status == 419 ){
-//             toastr.error( session_expired ); 
-//             redirect(domain("/"));
-//             return;
-//           }
-//             toastr.error( error , expired );  
-//       }); 
-// }
-
-// jQuery('#cmb_pais').chosen({width: "100%"});
-// jQuery('#cmb_pais_edit').chosen({width: "100%"});
-// jQuery('#cmb_regimen_fiscal').chosen({width: "100%"});
-// jQuery('#cmb_regimen_fiscal_edit').chosen({width: "100%"});
-// jQuery('#cmb_servicio_comerciales').chosen({width: "100%"});
-// jQuery('#cmb_servicio_comerciales_edit').chosen({width: "100%"});
-// var upload_url = domain('proveedores/upload');
-// var ids = {
-//   div_content  : 'div_dropzone_file_proveedor'
-//   ,div_dropzone : 'dropzone_xlsx_file_proveedor'
-//   ,file_name    : 'file'
-// };
-// var message = "Dar Clic aquí o arrastrar archivo";
-// upload_file('',upload_url,message,1,ids,'.jpg,.png,.jpeg',function( request ){
-//     console.log(request);
-// });
