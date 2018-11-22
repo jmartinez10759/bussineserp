@@ -28,9 +28,9 @@
             }
             
             $data = [
-                "page_title" 	        => ""
-                ,"title"  		        => ""
-                ,"data_table"  		    => ""
+                "page_title" 	        => "Almacén"
+                ,"title"  		        => "Categorias Productos"
+                
             ];
             return self::_load_view( "administracion.configuracion.categoriasproductos",$data );
         }
@@ -43,9 +43,12 @@
         public function all( Request $request ){
 
             try {
+                $response = $this->_tabla_model::get();
+                $data = [
+          'categoriasproductos' => $response          
+        ];
 
-
-              return $this->_message_success( 201, $response , self::$message_success );
+              return $this->_message_success( 201, $data , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -61,9 +64,9 @@
         public function show( Request $request ){
 
             try {
+                $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
 
-
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 201, $response[0] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -81,7 +84,8 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                // debuger($request->all());
+                $response = $this->_tabla_model::create( $request->all() );
 
             DB::commit();
             $success = true;
@@ -109,7 +113,8 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                // debuger($request->all());
+                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
 
             DB::commit();
             $success = true;
@@ -136,7 +141,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = SysCategoriasProductosModel::where(['id' => $request->id])->delete();
 
             DB::commit();
             $success = true;

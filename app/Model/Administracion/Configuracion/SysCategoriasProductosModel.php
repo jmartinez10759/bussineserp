@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class SysCategoriasProductosModel extends Model
 {
-      public $table = "";
-      public $fillable = [];
+      public $table = "sys_categoria_producto";
+      public $fillable = [
+		 'id'
+		,'nombre'
+		,'detalles'
+		,'estatus'
+		];
 }
