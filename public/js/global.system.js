@@ -917,11 +917,29 @@ restaFechas = function (fecha1, fecha2) {
     var dias = Math.floor(dif / (1000 * 60 * 60 * 24));
     return dias;
 }
-suma_dias_fecha = function (fecha1, dias) {
-    var fecha = new Date(fecha1);
-    var dias = (dias) ? dias : 2; // Número de días a agregar
-    var fecha_actual = fecha.setDate(fecha.getDate() + dias);
-    return fecha_actual;
+suma_dias_fecha = function (fecha1, dias, format = "yyyy-mm-dd") {
+    var Fecha = new Date(fecha1);
+    var sFecha = fecha || (Fecha.getDate() + "/" + (Fecha.getMonth() + 1) + "/" + Fecha.getFullYear());
+    var sep = sFecha.indexOf('/') != -1 ? '/' : '-';
+    var aFecha = sFecha.split(sep);
+    var fecha = aFecha[2] + '/' + aFecha[1] + '/' + aFecha[0];
+    fecha = new Date(fecha);
+    fecha.setDate(fecha.getDate() + parseInt(dias));
+    var anno = fecha.getFullYear();
+    var mes = fecha.getMonth() + 1;
+    var dia = fecha.getDate();
+    mes = (mes < 10) ? ("0" + mes) : mes;
+    dia = (dia < 10) ? ("0" + dia) : dia;
+    var fechaFinal = (format === "yyyy-mm-dd") ? anno + "-" + mes + "-" + dia : dia + "-" + mes + "-" + anno;
+    return (fechaFinal);
+}
+format_date = function( request, format ){
+    var d = new Date(request);
+    if( format === "yyyy-mm-dd"){
+      return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +  ("0" +(d.getDate())).slice(-2);
+    }else{
+      return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
+    }
 }
 /**
  *Funcion para contar los dias trancurridos

@@ -38,7 +38,7 @@
                 return view("errors.error");
             }
             #debuger(Session::all());
-            $cmb_estatus = dropdown([
+           /* $cmb_estatus = dropdown([
                 'data'       => SysEstatusModel::wherein('id',[5,4,6])->get()
                 ,'value'     => 'id'
                 ,'text'      => 'nombre'
@@ -201,12 +201,12 @@
                 ,'leyenda'   => 'Seleccione Opcion'
                 ,'attr'      => 'data-live-search="true" '
                 ,'event'     => 'display_planes_edit()'
-            ]);
+            ]);*/
             
             $data = [
                 "page_title" 	        => "Ventas"
                 ,"title"  		        => "Pedidos"
-                ,"cmb_estatus"  		=> $cmb_estatus
+                /*,"cmb_estatus"  		=> $cmb_estatus
                 ,"cmb_estatus_form"     => $cmb_estatus_form
                 ,"cmb_estatus_form_edit"=> $cmb_estatus_form_edit
                 ,"formas_pagos"  		=> $cmb_formas_pago
@@ -220,7 +220,7 @@
                 ,"productos"  		    => $cmb_productos
                 ,"productos_edit"  		=> $cmb_productos_edit
                 ,"planes"  		        => $cmb_planes
-                ,"planes_edit"  		=> $cmb_planes_edit
+                ,"planes_edit"  		=> $cmb_planes_edit*/
                 ,"iva"  		        => (Session::get('id_rol') != 1 )? Session::get('iva') : 16
             ];
             return self::_load_view( "ventas.pedidos",$data );
@@ -250,8 +250,18 @@
                     }])->where(['id' => Session::get('id')])->get();
                     $response = $data[0]->pedidos;
                 }
+                $data = [
+                    'response'          => $response
+                    ,'estatus'          => SysEstatusModel::wherein('id',[5,4,6])->get()
+                    ,'formas_pagos'     => SysFormasPagosModel::where(['estatus' => 1])->get()
+                    ,'metodos_pagos'    => SysMetodosPagosModel::where(['estatus' => 1])->get()
+                    ,'monedas'          => SysMonedasModel::where(['estatus' => 1])->get()
+                    ,'clientes'         => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
+                    ,'productos'        =>  $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
+                    ,'planes'           => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
+                ];
                 #debuger($response);
-              return $this->_message_success( 201, $response , self::$message_success );
+              return $this->_message_success( 200, $data , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );

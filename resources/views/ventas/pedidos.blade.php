@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div id="vue-pedidos" v-cloak>
+<div ng-app="ng-pedidos" ng-controller="PedidosController" ng-init="constructor()" ng-cloak>
 
     <div class="panel-body">
         <form class="form-horizontal">
@@ -18,7 +18,7 @@
                     <input type="text" class="form-control fecha" readonly="" id="fecha_final">
                 </div>
                 <!-- <div class="col-md-2">
-                    {!! $cmb_estatus !!}
+                    
                 </div> -->
                 <div class="col-md-2">
                     <select class="form-control" id="id_vendedor" onchange="" {{$permisos}}>
@@ -27,13 +27,6 @@
                         <option value="2">Obed Gomez Alvarado</option>
                     </select>
                 </div>
-                <!-- <label for="q" class="col-md-1 control-label input-sm">Buscar:</label>
-                        <div class="col-md-3">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="q" placeholder="Atención ó Empresa" onkeyup="load(1);">
-                                <span class="btn btn-default input-group-addon" onclick="load(1);"><i class="glyphicon glyphicon-search"></i></span>
-                            </div>	
-                        </div> -->
             </div>
 
         </form>
@@ -46,7 +39,6 @@
                         <th>Fecha</th>
                         <th>Contacto</th>
                         <th>Cliente</th>
-                        <!-- <th>Ejecutivo</th> -->
                         <th>Estatus</th>
                         <th class="text-right">Subtotal</th>
                         <th class="text-right">Iva</th>
@@ -56,16 +48,15 @@
                 </thead>
                 <tbody>
 
-                    <tr v-for="data in datos">
-                        <td>@{{data.id}}</td>
-                        <td>@{{ format_date(data.created_at, 'yyyy-mm-dd') }}</td>
-                        <td>@{{(data.id_contacto != 0)? data.contactos.nombre_completo:"" }}</td>
-                        <td>@{{(data.id_cliente != 0)?data.clientes.nombre_comercial:"" }}</td>
-                        <!-- <td>@{{data.usuarios[0].name}}</td> -->
-                        <td>
-                            <span class="label label-warning" v-if="data.id_estatus == 6">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
-                            <span class="label label-danger" v-if="data.id_estatus == 4">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
-                            <span class="label label-success" v-if="data.id_estatus == 5">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
+                    <tr ng-repeat="data in datos.response">
+                        <td style="cursor:pointer;" ng-click="edit_register(data.id)" >@{{data.id}}</td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data.id)" >@{{ data.created_at | date : format : shortDate }}</td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data.id)" >@{{(data.id_contacto != 0)? data.contactos.nombre_completo:"" }}</td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data.id)" >@{{(data.id_cliente != 0)?data.clientes.nombre_comercial:"" }}</td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data.id)" >
+                            <span class="label label-warning" ng-if="data.id_estatus == 6">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
+                            <span class="label label-danger" ng-if="data.id_estatus == 4">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
+                            <span class="label label-success" ng-if="data.id_estatus == 5">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
                         </td>
                         <td class="text-right">$ @{{(data.subtotal)?data.subtotal.toLocaleString(): 0.00}}</td>
                         <td class="text-right">$ @{{(data.iva)?data.iva.toLocaleString(): 0.00}}</td>
@@ -77,13 +68,13 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                                    <li>
-                                        <a title="Editar" style="cursor:pointer;" v-on:click.prevent="edit_register(data.id)">
+                                    <!-- <li>
+                                        <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
                                             <i class="glyphicon glyphicon-edit"></i> Editar
                                         </a>
-                                    </li>
+                                    </li> -->
                                     <li {{$reportes}}>
-                                        <a href="#" title="Imprimir cotización" v-on:click.prevent="descargar();">
+                                        <a href="#" title="Imprimir cotización" ng-click="descargar();">
                                             <i class="glyphicon glyphicon-print"></i> Imprimir
                                         </a>
                                     </li>
@@ -93,7 +84,7 @@
                                         </a>
                                     </li>
                                     <li {{$eliminar}}>
-                                        <a style="cursor:pointer;" title="Borrar" v-on:click.prevent="destroy_register(data.id)" >
+                                        <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
                                             <i class="glyphicon glyphicon-trash"></i> Eliminar
                                         </a>
                                     </li>
