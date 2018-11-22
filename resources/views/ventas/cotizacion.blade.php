@@ -420,6 +420,16 @@ function calcular_suma_edit(){
 
 }
 
+function change_estatus(){
+	if(jQuery("#cmb_estatus_edit").val() == 6){
+		jQuery('#add_concepto_edit').prop('disabled', false);
+		jQuery('.ocultarr').show("fast");
+	}else{
+		jQuery('#add_concepto_edit').prop('disabled', true);
+		jQuery('.ocultarr').hide("fast");
+	}
+}
+
 function fancy_click()
   {
 

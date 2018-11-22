@@ -201,7 +201,8 @@
                  ,'name'      => 'cmb_estatus_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opción'
-                 ,'attr'      => 'data-live-search="true" '                
+                 ,'attr'      => 'data-live-search="true" '   
+                 ,'event'     => 'change_estatus()'             
            ]);
            $estatus_in = dropdown([
             'data'       => SysEstatusModel::where(['estatus' => 1 ])->whereIn('id',['4','5','6'])->orderby('nombre', 'asc')->get()
