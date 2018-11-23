@@ -12,7 +12,7 @@ var url_edit_planes     = "planes/edit";
 var url_insert_factura  = "facturaciones/insert";
 
 
-var app = angular.module('ng-pedidos', ["ngRoute",'localytics.directives','components']);
+var app = angular.module('ng-pedidos', ["ngRoute",'localytics.directives','components',"stringToNumber"]);
 app.controller('PedidosController', function( $scope, $http, $location ) {
     
     $scope.constructor = function(){
@@ -20,10 +20,15 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
         $scope.insert = {
           id_forma_pago: 1, id_estatus: 6 ,id_metodo_pago : 1 , id_moneda : 100
         };
+        $scope.insertar = {};
         $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
+        $scope.products = {
+          cantidad : 0 , total: 0  
+        };
+        $scope.table_concepts = {};
         $scope.index();
     }
 
@@ -43,115 +48,178 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
               toastr.error( error.message , expired );
         });
     }
-    
-    $scope.insert_register = function(){
 
-        var validacion = {
-             'CORREO'       : $scope.insert.correo
-            ,'RAZON SOCIAL' : $scope.insert.razon_social
-            ,'RFC'          : $scope.insert.rfc_emisor
-          };
-        if(validaciones_fields(validacion)){return;}
-        if( !emailValidate( $scope.insert.correo ) ){  
-            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
-            return;
-        }
-        if( !valida_rfc($scope.insert.rfc_emisor) ){
-            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
-            return;
-        }
+    $scope.insert_register = function( update = false ){
+
         var url = domain( url_insert );
-        var fields = this.insert;
-        MasterController.request_http(url,fields,'post',$http, false )
-        .then(function( response ){
-            toastr.success( response.data.message , title );
+        $scope.insertar.pedidos = $scope.insert;
+        $scope.insertar.conceptos = [$scope.products];
+        var validacion = {
+          'CLIENTE'          : (update)? $scope.update.id_cliente    : $scope.insert.id_cliente
+          ,'CONTACTOS'       : (update)? $scope.update.id_contacto   : $scope.insert.id_contacto
+          ,'FORMAS DE PAGO'  : (update)? $scope.update.id_forma_pago : $scope.insert.id_forma_pago
+          ,'METODOS DE PAGO' : (update)? $scope.update.id_metodo_pago: $scope.insert.id_metodo_pago
+          ,'MONEDAS'         : (update)? $scope.update.id_moneda     : $scope.insert.id_moneda
+
+        };
+        
+        if( $scope.products.id_producto == null && $scope.products.id_plan == null   ){
+            return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
+        if($scope.products.cantidad == 0 || $scope.products.cantidad == ""){
+            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
+        }
+        if(validaciones_fields(validacion)){
+          if(update){
             jQuery.fancybox.close({
                 'type'      : 'inline'
-                ,'src'      : "#modal_add_register"
-                ,'modal'    : true
-                ,'width'    : 900
-                ,'height'   : 400
-                ,'autoSize' : false
-            }); 
-            $scope.index();
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
+            });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+          return toastr.warning('Sección de Pedidos');
+        }
+        var fields = {
+          pedidos     : $scope.insertar.pedidos
+          ,conceptos  : $scope.insertar.conceptos
+        };
+        
+        if(update){
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
+            });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+        MasterController.request_http(url,fields,'post',$http, false )
+        .then(function( response ){
+            //toastr.success( response.data.message , title );
+            $scope.table_concepts   = response.data.result.pedidos.conceptos;
+            $scope.insert.id        = response.data.result.pedidos.id;
+            $scope.insert.subtotal  = response.data.result.subtotal_;
+            $scope.insert.iva       = response.data.result.iva_;
+            $scope.insert.total     = response.data.result.total_;
+            
+            $scope.subtotal = response.data.result.subtotal;
+            $scope.iva      = response.data.result.iva;
+            $scope.total    = response.data.result.total;
+            $scope.products = {};
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
                   redirect(domain("/"));
                   return;
               }
-              console.error( error.data );
-              toastr.error( error.data.message , expired );
+              console.error( error );
+              toastr.error( error.result , expired );
         });
+
     }
 
-    $scope.update_register = function(){
+    $scope.update_register = function( update = false ){
+        //jQuery('.update').prop('disabled',true);
+        $scope.insertar.pedidos = (update)? $scope.update : $scope.insert;                        
+        var validacion = {
+          'CLIENTE'          : (update)? $scope.update.id_cliente    : $scope.insert.id_cliente
+          ,'CONTACTOS'       : (update)? $scope.update.id_contacto   : $scope.insert.id_contacto
+          ,'FORMAS DE PAGO'  : (update)? $scope.update.id_forma_pago : $scope.insert.id_forma_pago
+          ,'METODOS DE PAGO' : (update)? $scope.update.id_metodo_pago: $scope.insert.id_metodo_pago
+          ,'MONEDAS'         : (update)? $scope.update.id_moneda     : $scope.insert.id_moneda
 
-      var validacion = {
-             'CORREO'       : $scope.update.correo
-            ,'RAZON SOCIAL' : $scope.update.razon_social
-            ,'RFC'          : $scope.update.rfc_emisor
-          };
-        if(validaciones_fields(validacion)){return;}
-        if( !emailValidate( $scope.update.correo ) ){  
-            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
-            return;
-        }
-        if( !valida_rfc($scope.update.rfc_emisor) ){
-            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
-            return;
-        }
-        /*var datos = ['contactos'];
-        $scope.update = iterar_object($scope.update,datos);*/
-      var url = domain( url_update );
-      var fields = $scope.update;
-      MasterController.request_http(url,fields,'put',$http, false )
-      .then(function( response ){
-          toastr.info( response.data.message , title );
-          jQuery.fancybox.close({
+        };
+        if(validaciones_fields(validacion)){
+          if(update){
+            jQuery.fancybox.close({
                 'type'      : 'inline'
-                ,'src'      : "#modal_edit_register"
-                ,'modal'    : true
-                ,'width'    : 900
-                ,'height'   : 400
-                ,'autoSize' : false
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
             });
-          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
-          $scope.index();
-      }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
-      });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+          return toastr.warning('Sección de Pedidos');
+        }
+        
+        if(update){
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
+            });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+          var url = domain( url_update );
+          var fields = {pedidos : $scope.insertar.pedidos };
+          MasterController.request_http(url,fields,'put',$http, false )
+          .then(function( response ){
+              toastr.info( response.data.message , title );
+              jQuery.fancybox.close({
+                    'type'      : 'inline'
+                    ,'src'      : "#modal_edit_register"
+                    ,'modal'    : true
+                    ,'width'    : 900
+                    ,'height'   : 400
+                    ,'autoSize' : false
+                });
+              $scope.index();
+              if (update) {
+                $scope.update = {}
+              }else{
+                $scope.insert = {}
+                buildSweetAlert('# '+response.data.result.id,'Se genero el pedido con exito','success');
+              }
+              if(response.data.result.id_estatus == 5){
+                  $scope.insert_facturacion();
+              }
+              $scope.fields = {}
+              $scope.products = {}
+              $scope.table_concepts = {}
+              $scope.subtotal = "$ 0.00";
+              $scope.iva = "$ 0.00";
+              $scope.total = "$ 0.00";
+
+              jQuery('#tr_'+(update)? $scope.update.id : $scope.insert.id ).effect("highlight",{},5000);
+          }).catch(function( error ){
+              if( isset(error.response) && error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+                console.error( error );
+                toastr.error( error.result , expired );
+          });
+    
     }
 
     $scope.edit_register = function( data ){
-
-       var datos = ['updated_at','created_at','clientes','codigos','comerciales','regimenes','sucursales','$$hashKey'];
-            $scope.update = iterar_object(data,datos);
-            console.log($scope.update);
-           if( data.contactos.length > 0 ){
-               $scope.update.contacto     = data.contactos[0].nombre_completo;
-               $scope.update.departamento = data.contactos[0].departamento;
-               $scope.update.telefono     = data.contactos[0].telefono;
-               $scope.update.correo       = data.contactos[0].correo;
-           }
-           $scope.select_estado(1);
-           $scope.select_codigos(1);
-            var html = '';
-            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
-            jQuery('#imagen_edit').html("");        
-            jQuery('#imagen_edit').html(html); 
-
-          jQuery.fancybox.open({
-                'type'      : 'inline'
-                ,'src'      : "#modal_edit_register"
-                ,'modal': true
-            }); 
+        alert(data.id);
+        console.log(data);
+        jQuery.fancybox.open({
+            'type'      : 'inline'
+            ,'src'      : "#modal_edit_register"
+            ,'modal': true
+        }); 
     }
 
 
@@ -171,12 +239,126 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
                   return;
               }
               console.error( error );
-              toastr.error( error.data.result , expired );
+              toastr.error( error.result , expired );
         });
           
       },"warning",true,["SI","NO"]);  
+    
     }
-  
+
+    $scope.display_contactos = function( update = false ){
+
+      var url = domain( url_edit_clientes );
+      var fields = {id : (update)? $scope.update.id_cliente : $scope.insert.id_cliente };
+
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+            $scope.cmb_contactos = response.data.result.contactos;
+            $scope.fields.rfc = response.data.result.rfc_receptor
+            $scope.fields.nombre_comercial = response.data.result.nombre_comercial
+            $scope.fields.telefono_empresa = response.data.result.telefono
+            console.log(response);
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+
+    }
+
+    $scope.change_contactos = function( update = false ){
+
+      var url = domain( url_edit_contactos );
+      var fields = {id : (update)? $scope.update.id_contacto : $scope.insert.id_contacto };
+
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+            $scope.fields.telefono = response.data.result.telefono
+            $scope.fields.correo = response.data.result.correo
+            console.log(response);
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+    
+    }
+
+    $scope.display_productos = function( update = false){
+
+      var url = domain( url_edit_productos );
+      var fields = {id : (update)? $scope.products_edit.id_producto : $scope.products.id_producto};
+
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+            $scope.products.id_plan = null;
+            $scope.products.precio = response.data.result.total;
+            $scope.products.descripcion = response.data.result.descripcion;
+            $scope.products.cantidad = 0;
+            $scope.products.total = 0;
+            console.log(response);
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+
+    }
+
+    $scope.display_planes = function ( update = false ){
+
+      var url = domain( url_edit_planes );
+      var fields = {id : (update)? $scope.products_edit.id_plan : $scope.products.id_plan};
+
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+            $scope.products.id_producto = null;
+            $scope.products.precio = response.data.result.total;
+            $scope.products.descripcion = response.data.result.descripcion;
+            $scope.products.cantidad = 0;
+            $scope.products.total = 0;
+            console.log(response);
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+
+    }
+    
+    $scope.calcular_suma = function(update = false){
+      if(update){
+        var precio = ($scope.products.precio != "") ? $scope.products.precio : 0;
+        var cantidad = ($scope.products.cantidad != "") ? $scope.products.cantidad: 0;
+        var total  = parseFloat(precio * cantidad);
+        $scope.products.total = total.toFixed(2);
+      }else{
+        var precio = ($scope.products.precio != "") ? $scope.products.precio : 0;
+        var cantidad = ($scope.products.cantidad != "") ? $scope.products.cantidad: 0;
+        var total  = parseFloat(precio * cantidad);
+        $scope.products.total = total.toFixed(2);
+        
+      }
+
+    }
+
+
     /*$scope.upload_file = function(update){
 
       var upload_url = domain( url_upload );
@@ -220,7 +402,9 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
 });
 
 
-jQuery(".add").fancybox({ modal: true });
+jQuery(".add").fancybox({ 
+  modal: true ,width: 900 ,height: 600,autoSize: false
+});
 
 
 

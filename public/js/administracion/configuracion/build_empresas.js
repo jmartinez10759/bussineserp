@@ -343,5 +343,4 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
 
     }
 
-
 });

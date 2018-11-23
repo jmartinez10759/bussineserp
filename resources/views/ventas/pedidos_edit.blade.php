@@ -1,6 +1,6 @@
 
 <div id="modal_add_register" style="display:none;" class="col-sm-12">
-    <input type="hidden" id="id_pedido">
+    <input type="hidden" ng-model="insert.id">
     <h3>Registro de Pedidos</h3>
     <hr>
 
@@ -13,7 +13,7 @@
                     width="'100%'"
                     chosen
                     ng-model="insert.id_cliente" 
-                    ng-options="value.id as value.nombre_comercial for (key, value) in datos.clientes" 
+                    ng-options="value.id as value.razon_social for (key, value) in datos.clientes" 
                     ng-change="display_contactos()" >
                         <option value="">--Seleccione Opcion--</option>
                     </select>
@@ -26,7 +26,7 @@
                     width="'100%'"
                     chosen
                     ng-model="insert.id_contacto" 
-                    ng-options="value.id as value.nombre_comercial for (key, value) in cmb_contactos" 
+                    ng-options="value.id as value.nombre_completo for (key, value) in cmb_contactos" 
                     ng-change="change_contactos()" >
                         <option value="">--Seleccione Opcion--</option>
                     </select>
@@ -138,10 +138,10 @@
                     </thead>
 
                     <tbody>
-                        <tr ng-repeat="concepto in conceptos">
-                            <td class="text-center">@{{ (concepto.id_producto == 0)? concepto.planes.codigo :concepto.productos.codigo}}</td>
+                        <tr ng-repeat="concepto in table_concepts">
+                            <td class="text-center">@{{ (concepto.id_producto == null)? concepto.planes.codigo :concepto.productos.codigo}}</td>
                             <td class="text-center">@{{concepto.cantidad}}</td>
-                            <td>@{{ (concepto.id_producto == 0)? concepto.planes.descripcion :concepto.productos.descripcion }} </td>
+                            <td>@{{ (concepto.id_producto == null)? concepto.planes.descripcion :concepto.productos.descripcion }} </td>
                             <td class="text-right">$ @{{concepto.precio.toLocaleString() }}  </td>
                             <td class="text-right">$ @{{concepto.total.toLocaleString() }}</td>
                             <td class="text-center">
@@ -156,18 +156,24 @@
                     <tfoot>
                         <tr>
                             <td class="text-right" colspan="4">SUBTOTAL </td>
-                            <td class="text-right" id="subtotal" style="background-color:#eee">$ 0.00</td>
-                            <input type="hidden" id="subtotal_" ng-model="insert.subtotal">
+                            <td class="text-right" style="background-color:#eee">
+                                @{{(subtotal) ? subtotal : "$ 0.00" }}
+                            </td>
+                            <input type="text" ng-model="insert.subtotal">
                         </tr>
                         <tr>
                             <td class="text-right" colspan="4">IVA ({{$iva}})% </td>
-                            <td class="text-right" id="iva" style="background-color:#eee">$ 0.00</td>
-                            <input type="hidden" id="iva_" ng-model="insert.iva">
+                            <td class="text-right" id="iva" style="background-color:#eee">
+                                @{{(iva) ? iva : "$ 0.00" }}
+                            </td>
+                            <input type="text" ng-model="insert.iva">
                         </tr>
                         <tr>
                             <td class="text-right" colspan="4">TOTAL </td>
-                            <td class="text-right" id="total" style="background-color:#eee">$ 0.00</td>
-                            <input type="hidden" id="total_" ng-model="insert.total">
+                            <td class="text-right" style="background-color:#eee">
+                                @{{(total) ? total : "$ 0.00" }}
+                            </td>
+                            <input type="text" ng-model="insert.total">
                         </tr>
                     </tfoot>
 
@@ -183,7 +189,7 @@
             <button type="button" class="btn btn-danger" data-fancybox-close ng-click="cancel_pedido()">
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-primary agregar" ng-click="update_register(1)" {{$insertar}}>
+            <button type="button" class="btn btn-primary agregar" ng-click="update_register()" {{$insertar}}>
                 <i class="fa fa-save"></i> Registrar
             </button>
         </div>
@@ -332,9 +338,9 @@
                     
                     <tbody>
                         <tr v-for="(concepto,key) in conceptos">
-                            <td class="text-center">@{{ (concepto.id_producto == 0)? concepto.planes.codigo :concepto.productos.codigo}}</td>
+                            <td class="text-center">@{{ (concepto.id_producto == null)? concepto.planes.codigo :concepto.productos.codigo}}</td>
                             <td class="text-center">@{{concepto.cantidad}}</td>
-                            <td>@{{ (concepto.id_producto == 0)? concepto.planes.descripcion :concepto.productos.descripcion }} </td>
+                            <td>@{{ (concepto.id_producto == null)? concepto.planes.descripcion :concepto.productos.descripcion }} </td>
                             <td class="text-right">$ @{{concepto.precio.toLocaleString()}} </td>
                             <td class="text-right">$ @{{concepto.total.toLocaleString()}}</td>
                             <td class="text-center">
@@ -387,13 +393,11 @@
 
 
 <div class="" id="modal_conceptos" style="display:none;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3> Agregar Concepto </h3>
-            </div>
-            <div class="modal-body">
-                <form class="form-horizontal">
+    <div class="modal-header">
+        <h3> Agregar Concepto </h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
             <div class="form-group">
                 <label for="condiciones" class="col-sm-2 control-label">Productos:</label>
                 <div class="col-sm-4">
@@ -401,7 +405,8 @@
                     width="'100%'"
                     chosen
                     ng-model="products.id_producto" 
-                    ng-options="value.id as value.nombre_comercial for (key, value) in datos.productos">
+                    ng-change="display_productos()"
+                    ng-options="value.id as value.nombre for (key, value) in datos.productos">
                         <option value="">--Seleccione Opcion--</option>
                     </select>
                 </div>
@@ -410,8 +415,9 @@
                     <select class="form-control input-sm"
                     width="'100%'"
                     chosen
-                    ng-model="products.id_planes" 
-                    ng-options="value.id as value.nombre_comercial for (key, value) in datos.planes">
+                    ng-model="products.id_plan" 
+                    ng-change="display_planes()"
+                    ng-options="value.id as value.nombre for (key, value) in datos.planes">
                         <option value="">--Seleccione Opcion--</option>
                     </select>
                 </div>
@@ -421,7 +427,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Cantidad</label>
                 <div class="col-sm-9">
-                    <input type="number" class="form-control" ng-blur="calcular_suma()" value="0" maxlength="8">
+                    <input type="number" class="form-control" ng-blur="calcular_suma()" maxlength="8" ng-model="products.cantidad" string-to-number>
                 </div>
             </div>
 
@@ -429,7 +435,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Precio Unitario</label>
                 <div class="col-sm-9">
-                    <input type="number" class="form-control" readonly placeholder="$" ng-blur="calcular_suma()" value="0">
+                    <input type="number" class="form-control" readonly placeholder="$" ng-blur="calcular_suma()" value="0" ng-model="products.precio" string-to-number>
                 </div>
             </div>
 
@@ -443,19 +449,19 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Total</label>
                 <div class="col-sm-9">
-                    <input type="number" class="form-control" placeholder="$" readonly="" value="0" ng-model="products.total">
+                    <input type="number" class="form-control" placeholder="$" readonly="" ng-model="products.total" string-to-number>
                 </div>
             </div>
 
         </form>
-            </div>
-            <div class="modal-footer">
-                <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-info agregar" ng-click="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Agregar </button>
-                </div>
-            </div>
 
+    </div>
+
+    <div class="modal-footer">
+        <div class="btn-toolbar pull-right">
+            <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+            <button type="button" class="btn btn-info agregar" ng-click="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Agregar </button>
         </div>
     </div>
+    
 </div>
