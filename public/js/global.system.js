@@ -738,7 +738,7 @@ function validacion_fields(validacion) {
 function validaciones_fields( validacion ){
     for(var i in validacion ){
         var valores = validacion[i];
-        if( valores == "" || valores == "null" || valores === undefined ){
+        if( valores == "" || valores == null || valores === undefined ){
             toastr.error('Verificar campo '+ i +' para poder continuar' , title );
             return true;
         }
