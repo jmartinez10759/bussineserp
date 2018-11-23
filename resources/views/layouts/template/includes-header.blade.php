@@ -37,7 +37,8 @@
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
   <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css"> -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-chosen@1.4.2/bootstrap-chosen.css">
+  <!-- <link data-require="chosen@*" data-semver="1.0.0" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.min.css" /> -->
+  <link data-require="chosen@*" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-chosen@1.4.2/bootstrap-chosen.css">
   <!-- Styles -->
   <link type="text/css" rel="stylesheet" href="{{ asset('css/sweetalert.css')}}" />
   <link type="text/css" rel="stylesheet" href="{{ asset('css/toastr.css')}}" />
@@ -113,5 +114,4 @@
        [v-cloak]{display: none}
        [ng-cloak]{display: none}
   </style>
-  <!-- estilos del desarrollador -->
    @stack('styles')

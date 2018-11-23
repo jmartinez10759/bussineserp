@@ -119,21 +119,21 @@
                    ,'attr'      => 'data-live-search="true"'
             ]);
 
-            $giro_comercial =  dropdown([
+            $servicio_comerciales =  dropdown([
                    'data'       => SysClaveProdServicioModel::get()
                    ,'value'     => 'id'
                    ,'text'      => 'clave descripcion'
-                   ,'name'      => 'cmb_servicio'
+                   ,'name'      => 'cmb_servicio_comerciales'
                    ,'class'     => 'form-control'
                    ,'leyenda'   => 'Seleccione Opcion'
                    ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio_comercial"'
             ]);
             
-            $giro_comercial_edit =  dropdown([
+            $servicio_comerciales_edit =  dropdown([
                  'data'       => SysClaveProdServicioModel::get()
                  ,'value'     => 'id'
                  ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_servicio_edit'
+                 ,'name'      => 'cmb_servicio_comerciales_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opcion'
                  ,'attr'      => 'data-live-search="true"'
@@ -143,15 +143,10 @@
              "page_title" 	        => "Configuracion"
              ,"title"  		        => "Proveedores"
              ,"data_table"  		        => data_table($table)
-              ,'data_table_proveedores'   =>  ''
-             ,'estados'                 =>  ''
-             ,'estados_edit'            =>  ''
-             ,'giro_comercial'          =>  $giro_comercial
-             ,'giro_comercial_edit'     =>  $giro_comercial_edit
+             ,'giro_comercial'          =>  $servicio_comerciales
+             ,'giro_comercial_edit'     =>  $servicio_comerciales_edit
              ,'regimen_fiscal'          =>  $regimen_fiscal
              ,'regimen_fiscal_edit'     =>  $regimen_fiscal_edit
-             ,'codigo_postal'           =>  ""
-             ,'codigo_postal_edit'      =>  ""
              ,'paises'                  =>  $paises
              ,'paises_edit'             =>  $paises_edit
            ];
@@ -206,7 +201,7 @@
         *@return void
         */
         public function store( Request $request){
-
+            // debuger($request->all());
             $error = null;
             DB::beginTransaction();
             try {
@@ -267,23 +262,29 @@
             DB::beginTransaction();
             try {
                 $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-                $string_key_proveedores = [ 'rfc','nombre_comercial','razon_social','calle', 'colonia','municipio','id_codigo','estatus','id_estado','id_servicio_comercial ','id_regimen_fiscal' ];
+                $string_key_proveedores = [ 'rfc','nombre_comercial','razon_social','calle', 'colonia','estatus','municipio','created_at','updated_at','id_codigo','id_estado','id_servicio_comercial','id_regimen_fiscal','id_country' ];
                 $string_data_proveedor = [];
                 $string_data_contactos = [];
                 foreach( $request->all() as $key => $value ){
                     if( in_array( $key, $string_key_contactos) ){
                         if( $key == 'contacto' ){
                             $string_data_contactos['nombre_completo'] = $value;
+
                         }else{
                             $string_data_contactos[$key] = $value;
+                            
                         }
                     };
                     if( in_array( $key, $string_key_proveedores) ){
                        $string_data_proveedor[$key] = $value; 
+                       
                     }
                     
             }
             // debuger($string_data_proveedor);
+            // echo "string";die();
+
+            // debuger($);
 
              $response = $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_proveedor );
             if( count($request->contactos) > 0){

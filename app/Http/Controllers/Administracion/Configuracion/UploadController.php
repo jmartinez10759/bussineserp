@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysAccionesModel;
-use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
 use App\Model\Administracion\Configuracion\SysClientesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
@@ -54,6 +53,8 @@ use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysPaisModel;
 use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
+use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
+
 
 
 
@@ -210,6 +211,9 @@ class UploadController extends MasterController
                case "Servicioscomerciales": 
                 $this->_tabla_model = new SysServiciosComercialesModel; 
             break;
+               case "Categoriasproductos": 
+                $this->_tabla_model = new SysCategoriasProductosModel; 
+            break;
 
 
 
@@ -287,9 +291,26 @@ class UploadController extends MasterController
          }
 
      }
+    /**
+     * Metodo para subir los archivos.
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+     public function uploads_files( Request $request ){
+         try { 
+             $response = self::upload_file($request ,false, "upload_file/archivos/");
+             #debuger($response['file']);
+             if($response['file'][0]->success == false){
+                return $this->show_error(6, $response['file'][0]->result , $response['file'][0]->message );    
+             }
+             return $this->_message_success( 201, $response['file'][0]->result , $response['file'][0]->message );
+         } catch (\Exception $e) {
+             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+             return $this->show_error(6, $error, self::$message_error );
+         }
 
-    
-    
+     }
     
 
 }

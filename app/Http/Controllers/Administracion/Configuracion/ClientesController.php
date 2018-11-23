@@ -17,7 +17,7 @@ use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
 use App\Model\Administracion\Configuracion\SysClientesEmpresasModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
-use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
+use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
 
 class ClientesController extends MasterController
 {
@@ -39,85 +39,12 @@ class ClientesController extends MasterController
         if( Session::get('permisos')['GET'] ){
           return view('errors.error');
         }
-            #se crea el dropdown
-           $paises = dropdown([
-                 'data'      => SysPaisModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_pais'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" ng-model="insert.id_country"'
-                 ,'event'     => 'ng-select_estado()'
-                 ,'selected'  => '151'
-           ]);
-
-            $paises_edit =  dropdown([
-                 'data'      => SysPaisModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_pais_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" ng-model="update.id_country"'
-                 ,'event'     => 'ng-select_estado_edit()'
-            ]);
-
-           $uso_cfdi = dropdown([
-                 'data'      => SysUsoCfdiModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_uso_cfdi'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-           $uso_cfdi_edit =  dropdown([
-                 'data'      => SysUsoCfdiModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_uso_cfdi_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-
-           $giro_comercial =  dropdown([
-                   'data'       => SysClaveProdServicioModel::get()
-                   ,'value'     => 'id'
-                   ,'text'      => 'clave descripcion'
-                   ,'name'      => 'cmb_servicio'
-                   ,'class'     => 'form-control'
-                   ,'leyenda'   => 'Seleccione Opcion'
-                   ,'attr'      => 'data-live-search="true" ng-model="insert.id_servicio"'
-            ]);
-            
-            $giro_comercial_edit =  dropdown([
-                 'data'       => SysClaveProdServicioModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_servicio_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true"'
-            ]);
-
-
-          $data = [
-             'page_title' 	          => "Configuración"
-             ,'title'  		            => "Prospectos"
-             ,'data_table'  	        => ""
-             ,'data_table_clientes'   => ""
-             ,'country'               => $paises
-             ,'country_edit'          => $paises_edit
-             ,'uso_cfdi'              => $uso_cfdi
-             ,'uso_cfdi_edit'         => $uso_cfdi_edit
-             ,'servicios'             => $giro_comercial
-             ,'servicios_edit'        => $giro_comercial_edit
-           ];
-           #debuger($data);
-           return self::_load_view( 'administracion.configuracion.clientes', $data );
-
+        $data = [
+           'page_title' 	          => "Configuración"
+           ,'title'  		            => "Prospectos"
+         ];
+         #debuger($data);
+         return self::_load_view( 'administracion.configuracion.clientes', $data );
     }
     /**
      *Metodo para realizar la consulta por medio de su id
@@ -130,9 +57,12 @@ class ClientesController extends MasterController
         $response = $this->_tabla_model::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
         $response_clientes = $this->_validate_consulta($this->_tabla_model,['usoCfdi','empresas','contactos:id,nombre_completo,correo,telefono'],['estatus' => 1 ],['id' => Session::get('id_empresa')],['estatus' => 1]);
         $data = [
-          'prospectos' => $response
-          ,'clientes'  => $response_clientes
-          ,'empresas'  => SysEmpresasModel::where(['estatus' => 1])->get()
+          'prospectos'            => $response
+          ,'clientes'             => $response_clientes
+          ,'empresas'             => SysEmpresasModel::where(['estatus' => 1])->get()
+          ,'paises'               => SysPaisModel::get()
+          ,'servicio_comercial'   => SysServiciosComercialesModel::get()
+          ,'uso_cfdi'             => SysUsoCfdiModel::get()
         ];
 
         return $this->_message_success( 200, $data , self::$message_success );
@@ -166,7 +96,7 @@ class ClientesController extends MasterController
      *@return void
      */
     public function store( Request $request){
-
+          #debuger( $request->all() );
           $error = null;
           DB::beginTransaction();
           try {
@@ -185,7 +115,11 @@ class ClientesController extends MasterController
                     };
                     if( !in_array( $key, $string_key_contactos) ){
                         if( !is_array($value)){
-                            $string_data_clientes[$key] = strtoupper($value);
+                            if($key == "logo"){
+                              $string_data_clientes[$key] = (trim($value));
+                            }else{
+                              $string_data_clientes[$key] = strtoupper($value);
+                            }
                         }
                     };
                 }
@@ -224,7 +158,7 @@ class ClientesController extends MasterController
      *@return void
      */
     public function update( Request $request){
-        #debuger($request->all());
+        #debuger( $request->all() );
         $error = null;
           DB::beginTransaction();
           try {
@@ -244,7 +178,11 @@ class ClientesController extends MasterController
                     };
                     if( !in_array( $key, $string_key_clientes) ){
                         if( !is_array($value)){
-                            $string_data_clientes[$key] = strtoupper($value);
+                            if($key == "logo"){
+                              $string_data_clientes[$key] = (trim($value));
+                            }else{
+                              $string_data_clientes[$key] = strtoupper($value);
+                            }
                         }
                     };
                     

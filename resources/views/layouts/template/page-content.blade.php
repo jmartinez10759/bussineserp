@@ -18,7 +18,7 @@
         <div class="panel-heading">
             <div class="btn-group pull-right">
                 <div class="pull-right">
-                    <form class="form-inline">
+                    <form class="form-inline" id="form_general">
                         {!! $upload_files !!}
                         
                         <input id="search_general" class="form-control" type="text" placeholder="Buscar" aria-label="Search" onkeyup="buscador_general(this,'{{ $buscador }}')" />

@@ -58,7 +58,7 @@
 
             try {
                 $response = SysContactosModel::where(['id' => $request->id])->get();
-            return $this->_message_success( 200, $response[0] , self::$message_success );
+            return $this->_message_success( 200, isset($response[0])? $response[0] : [] , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );

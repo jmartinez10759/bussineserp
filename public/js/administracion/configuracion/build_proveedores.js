@@ -153,7 +153,8 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           ,id_regimen_fiscal: "0"
           ,id_servicio_comercial: "0"
           ,id_country: "151"
-          ,id_codigo: ""
+          
+          
         };
         $scope.update = {};
         $scope.edit   = {};
@@ -185,13 +186,12 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
     
     $scope.insert_register = function(){
-      
-        
-        var url = domain( url_insert );
-        var fields = this.insert;
+        this.insert.id_pais = jQuery('#cmb_pais').val();
         this.insert.id_estado  = jQuery('#cmb_estados').val();
         this.insert.id_codigo  = jQuery('#cmb_codigo_postal').val();
-        this.insert.id_servicio_comercial  = jQuery('#cmb_servicio').val();
+        this.insert.id_servicio_comercial  = jQuery('#cmb_servicio_comerciales').val();
+        var url = domain( url_insert );
+        var fields = this.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
@@ -219,12 +219,12 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     $scope.update_register = function(){
       
       $scope.update = $scope.edit;
-      $scope.update.id_estado  = jQuery('#cmb_estados_edit').val();
-      $scope.update.id_codigo  = jQuery('#cmb_codigo_postal_edit').val();
-      $scope.update.id_country        = jQuery('#cmb_pais_edit').val();
-      $scope.update.estatus           = jQuery('#cmb_estatus_edit').val();
-      $scope.update.id_servicio_comercial       = jQuery('#cmb_servicio_edit').val();
-      $scope.update.id_regimen_fiscal = jQuery('#cmb_regimen_fiscal_edit').val();
+      $scope.update.id_estado              = jQuery('#cmb_estados_edit').val();
+      $scope.update.id_codigo              = jQuery('#cmb_codigo_postal_edit').val();
+      $scope.update.id_country             = jQuery('#cmb_pais_edit').val();
+      $scope.update.estatus                = jQuery('#cmb_estatus_edit').val();
+      $scope.update.id_servicio_comercial  = jQuery('#cmb_servicio_comerciales_edit').val();
+      $scope.update.id_regimen_fiscal      = jQuery('#cmb_regimen_fiscal_edit').val();
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
@@ -266,10 +266,10 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
                $scope.edit.correo       = response.data.result.contactos[0].correo;
            }
           
-           jQuery('#cmb_pais_edit').val($scope.edit.id_country);
-           jQuery('#cmb_estatus_edit').val($scope.edit.estatus);
-           jQuery('#cmb_servicio_edit').selectpicker('val',[$scope.edit.id_servicio_comercial]);
-           jQuery('#cmb_regimen_fiscal_edit').val($scope.edit.id_regimen_fiscal);
+           jQuery('#cmb_pais_edit').val($scope.edit.id_country).trigger("chosen:updated");
+           jQuery('#cmb_estatus_edit').val($scope.edit.estatus).trigger("chosen:updated");
+           jQuery('#cmb_servicio_comerciales_edit').val($scope.edit.id_servicio_comercial).trigger("chosen:updated");
+           jQuery('#cmb_regimen_fiscal_edit').val($scope.edit.id_regimen_fiscal).trigger("chosen:updated");
            $scope.select_estado_edit();
            select_codigos_edit($scope.edit.id_estado,$scope.edit.id_codigo);
 
@@ -329,6 +329,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           };
           jQuery('#div_cmb_estados').html('');
           jQuery('#div_cmb_estados').html( select_general( estados ) );
+          jQuery('#cmb_estados').chosen({width: "100%"});
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
@@ -340,6 +341,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
 
     $scope.select_estado_edit = function(){
+      // console.log(jQuery('#cmb_pais_edit').val());
       var url = domain( url_edit_pais );
       var fields = { id: jQuery('#cmb_pais_edit').val() };
       MasterController.request_http(url,fields,"get",$http,false)
@@ -356,7 +358,8 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           };
           jQuery('#div_cmb_estados_edit').html('');
           jQuery('#div_cmb_estados_edit').html( select_general( estados ) );
-          jQuery('#cmb_estados_edit').val($scope.edit.id_estado);
+          jQuery('#cmb_estados_edit').chosen({width: "100%"});
+          jQuery('#cmb_estados_edit').val($scope.edit.id_estado).trigger("chosen:updated");
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
@@ -410,7 +413,8 @@ function select_codigos_edit(id = false,id_codigo =false){
           };
           jQuery('#div_cmb_codigos_edit').html('');
           jQuery('#div_cmb_codigos_edit').html( select_general( codigos ) );
-          jQuery('#cmb_codigo_postal_edit').val( id_codigo );
+          jQuery('#cmb_codigo_postal_edit').chosen({width: "100%"});
+          jQuery('#cmb_codigo_postal_edit').val( id_codigo ).trigger("chosen:updated");
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
@@ -421,8 +425,12 @@ function select_codigos_edit(id = false,id_codigo =false){
       }); 
 }
 
-jQuery('#cmb_servicio').selectpicker({width:'100%', size: 8});
-jQuery('#cmb_servicio_edit').selectpicker({width:'100%', size: 8});
+jQuery('#cmb_pais').chosen({width: "100%"});
+jQuery('#cmb_pais_edit').chosen({width: "100%"});
+jQuery('#cmb_regimen_fiscal').chosen({width: "100%"});
+jQuery('#cmb_regimen_fiscal_edit').chosen({width: "100%"});
+jQuery('#cmb_servicio_comerciales').chosen({width: "100%"});
+jQuery('#cmb_servicio_comerciales_edit').chosen({width: "100%"});
 var upload_url = domain('proveedores/upload');
 var ids = {
   div_content  : 'div_dropzone_file_proveedor'

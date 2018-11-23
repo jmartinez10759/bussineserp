@@ -7,31 +7,30 @@ var redireccion = "configuracion/empresas";
 var url_relacion      = "empresas/insert_relacion";
 var url_edit_pais     = 'pais/edit';
 var url_edit_codigos  = 'codigopostal/show';
+var url_upload          = 'upload/files';
 
-var app = angular.module('ng-empresas', ["ngRoute"]);
+var app = angular.module('ng-empresas', ["ngRoute",'localytics.directives','components']);
 app.controller('EmpresasController', function( $scope, $http, $location ) {
-    /*se declaran las propiedades dentro del controller*/
+    
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
-          estatus: "1"
-          ,id_regimen_fiscal: "0"
-          ,id_servicio: "0"
-          ,id_country: "151"
+          estatus: 1 ,id_country: 151
         };
+        $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
         $scope.select_estado();
-        $scope.consulta_general();
+        $scope.index();
     }
 
     $scope.click = function (){
       $location.path("/register");
-      $scope.consulta_general();
+      $scope.index();
     }
 
-    $scope.consulta_general = function(){
+    $scope.index = function(){
         var url = domain( url_all );
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
@@ -50,21 +49,20 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
     
     $scope.insert_register = function(){
 
-        var validacion = ['correo','razon_social','rfc_emisor'];
-        if(validacion_fields(validacion) == "error"){return;}
-        if( !emailValidate(jQuery('#correo').val()) ){  
-            jQuery('#correo').parent().addClass('has-error');
-            toastr.error("Correo Incorrecto","Ocurrio un error, favior de verificar");
+        var validacion = {
+             'CORREO'       : $scope.insert.correo
+            ,'RAZON SOCIAL' : $scope.insert.razon_social
+            ,'RFC'          : $scope.insert.rfc_emisor
+          };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.insert.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        if( !valida_rfc(jQuery('#rfc_emisor').val()) ){
-            jQuery('#rfc_emisor').parent().addClass('has-error');
-            toastr.error("RFC Incorrecto","Ocurrio un error, favior de verificar");
+        if( !valida_rfc($scope.insert.rfc_emisor) ){
+            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        this.insert.id_estado  = jQuery('#cmb_estados').val();
-        this.insert.id_codigo  = jQuery('#cmb_codigo_postal').val();
-        this.insert.id_servicio_comercial  = jQuery('#cmb_servicio_comerciales').val();
         var url = domain( url_insert );
         var fields = this.insert;
         MasterController.request_http(url,fields,'post',$http, false )
@@ -78,7 +76,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             }); 
-            $scope.constructor();
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -92,25 +90,22 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
 
     $scope.update_register = function(){
 
-      var validacion = ['correo_edit','razon_social_edit','rfc_emisor_edit'];
-      if(validacion_fields(validacion) == "error"){return;}
-      if( !emailValidate(jQuery('#correo_edit').val()) ){  
-          jQuery('#correo_edit').parent().addClass('has-error');
-          toastr.error("Correo Incorrecto","Ocurrio un error, favior de verificar");
-          return;
-      }
-      if( !valida_rfc(jQuery('#rfc_emisor_edit').val()) ){
-          jQuery('#rfc_emisor_edit').parent().addClass('has-error');
-          toastr.error("RFC Incorrecto","Ocurrio un error, favior de verificar");
-          return;
-      }
-      $scope.update = $scope.edit;
-      $scope.update.id_estado              = jQuery('#cmb_estados_edit').val();
-      $scope.update.id_codigo              = jQuery('#cmb_codigo_postal_edit').val();
-      $scope.update.id_country             = jQuery('#cmb_pais_edit').val();
-      $scope.update.estatus                = jQuery('#cmb_estatus_edit').val();
-      $scope.update.id_servicio_comercial  = jQuery('#cmb_servicio_comerciales_edit').val();
-      $scope.update.id_regimen_fiscal      = jQuery('#cmb_regimen_fiscal_edit').val();
+      var validacion = {
+             'CORREO'       : $scope.update.correo
+            ,'RAZON SOCIAL' : $scope.update.razon_social
+            ,'RFC'          : $scope.update.rfc_emisor
+          };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.update.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        if( !valida_rfc($scope.update.rfc_emisor) ){
+            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        /*var datos = ['contactos'];
+        $scope.update = iterar_object($scope.update,datos);*/
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
@@ -123,8 +118,9 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
                 ,'width'    : 900
                 ,'height'   : 400
                 ,'autoSize' : false
-            }); 
-          $scope.constructor();
+            });
+          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
+          $scope.index();
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -136,50 +132,31 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
       });
     }
 
-    $scope.edit_register = function( id ){
-      var url = domain( url_edit );
-      var fields = {id : id };
-      MasterController.request_http(url,fields,'get',$http, false )
-        .then(function( response ){
+    $scope.edit_register = function( data ){
 
-          var id_edit = {
-              div_content  : 'div_dropzone_file_empresa_dit'
-              ,div_dropzone : 'dropzone_xlsx_file_empresa_edit'
-              ,file_name    : 'file'
-            };
-            upload_file('',upload_url,message,1,id_edit,'.jpg,.png,.jpeg',function( request ){
-                console.log(request);
-            });
-
-           $scope.edit = response.data.result;
-           if( response.data.result.contactos.length > 0 ){
-               $scope.edit.contacto     = response.data.result.contactos[0].nombre_completo;
-               $scope.edit.departamento = response.data.result.contactos[0].departamento;
-               $scope.edit.telefono     = response.data.result.contactos[0].telefono;
-               $scope.edit.correo       = response.data.result.contactos[0].correo;
+       var datos = ['updated_at','created_at','clientes','codigos','comerciales','regimenes','sucursales','$$hashKey'];
+            $scope.update = iterar_object(data,datos);
+            console.log($scope.update);
+           if( data.contactos.length > 0 ){
+               $scope.update.contacto     = data.contactos[0].nombre_completo;
+               $scope.update.departamento = data.contactos[0].departamento;
+               $scope.update.telefono     = data.contactos[0].telefono;
+               $scope.update.correo       = data.contactos[0].correo;
            }
-           jQuery('#cmb_pais_edit').val($scope.edit.id_country).trigger("chosen:updated");
-           jQuery('#cmb_estatus_edit').val($scope.edit.estatus).trigger("chosen:updated");
-           jQuery('#cmb_servicio_comerciales_edit').val($scope.edit.id_servicio_comercial).trigger("chosen:updated");
-           jQuery('#cmb_regimen_fiscal_edit').val($scope.edit.id_regimen_fiscal).trigger("chosen:updated");
-           $scope.select_estado_edit();
-           select_codigos_edit($scope.edit.id_estado,$scope.edit.id_codigo);
+           $scope.select_estado(1);
+           $scope.select_codigos(1);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html); 
 
           jQuery.fancybox.open({
                 'type'      : 'inline'
                 ,'src'      : "#modal_edit_register"
                 ,'modal': true
-            });           
-        }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error , expired );
-        });
+            }); 
     }
+
 
     $scope.destroy_register = function( id ){
 
@@ -189,8 +166,7 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
-            redirect(domain(redireccion));
-            //$scope.consulta_general();
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -204,53 +180,12 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
       },"warning",true,["SI","NO"]);  
     }
 
-    $scope.select_estado = function(){
+    $scope.select_estado = function( update = false ){
       var url = domain( url_edit_pais );
-      var fields = { id: jQuery('#cmb_pais').val() };
+      var fields = { id: (update)? $scope.update.id_country: $scope.insert.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
-          var estados = {
-              'data'    : response.data.result.estados
-              ,'text'   : "nombre"
-              ,'value'  : "id"
-              ,'name'   : "cmb_estados"
-              ,'class'  : 'form-control'
-              ,'leyenda': 'Seleccione Opción'
-              ,'attr'   : 'data-live-search="true" '
-              ,'event'  : "select_codigos()"
-          };
-          jQuery('#div_cmb_estados').html('');
-          jQuery('#div_cmb_estados').html( select_general( estados ) );
-          jQuery('#cmb_estados').chosen({width: "100%"});
-      }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            toastr.error( error.data.result , expired );   
-      });    
-    }
-
-    $scope.select_estado_edit = function(){
-      var url = domain( url_edit_pais );
-      var fields = { id: jQuery('#cmb_pais_edit').val() };
-      MasterController.request_http(url,fields,"get",$http,false)
-      .then( response => {
-          var estados = {
-              'data'    : response.data.result.estados
-              ,'text'   : "nombre"
-              ,'value'  : "id"
-              ,'name'   : "cmb_estados_edit"
-              ,'class'  : 'form-control'
-              ,'leyenda': 'Seleccione Opción'
-              ,'attr'   : 'data-live-search="true" '
-              ,'event'  : "select_codigos_edit()"
-          };
-          jQuery('#div_cmb_estados_edit').html('');
-          jQuery('#div_cmb_estados_edit').html( select_general( estados ) );
-          jQuery('#cmb_estados_edit').chosen({width: "100%"});
-          jQuery('#cmb_estados_edit').val($scope.edit.id_estado).trigger("chosen:updated");
+         $scope.cmb_estados = response.data.result.estados;
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
@@ -260,7 +195,25 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
           console.log(error);
             toastr.error( error.result , expired );   
       });    
-    } 
+    }
+
+    $scope.select_codigos = function( update = false ){
+
+      var url = domain( url_edit_codigos );
+      var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
+      MasterController.request_http(url,fields,"get",$http,false)
+      .then( response => {
+          $scope.cmb_codigos = response.data.result;
+          console.log($scope.cmb_codigos);
+      }).catch( error => {
+          if( isset(error.response) && error.response.status == 419 ){
+            toastr.error( session_expired ); 
+            redirect(domain("/"));
+            return;
+          }
+            toastr.error( error.data.result , expired );  
+      }); 
+    }
 
     $scope.sucursales = function( id_empresa ){
       var url     = domain( url_edit );
@@ -335,8 +288,9 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
                 ,'width'    : 900
                 ,'height'   : 400
                 ,'autoSize' : false
-            }); 
-
+            });
+            jQuery('#tr_'+id_empresa).effect("highlight",{},5000);
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -349,81 +303,44 @@ app.controller('EmpresasController', function( $scope, $http, $location ) {
     
     }
 
-});
+    $scope.upload_file = function(update){
 
-function select_codigos(){
-    var url = domain( url_edit_codigos );
-    var fields = {id: jQuery('#cmb_estados').val()}
-    MasterController.method_master(url,fields,"get")
-      .then( response => {
-          var codigos = {
-              'data'    : response.data.result
-              ,'text'   : "codigo_postal"
-              ,'value'  : "id"
-              ,'name'   : "cmb_codigo_postal"
-              ,'class'  : 'form-control'
-              ,'attr'   : 'data-live-search="true" '
-              ,'leyenda': 'Seleccione Opción'
-          };
-          jQuery('#div_cmb_codigos').html('');
-          jQuery('#div_cmb_codigos').html( select_general( codigos ) );
-          jQuery('#cmb_codigo_postal').chosen({width: "100%"});
-      }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
+      var upload_url = domain( url_upload );
+      var identificador = {
+         div_content   : 'div_dropzone_file_empresas'
+        ,div_dropzone  : 'dropzone_xlsx_file_empresas'
+        ,file_name     : 'file'
+      };
+      var message = "Dar Clíc aquí o arrastrar archivo";
+      $scope.update.logo = "";
+      upload_file({'nombre': 'empresas_'+$scope.update.id },upload_url,message,1,identificador,'.png',function( request ){
+          if(update){
+            $scope.update.logo = domain(request.result);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html);        
+          }else{
+            $scope.insert.logo = domain(request.result);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.insert.logo+'" height="268px" width="200px">'
+            jQuery('#imagen').html("");        
+            jQuery('#imagen').html(html);        
+            
           }
-            console.log(error);
-            toastr.error( error.result , expired );    
+          jQuery.fancybox.close({
+              'type'      : 'inline'
+              ,'src'      : "#upload_file"
+              ,'modal'    : true
+          });
       });
 
-}
+      jQuery.fancybox.open({
+          'type'      : 'inline'
+          ,'src'      : "#upload_file"
+          ,'modal'    : true
+      });
 
-function select_codigos_edit(id = false,id_codigo =false){
-      var id_estado = (id)? id : jQuery('#cmb_estados_edit').val();
-      var url = domain( url_edit_codigos );
-      var fields = {id: id_estado}
-      MasterController.method_master(url,fields,"get")
-      .then( response => {
-          var codigos = {
-              'data'    : response.data.result
-              ,'text'   : "codigo_postal"
-              ,'value'  : "id"
-              ,'name'   : "cmb_codigo_postal_edit"
-              ,'class'  : 'form-control'
-              ,'attr'   : 'data-live-search="true" '
-              ,'leyenda': 'Seleccione Opción'
-          };
-          jQuery('#div_cmb_codigos_edit').html('');
-          jQuery('#div_cmb_codigos_edit').html( select_general( codigos ) );
-          jQuery('#cmb_codigo_postal_edit').chosen({width: "100%"});
-          jQuery('#cmb_codigo_postal_edit').val( id_codigo ).trigger("chosen:updated");
-      }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            console.log(error);
-            toastr.error( error.result , expired );   
-      }); 
-}
+    }
 
-jQuery('#cmb_pais').chosen({width: "100%"});
-jQuery('#cmb_pais_edit').chosen({width: "100%"});
-jQuery('#cmb_regimen_fiscal').chosen({width: "100%"});
-jQuery('#cmb_regimen_fiscal_edit').chosen({width: "100%"});
-jQuery('#cmb_servicio_comerciales').chosen({width: "100%"});
-jQuery('#cmb_servicio_comerciales_edit').chosen({width: "100%"});
-
-var upload_url = domain('empresas/upload');
-var ids = {
-  div_content  : 'div_dropzone_file_empresa'
-  ,div_dropzone : 'dropzone_xlsx_file_empresa'
-  ,file_name    : 'file'
-};
-var message = "Dar Clic aquí o arrastrar archivo";
-upload_file('',upload_url,message,1,ids,'.jpg,.png,.jpeg',function( request ){
-    console.log(request);
 });

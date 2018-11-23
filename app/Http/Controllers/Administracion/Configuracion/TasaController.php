@@ -6,6 +6,7 @@
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysTasaModel;
+    use App\Model\Administracion\Configuracion\SysTipoFactorModel;
 
     class TasaController extends MasterController
     {
@@ -184,5 +185,26 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
+        /**
+     * Metodo para consultar la tasa con la clave de tipo factor
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function factor_tasa( Request $request ){
+        try {
+            $where = ['id' => $request->id];
+            $tipo_factor = SysTipoFactorModel::select('clave')->where($where)->get();
+            $response = $this->_tabla_model::where( ['factor' => $tipo_factor[0]->clave] )->groupby('id')->get();
+        return $this->_message_success( 200, $response , self::$message_success );
+        } catch (\Exception $e) {
+        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+        return $this->show_error(6, $error, self::$message_error );
+        }
+
+    }
+
+
+
 
     }

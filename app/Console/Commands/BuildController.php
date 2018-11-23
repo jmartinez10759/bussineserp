@@ -473,7 +473,7 @@ var url_destroy  = "'.strtolower($vista).'/destroy";
 var url_all      = "'.strtolower($vista).'/all";
 var redireccion  = "configuracion/'.strtolower($vista).'";
 
-var app = angular.module("ng-'.strtolower($vista).'", ["ngRoute"]);
+var app = angular.module("ng-'.strtolower($vista).'", ["ngRoute","localytics.directives","components"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
     .when("/ruta1", {
@@ -489,16 +489,16 @@ app.config(function( $routeProvider, $locationProvider ) {
     $locationProvider.html5Mode(true);
 });
 app.controller("'.strtolower($vista).'Controller", function( $scope, $http, $location ) {
-    /*se declaran las propiedades dentro del controller*/
+    
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {};
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
-        $scope.consulta_general();
+        $scope.index();
     }
-    $scope.consulta_general = function(){
+    $scope.index = function(){
         var url = domain( url_all );
         var fields = {};
         MasterController.request_http(url,fields,"get",$http, false )
@@ -531,7 +531,7 @@ app.controller("'.strtolower($vista).'Controller", function( $scope, $http, $loc
                 ,"height"   : 400
                 ,"autoSize" : false
             });
-            $scope.constructor();
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -559,7 +559,7 @@ app.controller("'.strtolower($vista).'Controller", function( $scope, $http, $loc
                 ,"height"   : 400
                 ,"autoSize" : false
             });
-          $scope.consulta_general();
+          $scope.index();
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -606,7 +606,7 @@ app.controller("'.strtolower($vista).'Controller", function( $scope, $http, $loc
         MasterController.request_http(url,fields,"delete",$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
-            $scope.consulta_general();
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 

@@ -35,141 +35,10 @@ class ProductosController extends MasterController
         if( Session::get('permisos')['GET'] ){
             return view('errors.error');
         }
-
-        $categorias = dropdown([
-                'data'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
-                ,'value'     => 'id'
-                ,'text'      => 'nombre'
-                ,'name'      => 'cmb_categorias'
-                ,'class'     => 'form-control'
-                ,'leyenda'   => 'Seleccione Opcion'
-                ,'attr'      => 'data-live-search="true" '
-        ]);
-
-        $categorias_edit = dropdown([
-                 'data'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'nombre'
-                 ,'name'      => 'cmb_categorias_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-
-        $unidades = dropdown([
-                 'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave nombre'
-                 ,'name'      => 'cmb_unidades'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-
-        $unidades_edit = dropdown([
-                 'data'      => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave nombre'
-                 ,'name'      => 'cmb_unidades_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '
-           ]);
-        $tasa = dropdown([
-                 'data'      => SysTasaModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave valor_maximo'
-                 ,'name'      => 'cmb_tasas'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true"'
-                 ,'event'     => 'parser_iva()'
-           ]);
-        $tasa_edit = dropdown([
-                 'data'      => SysTasaModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave valor_maximo'
-                 ,'name'      => 'cmb_tasas_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true"'                 
-                 ,'event'     => 'parser_iva_edit()'                 
-           ]);
-
-        $impuesto = dropdown([
-                 'data'      => SysImpuestoModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_impuestos'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
-           ]);
-
-        $impuesto_edit = dropdown([
-                 'data'      => SysImpuestoModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave descripcion'
-                 ,'name'      => 'cmb_impuestos_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
-           ]);
-        $tipo_factor = dropdown([
-                 'data'      => SysTipoFactorModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave'
-                 ,'name'      => 'cmb_tipofactor'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
-           ]);
-        $tipo_factor_edit = dropdown([
-                 'data'      => SysTipoFactorModel::get()
-                 ,'value'     => 'id'
-                 ,'text'      => 'clave'
-                 ,'name'      => 'cmb_tipofactor_edit'
-                 ,'class'     => 'form-control'
-                 ,'leyenda'   => 'Seleccione Opcion'
-                 ,'attr'      => 'data-live-search="true" '                 
-           ]);
-
-        $servicios =  dropdown([
-           'data'       => SysClaveProdServicioModel::get()
-           ,'value'     => 'id'
-           ,'text'      => 'clave descripcion'
-           ,'name'      => 'cmb_servicio'
-           ,'class'     => 'form-control'
-           ,'leyenda'   => 'Seleccione Opcion'
-        ]);
-            
-        $servicios_edit =  dropdown([
-             'data'       => SysClaveProdServicioModel::get()
-             ,'value'     => 'id'
-             ,'text'      => 'clave descripcion'
-             ,'name'      => 'cmb_servicio_edit'
-             ,'class'     => 'form-control'
-             ,'leyenda'   => 'Seleccione Opcion'
-             ,'attr'      => 'data-live-search="true" '
-        ]);
-
-
         $data = [
             'page_title' 	         => "Configuración"
             ,'title'  		         => "Productos"
             ,'data_table'  		     => "data_table(table)"
-            ,'categorias'            => $categorias
-            ,'categorias_edit'       => $categorias_edit
-            ,'unidades'              => $unidades
-            ,'unidades_edit'         => $unidades_edit
-            ,'tasa'                  => $tasa
-            ,'tasa_edit'             => $tasa_edit
-            ,'impuesto'              => $impuesto
-            ,'impuesto_edit'         => $impuesto_edit
-            ,'tipo_factor'           => $tipo_factor
-            ,'tipo_factor_edit'      => $tipo_factor_edit
-            ,'servicios'             => $servicios
-            ,'servicios_edit'        => $servicios_edit
         ];
         return self::_load_view( "administracion.configuracion.productos",$data );
     }
@@ -182,10 +51,14 @@ class ProductosController extends MasterController
     public function all( Request $request ){
 
         try {
-           $response = $this->_catalogos_bussines( $this->_tabla_model, ['empresas','categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
+           $response = $this->_validate_consulta( $this->_tabla_model, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
            $data = [
-             'response' => $response
-             ,'empresas' => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
+             'response'         => $response
+             ,'empresas'        => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
+             ,'unidad_medida'   => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
+             ,'categorias'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
+             ,'servicios'       => SysClaveProdServicioModel::get()
+             ,'tipo_factor'     => SysTipoFactorModel::get()
            ];
           return $this->_message_success( 200, $data , self::$message_success );
         } catch (\Exception $e) {
@@ -201,10 +74,10 @@ class ProductosController extends MasterController
     *@return void
     */
     public function show( Request $request ){
-
+        #debuger($request->all());
         try {
             $response = $this->_tabla_model::with(['servicios:id,clave','categorias','unidades','tasas','impuestos','tipoFactor'])->where(['id' => $request->id])->get();
-        return $this->_message_success( 201, $response[0] , self::$message_success );
+        return $this->_message_success( 200, $response[0] , self::$message_success );
         } catch (\Exception $e) {
         $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
         return $this->show_error(6, $error, self::$message_error );
@@ -224,7 +97,11 @@ class ProductosController extends MasterController
         try {
             $registros = [];
             foreach ($request->all() as $key => $value) {
-                $registros[$key] = strtoupper($value);
+                if($key == "logo"){
+                  $registros[$key] = ($value);
+                }else{
+                  $registros[$key] = strtoupper($value);
+                }
             }
             $response = $this->_tabla_model::create( $registros );
             $data = [
@@ -260,7 +137,11 @@ class ProductosController extends MasterController
         try {
             $registros = [];
             foreach ($request->all() as $key => $value) {
-                $registros[$key] = strtoupper($value);
+                if($key == "logo"){
+                  $registros[$key] = ($value);
+                }else{
+                  $registros[$key] = strtoupper($value);
+                }
             }
             $this->_tabla_model::where(['id' => $request->id])->update($registros);
             $response = $this->_tabla_model::where(['id' => $request->id])->get();

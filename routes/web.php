@@ -585,6 +585,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'clientes.destroy'
     ]);
 
+    Route::post('/upload/register', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@store'
+        ,'as'       => 'clientes.register'
+    ]);
+
+
     ############################ SECCION DE CONTACTOS ###################################
     Route::get('/configuracion/contactos', [
         'uses'      => 'Administracion\Configuracion\ContactosController@index'
@@ -819,6 +825,11 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::post('/upload/catalogos', [
         'uses'      => 'Administracion\Configuracion\UploadController@upload_catalogos'
         ,'as'       => 'upload.catalogos'
+    ]);
+
+    Route::post('/upload/files', [
+        'uses'      => 'Administracion\Configuracion\UploadController@uploads_files'
+        ,'as'       => 'upload.files'
     ]);
 
     #SE REALIZA UNA URL DINAMICA
@@ -1149,6 +1160,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\TasaController@destroy'
         ,'as' => 'tasa.destroy'
     ]);
+
+    Route::get('/tasa/factor_tasa', [
+        'uses' => 'Administracion\Configuracion\TasaController@factor_tasa'
+        ,'as' => 'tasa.factor_tasa'
+    ]);
+    
 ################################## CATALOGO IMPUESTO ################################
 
     Route::get('/configuracion/impuesto', [
@@ -1159,6 +1176,11 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::get('/impuesto/all', [
         'uses' => 'Administracion\Configuracion\ImpuestoController@all'
         ,'as'  => 'impuesto.all'
+    ]);
+
+    Route::get('/impuesto/clave_impuesto', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@clave_impuesto'
+        ,'as'  => 'impuesto.clave_impuesto'
     ]);
 
     Route::post('/impuesto/register', [
@@ -1263,11 +1285,6 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\CuentasController@show'
         ,'as' => 'cuentas.edit'
     ]);
-    
-    /*Route::get('/cuentas/display_clientes', [
-        'uses' => 'Administracion\Configuracion\CuentasController@display_clientes'
-        ,'as' => 'cuentas.display_clientes'
-    ]);*/
 
     Route::put('/cuentas/update', [
         'uses' => 'Administracion\Configuracion\CuentasController@update'
@@ -1278,7 +1295,37 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\CuentasController@destroy'
         ,'as' => 'cuentas.destroy'
     ]);
-    
+    ################################## CATALOGO DE CATEGORIAS ################################
+    Route::get('/configuracion/categoriasproductos', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@index'
+        ,'as' => 'configuracion.categoriasproductos'
+    ]);
+
+    Route::get('/categoriasproductos/all', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@all'
+        ,'as' => 'categoriasproductos.all'
+    ]);
+
+    Route::post('/categoriasproductos/register', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@store'
+        ,'as' => 'categoriasproductos.register'
+    ]);
+
+    Route::get('/categoriasproductos/edit', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@show'
+        ,'as' => 'categoriasproductos.edit'
+    ]);
+
+    Route::put('/categoriasproductos/update', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@update'
+        ,'as' => 'categoriasproductos.update'
+    ]);
+
+    Route::delete('/categoriasproductos/destroy', [
+        'uses' => 'Administracion\Configuracion\CategoriasProductosController@destroy'
+        ,'as' => 'categoriasproductos.destroy'
+    ]);
+
 ##################################### COTIZACIONES #########################################    
 
 Route::get('/ventas/cotizacion', [

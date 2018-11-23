@@ -11,7 +11,409 @@ var url_edit_productos  = "productos/edit";
 var url_edit_planes     = "planes/edit";
 var url_insert_factura  = "facturaciones/insert";
 
-new Vue({
+
+var app = angular.module('ng-pedidos', ["ngRoute",'localytics.directives','components',"stringToNumber"]);
+app.controller('PedidosController', function( $scope, $http, $location ) {
+    
+    $scope.constructor = function(){
+        $scope.datos  = [];
+        $scope.insert = {
+          id_forma_pago: 1, id_estatus: 6 ,id_metodo_pago : 1 , id_moneda : 100
+        };
+        $scope.insertar = {};
+        $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
+        $scope.update = {};
+        $scope.edit   = {};
+        $scope.fields = {};
+        $scope.products = {
+          cantidad : 0 , total: 0  
+        };
+        $scope.table_concepts = {};
+        $scope.index();
+    }
+
+    $scope.index = function(){
+        var url = domain( url_all );
+        var fields = {};
+        MasterController.request_http(url,fields,'get',$http, false )
+        .then(function(response){
+            $scope.datos = response.data.result;
+        }).catch(function(error){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error(error);
+              toastr.error( error.message , expired );
+        });
+    }
+
+    $scope.insert_register = function( update = false ){
+
+        var url = domain( url_insert );
+        $scope.insertar.pedidos = $scope.insert;
+        $scope.insertar.conceptos = [$scope.products];
+        var validacion = {
+          'CLIENTE'          : (update)? $scope.update.id_cliente    : $scope.insert.id_cliente
+          ,'CONTACTOS'       : (update)? $scope.update.id_contacto   : $scope.insert.id_contacto
+          ,'FORMAS DE PAGO'  : (update)? $scope.update.id_forma_pago : $scope.insert.id_forma_pago
+          ,'METODOS DE PAGO' : (update)? $scope.update.id_metodo_pago: $scope.insert.id_metodo_pago
+          ,'MONEDAS'         : (update)? $scope.update.id_moneda     : $scope.insert.id_moneda
+
+        };
+        
+        if( $scope.products.id_producto == null && $scope.products.id_plan == null   ){
+            return toastr.warning('Seleccione al menos un Producto y/o Plan','Conceptos');   
+        }
+        if($scope.products.cantidad == 0 || $scope.products.cantidad == ""){
+            return toastr.warning('Debe de Ingresar al menos una cantidad','Agregar conceptos');
+        }
+        if(validaciones_fields(validacion)){
+          if(update){
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
+            });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+          return toastr.warning('Sección de Pedidos');
+        }
+        var fields = {
+          pedidos     : $scope.insertar.pedidos
+          ,conceptos  : $scope.insertar.conceptos
+        };
+        
+        if(update){
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
+            });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+        MasterController.request_http(url,fields,'post',$http, false )
+        .then(function( response ){
+            //toastr.success( response.data.message , title );
+            $scope.table_concepts   = response.data.result.pedidos.conceptos;
+            $scope.insert.id        = response.data.result.pedidos.id;
+            $scope.insert.subtotal  = response.data.result.subtotal_;
+            $scope.insert.iva       = response.data.result.iva_;
+            $scope.insert.total     = response.data.result.total_;
+            
+            $scope.subtotal = response.data.result.subtotal;
+            $scope.iva      = response.data.result.iva;
+            $scope.total    = response.data.result.total;
+            $scope.products = {};
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+
+    }
+
+    $scope.update_register = function( update = false ){
+        //jQuery('.update').prop('disabled',true);
+        $scope.insertar.pedidos = (update)? $scope.update : $scope.insert;                        
+        var validacion = {
+          'CLIENTE'          : (update)? $scope.update.id_cliente    : $scope.insert.id_cliente
+          ,'CONTACTOS'       : (update)? $scope.update.id_contacto   : $scope.insert.id_contacto
+          ,'FORMAS DE PAGO'  : (update)? $scope.update.id_forma_pago : $scope.insert.id_forma_pago
+          ,'METODOS DE PAGO' : (update)? $scope.update.id_metodo_pago: $scope.insert.id_metodo_pago
+          ,'MONEDAS'         : (update)? $scope.update.id_moneda     : $scope.insert.id_moneda
+
+        };
+        if(validaciones_fields(validacion)){
+          if(update){
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
+            });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+          return toastr.warning('Sección de Pedidos');
+        }
+        
+        if(update){
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos_edit"
+                ,'buttons'  : ['share', 'close']
+            });
+          }else{
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_conceptos"
+                ,'buttons'  : ['share', 'close']
+            });
+          }
+          var url = domain( url_update );
+          var fields = {pedidos : $scope.insertar.pedidos };
+          MasterController.request_http(url,fields,'put',$http, false )
+          .then(function( response ){
+              toastr.info( response.data.message , title );
+              jQuery.fancybox.close({
+                    'type'      : 'inline'
+                    ,'src'      : "#modal_edit_register"
+                    ,'modal'    : true
+                    ,'width'    : 900
+                    ,'height'   : 400
+                    ,'autoSize' : false
+                });
+              $scope.index();
+              if (update) {
+                $scope.update = {}
+              }else{
+                $scope.insert = {}
+                buildSweetAlert('# '+response.data.result.id,'Se genero el pedido con exito','success');
+              }
+              if(response.data.result.id_estatus == 5){
+                  $scope.insert_facturacion();
+              }
+              $scope.fields = {}
+              $scope.products = {}
+              $scope.table_concepts = {}
+              $scope.subtotal = "$ 0.00";
+              $scope.iva = "$ 0.00";
+              $scope.total = "$ 0.00";
+
+              jQuery('#tr_'+(update)? $scope.update.id : $scope.insert.id ).effect("highlight",{},5000);
+          }).catch(function( error ){
+              if( isset(error.response) && error.response.status == 419 ){
+                    toastr.error( session_expired ); 
+                    redirect(domain("/"));
+                    return;
+                }
+                console.error( error );
+                toastr.error( error.result , expired );
+          });
+    
+    }
+
+    $scope.edit_register = function( data ){
+        alert(data.id);
+        console.log(data);
+        jQuery.fancybox.open({
+            'type'      : 'inline'
+            ,'src'      : "#modal_edit_register"
+            ,'modal': true
+        }); 
+    }
+
+
+    $scope.destroy_register = function( id ){
+
+      var url = domain( url_destroy );
+      var fields = {id : id };
+      buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+        MasterController.request_http(url,fields,'delete',$http, false )
+        .then(function( response ){
+            toastr.success( response.data.message , title );
+            $scope.index();
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+          
+      },"warning",true,["SI","NO"]);  
+    
+    }
+
+    $scope.display_contactos = function( update = false ){
+
+      var url = domain( url_edit_clientes );
+      var fields = {id : (update)? $scope.update.id_cliente : $scope.insert.id_cliente };
+
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+            $scope.cmb_contactos = response.data.result.contactos;
+            $scope.fields.rfc = response.data.result.rfc_receptor
+            $scope.fields.nombre_comercial = response.data.result.nombre_comercial
+            $scope.fields.telefono_empresa = response.data.result.telefono
+            console.log(response);
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+
+    }
+
+    $scope.change_contactos = function( update = false ){
+
+      var url = domain( url_edit_contactos );
+      var fields = {id : (update)? $scope.update.id_contacto : $scope.insert.id_contacto };
+
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+            $scope.fields.telefono = response.data.result.telefono
+            $scope.fields.correo = response.data.result.correo
+            console.log(response);
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+    
+    }
+
+    $scope.display_productos = function( update = false){
+
+      var url = domain( url_edit_productos );
+      var fields = {id : (update)? $scope.products_edit.id_producto : $scope.products.id_producto};
+
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+            $scope.products.id_plan = null;
+            $scope.products.precio = response.data.result.total;
+            $scope.products.descripcion = response.data.result.descripcion;
+            $scope.products.cantidad = 0;
+            $scope.products.total = 0;
+            console.log(response);
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+
+    }
+
+    $scope.display_planes = function ( update = false ){
+
+      var url = domain( url_edit_planes );
+      var fields = {id : (update)? $scope.products_edit.id_plan : $scope.products.id_plan};
+
+      MasterController.request_http(url,fields,"get",$http, false )
+        .then(function( response ){
+            $scope.products.id_producto = null;
+            $scope.products.precio = response.data.result.total;
+            $scope.products.descripcion = response.data.result.descripcion;
+            $scope.products.cantidad = 0;
+            $scope.products.total = 0;
+            console.log(response);
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        });
+
+    }
+    
+    $scope.calcular_suma = function(update = false){
+      if(update){
+        var precio = ($scope.products.precio != "") ? $scope.products.precio : 0;
+        var cantidad = ($scope.products.cantidad != "") ? $scope.products.cantidad: 0;
+        var total  = parseFloat(precio * cantidad);
+        $scope.products.total = total.toFixed(2);
+      }else{
+        var precio = ($scope.products.precio != "") ? $scope.products.precio : 0;
+        var cantidad = ($scope.products.cantidad != "") ? $scope.products.cantidad: 0;
+        var total  = parseFloat(precio * cantidad);
+        $scope.products.total = total.toFixed(2);
+        
+      }
+
+    }
+
+
+    /*$scope.upload_file = function(update){
+
+      var upload_url = domain( url_upload );
+      var identificador = {
+         div_content   : 'div_dropzone_file_empresas'
+        ,div_dropzone  : 'dropzone_xlsx_file_empresas'
+        ,file_name     : 'file'
+      };
+      var message = "Dar Clíc aquí o arrastrar archivo";
+      $scope.update.logo = "";
+      upload_file({'nombre': 'empresas_'+$scope.update.id },upload_url,message,1,identificador,'.png',function( request ){
+          if(update){
+            $scope.update.logo = domain(request.result);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html);        
+          }else{
+            $scope.insert.logo = domain(request.result);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.insert.logo+'" height="268px" width="200px">'
+            jQuery('#imagen').html("");        
+            jQuery('#imagen').html(html);        
+            
+          }
+          jQuery.fancybox.close({
+              'type'      : 'inline'
+              ,'src'      : "#upload_file"
+              ,'modal'    : true
+          });
+      });
+
+      jQuery.fancybox.open({
+          'type'      : 'inline'
+          ,'src'      : "#upload_file"
+          ,'modal'    : true
+      });
+
+    }*/
+
+});
+
+
+jQuery(".add").fancybox({ 
+  modal: true ,width: 900 ,height: 600,autoSize: false
+});
+
+
+
+
+
+
+
+
+/*new Vue({
   el: "#vue-pedidos",
   created: function () {
     this.consulta_general();
@@ -436,9 +838,9 @@ new Vue({
     
   }
 
-});
+});*/
 
-
+/*
 function display_contactos(){
     
     var url = domain( url_edit_clientes );
@@ -641,9 +1043,9 @@ function calcular_suma_edit(){
     var total  = parseFloat(precio * cantidad);
     jQuery('#total_concepto_edit').val(total.toFixed(2));
 }
-
+*/
 //jQuery('.add').fancybox();
-jQuery(".add").fancybox({ modal: true });
+/*jQuery(".add").fancybox({ modal: true });
 jQuery('#cmb_estatus').selectpicker();
 jQuery('#cmb_clientes').selectpicker();
 jQuery('#cmb_clientes_edit').selectpicker();
@@ -701,4 +1103,4 @@ jQuery('.add').click(function(){
     jQuery('#precio_concepto_edit').val(0);
     jQuery('#descripcion_edit').val("");
     jQuery('#total_concepto_edit').val(0);
-});
+});*/
