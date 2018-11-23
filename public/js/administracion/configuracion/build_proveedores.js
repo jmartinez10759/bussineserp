@@ -149,16 +149,17 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
-          estatus: '1'
-          ,id_regimen_fiscal: 0
+          estatus: 1
+          ,id_regimen_fiscal: null
           ,id_country: 151
-          ,id_servicio_comercial: 0
+          ,id_servicio_comercial: null
         };
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
         $scope.consulta_general();
         $scope.select_estado();
+        $scope.cmb_estatus = [{id:0 ,descripcion:"Baja"}, {id:1, descripcion:"Activo"}];
     }
 
     $scope.click = function (){
@@ -198,7 +199,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             });
-            $scope.consulta_general();
+            $scope.constructor();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -257,8 +258,8 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
            $scope.select_estado(1);
            $scope.select_codigos(1);
            var html = '';
-            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()
-            +'" height="268px" width="200px">'
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
             jQuery('#imagen_edit').html("");        
             jQuery('#imagen_edit').html(html); 
           jQuery.fancybox.open({
@@ -285,8 +286,8 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
-            redirect(domain(redireccion));
-            // $scope.consulta_general();
+            // redirect(domain(redireccion));
+            $scope.consulta_general();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -304,6 +305,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
+          $scope.cmb_estados = {};
           $scope.cmb_estados = response.data.result.estados;
           console.log($scope.cmb_estados);
       }).catch( error => {
@@ -319,7 +321,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     $scope.select_codigos = function( update = false ){
       var url = domain( url_edit_codigos );
       var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
-      MasterController.method_master(url,fields,"get")
+      MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
           $scope.cmb_codigos = response.data.result;
           console.log($scope.cmb_codigos);

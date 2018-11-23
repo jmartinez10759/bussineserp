@@ -105,17 +105,19 @@
                 foreach( $request->all() as $key => $value ){
                     if( in_array( $key, $string_key_contactos) ){
                         if( $key == 'contacto' ){
-                            $string_data_contactos['nombre_completo'] = $value;
-                        }else{
+                            $string_data_contactos['nombre_completo'] = strtoupper($value);
+                        }else if( $key == 'correo'){
                             $string_data_contactos[$key] = $value;
+                        }else{
+                            $string_data_contactos[$key] = strtoupper($value);
                         }
                     };
                     if( !in_array( $key, $string_key_contactos) ){
                       if( !is_array($value)){
                             if($key == "logo"){
-                              $string_data_clientes[$key] = (trim($value));
+                              $string_data_proveedor[$key] = (trim($value));
                             }else{
-                        $string_data_proveedor[$key] = $value;
+                        $string_data_proveedor[$key] = strtoupper($value);
                             }
                       }
                     };
@@ -162,25 +164,26 @@
             DB::beginTransaction();
             try {
                 $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-                $string_key_proveedores = [ 'rfc','nombre_comercial','razon_social','calle', 'colonia','estatus','municipio','created_at','updated_at','id_codigo','id_estado','id_servicio_comercial','id_regimen_fiscal','id_country' ];
+                $string_key_proveedores = [ 'rfc','nombre_comercial','razon_social','calle', 'colonia','logo','estatus','municipio','created_at','updated_at','id_codigo','id_estado','id_servicio_comercial','id_regimen_fiscal','id_country' ];
                 $string_data_proveedor = [];
                 $string_data_contactos = [];
                 foreach( $request->all() as $key => $value ){
                     if( in_array( $key, $string_key_contactos) ){
                         if( $key == 'contacto' ){
-                            $string_data_contactos['nombre_completo'] = $value;
-
-                        }else{
+                            $string_data_contactos['nombre_completo'] = strtoupper($value);
+                        }else if( $key == 'correo'){
                             $string_data_contactos[$key] = $value;
+                        }else{
+                            $string_data_contactos[$key] = strtoupper($value);
                             
                         }
                     };
                     if( in_array( $key, $string_key_proveedores) ){
                       if( !is_array($value)){
                             if($key == "logo"){
-                              $string_data_clientes[$key] = (trim($value));
+                              $string_data_proveedor[$key] = (trim($value));
                             }else{
-                        $string_data_proveedor[$key] = $value;
+                        $string_data_proveedor[$key] = strtoupper($value)   ;
                             }
                       } 
                     };
@@ -188,8 +191,6 @@
             }
             // debuger($string_data_proveedor);
             // echo "string";die();
-
-            // debuger($);
 
              $response = $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_proveedor );
             if( count($request->contactos) > 0){

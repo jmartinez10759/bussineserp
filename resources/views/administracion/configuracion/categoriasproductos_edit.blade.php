@@ -16,15 +16,19 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Detalles:  </font> </label>
                             <div class="col-sm-7">
-                               <input type="text" id="descripcion" class="form-control" placeholder="" ng-model="insert.detalles">
+                               <textarea id="descripcion" class="form-control" placeholder="" ng-model="insert.detalles">
+                                </textarea>
                             </div> 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Estatus: </label>
                             <div class="col-sm-7">
-                                <select class="form-control" ng-model="insert.estatus">
-                                    <option value="0">Baja</option>
-                                    <option value="1">Activo</option>
+                                 <select class="form-control"
+                                 chosen
+                                 width="'100%'" 
+                                 ng-model="insert.estatus" 
+                                 ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+                                    <option value="">--Seleccione Opcion--</option> 
                                 </select>
                             </div>
                         </div>
@@ -60,7 +64,8 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Detalles:  </font> </label>
                             <div class="col-sm-7">
-                               <input type="text" id="descripcion" class="form-control" placeholder="" ng-model="edit.detalles">
+                               <textarea type="text" id="descripcion" class="form-control" placeholder="" ng-model="edit.detalles">
+                                </textarea>
                             </div> 
                         </div>
                         <div class="form-group">

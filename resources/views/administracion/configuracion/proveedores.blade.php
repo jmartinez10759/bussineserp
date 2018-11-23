@@ -33,7 +33,10 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].nombre_completo: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{(data.estatus == 1)? "ACTIVO":"BAJA" }}</td>
+                            <td>
+                            <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
+                            <span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
+                            </td>
                             <td class="text-right">
                                 <div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
