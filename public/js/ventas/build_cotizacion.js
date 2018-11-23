@@ -427,10 +427,13 @@ new Vue({
                 jQuery('#cmb_estatus_edit').prop('disabled', true)
                 jQuery('#add_concepto_edit').attr("disabled", true)
                 jQuery('#insertar_add_edit').attr("disabled", true)
+                parser_data_edit(response.data.result.cotizacion[0].id_contacto);
               }else{
                 jQuery('#cmb_estatus_edit').prop('disabled', false)
                 jQuery('#add_concepto_edit').attr("disabled", false)
                 jQuery('#insertar_add_edit').attr("disabled", false)
+                parser_data_edit(response.data.result.cotizacion[0].id_contacto);
+                change_estatus();
               }
               //console.log(response.data.result);
               toastr.success( response.data.message , title );

@@ -285,7 +285,7 @@ function display_contactos_edit(id_clientes){
           	//console.log(response.data.result.correo);
           	jQuery('#div_contacto_edit').html(select_contactos.combo_contactos);
 
-			$('#div_contacto').on('change', function() {
+			$('#div_contacto_edit').on('change', function() {
 			  	jQuery('#tel1_edit').val('');
               	jQuery('#email_contact_edit').val('');
 			});
