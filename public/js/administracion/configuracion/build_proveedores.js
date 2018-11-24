@@ -158,7 +158,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         $scope.edit   = {};
         $scope.fields = {};
         $scope.consulta_general();
-        $scope.select_estado();
+        // $scope.select_estado();
         $scope.cmb_estatus = [{id:0 ,descripcion:"Baja"}, {id:1, descripcion:"Activo"}];
     }
 
@@ -173,7 +173,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
-            console.log($scope.datos);
+            // console.log($scope.datos);
         }).catch(function(error){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -186,7 +186,21 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
     
     $scope.insert_register = function(){
-       var url = domain( url_insert );
+      var validacion = {
+            'CORREO'        : $scope.insert.correo
+            ,'RAZON SOCIAL' : $scope.insert.razon_social
+            ,'RFC'          : $scope.insert.rfc
+           };
+           if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.insert.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        if( !valida_rfc($scope.insert.rfc) ){
+            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        var url = domain( url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
@@ -199,7 +213,8 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
                 ,'height'   : 400
                 ,'autoSize' : false
             });
-            $scope.constructor();
+            $scope.insert = {};
+            $scope.consulta_general();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -213,7 +228,20 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
 
     $scope.update_register = function(){
-      
+      var validacion = {
+             'CORREO'       : $scope.update.correo
+            ,'RAZON SOCIAL' : $scope.update.razon_social
+            ,'RFC'          : $scope.update.rfc
+          };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.update.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        if( !valida_rfc($scope.update.rfc) ){
+            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
@@ -254,10 +282,9 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
                $scope.update.departamento = response.data.result.contactos[0].departamento;
                $scope.update.telefono     = response.data.result.contactos[0].telefono;
                $scope.update.correo       = response.data.result.contactos[0].correo;
-           }
+           }           
            $scope.select_estado(1);
-           $scope.select_codigos(1);
-           var html = '';
+           $scope.select_codigos(1);           
             var html = '';
             html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
             jQuery('#imagen_edit').html("");        
@@ -300,12 +327,13 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           
       },"warning",true,["SI","NO"]);  
     }
+
     $scope.select_estado = function( update = false){
       var url = domain( url_edit_pais );
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
-          $scope.cmb_estados = {};
+          $scope.cmb_estados = {};  
           $scope.cmb_estados = response.data.result.estados;
           console.log($scope.cmb_estados);
       }).catch( error => {
@@ -318,6 +346,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error( error.result , expired );   
       });    
     }
+
     $scope.select_codigos = function( update = false ){
       var url = domain( url_edit_codigos );
       var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};

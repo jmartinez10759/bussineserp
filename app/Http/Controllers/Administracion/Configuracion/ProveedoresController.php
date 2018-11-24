@@ -10,7 +10,7 @@
     use App\Model\Administracion\Configuracion\SysPaisModel;
     use App\Model\Administracion\Configuracion\SysEstadosModel;
     use App\Model\Administracion\Configuracion\SysContactosModel;
-    use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
+    use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
     use App\Model\Administracion\Configuracion\SysProveedoresEmpresasModel;
     use App\Model\Administracion\Configuracion\SysEmpresasModel;
     use App\Model\Administracion\Configuracion\SysSucursalesModel;
@@ -58,7 +58,7 @@
         $data = [
           'proveedores'            => $response
           ,'paises'               => SysPaisModel::get()
-          ,'servicio_comercial'   => SysClaveProdServicioModel::get()
+          ,'servicio_comercial'   => SysServiciosComercialesModel::get()
           ,'regimen_fiscal'             => SysRegimenFiscalModel::get()
         ];
 
@@ -124,7 +124,9 @@
                     
                 }
                 
-                // debuger($string_data_proveedor);
+                // debuger($request->all());
+            //     debuger($string_data_proveedor);
+            // echo "string";die();
                $response = $this->_tabla_model::create( $string_data_proveedor );
                $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [

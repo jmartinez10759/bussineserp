@@ -95,7 +95,7 @@
                                         
                                         <label for="iva" class="col-sm-2 control-label">Pais: </label>
                                         <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
+                                            <select class="form-control"
                                             chosen
                                             width="'100%'" 
                                             ng-change="select_estado()" 
@@ -138,7 +138,7 @@
                                             chosen
                                             width="'100%'" 
                                             ng-model="insert.id_servicio_comercial" 
-                                            ng-options="value.id as value.descripcion for (key, value) in datos.servicio_comercial">
+                                            ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
                                             <option value="">--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
@@ -164,7 +164,7 @@
                                                  width="'100%'" 
                                                  ng-model="insert.estatus" 
                                                  ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
-                                                    {{-- <option value="">--Seleccione Opcion--</option>  --}}
+                                                    
                                             </select>
                                         </div>
 
@@ -349,7 +349,7 @@
                                             <select class="form-control select_chosen"
                                             chosen 
                                             ng-model="update.id_servicio_comercial" 
-                                            ng-options="value.id as value.descripcion for (key, value) in datos.servicio_comercial">
+                                            ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
                                             <option value="">--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
@@ -375,7 +375,7 @@
                                              width="'100%'" 
                                              ng-model="update.estatus" 
                                              ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
-                                                {{-- <option value="">--Seleccione Opcion--</option>  --}}
+                                                
                                             </select>
                                         </div>
 
@@ -410,7 +410,7 @@
                         <button type= "button" class="btn btn-danger" data-fancybox-close>
                             <i class="fa fa-times-circle"></i> Cancelar
                         </button>
-                        <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
+                        <button type="button" class="btn btn-info" ng-click="insert_register()" {{$update}}>
                         <i class="fa fa-save"></i> Actualizar 
                         </button>
                     </div>
