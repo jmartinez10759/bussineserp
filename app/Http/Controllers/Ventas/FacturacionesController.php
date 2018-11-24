@@ -302,7 +302,7 @@
         *@return void
         */
         public function create( Request $request ){
-
+            #debuger($request->all());
             $error = null;
             DB::beginTransaction();
             try {
@@ -329,8 +329,8 @@
                     $pedidos_conceptos = SysPedidosModel::with(['conceptos'])->where(['id' => $request->id])->get();
                     foreach ($pedidos_conceptos[0]->conceptos as $conceptos) {
                         $data_conceptos = [
-                            'id_producto'   => $conceptos->id_producto
-                            ,'id_plan'      => $conceptos->id_plan
+                            'id_producto'   => ($conceptos->id_producto != null )? $conceptos->id_producto: 0
+                            ,'id_plan'      => ($conceptos->id_plan != null)? $conceptos->id_plan : 0
                             ,'cantidad'     => $conceptos->cantidad
                             ,'precio'       => $conceptos->precio
                             ,'total'        => $conceptos->total

@@ -8,7 +8,16 @@
         <form class="form-horizontal">
 
             <div class="form-group row">
-                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
+                <div class="col-sm-6">
+                    
+                    <ul class="pagination pagination-sm">
+                        <li ng-repeat="filtros in filtro" class="@{{ filtros.class }}">                    
+                            <a style="cursor: pointer" ng-click="filtros_mes(filtros)">@{{filtros.nombre}}</a>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
                 <div class="col-md-3">
                     <input type="text" class="form-control fecha" readonly="" id="fecha_inicial">
                 </div>
@@ -16,16 +25,14 @@
                 <label for="daterange" class="col-md-1 control-label input-sm">Fecha Final </label>
                 <div class="col-md-3">
                     <input type="text" class="form-control fecha" readonly="" id="fecha_final">
-                </div>
-                <!-- <div class="col-md-2">
-                    
                 </div> -->
                 <div class="col-md-2">
-                    <select class="form-control" id="id_vendedor" onchange="" {{$permisos}}>
+
+                    <!-- <select class="form-control" id="id_vendedor" onchange="" {{$permisos}}>
                         <option value="">Vendedor</option>
                         <option value="1">Joaquin Alvarado</option>
                         <option value="2">Obed Gomez Alvarado</option>
-                    </select>
+                    </select> -->
                 </div>
             </div>
 
@@ -39,6 +46,7 @@
                         <th>Fecha</th>
                         <th>Contacto</th>
                         <th>Cliente</th>
+                        <th>Usuario</th>
                         <th>Estatus</th>
                         <th class="text-right">Subtotal</th>
                         <th class="text-right">Iva</th>
@@ -50,13 +58,19 @@
 
                     <tr ng-repeat="data in datos.response" id="tr_@{{ data.id }}" >
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{data.id}}</td>
-                        <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ data.created_at | date : format : shortDate }}</td>
-                        <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{(data.id_contacto != 0)? data.contactos.nombre_completo:"" }}</td>
-                        <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{(data.id_cliente != 0)?data.clientes.nombre_comercial:"" }}</td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ format_date(data.created_at,'yyyy-mm-dd') }}</td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >
-                            <span class="label label-warning" ng-if="data.id_estatus == 6">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
-                            <span class="label label-danger" ng-if="data.id_estatus == 4">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
-                            <span class="label label-success" ng-if="data.id_estatus == 5">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>
+                            @{{(data.id_contacto != null)? data.contactos.nombre_completo:"" }}</td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data)" >
+                            @{{(data.id_cliente != null)?data.clientes.nombre_comercial:"" }}
+                        </td>
+                        <td>
+                            @{{(data.usuarios != 0)? data.usuarios[0].name+" "+data.usuarios[0].first_surname: "" }}
+                        </td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data)" >
+                            <span class="label label-warning" ng-if="data.id_estatus == 6">@{{(data.id_estatus != null )? data.estatus.nombre: ""}}</span>
+                            <span class="label label-danger" ng-if="data.id_estatus == 4">@{{(data.id_estatus != null )? data.estatus.nombre: ""}}</span>
+                            <span class="label label-success" ng-if="data.id_estatus == 5">@{{(data.id_estatus != null )? data.estatus.nombre: ""}}</span>
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">$ @{{(data.subtotal)?data.subtotal.toLocaleString(): 0.00}}</td>
                         <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">$ @{{(data.iva)?data.iva.toLocaleString(): 0.00}}</td>
@@ -75,7 +89,7 @@
                                     </li> -->
                                     <li {{$reportes}}>
                                         <a href="#" title="Imprimir cotización" ng-click="descargar();">
-                                            <i class="glyphicon glyphicon-print"></i> Imprimir
+                                            <i class="glyphicon glyphicon-print"></i> Reporte
                                         </a>
                                     </li>
                                     <li {{$email}}>
@@ -83,7 +97,7 @@
                                             <i class="glyphicon glyphicon-envelope"></i> Enviar Email
                                         </a>
                                     </li>
-                                    <li {{$eliminar}}>
+                                    <li {{$eliminar}} ng-if="data.id_estatus != 5">
                                         <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
                                             <i class="glyphicon glyphicon-trash"></i> Eliminar
                                         </a>
@@ -93,6 +107,13 @@
                         </td>
                     </tr>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td> 
+                            TOTAL PEDIDOS: @{{ datos.total_pedidos }}
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>

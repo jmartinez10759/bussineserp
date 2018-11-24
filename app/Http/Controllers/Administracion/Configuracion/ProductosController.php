@@ -132,6 +132,7 @@ class ProductosController extends MasterController
     *@return void
     */
     public function update( Request $request){
+        #debuger($request->all());
         $error = null;
         DB::beginTransaction();
         try {
