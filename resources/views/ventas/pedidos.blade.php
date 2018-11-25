@@ -11,8 +11,10 @@
                 <div class="col-sm-6">
                     
                     <ul class="pagination pagination-sm">
-                        <li ng-repeat="filtros in filtro" class="@{{ filtros.class }}">                    
-                            <a style="cursor: pointer" ng-click="filtros_mes(filtros)">@{{filtros.nombre}}</a>
+                        <li ng-repeat="filtros in filtro" class="@{{filtros.class}}" >                    
+                            <a style="cursor: pointer" ng-click="filtros_mes(filtros)"> 
+                                @{{filtros.nombre}}
+                            </a>
                         </li>
                     </ul>
 
@@ -64,7 +66,7 @@
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >
                             @{{(data.id_cliente != null)?data.clientes.nombre_comercial:"" }}
                         </td>
-                        <td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data)">
                             @{{(data.usuarios != 0)? data.usuarios[0].name+" "+data.usuarios[0].first_surname: "" }}
                         </td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >
@@ -72,9 +74,15 @@
                             <span class="label label-danger" ng-if="data.id_estatus == 4">@{{(data.id_estatus != null )? data.estatus.nombre: ""}}</span>
                             <span class="label label-success" ng-if="data.id_estatus == 5">@{{(data.id_estatus != null )? data.estatus.nombre: ""}}</span>
                         </td>
-                        <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">$ @{{(data.subtotal)?data.subtotal.toLocaleString(): 0.00}}</td>
-                        <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">$ @{{(data.iva)?data.iva.toLocaleString(): 0.00}}</td>
-                        <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">$ @{{(data.total)? data.total.toLocaleString(): 0.00 }}</td>
+                        <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">
+                            $ @{{(data.subtotal)?data.subtotal.toLocaleString(): 0.00}}
+                        </td>
+                        <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">
+                            $ @{{(data.iva)?data.iva.toLocaleString(): 0.00}}
+                        </td>
+                        <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">
+                            $ @{{(data.total)? data.total.toLocaleString(): 0.00 }}
+                        </td>
                         <td class="text-right">
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

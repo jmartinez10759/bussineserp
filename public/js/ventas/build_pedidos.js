@@ -43,6 +43,7 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
           ,{id:13 ,nombre:"TODOS"}
         ];
         $scope.table_concepts = {};
+        $scope.check_meses();
         $scope.index();
     }
 
@@ -52,6 +53,7 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
+            console.log($scope.datos);
         }).catch(function(error){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -240,7 +242,7 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
                 });
               var id = (update)? $scope.update.id : $scope.insert.id;
               jQuery('#tr_'+id ).effect("highlight",{},5000);
-              $scope.index();
+              $scope.index($scope.meses);
               if(response.data.result.pedidos.id_estatus == 5){
                   $scope.update = response.data.result;
                   $scope.insert_facturacion();
@@ -304,7 +306,7 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
             if(!cancel){
               toastr.success( response.data.message , title );
             }
-            $scope.index();
+            $scope.index($scope.meses);
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -494,11 +496,24 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
     
     }
     $scope.filtros_mes = function(data){
-        //console.log(data);
         for(var i in $scope.filtro){ $scope.filtro[i].class = "";}
         data.class = "active";
+        $scope.meses = data.id;
         $scope.index(data.id);
     }
+
+    $scope.check_meses = function( mes_select = false ){
+        var fecha = new Date();
+        var mes = (fecha.getMonth() +1);
+        $scope.meses = mes;
+        alert($scope.meses);
+        for(var i in $scope.filtro){
+          if ($scope.filtro[i].id == mes ) {
+              $scope.filtro[i].class = "active";
+          }
+        }
+    }
+
 
     /*$scope.upload_file = function(update){
 
