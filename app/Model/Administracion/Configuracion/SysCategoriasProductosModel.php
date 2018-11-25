@@ -14,8 +14,9 @@ class SysCategoriasProductosModel extends Model
     ,'estatus'
   ];
 
-  public function productos(){
-     return $this->belongsTo('App\Model\Administracion\Configuracion\SysProductosModel','id','id_categoria');
+  public function productos()
+  {
+     return $this->belongsTo(SysProductosModel::class,'id','id_categoria');
   }
 
 }

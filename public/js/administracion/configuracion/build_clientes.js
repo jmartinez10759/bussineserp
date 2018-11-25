@@ -31,8 +31,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
-          estatus: 0
-          ,id_servicio_comercial: 0
+          estatus: 1
           ,id_country: 151
           ,id_servicio_comercial: null
         };
@@ -168,7 +167,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
            $scope.select_estado(1);
            $scope.select_codigos(1);
             var html = '';
-            html = '<img class="img-responsive" src="'+$scope.update.logo+'" height="268px" width="200px">'
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
             jQuery('#imagen_edit').html("");        
             jQuery('#imagen_edit').html(html); 
 

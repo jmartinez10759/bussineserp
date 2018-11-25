@@ -74,10 +74,10 @@ class ProductosController extends MasterController
     *@return void
     */
     public function show( Request $request ){
-
+        #debuger($request->all());
         try {
             $response = $this->_tabla_model::with(['servicios:id,clave','categorias','unidades','tasas','impuestos','tipoFactor'])->where(['id' => $request->id])->get();
-        return $this->_message_success( 201, $response[0] , self::$message_success );
+        return $this->_message_success( 200, $response[0] , self::$message_success );
         } catch (\Exception $e) {
         $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
         return $this->show_error(6, $error, self::$message_error );
@@ -132,6 +132,7 @@ class ProductosController extends MasterController
     *@return void
     */
     public function update( Request $request){
+        #debuger($request->all());
         $error = null;
         DB::beginTransaction();
         try {

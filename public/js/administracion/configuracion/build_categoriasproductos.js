@@ -1,11 +1,11 @@
-var url_insert  = "servicioscomerciales/register";
-var url_update   = "servicioscomerciales/update";
-var url_edit     = "servicioscomerciales/edit";
-var url_destroy  = "servicioscomerciales/destroy";
-var url_all      = "servicioscomerciales/all";
-var redireccion  = "configuracion/servicioscomerciales";
+var url_insert  = "categoriasproductos/register";
+var url_update   = "categoriasproductos/update";
+var url_edit     = "categoriasproductos/edit";
+var url_destroy  = "categoriasproductos/destroy";
+var url_all      = "categoriasproductos/all";
+var redireccion  = "configuracion/categoriasproductos";
 
-var app = angular.module("ng-servicioscomerciales", ["ngRoute","localytics.directives","components"]);
+var app = angular.module("ng-categoriasproductos", ["ngRoute","localytics.directives","components"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
     .when("/ruta1", {
@@ -20,25 +20,26 @@ app.config(function( $routeProvider, $locationProvider ) {
     });
     $locationProvider.html5Mode(true);
 });
-app.controller("servicioscomercialesController", function( $scope, $http, $location ) {
-    /*se declaran las propiedades dentro del controller*/
-    //El constructor funciona para inicializar las variables 
+app.controller("categoriasproductosController", function( $scope, $http, $location ) {
+    
     $scope.constructor = function(){
         $scope.datos  = [];
-        $scope.insert = {};
+        $scope.insert = {
+          estatus : "1"
+        };
+        $scope.cmb_estatus = [{id:0 ,descripcion:"Baja"}, {id:1, descripcion:"Activo"}];
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
-        $scope.consulta_general();
+        $scope.index();
     }
-    $scope.consulta_general = function(){
+    $scope.index = function(){
         var url = domain( url_all );
         var fields = {};
         MasterController.request_http(url,fields,"get",$http, false )
         .then(function(response){
-          //devuelve un Array con todos los datos 
             $scope.datos = response.data.result;
-            // console.log($scope.datos);
+            console.log($scope.datos);
         }).catch(function(error){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -57,6 +58,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
         MasterController.request_http(url,fields,"post",$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
+            
             jQuery.fancybox.close({
                 "type"      : "inline"
                 ,"src"      : "#modal_add_register"
@@ -65,10 +67,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
                 ,"height"   : 400
                 ,"autoSize" : false
             });
-            //devuelve un Array con los datos actualizados
             $scope.constructor();
-            // console.log($scope.constructor());return;
-
+            // console.log($scope.index());return;
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -82,7 +82,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
     }
 
     $scope.update_register = function(){
-     
+      
       $scope.update = $scope.edit;
       var url = domain( url_update );
       var fields = $scope.update;
@@ -97,8 +97,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
                 ,"height"   : 400
                 ,"autoSize" : false
             });
-          $scope.consulta_general();
-          // console.log($scope.consulta_general());return;
+          $scope.index();
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
@@ -117,9 +116,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
       var fields = {id : id };
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
-
-          //Regresa un objeto con los datos del registro seleccionado
            $scope.edit = response.data.result;
+
 
           jQuery.fancybox.open({
                 "type"      : "inline"
@@ -128,8 +126,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
                 ,"width"    : 900
                 ,"height"   : 400
                 ,"autoSize" : false
-            });        
-            // console.log($scope.edit);return;  
+            });          
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -149,8 +146,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
         MasterController.request_http(url,fields,"delete",$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
-            $scope.consulta_general();
-            // console.log($scope.consulta_general());return;
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -163,6 +159,5 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
           
       },"warning",true,["SI","NO"]);  
     }
-
 
 });

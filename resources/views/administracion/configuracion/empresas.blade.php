@@ -21,18 +21,18 @@
 	        </thead>
 	        <tbody>
 
-	            <tr ng-repeat="data in datos" id="tr_@{{data.id}}">
-	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.nombre_comercial}}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.razon_social }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.rfc_emisor }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{(data.comerciales  !== null )? data.comerciales.nombre: "" }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data.id)" >@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
+	            <tr ng-repeat="data in datos.response" id="tr_@{{data.id}}">
+	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.nombre_comercial}}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.razon_social }}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.rfc_emisor }}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{(data.comerciales  !== null )? data.comerciales.nombre: "" }}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
+	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
 	                <td>
 		                <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
-	                	<span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
+	                	<span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>
 	            	</td>
 	                <td class="text-right">
 	                    <div class="dropdown">
