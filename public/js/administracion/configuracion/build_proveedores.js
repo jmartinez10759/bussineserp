@@ -149,16 +149,16 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
-          estatus: 1
-          ,id_regimen_fiscal: null
+          id_regimen_fiscal: null
           ,id_country: 151
           ,id_servicio_comercial: null
+          // ,estatus: 1
         };
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
         $scope.consulta_general();
-        // $scope.select_estado();
+        $scope.select_estado();
         $scope.cmb_estatus = [{id:0 ,descripcion:"Baja"}, {id:1, descripcion:"Activo"}];
     }
 
@@ -173,7 +173,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
-            // console.log($scope.datos);
+            console.log($scope.datos);
         }).catch(function(error){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -186,10 +186,12 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
     
     $scope.insert_register = function(){
+
       var validacion = {
             'CORREO'        : $scope.insert.correo
             ,'RAZON SOCIAL' : $scope.insert.razon_social
             ,'RFC'          : $scope.insert.rfc
+            ,'PAIS'         : $scope.insert.id_country
            };
            if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.insert.correo ) ){  
@@ -200,6 +202,22 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
+        
+        // if($scope.insert.id_country == 151 ){
+          if($scope.insert.id_estado == null){
+            return toastr.warning('Debe de Seleccionar un estado');
+          }
+        // }
+        if($scope.insert.estatus == null){
+            return toastr.warning('Debe de Elegir el Estatus');
+          }
+        
+        if($scope.insert.id_servicio_comercial == null){
+            return toastr.warning('Debe de Seleccionar un Servicio');
+          }
+        if($scope.insert.id_regimen_fiscal == null){
+            return toastr.warning('Debe de Seleccionar el Regimen Fiscal');
+         }
         var url = domain( url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
@@ -228,12 +246,14 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
 
     $scope.update_register = function(){
-      var validacion = {
+
+      var validacionU = {
              'CORREO'       : $scope.update.correo
             ,'RAZON SOCIAL' : $scope.update.razon_social
             ,'RFC'          : $scope.update.rfc
+            ,'PAIS'         : $scope.update.id_country
           };
-        if(validaciones_fields(validacion)){return;}
+        if(validaciones_fields(validacionU)){return;}
         if( !emailValidate( $scope.update.correo ) ){  
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
@@ -242,6 +262,22 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
+        if($scope.update.estatus == null){
+            return toastr.warning('Debe de Elegir el Estatus');
+           
+          }
+        // if($scope.update.id_country == 151 ){
+          if($scope.update.id_estado == null){
+            return toastr.warning('Debe de Seleccionar un estado');
+          }
+        // }
+        
+        if($scope.update.id_servicio_comercial == null){
+            return toastr.warning('Debe de Seleccionar un Servicio');
+          }
+        if($scope.update.id_regimen_fiscal == null){
+            return toastr.warning('Debe de Seleccionar el Regimen Fiscal');
+         }
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )

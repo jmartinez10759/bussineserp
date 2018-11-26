@@ -93,7 +93,7 @@
                                     </div>
                                     <div class="form-group">
                                         
-                                        <label for="iva" class="col-sm-2 control-label">Pais: </label>
+                                        <label for="iva" class="col-sm-2 control-label">Pais:<font size="3" color="red">* </font> </label>
                                         <div class="col-sm-4">
                                             <select class="form-control"
                                             chosen
@@ -105,7 +105,7 @@
                                             </select>  
                                         </div>
                                         
-                                        <label for="iva" class="col-sm-2 control-label">Estado: </label>
+                                        <label for="iva" class="col-sm-2 control-label">Estado:<font size="3" color="red">* </font> </label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen
@@ -132,7 +132,7 @@
                                             </select>    
                                         </div>
 
-                                        <label for="subtotal" class="col-sm-2 control-label">Servicio Comercial: </label>
+                                        <label for="subtotal" class="col-sm-2 control-label">Servicio Comercial: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen
@@ -146,7 +146,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="iva" class="col-sm-2 control-label">Regimen Fiscal: </label>
+                                        <label for="iva" class="col-sm-2 control-label">Regimen Fiscal: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen
@@ -157,14 +157,14 @@
                                             </select>    
                                         </div>
 
-                                        <label for="estatus" class="col-sm-2 control-label">Estatus</label>
+                                        <label for="estatus" class="col-sm-2 control-label">Estatus:<font size="3" color="red">* </label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                                  chosen
                                                  width="'100%'" 
                                                  ng-model="insert.estatus" 
                                                  ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
-                                                    
+                                                 <option value="">--Seleccione Opcion--</option>    
                                             </select>
                                         </div>
 
@@ -308,7 +308,7 @@
                                     </div>
                                     <div class="form-group">
                                         
-                                        <label for="iva" class="col-sm-2 control-label">Pais: </label>
+                                        <label for="iva" class="col-sm-2 control-label">Pais:<font size="3" color="red">* </font> </label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen
@@ -319,7 +319,7 @@
                                             </select>  
                                         </div>
                                         
-                                        <label for="iva" class="col-sm-2 control-label">Estado: </label>
+                                        <label for="iva" class="col-sm-2 control-label">Estado: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen
@@ -334,7 +334,7 @@
 
                                     <div class="form-group">
 
-                                        <label for="subtotal" class="col-sm-2 control-label">Código Postal: </label>
+                                        <label for="subtotal" class="col-sm-2 control-label">Código Postal:</label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen 
@@ -344,7 +344,7 @@
                                             </select>    
                                         </div>
 
-                                        <label for="subtotal" class="col-sm-2 control-label">Servicio Comercial: </label>
+                                        <label for="subtotal" class="col-sm-2 control-label">Servicio Comercial:<font size="3" color="red">* </font> </label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen 
@@ -358,7 +358,7 @@
 
                                     <div class="form-group">
                                         
-                                        <label for="iva" class="col-sm-2 control-label">Regimen Fiscal: </label>
+                                        <label for="iva" class="col-sm-2 control-label">Regimen Fiscal:<font size="3" color="red">* </font> </label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen
@@ -368,14 +368,14 @@
                                             </select>    
                                         </div>
 
-                                        <label for="estatus" class="col-sm-2 control-label">Estatus</label>
+                                        <label for="estatus" class="col-sm-2 control-label">Estatus: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
                                             <select class="form-control"
                                              chosen
                                              width="'100%'" 
                                              ng-model="update.estatus" 
                                              ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
-                                                
+                                             <option value="">--Seleccione Opcion--</option>   
                                             </select>
                                         </div>
 
@@ -410,7 +410,7 @@
                         <button type= "button" class="btn btn-danger" data-fancybox-close>
                             <i class="fa fa-times-circle"></i> Cancelar
                         </button>
-                        <button type="button" class="btn btn-info" ng-click="insert_register()" {{$update}}>
+                        <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
                         <i class="fa fa-save"></i> Actualizar 
                         </button>
                     </div>
