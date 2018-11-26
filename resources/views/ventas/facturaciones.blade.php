@@ -50,8 +50,8 @@
 
                     <tr v-for="data in datos">
                         <td>@{{data.serie }}@{{data.folio}}</td>
-                        <td>@{{(data.id_cliente != 0)?data.clientes.rfc_receptor:"" }}</td>
-                        <td>@{{(data.id_cliente != 0)?data.clientes.razon_social:"" }}</td>
+                        <td>@{{(data.clientes != null)?data.clientes.rfc_receptor:"" }}</td>
+                        <td>@{{(data.clientes != null)?data.clientes.razon_social:"" }}</td>
                         <td>@{{ format_date(data.created_at, 'yyyy-mm-dd') }}</td>
                         <td>
                             <span class="label label-warning" v-if="data.id_estatus == 6">@{{(data.id_estatus != 0 )? data.estatus.nombre: ""}}</span>

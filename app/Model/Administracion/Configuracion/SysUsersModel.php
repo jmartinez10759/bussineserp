@@ -22,66 +22,76 @@ class SysUsersModel extends Model
   		,'confirmed_code'
     ];
 
-    public function categorias(){
+    public function categorias()
+    {
       return $this->hasMany('App\Model\Administracion\Correos\SysCategoriasModel','id_users','id');
     }
 
-    public function correos(){
+    public function correos()
+    {
       return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_categorias_correos','id_users','id_correo');
     }
 
-    public function menus(){
+    public function menus()
+    {
       return $this->belongsToMany(SysMenuModel::class,'sys_rol_menu','id_users','id_menu')->withPivot('estatus');
     }
 
-    public function empresas(){
-        #return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_users_roles','id_users','id_empresa')->withPivot('estatus');
-        return $this->belongsToMany(SysEmpresasModel::class,'sys_users_roles','id_users','id_empresa')->withPivot('estatus');
+    public function empresas()
+    {
+      return $this->belongsToMany(SysEmpresasModel::class,'sys_users_roles','id_users','id_empresa')->withPivot('estatus');
+    }
+    public function sucursales()
+    {
+      return $this->belongsToMany(SysSucursalesModel::class,'sys_users_roles','id_users','id_sucursal')->withPivot('estatus');
+    }
+    public function permisos()
+    {
+      return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_users','id_permiso');
+    }
+    public function roles()
+    {
+      return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','id_users','id_rol')->withPivot('id_rol','estatus');
     }
 
-    public function sucursales(){
-        return $this->belongsToMany(SysSucursalesModel::class,'sys_users_roles','id_users','id_sucursal')->withPivot('estatus');
+    public function skills()
+    {
+      return $this->hasMany(SysSkillsModel::class,'id_users','id');
     }
 
-    public function permisos(){
-        #return $this->belongsToMany('App\Model\Administracion\Configuracion\SysAccionesModel','sys_rol_menu','id_users','id_permiso');
-        return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_users','id_permiso');
+    public function details()
+    {
+      return $this->hasOne(SysPerfilUsersModel::class,'id_users','id');
     }
 
-    public function roles(){
-        return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','id_users','id_rol')->withPivot('id_rol','estatus');
+    public function bitacora()
+    {
+      return $this->hasOne(SysSesionesModel::class,'id','id_bitacora');
     }
 
-    public function skills(){
-        return $this->hasMany(SysSkillsModel::class,'id_users','id');
+    public function facturas()
+    {
+      return $this->belongsToMany('App\Model\Administracion\Facturacion\SysFacturacionModel','sys_users_facturacion','id_users','id_factura');
     }
 
-    public function details(){
-        return $this->hasOne(SysPerfilUsersModel::class,'id_users','id');
-    }
-
-    public function bitacora(){
-        return $this->hasOne(SysSesionesModel::class,'id','id_bitacora');
-    }
-
-    public function facturas(){
-        return $this->belongsToMany('App\Model\Administracion\Facturacion\SysFacturacionModel','sys_users_facturacion','id_users','id_factura');
-    }
-
-    public function clientes(){
+    public function clientes()
+    {
         return $this->belongsToMany(SysClientesModel::class,'sys_users_facturacion','id_users','id_cliente');
     }
 
-    public function pedidos(){
-        return $this->belongsToMany('App\Model\Ventas\SysPedidosModel','sys_users_pedidos','id_users','id_pedido');
+    public function pedidos()
+    {
+      return $this->belongsToMany('App\Model\Ventas\SysPedidosModel','sys_users_pedidos','id_users','id_pedido');
     }
 
-    public function cotizaciones(){
-        return $this->belongsToMany('App\Model\Ventas\SysCotizacionesModel','sys_users_cotizaciones','id_users','id_cotizacion');
+    public function cotizaciones()
+    {
+      return $this->belongsToMany('App\Model\Ventas\SysCotizacionesModel','sys_users_cotizaciones','id_users','id_cotizacion');
     }
 
-    public function facturaciones(){
-        return $this->belongsToMany('App\Model\Ventas\SysFacturacionModel','sys_users_facturaciones','id_users','id_facturacion');
+    public function facturaciones()
+    {
+      return $this->belongsToMany('App\Model\Ventas\SysFacturacionModel','sys_users_facturaciones','id_users','id_facturacion');
     }
 
 

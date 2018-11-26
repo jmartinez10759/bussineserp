@@ -201,7 +201,8 @@
                  ,'name'      => 'cmb_estatus_edit'
                  ,'class'     => 'form-control'
                  ,'leyenda'   => 'Seleccione Opción'
-                 ,'attr'      => 'data-live-search="true" '                
+                 ,'attr'      => 'data-live-search="true" '   
+                 ,'event'     => 'change_estatus()'             
            ]);
            $estatus_in = dropdown([
             'data'       => SysEstatusModel::where(['estatus' => 1 ])->whereIn('id',['4','5','6'])->orderby('nombre', 'asc')->get()
@@ -1151,7 +1152,7 @@
                     ,'totales'          => $totales
                 ];
                 $pdf = PDF::loadView('ventas.pdf.pdf_cotizacion', ['data' => $response]);
-                $message->to( 'al221211431@gmail.com', $data['name'] )
+                $message->to( $data['email'], $data['name'] )
                         ->from('notificaciones@burolaboralmexico.com.mx','BLM')
                         ->subject(  $data['asunto'] )
                         ->attachData($pdf->output(), "cotizacion.pdf");

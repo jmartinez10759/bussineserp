@@ -44,86 +44,126 @@
             ];
             return self::_load_view( "ventas.pedidos",$data );
         }
-        /**
-         *Metodo para obtener los datos de manera asicronica.
-         *@access public
-         *@param Request $request [Description]
-         *@return void
-         */
-        public function all( Request $request ){
+    /**
+     *Metodo para obtener los datos de manera asicronica.
+     *@access public
+     *@param Request $request [Description]
+     *@return void
+     */
+    public function all( Request $request ){
+        #debuger($request->all());
+        try {
+            if( Session::get('id_rol') == 1 ){
 
-            try {
-                if( Session::get('id_rol') == 1 ){
-                    $response = $this->_tabla_model::with(['clientes','contactos','usuarios','estatus','conceptos'=>function($query){
+                $data = $this->_tabla_model::with([
+                    'clientes'
+                    ,'contactos'
+                    ,'usuarios' => function( $query ){
+                        return $query->groupBy('id_pedido');
+                    }
+                    ,'estatus'
+                    ,'conceptos' =>function($query){
                         return $query->with(['productos','planes']);
-                    }])->orderby('id','desc')->get();
+                    }]);
+                if( isset( $request->mes ) && $request->mes != 13 ){
+                    $response = $data->whereMonth('created_at','=', $request->mes );
                 }
-                if( Session::get('id_rol') == 3 ){
-                    
-                    $response = $data = SysEmpresasModel::with(['pedidos' => function($query){
-                        return $query->with(['clientes','contactos','usuarios','estatus','conceptos'=>function($query){
-                                                return $query->with(['productos','planes']);
-                                            }])->groupby('id')->orderby('id','desc');
-                    }])->where(['id' => Session::get('id_empresa')])->get();
-                    $response = $data[0]->pedidos;
+                if( !isset( $request->mes ) ){
+                    $response = $data->whereMonth('created_at','=', date('m') );
+                }
+                $response = $data->whereYear('created_at','=', date('Y'))
+                ->orderby('id','desc')
+                ->get();
 
-                }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
-                    $data = SysUsersModel::with(['pedidos' => function($query){
-                        return $query->with(['clientes','contactos','usuarios','estatus','conceptos'=>function($query){
-                                                return $query->with(['productos','planes']);
-                                            }])->groupby('id')->orderby('id','desc');
-                    }])->where(['id' => Session::get('id')])->get();
-                    $response = $data[0]->pedidos;
-                }
-                $data = [
-                    'response'          => $response
-                    ,'estatus'          => SysEstatusModel::wherein('id',[5,4,6])->get()
-                    ,'formas_pagos'     => SysFormasPagosModel::where(['estatus' => 1])->get()
-                    ,'metodos_pagos'    => SysMetodosPagosModel::where(['estatus' => 1])->get()
-                    ,'monedas'          => SysMonedasModel::where(['estatus' => 1])->get()
-                    ,'clientes'         => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
-                    ,'productos'        =>  $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
-                    ,'planes'           => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
-                ];
-                #debuger($response);
-              return $this->_message_success( 200, $data , self::$message_success );
-            } catch (\Exception $e) {
-                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-                return $this->show_error(6, $error, self::$message_error );
             }
+            if( Session::get('id_rol') == 3 ){
+                
+                $response = $data = SysEmpresasModel::with([
+                    'pedidos' => function($query){
+                        return $query->with([
+                            'clientes'
+                            ,'contactos'
+                            ,'usuarios'  => function($query){
+                                return $query->groupBy('id_pedido');
+                            }
+                            ,'estatus'
+                            ,'conceptos' =>function($query){
+                                return $query->with(['productos','planes']);
+                            }])->groupby('id')->orderby('id','desc');
+                    }])
+                ->where(['id' => Session::get('id_empresa')])
+                ->get();
+                $response = $data[0]->pedidos;
 
-        }
-        /**
-        *Metodo para realizar la consulta por medio de su id
-        *@access public
-        *@param Request $request [Description]
-        *@return void
-        */
-        public function show( Request $request ){
+            }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
 
-            try {
-                $response = $this->_tabla_model::with(['conceptos'=>function($query){
-                    return $query->with(['productos','planes']);
-                },'clientes','contactos'])->where(['id' => $request->id])->get();
-                $subtotal  = $response[0]->conceptos->sum('total');
-                $iva       = $subtotal * Session::get('iva') / 100;
-                $total     = ($subtotal + $iva);
-             $data = [
-                'pedidos'   => $response[0]
-                ,'subtotal' => format_currency($subtotal,2)
-                ,'iva'      => format_currency($iva,2)
-                ,'total'    => format_currency($total,2)
-                ,'subtotal_' => number_format($subtotal,2)
-                ,'iva_'      => number_format($iva,2)
-                ,'total_'    => number_format($total,2)
-             ];
-            return $this->_message_success( 200, $data , self::$message_success );
-            } catch (\Exception $e) {
+                $data = SysUsersModel::with([
+                    'pedidos' => function($query){
+                        return $query->with([
+                                'clientes'
+                                ,'contactos'
+                                ,'usuarios'   => function($query){
+                                    return $query->groupBy('id_pedido');
+                                }
+                                ,'estatus'
+                                ,'conceptos' =>function($query){
+                                    return $query->with(['productos','planes']);
+                                }])->groupby('id')->orderby('id','desc');
+                    }])
+                ->where(['id' => Session::get('id')])
+                ->get();
+                $response = $data[0]->pedidos;
+            }
+            $data = [
+                'response'          => $response
+                ,'total_pedidos'    => count($response)
+                ,'estatus'          => SysEstatusModel::wherein('id',[5,4,6])->get()
+                ,'formas_pagos'     => SysFormasPagosModel::where(['estatus' => 1])->get()
+                ,'metodos_pagos'    => SysMetodosPagosModel::where(['estatus' => 1])->get()
+                ,'monedas'          => SysMonedasModel::where(['estatus' => 1])->get()
+                ,'clientes'         => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
+                ,'productos'        =>  $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
+                ,'planes'           => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
+            ];
+            #debuger($response);
+          return $this->_message_success( 200, $data , self::$message_success );
+        } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
-            }
-
         }
+
+    }
+    /**
+    *Metodo para realizar la consulta por medio de su id
+    *@access public
+    *@param Request $request [Description]
+    *@return void
+    */
+    public function show( Request $request ){
+
+        try {
+            $response = $this->_tabla_model::with(['conceptos'=>function($query){
+                return $query->with(['productos','planes']);
+            },'clientes','contactos'])->where(['id' => $request->id])->get();
+            $subtotal  = $response[0]->conceptos->sum('total');
+            $iva       = $subtotal * Session::get('iva') / 100;
+            $total     = ($subtotal + $iva);
+         $data = [
+            'pedidos'   => $response[0]
+            ,'subtotal' => format_currency($subtotal,2)
+            ,'iva'      => format_currency($iva,2)
+            ,'total'    => format_currency($total,2)
+            ,'subtotal_' => number_format($subtotal,2)
+            ,'iva_'      => number_format($iva,2)
+            ,'total_'    => number_format($total,2)
+         ];
+        return $this->_message_success( 200, $data , self::$message_success );
+        } catch (\Exception $e) {
+        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+        return $this->show_error(6, $error, self::$message_error );
+        }
+
+    }
         /**
         *Metodo para
         *@access public
@@ -181,7 +221,6 @@
             }
             return $this->show_error(6, $error, self::$message_error );
 
-
         }
         /**
         *Metodo para la actualizacion de los registros
@@ -190,7 +229,7 @@
         *@return void
         */
         public function update( Request $request ){
-
+            #debuger($request->all());
             $error = null;
             DB::beginTransaction();
             try {
@@ -205,7 +244,7 @@
                 $data['iva']      = str_replace(",", "", $data['iva']);
                 $data['total']    = str_replace(",", "", $data['total']);
                 $this->_tabla_model::where(['id' => $request->pedidos['id']])->update($data);
-                $response = $this->_tabla_model::where(['id' => $request->pedidos['id']])->get()[0];
+                #$response = $this->_tabla_model::where(['id' => $request->pedidos['id']])->get()[0];
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -215,9 +254,10 @@
             }
 
             if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
+                return $this->show(new Request(['id' => $request->pedidos['id']]));
+                #return $this->_message_success( 201, $response , self::$message_success );
             }
-            return $this->show_error(6, $error, self::$message_error );
+                return $this->show_error(6, $error, self::$message_error );
 
         }
         /**

@@ -16,11 +16,13 @@ class SysConceptosPedidosModel extends Model
         ,'total'
       ];
     
-    public function productos(){
+    public function productos()
+    {
     	return $this->hasOne('App\Model\Administracion\Configuracion\SysProductosModel','id','id_producto');
     }
 
-    public function planes(){
+    public function planes()
+    {
     	return $this->hasOne('App\Model\Administracion\Configuracion\SysPlanesModel','id','id_plan');
     }
 

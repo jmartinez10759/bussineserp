@@ -74,8 +74,8 @@ app.controller('ProductosController', function( $scope, $http, $location ) {
               toastr.error( error.data.result , expired );
         });
     }
-
     $scope.update_register = function(){
+
       var validacion = {
              'CODIGO'       : $scope.update.codigo
             ,'PRODUCTOS'    : $scope.update.nombre
