@@ -301,9 +301,9 @@
                                             <select class="form-control"
                                             width="'100%'"
                                             chosen
-                                            ng-model="update.id_categoria" 
+                                            ng-model="update.id_categoria"
                                             ng-options="value.id as value.nombre for (key, value) in datos.categorias">
-                                                <option value="">--Seleccione Opcion--</option>  
+                                                <!-- <option value="">--Seleccione Opcion--</option>   -->
                                             </select>  
                                         </div>
 

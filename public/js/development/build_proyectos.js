@@ -1,11 +1,11 @@
-var url_insert  = "categoriasproductos/register";
-var url_update   = "categoriasproductos/update";
-var url_edit     = "categoriasproductos/edit";
-var url_destroy  = "categoriasproductos/destroy";
-var url_all      = "categoriasproductos/all";
-var redireccion  = "configuracion/categoriasproductos";
+var url_insert  = "proyectos/register";
+var url_update   = "proyectos/update";
+var url_edit     = "proyectos/edit";
+var url_destroy  = "proyectos/destroy";
+var url_all      = "proyectos/all";
+var redireccion  = "proyectos/listado";
 
-var app = angular.module("ng-categoriasproductos", ["ngRoute","localytics.directives","components"]);
+var app = angular.module("ng-proyectos", ["ngRoute","localytics.directives","components"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
     .when("/ruta1", {
@@ -20,14 +20,11 @@ app.config(function( $routeProvider, $locationProvider ) {
     });
     $locationProvider.html5Mode(true);
 });
-app.controller("categoriasproductosController", function( $scope, $http, $location ) {
+app.controller("proyectosController", function( $scope, $http, $location ) {
     
     $scope.constructor = function(){
         $scope.datos  = [];
-        $scope.insert = {
-          estatus : "1"
-        };
-        $scope.cmb_estatus = [{id:0 ,descripcion:"Baja"}, {id:1, descripcion:"Activo"}];
+        $scope.insert = {};
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
@@ -58,7 +55,6 @@ app.controller("categoriasproductosController", function( $scope, $http, $locati
         MasterController.request_http(url,fields,"post",$http, false )
         .then(function( response ){
             toastr.success( response.data.message , title );
-            
             jQuery.fancybox.close({
                 "type"      : "inline"
                 ,"src"      : "#modal_add_register"
@@ -67,8 +63,7 @@ app.controller("categoriasproductosController", function( $scope, $http, $locati
                 ,"height"   : 400
                 ,"autoSize" : false
             });
-            $scope.constructor();
-            // console.log($scope.index());return;
+            $scope.index();
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -82,8 +77,7 @@ app.controller("categoriasproductosController", function( $scope, $http, $locati
     }
 
     $scope.update_register = function(){
-      
-      $scope.update = $scope.edit;
+
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,"put",$http, false )
@@ -98,7 +92,6 @@ app.controller("categoriasproductosController", function( $scope, $http, $locati
                 ,"autoSize" : false
             });
           $scope.index();
-          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -117,7 +110,6 @@ app.controller("categoriasproductosController", function( $scope, $http, $locati
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
            $scope.edit = response.data.result;
-
 
           jQuery.fancybox.open({
                 "type"      : "inline"

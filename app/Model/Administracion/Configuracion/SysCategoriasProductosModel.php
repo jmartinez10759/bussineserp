@@ -19,5 +19,4 @@ class SysCategoriasProductosModel extends Model
      return $this->belongsTo(SysProductosModel::class,'id','id_categoria');
   }
 
-
 }

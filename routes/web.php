@@ -1428,6 +1428,46 @@ Route::get('/ventas/cotizacion', [
                 ,'as'       => 'atencion'
         ]);
 
+ ################################## CATALOGO DE PROYECTOS ################################
+    Route::get('/proyectos/listado', [
+        'uses' => 'Development\ProyectosController@index'
+        ,'as' => 'proyectos.listado'
+    ]);
+
+    Route::get('/proyectos/all', [
+        'uses' => 'Development\ProyectosController@all'
+        ,'as' => 'proyectos.all'
+    ]);
+
+    Route::post('/proyectos/register', [
+        'uses' => 'Development\ProyectosController@store'
+        ,'as' => 'proyectos.register'
+    ]);
+
+    Route::get('/proyectos/edit', [
+        'uses' => 'Development\ProyectosController@show'
+        ,'as' => 'proyectos.edit'
+    ]);
+
+    Route::put('/proyectos/update', [
+        'uses' => 'Development\ProyectosController@update'
+        ,'as' => 'proyectos.update'
+    ]);
+
+    Route::delete('/proyectos/destroy', [
+        'uses' => 'Development\ProyectosController@destroy'
+        ,'as' => 'proyectos.destroy'
+    ]);
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,20 +1,20 @@
 <?php
-    namespace App\Http\Controllers\Administracion\Configuracion;
+    namespace App\Http\Controllers\Development;
 
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
-    use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
+    use App\Model\Development\SysProyectosModel;
 
-    class CategoriasProductosController extends MasterController
+    class ProyectosController extends MasterController
     {
         #se crea las propiedades
         private $_tabla_model;
 
         public function __construct(){
             parent::__construct();
-            $this->_tabla_model = new SysCategoriasProductosModel;
+            $this->_tabla_model = new SysProyectosModel;
         }
         /**
         *Metodo para obtener la vista y cargar los datos
@@ -28,11 +28,11 @@
             }
             
             $data = [
-                "page_title" 	        => "Almacén"
-                ,"title"  		        => "Categorias Productos"
-                
+                "page_title" 	        => "Proyectos"
+                ,"title"  		        => "Listado"
+                ,"data_table"  		    => ""
             ];
-            return self::_load_view( "administracion.configuracion.categoriasproductos",$data );
+            return self::_load_view( "development.proyectos",$data );
         }
         /**
          *Metodo para obtener los datos de manera asicronica.
@@ -43,12 +43,9 @@
         public function all( Request $request ){
 
             try {
-                $response = $this->_tabla_model::get();
-                $data = [
-          'categoriasproductos' => $response          
-        ];
 
-              return $this->_message_success( 201, $data , self::$message_success );
+
+              return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -64,9 +61,9 @@
         public function show( Request $request ){
 
             try {
-                $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
 
-            return $this->_message_success( 201, $response[0] , self::$message_success );
+
+            return $this->_message_success( 201, $response , self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -84,8 +81,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-                // debuger($request->all());
-                $response = $this->_tabla_model::create( $request->all() );
+
 
             DB::commit();
             $success = true;
@@ -113,8 +109,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-                // debuger($request->all());
-                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
+
 
             DB::commit();
             $success = true;
@@ -141,7 +136,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-                $response = SysCategoriasProductosModel::where(['id' => $request->id])->delete();
+
 
             DB::commit();
             $success = true;

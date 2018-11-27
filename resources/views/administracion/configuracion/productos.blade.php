@@ -22,7 +22,7 @@
 	        </thead>
 	        <tbody>
 	            <tr ng-repeat="data in datos.response" id="tr_@{{data.id}}">
-	                <td style="cursor:pointer;" ng-click="edit_register(data)">@{{(data.categorias !== null )? data.categorias : "" }}</td>
+	                <td style="cursor:pointer;" ng-click="edit_register(data)">@{{(data.categorias !== null )? data.categorias.nombre : "" }}</td>
 	                <td style="cursor:pointer;" ng-click="edit_register(data)">@{{ data.codigo }}</td>
 	                <td style="cursor:pointer;" ng-click="edit_register(data)">@{{(data.unidades !== null )? data.unidades.clave+" - "+data.unidades.descripcion : "" }}</td>
 	                <td style="cursor:pointer;" ng-click="edit_register(data)">@{{ data.nombre }}</td>

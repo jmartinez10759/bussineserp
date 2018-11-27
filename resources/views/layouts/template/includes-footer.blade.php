@@ -117,6 +117,7 @@
 
             });
             jQuery('.select_chosen').chosen({width: "100%"});
+        jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
     </script>
  	 <!-- <script type="text/javascript">
  			 jQuery(".fancybox").fancybox({

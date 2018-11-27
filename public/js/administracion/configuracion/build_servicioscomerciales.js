@@ -5,7 +5,7 @@ var url_destroy  = "servicioscomerciales/destroy";
 var url_all      = "servicioscomerciales/all";
 var redireccion  = "configuracion/servicioscomerciales";
 
-var app = angular.module("ng-servicioscomerciales", ["ngRoute"]);
+var app = angular.module("ng-servicioscomerciales", ["ngRoute","localytics.directives","components"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
     .when("/ruta1", {
@@ -22,6 +22,7 @@ app.config(function( $routeProvider, $locationProvider ) {
 });
 app.controller("servicioscomercialesController", function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
+    //El constructor funciona para inicializar las variables 
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {};
@@ -35,8 +36,9 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
         var fields = {};
         MasterController.request_http(url,fields,"get",$http, false )
         .then(function(response){
+          //devuelve un Array con todos los datos 
             $scope.datos = response.data.result;
-            console.log($scope.datos);
+            // console.log($scope.datos);
         }).catch(function(error){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -63,7 +65,10 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
                 ,"height"   : 400
                 ,"autoSize" : false
             });
+            //devuelve un Array con los datos actualizados
             $scope.constructor();
+            // console.log($scope.constructor());return;
+
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -77,7 +82,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
     }
 
     $scope.update_register = function(){
-
+     
+      $scope.update = $scope.edit;
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,"put",$http, false )
@@ -92,6 +98,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
                 ,"autoSize" : false
             });
           $scope.consulta_general();
+          // console.log($scope.consulta_general());return;
+          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
       }).catch(function( error ){
           if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -109,6 +117,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
       var fields = {id : id };
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+
+          //Regresa un objeto con los datos del registro seleccionado
            $scope.edit = response.data.result;
 
           jQuery.fancybox.open({
@@ -118,7 +128,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
                 ,"width"    : 900
                 ,"height"   : 400
                 ,"autoSize" : false
-            });          
+            });        
+            // console.log($scope.edit);return;  
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -139,6 +150,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
         .then(function( response ){
             toastr.success( response.data.message , title );
             $scope.consulta_general();
+            // console.log($scope.consulta_general());return;
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -151,5 +163,6 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
           
       },"warning",true,["SI","NO"]);  
     }
+
 
 });
