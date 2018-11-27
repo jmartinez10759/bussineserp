@@ -42,14 +42,15 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
           ,{id:12,nombre:"DIC"}
           ,{id:13 ,nombre:"TODOS"}
         ];
+        $scope.select_anios();
         $scope.table_concepts = {};
         $scope.check_meses();
         $scope.index();
     }
 
-    $scope.index = function( mes = false ){
+    $scope.index = function( array = {} ){
         var url = domain( url_all );
-        var fields = (mes)? { mes: mes } :{};
+        var fields = (array != 0)? array :{};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
@@ -242,7 +243,11 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
                 });
               var id = (update)? $scope.update.id : $scope.insert.id;
               jQuery('#tr_'+id ).effect("highlight",{},5000);
-              $scope.index($scope.meses);
+              var data = {
+                mes: $scope.meses
+                ,anio: $scope.anio
+              }
+              $scope.index(data);
               if(response.data.result.pedidos.id_estatus == 5){
                   $scope.update = response.data.result;
                   $scope.insert_facturacion();
@@ -306,7 +311,11 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
             if(!cancel){
               toastr.success( response.data.message , title );
             }
-            $scope.index($scope.meses);
+            var data = {
+                mes: $scope.meses
+                ,anio: $scope.anio
+              }
+            $scope.index(data);
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -498,20 +507,59 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
     $scope.filtros_mes = function(data){
         for(var i in $scope.filtro){ $scope.filtro[i].class = "";}
         data.class = "active";
-        $scope.meses = data.id;
-        $scope.index(data.id);
+        $scope.meses = data.id;        
+        var fields = {
+           mes:     $scope.meses
+          ,anio:    $scope.anio
+          ,usuario: $scope.usuarios
+        }
+        $scope.index(fields);
     }
 
-    $scope.check_meses = function( mes_select = false ){
+    $scope.filtros_anio = function(){
+        var fields = {
+           mes:     $scope.meses
+          ,anio:    $scope.anio
+          ,usuario: $scope.usuarios
+        }
+        $scope.index(fields);
+
+    }
+
+    $scope.filtros_usuarios = function(){
+        var fields = {
+           mes:     $scope.meses
+          ,anio:    $scope.anio
+          ,usuario: $scope.usuarios
+        }
+        $scope.index(fields);
+    }
+
+    $scope.check_meses = function(){
         var fecha = new Date();
         var mes = (fecha.getMonth() +1);
         $scope.meses = mes;
-        alert($scope.meses);
         for(var i in $scope.filtro){
           if ($scope.filtro[i].id == mes ) {
               $scope.filtro[i].class = "active";
           }
         }
+    }
+
+    $scope.select_anios = function(){
+        var fecha = new Date();
+        var year = (fecha.getFullYear());
+        var select = [];
+        var cont = 1;
+        //console.log(year);return;
+        for (var i = year; i >= 2000; i--) {
+            select[cont] = { id: i ,descripcion: i };
+            cont++;
+        }
+        $scope.anio = select[1].id;
+        $scope.cmb_anios = select;
+        console.log($scope.cmb_anios);
+
     }
 
 

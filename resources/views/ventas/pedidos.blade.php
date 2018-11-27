@@ -8,6 +8,18 @@
         <form class="form-horizontal">
 
             <div class="form-group row">
+                <div class="col-sm-2">
+                    <select class="form-control input-sm"
+                    width="'50%'"
+                    chosen
+                    ng-model="anio" 
+                    ng-change="filtros_anio()"
+                    ng-options="value.id as value.descripcion for (key, value) in cmb_anios" >
+                        <!-- <option value="">--Seleccione Opcion--</option> -->
+                    </select>
+
+                </div>
+
                 <div class="col-sm-6">
                     
                     <ul class="pagination pagination-sm">
@@ -19,23 +31,18 @@
                     </ul>
 
                 </div>
-                <!-- <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
-                <div class="col-md-3">
-                    <input type="text" class="form-control fecha" readonly="" id="fecha_inicial">
+                <div class="col-sm-2">
+                    <select class="form-control input-sm"
+                    width="'100%'"
+                    chosen
+                    ng-model="usuarios" 
+                    ng-change="filtros_usuarios()"
+                    ng-options="value.id as value.name +' '+value.first_surname for (key, value) in datos.usuarios" {{ $permisos }}>
+                        <option value="">--Seleccione Opcion--</option>
+                    </select>
+
                 </div>
 
-                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Final </label>
-                <div class="col-md-3">
-                    <input type="text" class="form-control fecha" readonly="" id="fecha_final">
-                </div> -->
-                <div class="col-md-2">
-
-                    <!-- <select class="form-control" id="id_vendedor" onchange="" {{$permisos}}>
-                        <option value="">Vendedor</option>
-                        <option value="1">Joaquin Alvarado</option>
-                        <option value="2">Obed Gomez Alvarado</option>
-                    </select> -->
-                </div>
             </div>
 
         </form>

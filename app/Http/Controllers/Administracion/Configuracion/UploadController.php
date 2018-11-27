@@ -54,6 +54,10 @@ use App\Model\Administracion\Configuracion\SysPaisModel;
 use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
 use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
+use  App\Model\Development\SysProyectosModel;
+use  App\Model\Development\SysProyectosModel;
+
+
 
 
 
@@ -104,6 +108,9 @@ class UploadController extends MasterController
      *@return void
      */
     public function index(){
+               case "Proyectos": 
+                $this->_tabla_model = new SysProyectosModel; 
+            break;
 
         switch ( $this->show() ) {
                 case "Roles":
@@ -213,6 +220,9 @@ class UploadController extends MasterController
             break;
                case "Categoriasproductos": 
                 $this->_tabla_model = new SysCategoriasProductosModel; 
+            break;
+               case "Proyectos": 
+                $this->_tabla_model = new SysProyectosModel; 
             break;
 
 
