@@ -8,141 +8,6 @@ var url_edit_pais       = 'pais/edit';
 var url_edit_codigos    = 'codigopostal/show';
 var url_upload          = 'upload/files';
 
-// new Vue({
-//   el: "#vue-proveedores",
-//   created: function () {
-//     // this.consulta_general();
-//   },
-//   data: {
-//     datos: [],
-//     insert: {'estatus':'1'},
-//     update: {'estatus':'1'},
-//     edit: {'estatus':'1'},
-//     fields: {},
-
-//   },
-//   mixins : [mixins],
-//   methods:{
-//     consulta_general(){
-//         var url = domain( url_all );
-//         var fields = {};
-//         var promise = MasterController.method_master(url,fields,"get");
-//           promise.then( response => {
-          
-              
-//           }).catch( error => {
-//               if( error.response.status == 419 ){
-//                     toastr.error( session_expired ); 
-//                     redirect(domain("/"));
-//                     return;
-//                 }
-//               toastr.error( error.response.data.message , expired );
-//           });
-//     }
-//     ,insert_register(){
-//       var validacion = ['cmb_estados'];
-//       var url = domain( url_insert );
-//         this.insert.id_estado = jQuery('#cmb_estados').val();
-//         this.insert.giro_comercial = jQuery('#cmb_servicio').val();
-//         var fields = this.insert;
-//         var promise = MasterController.method_master(url,fields,"post");
-//           promise.then( response => {
-          
-//               toastr.success( response.data.message , title );
-//               redirect(domain(redireccion)); 
-              
-//           }).catch( error => {
-//               if( error.response.status == 419 ){
-//                     toastr.error( session_expired ); 
-//                     redirect(domain("/"));
-//                     return;
-//                 }
-//               toastr.error( error.response.data.message , expired );
-//               redirect();
-//           });
-//     }
-//     ,update_register(){
-//        var url = domain( url_update );
-//         this.edit.id_estado = jQuery('#cmb_estados_edit').val();
-//         this.edit.giro_comercial = jQuery('#cmb_servicio_edit').val();
-//         var fields = this.edit;
-//         var promise = MasterController.method_master(url,fields,"put");
-//           promise.then( response => {
-//               toastr.success( response.data.message , title );
-//               redirect(domain(redireccion));   
-              
-//           }).catch( error => {
-//               if( error.response.status == 419 ){
-//                     toastr.error( session_expired ); 
-//                     redirect(domain("/"));
-//                     return;
-//                 }
-//               toastr.error( error.response.data.message , expired );
-//               // redirect();
-//           });
-//     }
-//     ,edit_register( id ){
-//         var url = domain( url_edit );
-//         var fields = {id : id };
-//         var promise = MasterController.method_master(url,fields,"get");
-//           promise.then( response => {
-          
-//               // toastr.success( response.data.message , title );
-//                this.edit = response.data.result;
-//                // console.log(this.edit);
-//                // return;
-//                //this.edit.id = response.data.result.id;
-//                if( response.data.result.contactos.length > 0 ){
-//                    this.edit.contacto = response.data.result.contactos[0].nombre_completo;
-//                    this.edit.departamento = response.data.result.contactos[0].departamento;
-//                    this.edit.telefono = response.data.result.contactos[0].telefono;
-//                    this.edit.correo = response.data.result.contactos[0].correo;
-//                }
-
-               
-//                jQuery('#cmb_estados_edit').selectpicker("val",[response.data.result.id_estado]);
-//                jQuery('#cmb_servicio_edit').selectpicker("val",[response.data.result.giro_comercial]);
-//                jQuery('#modal_edit_register').modal('show');
-               
-              
-//           }).catch( error => {
-//               if( error.response.status == 419 ){
-//                     toastr.error( session_expired ); 
-//                     redirect(domain("/"));
-//                     return;
-//                 }
-//               toastr.error( error.response.data.message , expired );
-//               //redirect();
-//           });
-        
-//     }
-//     ,destroy_register( id ){
-//         var url = domain( url_destroy );
-//         var fields = {id : id };
-//          buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
-//           var promise = MasterController.method_master(url,fields,"delete");
-//           promise.then( response => {
-//               toastr.success( response.data.message , title );
-//                location.reload();
-//           }).catch( error => {
-//               if( error.response.status == 419 ){
-//                     toastr.error( session_expired ); 
-//                     redirect(domain("/"));
-//                     return;
-//                 }
-//               toastr.error( error.response.data.message , expired );
-//               redirect();
-//           });
-//       },"warning",true,["SI","NO"]);   
-//     }
-    
-   
-    
-    
-//   }
-
-
-// });
 var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
 app.controller('ProveedoresController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
@@ -188,10 +53,15 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     $scope.insert_register = function(){
 
       var validacion = {
-            'CORREO'        : $scope.insert.correo
-            ,'RAZON SOCIAL' : $scope.insert.razon_social
-            ,'RFC'          : $scope.insert.rfc
-            ,'PAIS'         : $scope.insert.id_country
+            'CORREO'               : $scope.insert.correo
+            ,'RAZON SOCIAL'        : $scope.insert.razon_social
+            ,'RFC'                 : $scope.insert.rfc
+            ,'PAIS'                : $scope.insert.id_country
+            ,'ESTADO'              : $scope.insert.id_estado
+            ,'CODIGO POSTAL'       : $scope.insert.id_codigo
+            ,'SERVICIO COMERCIAL'  : $scope.insert.id_servicio_comercial
+            ,'REGIMEN FISCAL'      : $scope.insert.id_regimen_fiscal
+            ,'ESTATUS'             : $scope.insert.estatus
            };
            if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.insert.correo ) ){  
@@ -201,23 +71,8 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         if( !valida_rfc($scope.insert.rfc) ){
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
-        }
-        
-        // if($scope.insert.id_country == 151 ){
-          if($scope.insert.id_estado == null){
-            return toastr.warning('Debe de Seleccionar un estado');
-          }
-        // }
-        if($scope.insert.estatus == null){
-            return toastr.warning('Debe de Elegir el Estatus');
-          }
-        
-        if($scope.insert.id_servicio_comercial == null){
-            return toastr.warning('Debe de Seleccionar un Servicio');
-          }
-        if($scope.insert.id_regimen_fiscal == null){
-            return toastr.warning('Debe de Seleccionar el Regimen Fiscal');
-         }
+        }       
+
         var url = domain( url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
@@ -247,13 +102,18 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
 
     $scope.update_register = function(){
 
-      var validacionU = {
-             'CORREO'       : $scope.update.correo
-            ,'RAZON SOCIAL' : $scope.update.razon_social
-            ,'RFC'          : $scope.update.rfc
-            ,'PAIS'         : $scope.update.id_country
+      var validacion = {
+             'CORREO'              : $scope.update.correo
+            ,'RAZON SOCIAL'        : $scope.update.razon_social
+            ,'RFC'                 : $scope.update.rfc
+            ,'PAIS'                : $scope.update.id_country
+            ,'ESTADO'              : $scope.update.id_estado
+            ,'CODIGO POSTAL'       : $scope.update.id_codigo
+            ,'SERVICIO COMERCIAL'  : $scope.update.id_servicio_comercial
+            ,'REGIMEN FISCAL'      : $scope.update.id_regimen_fiscal
+            ,'ESTATUS'             : $scope.update.estatus
           };
-        if(validaciones_fields(validacionU)){return;}
+        if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.update.correo ) ){  
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
@@ -262,22 +122,6 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        if($scope.update.estatus == null){
-            return toastr.warning('Debe de Elegir el Estatus');
-           
-          }
-        // if($scope.update.id_country == 151 ){
-          if($scope.update.id_estado == null){
-            return toastr.warning('Debe de Seleccionar un estado');
-          }
-        // }
-        
-        if($scope.update.id_servicio_comercial == null){
-            return toastr.warning('Debe de Seleccionar un Servicio');
-          }
-        if($scope.update.id_regimen_fiscal == null){
-            return toastr.warning('Debe de Seleccionar el Regimen Fiscal');
-         }
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )

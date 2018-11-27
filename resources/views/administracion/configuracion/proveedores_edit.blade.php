@@ -121,7 +121,7 @@
 
                                     <div class="form-group">
 
-                                        <label for="subtotal" class="col-sm-2 control-label">Código Postal: </label>
+                                        <label for="subtotal" class="col-sm-2 control-label">Código Postal:<font size="3" color="red">* </font> </label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen
@@ -334,7 +334,7 @@
 
                                     <div class="form-group">
 
-                                        <label for="subtotal" class="col-sm-2 control-label">Código Postal:</label>
+                                        <label for="subtotal" class="col-sm-2 control-label">Código Postal:<font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                             chosen 
