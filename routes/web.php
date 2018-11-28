@@ -942,9 +942,19 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'pedidos.register'
         ]);
 
+        Route::post('/pedidos/correo', [
+            'uses'      => 'Ventas\PedidosController@correo'
+            ,'as'       => 'pedidos.correo'
+        ]);
+
         Route::get('/pedidos/edit', [
             'uses'      => 'Ventas\PedidosController@show'
             ,'as'       => 'pedidos.edit'
+        ]);
+
+        Route::get('/pedidos/reportes/{id}', [
+            'uses'      => 'Ventas\PedidosController@reportes'
+            ,'as'       => 'pedidos.reportes'
         ]);
 
         Route::put('/pedidos/update', [

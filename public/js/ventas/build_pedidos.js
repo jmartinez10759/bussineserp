@@ -1,15 +1,17 @@
-var url_insert  = "pedidos/register";
-var url_update   = "pedidos/update";
-var url_edit     = "pedidos/edit";
-var url_destroy  = "pedidos/destroy";
-var url_destroy_conceptos  = "pedidos/destroy_concepto";
-var url_all      = "pedidos/all";
-var redireccion  = "ventas/pedidos";
-var url_edit_clientes   = "clientes/edit";
-var url_edit_contactos  = "contactos/edit";
-var url_edit_productos  = "productos/edit";
-var url_edit_planes     = "planes/edit";
-var url_insert_factura  = "facturaciones/insert";
+var url_insert              = "pedidos/register";
+var url_update              = "pedidos/update";
+var url_edit                = "pedidos/edit";
+var url_destroy             = "pedidos/destroy";
+var url_destroy_conceptos   = "pedidos/destroy_concepto";
+var url_all                 = "pedidos/all";
+var url_see_report          = "pedidos/reportes";
+var url_send_correo         = "pedidos/correo";
+var redireccion             = "ventas/pedidos";
+var url_edit_clientes       = "clientes/edit";
+var url_edit_contactos      = "contactos/edit";
+var url_edit_productos      = "productos/edit";
+var url_edit_planes         = "planes/edit";
+var url_insert_factura      = "facturaciones/insert";
 
 
 var app = angular.module('ng-pedidos', ["ngRoute",'localytics.directives','components',"stringToNumber"]);
@@ -24,24 +26,13 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
+        $scope.correo = {
+          asunto: "Envio de Pedido"
+        };
         $scope.products = {
           cantidad : 0 , total: 0  
         };
-        $scope.filtro = [
-           {id:1,nombre:"ENE"}
-          ,{id:2,nombre:"FEB"}
-          ,{id:3,nombre:"MAR"}
-          ,{id:4,nombre:"ABR"}
-          ,{id:5,nombre:"MAY"}
-          ,{id:6,nombre:"JUN"}
-          ,{id:7,nombre:"JUL"}
-          ,{id:8,nombre:"AGO"}
-          ,{id:9,nombre:"SEP"}
-          ,{id:10,nombre:"OCT"}
-          ,{id:11,nombre:"NOV"}
-          ,{id:12,nombre:"DIC"}
-          ,{id:13 ,nombre:"TODOS"}
-        ];
+        $scope.calendar();
         $scope.select_anios();
         $scope.table_concepts = {};
         $scope.check_meses();
@@ -188,7 +179,8 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
     }
 
     $scope.update_register = function( update = false ){
-        //jQuery('.update').prop('disabled',true);
+
+        jQuery('.update').prop('disabled',true);
         $scope.insertar.pedidos = (update)? $scope.update : $scope.insert;                        
         var validacion = {
           'CLIENTE'          : (update)? $scope.update.id_cliente    : $scope.insert.id_cliente
@@ -264,6 +256,7 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
               $scope.subtotal = "$ 0.00";
               $scope.iva = "$ 0.00";
               $scope.total = "$ 0.00";
+              jQuery('.update').prop('disabled',false);
 
           }).catch(function( error ){
               if( isset(error.response) && error.response.status == 419 ){
@@ -279,7 +272,7 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
 
     $scope.edit_register = function( data ){
 
-        var datos = ['estatus','contactos','clientes','usuarios' ,'updated_at' ,'created_at','$$hashKey','conceptos','pivot'];
+        var datos = ['empresas','estatus','contactos','clientes','usuarios' ,'updated_at' ,'created_at','$$hashKey','conceptos','pivot'];
         $scope.update = iterar_object(data,datos);
         $scope.estatus = data.id_estatus;
         $scope.table_concepts   = data.conceptos;
@@ -295,8 +288,9 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
         jQuery.fancybox.open({
             'type'      : 'inline'
             ,'src'      : "#modal_edit_register"
-            ,'modal': true
+            ,'modal'    : true
         }); 
+    
     }
 
     $scope.destroy_register = function( id, cancel = false ){
@@ -533,6 +527,20 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
           ,usuario: $scope.usuarios
         }
         $scope.index(fields);
+    
+    }
+
+    $scope.calendar = function(){
+
+        var calendar = [];
+        var count = 1;
+        var nombres = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC','TODOS'];
+        for (var i = 0; i < nombres.length; i++) {
+            calendar[i] = { id: count , nombre:nombres[i] };
+            count++;
+        }
+        $scope.filtro = calendar;
+    
     }
 
     $scope.check_meses = function(){
@@ -562,6 +570,62 @@ app.controller('PedidosController', function( $scope, $http, $location ) {
 
     }
 
+    $scope.see_reporte = function( data ){
+
+        jQuery.fancybox.open({
+            'type': 'iframe'
+            ,'src': domain( url_see_report+"/"+data.id )
+            ,'buttons' : ['share', 'close']
+        });
+
+    }
+
+    $scope.send_reporte = function(data){
+
+        $scope.correo.email        = data.contactos.correo;
+        $scope.correo.name         = data.contactos.nombre_completo;
+        $scope.correo.mensaje      = "Se le hace el envio de su solicitud";
+        $scope.correo.asunto       = "Confirmar Solicitud";
+        $scope.correo.id_pedido    = data.id;
+        //$scope.correo.descripcion = "Es ";
+        jQuery.fancybox.open({
+            'type'      : 'inline'
+            ,'src'      : "#modal_correo_send"
+            ,'modal'    : true
+            ,'width'    : 900
+            ,'height'   : 500
+            ,'autoSize' : false
+        });
+
+    }
+
+    $scope.send_correo = function(){
+
+        var url = domain( url_send_correo );
+        var fields = $scope.correo;
+        MasterController.request_http(url,fields,'post',$http, false )
+        .then(function( response ){
+            toastr.success( "Se envio el correo correctamente" , title ); 
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_correo_send"
+                ,'modal'    : true
+                ,'width'    : 900
+                ,'height'   : 500
+                ,'autoSize' : false
+            });           
+            $scope.correo = {};
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.result , expired );
+        }); 
+
+    }
 
     /*$scope.upload_file = function(update){
 

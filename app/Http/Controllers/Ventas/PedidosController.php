@@ -3,6 +3,7 @@
 
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\Mail;
     use App\Model\Ventas\SysPedidosModel;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
@@ -85,7 +86,9 @@
         try {
             $response = $this->_tabla_model::with(['conceptos'=>function($query){
                 return $query->with(['productos','planes']);
-            },'clientes','contactos'])->where(['id' => $request->id])->get();
+            },'clientes','contactos','empresas' => function($query){
+                return $query->groupBy('id_pedido');
+            },'formaspagos','metodospagos','usuarios'])->where(['id' => $request->id])->get();
             $subtotal  = $response[0]->conceptos->sum('total');
             $iva       = $subtotal * Session::get('iva') / 100;
             $total     = ($subtotal + $iva);
@@ -260,6 +263,35 @@
         return $this->show_error(6, $error, self::$message_error );
 
     }
+    /**
+    * Metodo para realizar la parte de reportes con la consulta del front
+    * @access public
+    * @param Request $request [Description]
+    * @return void
+    */
+    public function reportes( $id , $correo = false )
+    {   
+        $response = $this->show( new Request( ['id' => $id ] ) );
+        $pedidos = $response->original['result']['pedidos'];
+        return $this->_plantillas($pedidos,$correo);
+    }
+   /**
+    * Metodo para el envio de correos.
+    * @access public
+    * @param Request $request [Description]
+    * @return void
+    */
+    public function correo( Request $request )
+    {
+        $data = $request->all();
+         Mail::send('emails.confirmation', $data, function( $message ) use ( $data ) {
+            $message->to( $data['email'], $data['name'] )
+                    ->from('notificaciones@burolaboralmexico.com.mx','Reportes')
+                    ->subject(  $data['asunto'] )
+                    ->attachData($this->reportes($data['id_pedido'],1), "Reportes.pdf");
+        });
+
+    }
    /**
     * Metodo para borrar el registro de conceptos
     * @access public
@@ -284,6 +316,8 @@
                     ,'estatus'
                     ,'conceptos' =>function($query){
                         return $query->with(['productos','planes']);
+                    },'empresas' => function($query){
+                        return $query->groupBy('id_pedido');
                     }]);
                 if( isset( $request->mes ) && $request->mes != 13 ){
                     $response = $data->whereMonth('created_at','=', $request->mes );
@@ -326,6 +360,8 @@
                         ,'estatus'
                         ,'conceptos' =>function($query){
                             return $query->with(['productos','planes']);
+                        },'empresas' => function($query){
+                            return $query->groupBy('id');
                         }]);
                     if( isset( $request->mes ) && $request->mes != 13 ){
                         $response = $data->whereMonth('sys_pedidos.created_at','=', $request->mes );
@@ -366,6 +402,8 @@
                         ,'estatus'
                         ,'conceptos' =>function($query){
                             return $query->with(['productos','planes']);
+                        },'empresas' => function($query) {
+                            return $query->groupBy('id');
                         }]);
                     if( isset( $request->mes ) && $request->mes != 13 ){
                         $response = $data->whereMonth('sys_pedidos.created_at','=', $request->mes );
@@ -388,6 +426,9 @@
         }
         
    }
+
+
+
 
 
 
