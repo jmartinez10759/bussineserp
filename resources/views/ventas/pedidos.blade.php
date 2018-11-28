@@ -8,8 +8,19 @@
         <form class="form-horizontal">
 
             <div class="form-group row">
+                <div class="col-sm-2">
+                    <select class="form-control input-sm"
+                    width="'50%'"
+                    chosen
+                    ng-model="anio" 
+                    ng-change="filtros_anio()"
+                    ng-options="value.id as value.descripcion for (key, value) in cmb_anios" >
+                        <!-- <option value="">--Seleccione Opcion--</option> -->
+                    </select>
+
+                </div>
+
                 <div class="col-sm-6">
-                    
                     <ul class="pagination pagination-sm">
                         <li ng-repeat="filtros in filtro" class="@{{filtros.class}}" >                    
                             <a style="cursor: pointer" ng-click="filtros_mes(filtros)"> 
@@ -19,23 +30,18 @@
                     </ul>
 
                 </div>
-                <!-- <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
-                <div class="col-md-3">
-                    <input type="text" class="form-control fecha" readonly="" id="fecha_inicial">
+                <div class="col-sm-2">
+                    <select class="form-control input-sm"
+                    width="'100%'"
+                    chosen
+                    ng-model="usuarios" 
+                    ng-change="filtros_usuarios()"
+                    ng-options="value.id as value.name +' '+value.first_surname for (key, value) in datos.usuarios" {{ $permisos }}>
+                        <option value="">--Seleccione Opcion--</option>
+                    </select>
+
                 </div>
 
-                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Final </label>
-                <div class="col-md-3">
-                    <input type="text" class="form-control fecha" readonly="" id="fecha_final">
-                </div> -->
-                <div class="col-md-2">
-
-                    <!-- <select class="form-control" id="id_vendedor" onchange="" {{$permisos}}>
-                        <option value="">Vendedor</option>
-                        <option value="1">Joaquin Alvarado</option>
-                        <option value="2">Obed Gomez Alvarado</option>
-                    </select> -->
-                </div>
             </div>
 
         </form>
@@ -96,12 +102,12 @@
                                         </a>
                                     </li> -->
                                     <li {{$reportes}}>
-                                        <a href="#" title="Imprimir cotización" ng-click="descargar();">
+                                        <a style="cursor:pointer;" title="Imprimir cotización" ng-click="see_reporte(data)">
                                             <i class="glyphicon glyphicon-print"></i> Reporte
                                         </a>
                                     </li>
-                                    <li {{$email}}>
-                                        <a title="Enviar Correo">
+                                    <li {{ $email }}>
+                                        <a title="Enviar Correo" style="cursor:pointer;" ng-click="send_reporte(data)">
                                             <i class="glyphicon glyphicon-envelope"></i> Enviar Email
                                         </a>
                                     </li>
@@ -117,8 +123,8 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td> 
-                            TOTAL PEDIDOS: @{{ datos.total_pedidos }}
+                        <td style="background-color:#eee"> 
+                            TOTAL PEDIDOS: <strong> @{{ datos.total_pedidos }} </strong>
                         </td>
                     </tr>
                 </tfoot>

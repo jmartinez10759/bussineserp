@@ -389,7 +389,7 @@
             <button type="button" class="btn btn-danger" data-fancybox-close ng-click="cancel_pedido()">
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-info agregar" ng-click="update_register(1)" {{$update}} ng-if="estatus != 5 ">
+            <button type="button" class="btn btn-info update" ng-click="update_register(1)" {{$update}} ng-if="estatus != 5 ">
                 <i class="fa fa-save"></i> Actualizar
             </button>
         </div>
@@ -541,6 +541,49 @@
         <div class="btn-toolbar pull-right">
             <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
             <button type="button" class="btn btn-info agregar" ng-click="insert_register(1)" {{$insertar}} ng-if="estatus != 5"><i class="fa fa-save"></i> Agregar </button>
+        </div>
+    </div>
+    
+</div>
+
+
+<div class="" id="modal_correo_send" style="display:none;">
+    <div class="modal-header">
+        <h3> Envio de Correo  </h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="">Correo: </label>
+                <div class="col-sm-9">
+                    <input type="text" ng-model="correo.email" class="form-control">
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="">Asunto</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" ng-model="correo.asunto" >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="">Descripción</label>
+                <div class="col-sm-9">
+                    <textarea class="form-control" rows="6"  ng-model="correo.mensaje"></textarea>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="modal-footer">
+        <div class="btn-toolbar pull-right">
+            <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+            <button type="button" class="btn btn-info" ng-click="send_correo()" {{$email}}><i class="glyphicon glyphicon-envelope"></i> Enviar Correo </button>
         </div>
     </div>
     

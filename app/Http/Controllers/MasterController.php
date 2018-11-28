@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use DOMDocument;
 use App\Facades\Menu;
 use GuzzleHttp\Client;
@@ -9,8 +10,9 @@ use App\Facades\Upload;
 use App\Model\MasterModel;
 use Codedge\Fpdf\Fpdf\Fpdf;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Model\Administracion\Correos\SysCorreosModel;
 use App\Model\Administracion\Correos\SysEnviadosModel;
@@ -967,6 +969,7 @@ abstract class MasterController extends Controller
 		}
 		#debuger($response);
 		return $request;
+	
 	}
 	/**
 	 * Metodo para obtener los registros de los productos por empresa.
@@ -1044,6 +1047,23 @@ abstract class MasterController extends Controller
         }
 
 	}
+	/**
+	 * Metodo para cargar la platilla de forma general para la generacion de las cotizaciones/ pedidos
+	 * @access public
+	 * @param Request $request [Description]
+	 * @return void
+	 */
+	protected function _plantillas( $request, $correo = false ){
+		#debuger($request);
+		$pdf = PDF::loadView('plantillas.reportes', $request );
+		if (!$correo) {
+        	return $pdf->stream();
+		}else{
+        	return $pdf->output();
+		}
+	}
+
+
 
 
 

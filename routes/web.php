@@ -942,9 +942,19 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'pedidos.register'
         ]);
 
+        Route::post('/pedidos/correo', [
+            'uses'      => 'Ventas\PedidosController@correo'
+            ,'as'       => 'pedidos.correo'
+        ]);
+
         Route::get('/pedidos/edit', [
             'uses'      => 'Ventas\PedidosController@show'
             ,'as'       => 'pedidos.edit'
+        ]);
+
+        Route::get('/pedidos/reportes/{id}', [
+            'uses'      => 'Ventas\PedidosController@reportes'
+            ,'as'       => 'pedidos.reportes'
         ]);
 
         Route::put('/pedidos/update', [
@@ -1427,6 +1437,46 @@ Route::get('/ventas/cotizacion', [
                 'uses'      => 'Development\AtencionesController@index'
                 ,'as'       => 'atencion'
         ]);
+
+ ################################## CATALOGO DE PROYECTOS ################################
+    Route::get('/proyectos/listado', [
+        'uses' => 'Development\ProyectosController@index'
+        ,'as' => 'proyectos.listado'
+    ]);
+
+    Route::get('/proyectos/all', [
+        'uses' => 'Development\ProyectosController@all'
+        ,'as' => 'proyectos.all'
+    ]);
+
+    Route::post('/proyectos/register', [
+        'uses' => 'Development\ProyectosController@store'
+        ,'as' => 'proyectos.register'
+    ]);
+
+    Route::get('/proyectos/edit', [
+        'uses' => 'Development\ProyectosController@show'
+        ,'as' => 'proyectos.edit'
+    ]);
+
+    Route::put('/proyectos/update', [
+        'uses' => 'Development\ProyectosController@update'
+        ,'as' => 'proyectos.update'
+    ]);
+
+    Route::delete('/proyectos/destroy', [
+        'uses' => 'Development\ProyectosController@destroy'
+        ,'as' => 'proyectos.destroy'
+    ]);
+
+
+
+
+
+
+
+
+
 
 
 

@@ -7,7 +7,10 @@ var redireccion  = "configuracion/proveedores";
 var url_edit_pais       = 'pais/edit';
 var url_edit_codigos    = 'codigopostal/show';
 var url_upload          = 'upload/files';
+<<<<<<< HEAD
 
+=======
+>>>>>>> d48190b7095d50f6ca288774f3370a47ceae36f8
 var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
 app.controller('ProveedoresController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
@@ -62,6 +65,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             ,'SERVICIO COMERCIAL'  : $scope.insert.id_servicio_comercial
             ,'REGIMEN FISCAL'      : $scope.insert.id_regimen_fiscal
             ,'ESTATUS'             : $scope.insert.estatus
+
            };
            if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.insert.correo ) ){  
