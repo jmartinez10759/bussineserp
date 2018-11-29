@@ -43,7 +43,21 @@
         public function all( Request $request ){
 
             try {
-
+            $response = SysProyectosModel::where('sys_users_projects.id_empresa', 1)
+                ->leftJoin('sys_projects'   ,'sys_projects.id'  ,'=','sys_users_projects.id_proyecto')
+                ->leftJoin('sys_tasks'      ,'sys_tasks.id'     ,'=','sys_users_projects.id_tarea')
+                ->select(
+                    'sys_users_projects.id_proyecto'
+                    ,'sys_users_projects.id_tarea'
+                    ,'sys_projects.titulo'
+                    ,'sys_projects.descripcion'
+                    ,'sys_projects.fecha_cierre'
+                    ,'sys_projects.id_cliente'
+                    ,'sys_projects.id_estatus'
+                    ,'sys_tasks.titulo as task_titulo'
+                    ,'sys_tasks.descripcion as task_desc'
+                )
+                ->get();
 
               return $this->_message_success( 200, $response , self::$message_success );
             } catch (\Exception $e) {
