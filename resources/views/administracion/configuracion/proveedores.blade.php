@@ -3,7 +3,8 @@
 @push('styles')
 @endpush
 <div ng-app="ng-proveedores" ng-controller="ProveedoresController" ng-init="constructor()" ng-cloak>
-      
+      <div class="tab-content">
+ 
             <div class="table-responsive">
                 <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable">
                     <thead>

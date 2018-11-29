@@ -54,7 +54,7 @@
 
             try {
                 // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
-                $response = $this->_tabla_model::with(['estados','contactos'],['id' => Session::get('id_empresa')])->orderBy('id','DESC')->get();
+                $response = $this->_tabla_model::with(['estados','contactos'])->orderBy('id','DESC')->get();
 
         $data = [
           'proveedores'           => $response
@@ -202,13 +202,11 @@
             }else{
                 $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
-                     'id_empresa' => session::get('id_empresa')
-                    ,'id_proveedor' => $response->id
-                    ,'id_sucursal' => session::get('id_sucursal')
-                    ,'id_contacto' => $response_contactos->id
+                     'id_contacto'     => $response_contactos->id
+                    ,'id_proveedor'      => $request->id
                 ];
-            SysProveedoresEmpresasModel::create($data);   
-                
+               
+                  SysProveedoresEmpresasModel::create($data);                 
             }
 
 
@@ -331,7 +329,7 @@
                 $data = [
                     'id_empresa'      => $request->id_empresa
                     ,'id_sucursal'    => $id_sucursal
-                    ,'id_proveedor'        => $request->id_proveedor
+                    ,'id_proveedor'   => $request->id_proveedor
                 ];
                 $response[] = SysProveedoresEmpresasModel::create($data);
             }

@@ -395,6 +395,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'proveedores.destroy'
     ]);
     
+    Route::post('/proveedores/register_permisos', [
+        'uses'      => 'Administracion\Configuracion\ProveedoresController@register_permisos'
+        ,'as'       => 'proveedores.register'
+    ]);
+    
     ######################### MODULO DE PLANES ##################################
     
     Route::get('/configuracion/planes', [
