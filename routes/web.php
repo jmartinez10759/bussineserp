@@ -394,6 +394,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProveedoresController@destroy'
         ,'as'       => 'proveedores.destroy'
     ]);
+
+    Route::get('/proveedores/display_sucursales', [
+        'uses'      => 'Administracion\Configuracion\ProveedoresController@display_sucursales'
+        ,'as'       => 'clientes.display_sucursales'
+    ]);
     
     ######################### MODULO DE PLANES ##################################
     
