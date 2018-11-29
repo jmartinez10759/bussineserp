@@ -157,7 +157,7 @@
                                             </select>    
                                         </div>
 
-                                        <label for="estatus" class="col-sm-2 control-label">Estatus:<font size="3" color="red">* </label>
+                                        <label for="estatus" class="col-sm-2 control-label">Estatus: </label>
                                         <div class="col-sm-4">
                                             <select class="form-control select_chosen"
                                                  chosen
@@ -263,7 +263,7 @@
                                             <input type="text" id="telefono" class="form-control" placeholder="Lada + número" ng-model="update.telefono" maxlength="15">
                                         </div>
                                         
-                                        <label for="modelo" class="col-sm-2 control-label">Correo:<font size="3" color="red">* </font></label>
+                                        <label for="modelo" class="col-sm-2 control-label">Correo: </label>
                                         <div class="col-sm-4">
                                             <input type="text" id="correo" class="form-control" placeholder="Ingrese un correo valido" ng-model="update.correo">
                                         </div>
@@ -405,43 +405,45 @@
 
         </section>
     </div>
-                <div class="modal-footer">
-                    <div class="btn-toolbar pull-right">
-                        <button type= "button" class="btn btn-danger" data-fancybox-close>
-                            <i class="fa fa-times-circle"></i> Cancelar
-                        </button>
-                        <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
-                        <i class="fa fa-save"></i> Actualizar 
-                        </button>
-                    </div>
-                </div>
+    <div class="modal-footer">
+        <div class="btn-toolbar pull-right">
+            <button type= "button" class="btn btn-danger" data-fancybox-close>
+                <i class="fa fa-times-circle"></i> Cancelar
+            </button>
+            <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
+            <i class="fa fa-save"></i> Actualizar 
+            </button>
+        </div>
+    </div>
 
 </div>
-
-    {{-- <div class="modal fade" id="modal_proveedores_register" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
-                    </button>
-                    <h3>Asignacion de Proveedores</h3>
-                </div>
-
-                <div class="modal-body panel-body">
-                        {!! $data_table_proveedores !!}
-                </div>  
-                </div>
+<div class="" id="permisos" style="display:none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Asigne Sucursales </h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="id_empresa">
+                <input type="hidden" id="id_proveedor">
+                <div id="sucursal_empresa"></div>
+            </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    {!! $button_insertar !!}
+                    <button type="button" class="btn btn-danger" data-fancybox-close>
+                        <i class="fa fa-times-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}>
+                        <i class="fa fa-save"></i> Registrar 
+                    </button>
                 </div>
             </div>
 
         </div>
+    </div>
 </div>
-    </div> --}}
-    <div class="" id="upload_file" style="display:none;">
+
+<div class="" id="upload_file" style="display:none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

@@ -7,10 +7,9 @@ var redireccion  = "configuracion/proveedores";
 var url_edit_pais       = 'pais/edit';
 var url_edit_codigos    = 'codigopostal/show';
 var url_upload          = 'upload/files';
-<<<<<<< HEAD
+var url_display = "proveedores/display_sucursales";
+var url_insert_permisos = "proveedores/register_permisos";
 
-=======
->>>>>>> d48190b7095d50f6ca288774f3370a47ceae36f8
 var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
 app.controller('ProveedoresController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
@@ -20,7 +19,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           id_regimen_fiscal: null
           ,id_country: 151
           ,id_servicio_comercial: null
-          // ,estatus: 1
+          ,estatus: 1
         };
         $scope.update = {};
         $scope.edit   = {};
@@ -64,7 +63,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             ,'CODIGO POSTAL'       : $scope.insert.id_codigo
             ,'SERVICIO COMERCIAL'  : $scope.insert.id_servicio_comercial
             ,'REGIMEN FISCAL'      : $scope.insert.id_regimen_fiscal
-            ,'ESTATUS'             : $scope.insert.estatus
+            // ,'ESTATUS'             : $scope.insert.estatus
 
            };
            if(validaciones_fields(validacion)){return;}
@@ -115,7 +114,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             ,'CODIGO POSTAL'       : $scope.update.id_codigo
             ,'SERVICIO COMERCIAL'  : $scope.update.id_servicio_comercial
             ,'REGIMEN FISCAL'      : $scope.update.id_regimen_fiscal
-            ,'ESTATUS'             : $scope.update.estatus
+            // ,'ESTATUS'             : $scope.update.estatus
           };
         if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.update.correo ) ){  
@@ -247,6 +246,78 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error( error.data.result , expired );  
       }); 
     }
+    $scope.display_sucursales = function( id ) {
+
+       var id_empresa = jQuery('#cmb_empresas_'+id).val().replace('number:','');
+       var url = domain( url_display );
+       var fields = { 
+           id_empresa : id_empresa
+           ,id_proveedor : id
+       };
+       $scope.fields.id_empresa = id_empresa;
+       $scope.fields.id_proveedor = id;
+       MasterController.request_http(url, fields, "get", $http ,false)
+       .then(response => {
+           jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
+           jQuery.fancybox.open({
+               'type': 'inline',
+               'src':  "#permisos",
+               'buttons': ['share', 'close']
+           });
+           for (var i = 0; i < response.data.result.sucursales.length; i++) {
+               console.log(response.data.result.sucursales[i].id_sucursal);
+               jQuery(`#sucursal_${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
+           };
+       }).catch(error => {
+           if( isset(error.response) && error.response.status == 419 ){
+            toastr.error( session_expired ); 
+            redirect(domain("/"));
+            return;
+          }
+            console.error(error);
+            toastr.error( error.result , expired );  
+
+       });
+
+    
+    }
+    $scope.insert_permisos = function(){
+
+        var matrix = [];
+        var i = 0;
+        jQuery('#sucursales input[type="checkbox"]').each(function () {
+            if (jQuery(this).is(':checked') == true) {
+                var id = jQuery(this).attr('id_sucursal');
+                matrix[i] = `${id}|${jQuery(this).is(':checked')}`;
+                i++;
+            }
+        });
+        var url = domain(url_insert_permisos);
+        var fields = {
+            'matrix' : matrix
+            , 'id_empresa': $scope.fields.id_empresa
+            , 'id_proveedor': $scope.fields.id_proveedor
+        }
+        MasterController.request_http(url, fields, "post", $http, false )
+        .then(response => {
+            //this.sucursales = response.data.result;
+            jQuery.fancybox.close({
+                'type': 'inline',
+                'src': "#permisos",
+                'buttons': ['share', 'close']
+            });
+            jQuery('#tr_'+$scope.fields.id_proveedor).effect("highlight",{},5000);
+            $scope.consulta_general();
+        }).catch(error => {
+            if( isset(error.response) && error.response.status == 419 ){
+              toastr.error( session_expired ); 
+              redirect(domain("/"));
+              return;
+            }
+              toastr.error( error.data.result , expired );  
+
+        });
+    }
     $scope.upload_file = function(update){
 
       var upload_url = domain( url_upload );
@@ -288,4 +359,6 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
       });
 
     }
+
   });
+
