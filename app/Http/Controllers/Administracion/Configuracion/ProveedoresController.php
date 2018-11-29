@@ -292,7 +292,7 @@
                 'tabla_sucursales'  => data_table($table)
                 ,'sucursales'       => $sucursales
             ];
-            return $this->_message_success(201, $data, self::$message_success);
+            return $this->_message_success(200, $data, self::$message_success);
         } catch (\Exception $e) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
             return $this->show_error(6, $error, self::$message_error);

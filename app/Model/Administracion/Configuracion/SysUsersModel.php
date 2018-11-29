@@ -91,7 +91,7 @@ class SysUsersModel extends Model
 
     public function facturaciones()
     {
-      return $this->belongsToMany('App\Model\Ventas\SysFacturacionModel','sys_users_facturaciones','id_users','id_facturacion');
+      return $this->belongsToMany('App\Model\Ventas\SysFacturacionesModel','sys_users_facturaciones','id_users','id_facturacion');
     }
 
 

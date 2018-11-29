@@ -52,7 +52,7 @@ class SysEmpresasModel extends Model
   
   public function proveedores()
   {
-      return $this->belongsToMany(SysProveedoresModel::class,'sys_proveedores_empresas','id_empresa','id_proveedor');
+    return $this->belongsToMany(SysProveedoresModel::class,'sys_proveedores_empresas','id_empresa','id_proveedor');
   }
   public function cuentas()
   {
@@ -64,7 +64,7 @@ class SysEmpresasModel extends Model
   }
   public function productos()
   {
-    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel', 'sys_planes_productos', 'id_empresa', 'id_producto');
+    return $this->belongsToMany(SysProductosModel::class, 'sys_planes_productos', 'id_empresa', 'id_producto');
   }
   public function planes()
   {
@@ -74,12 +74,14 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany(SysClientesModel::class, 'sys_clientes_empresas', 'id_empresa', 'id_cliente');
   }
-
   public function pedidos()
   {
     return $this->belongsToMany('App\Model\Ventas\SysPedidosModel','sys_users_pedidos','id_empresa','id_pedido');
   }
-
+  public function facturaciones()
+  {
+    return $this->belongsToMany('App\Model\Ventas\SysFacturacionesModel','sys_users_facturaciones','id_empresa','id_facturacion');
+  }
   public function notificaciones()
   {
     return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_notificacion','id_empresa')->withPivot('estatus');

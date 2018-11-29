@@ -63,7 +63,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     <tr ng-repeat="data in datos.response" id="tr_@{{ data.id }}" >
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{data.id}}</td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ format_date(data.created_at,'yyyy-mm-dd') }}</td>
