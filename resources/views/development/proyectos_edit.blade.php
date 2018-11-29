@@ -1,7 +1,85 @@
-<div id="modal_add_register" style="display:none;" class="col-sm-12">
+<div id="modal_add_register" style="display:none;" class="">
+        <h3>Registro</h3>
+        <hr><div class="modal-dialog modal-lg">
+            <div class="modal-body" style="overflow-y:scroll;">
+			<form class="form-horizontal">
+                    <div>
+                        <font size="4" color="green"> DATOS DE CUENTA </font>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Título: </label>
+                        <div class="col-sm-7">
+                            <input type="text" id="nombre_titulo_proyecto" class="form-control" placeholder="" ng-model="insert.nombre_titulo_proyecto">
+                        </div>
+					</div>
+					
+					<div class="form-group">
+                        <label class="control-label col-sm-3">Descripción: </label>
+                        <div class="col-sm-7">
+						<textarea class="form-control" id="descripcion_proyecto" name="observaciones" ng-model="insert.descripcion_proyecto" rows="4"></textarea>
+                        </div>
+					</div>
+					
+					<div class="form-group">
+                        <label class="control-label col-sm-3">Fecha limite: </label>
+                        <div class="col-sm-7">
+                            <input type="text" id="fecha_cierre" class="form-control fecha" ng-model="insert.fecha_cierre" placeholder="">
+                        </div>
+					</div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Cliente: </label>
+                        <div class="col-sm-7">
+						<select class="form-control input-sm"
+                    width="'100%'"
+					chosen
+                    ng-model="insert.id_clientes" 
+                    ng-options="value.id as value.razon_social for (key, value) in datos.clientes">
+                        <option value="">--Seleccione Opcion--</option>
+                    </select>
+                        </div>
+                    </div>
+                    
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Estatus: </label>
+                        <div class="col-sm-7">
+						<select class="form-control input-sm"
+                    width="'100%'"
+					chosen
+					disabled="" 
+                    ng-model="insert.id_estatus" 
+                    ng-options="value.id as value.nombre for (key, value) in datos.estatus">
+                        <option value="">--Seleccione Opcion--</option>
+                    </select>
+                        </div>
+					</div>
+					
+					<div class="form-group">
+                        <label class="control-label col-sm-3">Archivos: </label>
+                        <div class="col-sm-7">
+						<input type="file" name="pdf" title="ADJUNTAR PDF" multiple>
+                        </div>
+                    </div>
+
+
+                </form>
+                                    
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+					<button type="button" class="btn btn-primary" ng-click="insert_register()"><i class="fa fa-save"></i> Registrar </button>
+                </div>
+	</div>
+</div>    
+</div>
+
+<div id="modal_add_tarea" style="display:none;" class="col-sm-12">
         <h3>Registro</h3>
         <hr>
-            <div class="modal-body" style="overflow-y:scroll; height:500px;">
+            <div class="modal-body" style="overflow-y:scroll; height:550px;">
             <div class="panel panel-primary">
 			<div class="panel-heading">
 				<div class="btn-group pull-right">
@@ -9,7 +87,7 @@
 						<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modal_add_clientes" title="Agregar usuario"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar</button>
 					</div>
 				</div>
-				<h4><i class='glyphicon glyphicon-user'></i> Clientes</h4>
+				<h4><i class='glyphicon glyphicon-user'></i> Proyectos</h4>
 			</div>
 			<div class="panel-body">
 					<div class='outer_div'></div><!-- Carga los datos ajax -->

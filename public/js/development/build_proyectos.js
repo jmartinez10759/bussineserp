@@ -25,6 +25,9 @@ app.controller("proyectosController", function( $scope, $http, $location ) {
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {};
+        $scope.insert = {
+             id_estatus: 6 
+          };
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
@@ -153,3 +156,4 @@ app.controller("proyectosController", function( $scope, $http, $location ) {
     }
 
 });
+jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
