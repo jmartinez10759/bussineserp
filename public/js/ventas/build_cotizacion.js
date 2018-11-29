@@ -648,6 +648,7 @@ new Vue({
             'fecha_inicial' : jQuery('#fecha_inicial').val()
             ,'fecha_final'  : jQuery('#fecha_final').val()
             ,'estatus'      : jQuery('#cmb_estatus_ini').val()
+            ,'vendedores'   : jQuery('#cmb_vendedores').val()
         };
         var promise = MasterController.method_master(url,fields,"post");
           promise.then( response => {
@@ -672,6 +673,7 @@ new Vue({
         jQuery('#fecha_inicial').val('');
         jQuery('#fecha_final').val('');
         jQuery('#cmb_estatus_ini').val(0);
+        jQuery('#cmb_vendedores').val(0);
         this.consulta_general();
     }
   

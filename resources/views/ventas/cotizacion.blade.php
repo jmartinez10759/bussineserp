@@ -8,12 +8,12 @@
         			<input type="hidden" id="Iva" value="{{$iva}}">
 						<div class="form-group row">
 								 <label for="daterange" class="col-md-1 control-label input-sm">Fecha Inicio </label>
-				                <div class="col-md-2">
+				                <div class="col-md-1">
 				                    <input type="text" class="form-control fecha" readonly="" id="fecha_inicial">
 				                </div>
 
 				                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Final </label>
-				                <div class="col-md-2">
+				                <div class="col-md-1">
 				                    <input type="text" class="form-control fecha" readonly="" id="fecha_final">
 				                </div>
 								
@@ -29,6 +29,11 @@
 								<label for="estatus_in" class="col-md-1 control-label input-sm">Estatus </label>
 								<div class="col-md-2">
 									{!! $estatus_in !!}
+								</div>
+
+								<label for="estatus_in" class="col-md-1 control-label input-sm">Vendedor </label>
+								<div class="col-md-2">
+									{!! $vendedores !!}
 								</div>
 								
 								<div class="col-md-2">
@@ -65,9 +70,9 @@
 								<td>@{{ cot.id_cotizacion }}
 									<!--<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>-->
 								<td>@{{ cot.created_at }}</td>
-								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
+								<td v-on:click.prevent="edit_register(cot);"><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
 								<td>@{{ cot.nombre_comercial }}</td>
-								<td>@{{ cot.vendedor }}</td>
+								<td v-on:click.prevent="edit_register(cot);">@{{ cot.vendedor }}</td>
 								<td>
 									<span class="label label-warning" v-if="cot.id_estatus == 6">@{{(cot.id_estatus != 0 )? cot.nombre: ""}}</span>
 									<span class="label label-danger" v-if="cot.id_estatus == 4">@{{(cot.id_estatus != 0 )? cot.nombre: ""}}</span>
@@ -98,11 +103,18 @@
 								</td> -->
 
 							</tr>
-
 							<!--<tr>
 								<td colspan="12"><span class="pull-right"><ul class="pagination pagination-large"><li class="disabled"><span><a>‹ Ant.</a></span></li><li class="active"><a>1</a></li><li><a href="javascript:void(0);" onclick="load(2)">2</a></li><li><a href="javascript:void(0);" onclick="load(3)">3</a></li><li><a href="javascript:void(0);" onclick="load(4)">4</a></li><li><a href="javascript:void(0);" onclick="load(5)">5</a></li><li><a>...</a></li><li><a href="javascript:void(0);" onclick="load(225)">225</a></li><li><span><a href="javascript:void(0);" onclick="load(2)">Sig. ›</a></span></li></ul></span></td>
 							</tr>-->
-						</tbody></table>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td> 
+									TOTAL COTIZACIONES: <b>@{{ cotizacion.length }}</b>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
 					</div>
 				</div>
 
