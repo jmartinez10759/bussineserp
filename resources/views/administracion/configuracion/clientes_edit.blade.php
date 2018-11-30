@@ -207,7 +207,7 @@
     </div>
 </div>
 
-<div class="col-sm-12" id="modal_edit_register" style="display:none;" ng-dblclick="update_register()">
+<div class="col-sm-12" id="modal_edit_register" style="display:none;" ng-dblclick="update_register(1)">
     <div class="modal-header">
         <h3> Detalles del Cliente </h3>
     </div>

@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-app="application" ng-controller="FacturacionController" ng-init="constructor()" ng-cloak >
+<div ng-controller="FacturacionController" ng-init="constructor()" ng-cloak >
 
 	    <div class="panel-body">
         <form class="form-horizontal">

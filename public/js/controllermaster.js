@@ -1,5 +1,4 @@
 var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber"]);
-
 app.service('masterservice', function() {
 
 	return {
@@ -79,7 +78,7 @@ app.service('masterservice', function() {
 app.directive('habilitar', function() {
 	 return {
 		 link: function(scope, element, attrs, controller) {
-		 element[0].focus();
+		 	element[0].focus();
 		 }
 	 };
 	 });

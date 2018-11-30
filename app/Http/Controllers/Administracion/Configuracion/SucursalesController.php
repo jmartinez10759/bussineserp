@@ -24,9 +24,8 @@ class SucursalesController extends MasterController
      *@return void
      */
      public function index(){
-         if( Session::get('permisos')['GET'] ){
-          return view('errors.error');
-        }
+        if( Session::get('permisos')['GET'] ){ return view('errors.error'); }
+           
            $response = $this->_tabla_model::all();
            $registros = [];
            foreach ($response as $respuesta) {
@@ -48,7 +47,7 @@ class SucursalesController extends MasterController
            $table = [
              'titulos' 		     => $titulos
              ,'registros' 	     => $registros
-             ,'id' 			     => "datatable"
+             ,'id' 			          => "datatable"
            ];
 
            $data = [
@@ -69,7 +68,7 @@ class SucursalesController extends MasterController
       */
      public function store( Request $request){
 
-        $response_store = self::$_model::create_model([$request->all()], self::$_tabla_model );
+        $response_store = $this->_model::create_model([$request->all()], self::$_tabla_model );
         if ($response_store) {
           return message( true,$response_store[0],self::$message_success );
         }
@@ -143,27 +142,6 @@ class SucursalesController extends MasterController
          }
          $data['sucursales'] = $sucursal;
          return message( true, $data , "¡Listado de sucursales de la empresa!" );
-         #return view( 'administracion.configuracion.lista_sucursales' ,$data);
-
-        //  $registros = [];
-        //  foreach ($data as $respuesta) {
-        //    $id['id'] = $respuesta->id;
-        //    $portal = build_acciones_usuario($id,'portal','Ingresar','btn btn-primary','fa fa-edit');
-        //    $registros[] = [
-        //       $respuesta->id
-        //      ,$respuesta->sucursal
-        //      ,$respuesta->descripcion
-        //      #,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-        //      ,$portal
-        //    ];
-        //  }
-         //
-        //  $titulos = [ 'ID','Sucursal','Descripción',''];
-        //  $table = [
-        //    'titulos' 		   => $titulos
-        //    ,'registros' 	 => $registros
-        //    ,'id' 			     => "data_table_sucursales"
-        //  ];
 
       }
       /**
@@ -173,8 +151,7 @@ class SucursalesController extends MasterController
        *@return void
        */
       public function load_lista_sucursal(){
-
-            return view('administracion.configuracion.lista_sucursales' );
+          return view('administracion.configuracion.lista_sucursales' );
       }
       /**
        *Metodo meter en session la empresa y/o sucursal..

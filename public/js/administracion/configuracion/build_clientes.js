@@ -104,7 +104,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
     }
 
-    $scope.update_register = function(){
+    $scope.update_register = function( dblclick = false ){
 
       var validacion = {
              'CORREO'       : $scope.update.correo
@@ -126,14 +126,16 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
           toastr.info( response.data.message , title );
-          jQuery.fancybox.close({
-                'type'      : 'inline'
-                ,'src'      : "#modal_edit_register"
-                ,'modal'    : true
-                ,'width'    : 900
-                ,'height'   : 400
-                ,'autoSize' : false
-            });
+          if (!dblclick) {
+            jQuery.fancybox.close({
+                  'type'      : 'inline'
+                  ,'src'      : "#modal_edit_register"
+                  ,'modal'    : true
+                  ,'width'    : 900
+                  ,'height'   : 400
+                  ,'autoSize' : false
+              });
+          }
           $scope.index();
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           //redirect(domain(redireccion));
