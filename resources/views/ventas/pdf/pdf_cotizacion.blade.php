@@ -94,9 +94,9 @@
     <div class="">
     <table class="tg">
         <tr>
-            <th width="10%" align="left"><img src="{{ asset('img/header_buro_laboral.jpeg') }}" alt="" width="80" height="60"></th>
-            <th width="60%" align="center">{{ $data['datos'][0]->razon_em }} <br> {{ $data['datos'][0]->calle_em }} {{ $data['datos'][0]->col_em }}<br>{{ $data['datos'][0]->tel_em }}</th>
-            <th width="15%" align="center" class="border">Cotización <br> Nº {{ $data['datos'][0]->id_cotizacion }}<span class="text"></span></th>
+            <th width="12%" align="left"><img src="{{ $data['logo'] }}" alt="" width="100" height="100"></th>
+            <th width="65%" align="center">{{ $data['datos'][0]->razon_em }} <br> {{ $data['datos'][0]->calle_em }} {{ $data['datos'][0]->col_em }}<br>{{ $data['datos'][0]->tel_em }}</th>
+            <th width="15%" align="center" class="border">Cotización <br> {{ $data['datos'][0]->id_cotizacion }}<span class="text"></span></th>
         </tr>
     </table><br>
     <table ><tr><td width="20%" align="right"><strong>Fecha: </strong>{{ $data['datos'][0]->fecha_alta }}</td></tr></table>

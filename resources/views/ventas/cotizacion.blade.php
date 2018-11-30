@@ -14,7 +14,7 @@
 
 				                <label for="daterange" class="col-md-1 control-label input-sm">Fecha Final </label>
 				                <div class="col-md-1">
-				                    <input type="text" class="form-control fecha" readonly="" id="fecha_final">
+				                    <input type="text" class="form-control fechaa" readonly="" id="fecha_final">
 				                </div>
 								
 								<!-- <label for="daterange" class="col-md-1 control-label input-sm">Vendedor </label>
@@ -30,11 +30,11 @@
 								<div class="col-md-2">
 									{!! $estatus_in !!}
 								</div>
-
+								<div {{ $permisos }}>
 								<label for="estatus_in" class="col-md-1 control-label input-sm">Vendedor </label>
-								<div class="col-md-2">
+								<div class="col-md-2" >
 									{!! $vendedores !!}
-								</div>
+								</div></div>
 								
 								<div class="col-md-2">
 									<div class="input-group">
@@ -54,6 +54,7 @@
 									<th>#</th>
 									<th>Fecha</th>
 									<th>Contacto</th>
+									<th>Empresa</th>
 									<th>Cliente</th>
 									<th>Vendedor</th>
 									<th>Estatus</th>
@@ -69,19 +70,20 @@
 							<tr v-for="cot in cotizacion">
 								<td>@{{ cot.id_cotizacion }}
 									<!--<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>-->
-								<td>@{{ cot.created_at }}</td>
+								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">@{{ cot.created_at }}</td>
 								<td v-on:click.prevent="edit_register(cot);"><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
-								<td>@{{ cot.nombre_comercial }}</td>
-								<td v-on:click.prevent="edit_register(cot);">@{{ cot.vendedor }}</td>
-								<td>
+								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">@{{ cot.razon_emp }}</td>
+								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">@{{ cot.nombre_comercial }}</td>
+								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">@{{ cot.vendedor }}</td>
+								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">
 									<span class="label label-warning" v-if="cot.id_estatus == 6">@{{(cot.id_estatus != 0 )? cot.nombre: ""}}</span>
 									<span class="label label-danger" v-if="cot.id_estatus == 4">@{{(cot.id_estatus != 0 )? cot.nombre: ""}}</span>
 									<span class="label label-success" v-if="cot.id_estatus == 5">@{{(cot.id_estatus != 0 )? cot.nombre: ""}}</span>
 								</td>
 								<!-- <td>{!! $estatus_inicio !!}</td> -->
-								<td class="text-right">	$ @{{(cot.subtotal)?cot.subtotal.toLocaleString(): 0.00}}</td>
-								<td class="text-right"> $ @{{(cot.iva)?cot.iva.toLocaleString(): 0.00}}</td>
-								<td class="text-right"> $ @{{(cot.total_conc)?cot.total_conc.toLocaleString(): 0.00}}</td>
+								<td class="text-right" v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">	$ @{{(cot.subtotal)?cot.subtotal.toLocaleString(): 0.00}}</td>
+								<td class="text-right" v-on:click.prevent="edit_register(cot);" style="cursor: pointer;"> $ @{{(cot.iva)?cot.iva.toLocaleString(): 0.00}}</td>
+								<td class="text-right" v-on:click.prevent="edit_register(cot);" style="cursor: pointer;"> $ @{{(cot.total_conc)?cot.total_conc.toLocaleString(): 0.00}}</td>
 								<td class="text-right"> 
 									<div class="dropdown">
 										<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -89,7 +91,7 @@
 											<span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-											<li><a style="cursor: pointer;" title="Editar cotización" v-on:click.prevent="edit_register(cot);"><i class="glyphicon glyphicon-edit"></i> Editar</a></li>
+											<!-- <li><a style="cursor: pointer;" title="Editar cotización" v-on:click.prevent="edit_register(cot);"><i class="glyphicon glyphicon-edit"></i> Editar</a></li> -->
 											<li><a href="#" title="Imprimir cotización" v-on:click.prevent="pdf_print(cot)"><i class="glyphicon glyphicon-print"></i> Imprimir</a></li>
 											<li><a href="#" title="Enviar cotización" v-on:click.prevent="pdf_email(cot)"><i class="glyphicon glyphicon-envelope"></i> Enviar Email</a></li>
 											<li><a href="#" title="Borrar cotización" v-on:click.prevent="destroy_cotizacion(cot)" v-if="cot.id_estatus != 5"><i class="glyphicon glyphicon-trash"></i> Eliminar</a></li>

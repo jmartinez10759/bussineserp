@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-app="ng-productos" ng-controller="ProductosController" ng-init="constructor()" ng-cloak>
+<div ng-controller="ProductosController" ng-init="constructor()" ng-cloak >
     <div class="table-responsive">
 	    <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable">
 	        <thead>

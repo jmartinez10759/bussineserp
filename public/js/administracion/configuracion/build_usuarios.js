@@ -42,7 +42,7 @@ new Vue({
         promise.then( response => {
           toastr.info( response.data.message, "¡Registro generado correctamente!" );
           jQuery('#modal_add_register').modal('hide');
-          redirect();
+          redirect(domain(redireccion));
         }).catch( error => {
             if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 
@@ -84,7 +84,7 @@ new Vue({
         var promise = MasterController.method_master(url,fields,'put');
         promise.then( response => {
             toastr.info('¡Se actualizo correctamente el registro!','¡Registro Actualizado!'); //mensaje
-            //redirect();
+            redirect(domain(redireccion));
         }).catch( error => {
             if( isset(error.response) && error.response.status == 419 ){
                 toastr.error( session_expired ); 

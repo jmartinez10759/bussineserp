@@ -11,8 +11,7 @@ var url_edit_tipo       = "tasa/factor_tasa";
 var url_edit_tasa       = "impuesto/clave_impuesto";
 var url_upload          = 'upload/files';
 
-var app = angular.module('ng-productos', ["ngRoute",'localytics.directives','components']);
-app.controller('ProductosController', function( $scope, $http, $location ) {
+app.controller('ProductosController', function( masterservice ,$scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];

@@ -138,6 +138,7 @@ class PermisosController extends MasterController
             ,'id_sucursal' => $request->id_sucursal
             ,'id_menu'     => $request->id_menu
          ];
+         #debuger($where);
          $acciones = SysUsersPermisosModel::where( $where )->get();
          return message(true,$acciones,"¡Acciones del usuario.!");
 
@@ -223,7 +224,7 @@ class PermisosController extends MasterController
     *@return void
     */
     public static function store_actions( Request $request ){
-        
+         #debuger($request->all());
           $matrix       = $request->matrix;
           $id_rol       = $request->id_rol;
           $id_users     = $request->id_users;
@@ -246,6 +247,8 @@ class PermisosController extends MasterController
                 $where['id_rol']      = $id_rol;
                 $where['id_users']    = $id_users;
                 $where['id_menu']     = $id_menu;
+                $where['id_empresa']  = $id_empresa;
+                $where['id_sucursal'] = $id_sucursal;
                 $select = self::$_model::show_model([],$where, new SysUsersPermisosModel );
                 #debuger($select);
                 $data['estatus']      = ($matrices[1] === "true")? 1 : 0;
@@ -261,8 +264,9 @@ class PermisosController extends MasterController
                     'id_rol'        => $id_rol
                     ,'id_users'     => $id_users
                     ,'id_menu'      => $id_menu
+                    ,'id_empresa'   => $id_empresa
+                    ,'id_sucursal'  => $id_sucursal
                     ,'id_accion'    => $matrices[0]
-                    // ,'id_sucursal'  => $id_sucursal
                   ];
                    $response[] = self::$_model::update_model( $where, $data, new SysUsersPermisosModel );
                 }else{

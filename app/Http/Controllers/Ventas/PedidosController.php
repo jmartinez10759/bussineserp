@@ -302,7 +302,7 @@
         #debuger($request->all());
         if( Session::get('id_rol') == 1 ){
 
-                $data = $this->_tabla_model::with([
+                $data = SysPedidosModel::with([
                     'clientes'
                     ,'contactos'
                     ,'usuarios' => function( $query ) use ($request){
@@ -361,7 +361,7 @@
                         ,'conceptos' =>function($query){
                             return $query->with(['productos','planes']);
                         },'empresas' => function($query){
-                            return $query->groupBy('id');
+                            return $query->where(['id' => Session::get('id_empresa')])->groupBy('id_pedido');
                         }]);
                     if( isset( $request->mes ) && $request->mes != 13 ){
                         $response = $data->whereMonth('sys_pedidos.created_at','=', $request->mes );
@@ -403,7 +403,7 @@
                         ,'conceptos' =>function($query){
                             return $query->with(['productos','planes']);
                         },'empresas' => function($query) {
-                            return $query->groupBy('id');
+                            return $query->where(['id' => Session::get('id_empresa')])->groupBy('id_pedido');
                         }]);
                     if( isset( $request->mes ) && $request->mes != 13 ){
                         $response = $data->whereMonth('sys_pedidos.created_at','=', $request->mes );
@@ -421,7 +421,13 @@
                 }])
             ->where(['id' => Session::get('id')])
             ->get();
-            return $data[0]->pedidos;
+            $datos = [];
+            foreach ($data[0]->pedidos as $respuesta) {
+                if ( count($respuesta->empresas) > 0 ){
+                    $datos[] = $respuesta;
+                }
+            }
+            return $datos;
         
         }
         
