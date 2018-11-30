@@ -27,15 +27,18 @@ class SysProveedoresModel extends Model
 
 
   public function sucursales(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_proveedores_empresas','id_empresa','id_sucursal')->withPivot('estatus');
+    return $this->belongsToMany(SysSucursalesModel::class,'sys_proveedores_empresas','id_proveedor','id_sucursal');
+  }
+  public function empresas(){
+    return $this->belongsToMany(SysSucursalesModel::class,'sys_proveedores_empresas','id_proveedor','id_empresa');
   }
   
   public function contactos(){
-      return $this->belongsToMany(SysContactosModel::class,'sys_proveedores_empresas','id_proveedor','id_contacto');
+      return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_proveedor','id_contacto');
   }
 
   public function productos(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel', 'sys_planes_productos', 'id_proveedor', 'id_producto');
+        return $this->belongsToMany(SysProductosModel::class, 'sys_planes_productos', 'id_proveedor', 'id_producto');
   }
   public function regimenes()
   {

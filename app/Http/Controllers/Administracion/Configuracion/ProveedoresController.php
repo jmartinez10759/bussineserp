@@ -54,11 +54,11 @@
 
             try {
                 // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
-                $response = $this->_tabla_model::with(['estados','contactos'])->orderBy('id','DESC')->get();
+                $response = $this->_tabla_model::with(['estados','contactos:id,nombre_completo,correo,telefono','empresas'],['id' => Session::get('id_empresa')])->orderBy('id','DESC')->get();
 
         $data = [
           'proveedores'           => $response
-          ,'empresas'            => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
+          ,'empresas'             => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
           ,'paises'               => SysPaisModel::get()
           ,'servicio_comercial'   => SysServiciosComercialesModel::get()
           ,'regimen_fiscal'       => SysRegimenFiscalModel::get()
@@ -135,10 +135,13 @@
                  'id_empresa'  =>  Session::get('id_empresa')  
                 ,'id_proveedor'=> $response->id
                 ,'id_sucursal' =>  Session::get('id_sucursal') 
-                ,'id_contacto' => $response_contactos->id
+                
                 ];
                 
-               SysProveedoresEmpresasModel::create($data);    
+                SysProveedoresEmpresasModel::create($data);
+                $datos['id_contacto'] = $response_contactos->id;   
+                $datos['id_proveedor']  = $response->id;   
+                SysContactosSistemasModel::create($datos);    
 
                 // debuger($request->all());
             DB::commit();
@@ -206,7 +209,13 @@
                     ,'id_proveedor'      => $request->id
                 ];
                
-                  SysProveedoresEmpresasModel::create($data);                 
+                  SysContactosSistemasModel::create($data); 
+
+                  if (Session::get('id_rol') != 1) {
+                  $datos['id_empresa']  = Session::get('id_empresa');
+                  $datos['id_sucursal'] = Session::get('id_sucursal');
+                  SysProveedoresEmpresasModel::create($datos); 
+               }                
             }
 
 
@@ -264,10 +273,11 @@
         // debuger($request->all());
         try {
             $response = SysEmpresasModel::with(['sucursales' => function($query){
-                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->groupby('id')->get();
+                return $query->where(['sys_sucursales.estatus' => 1])->groupby('id')->get();
             }])->where(['id' => $request->id_empresa])->get();
+            
             $sucursales = SysProveedoresEmpresasModel::select('id_sucursal')->where($request->all())->get();
-            #debuger($sucursales);
+            // debuger($sucursales);
             #se crea la tabla 
             $registros = [];
             foreach ($response[0]->sucursales as $respuesta) {
@@ -310,16 +320,9 @@
 
         $error = null;
         DB::beginTransaction();
-        try {
-            // debuger($request->all());
-            $where = [
-                'id_empresa'   => Session::get('id_empresa')
-                ,'id_sucursal' => Session::get('id_sucursal')
-            ];
-            $response_producto = SysProveedoresEmpresasModel::where($where)->get();
-            if( count($response_producto) > 0){
-                SysProveedoresEmpresasModel::where($where)->delete();
-            }
+        try { 
+           // debuger($request->all());
+           
             SysProveedoresEmpresasModel::where(['id_proveedor' => $request->id_proveedor ])->delete();
             $response = [];
             for ($i=0; $i < count($request->matrix) ; $i++) { 
@@ -329,7 +332,8 @@
                 $data = [
                     'id_empresa'      => $request->id_empresa
                     ,'id_sucursal'    => $id_sucursal
-                    ,'id_proveedor'   => $request->id_proveedor
+                    ,'id_proveedor'        => $request->id_proveedor
+
                 ];
                 $response[] = SysProveedoresEmpresasModel::create($data);
             }

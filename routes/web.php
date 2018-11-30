@@ -397,7 +397,7 @@ Route::group(['middleware' => ['admin.only']], function() {
 
     Route::get('/proveedores/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@display_sucursales'
-        ,'as'       => 'clientes.display_sucursales'
+        ,'as'       => 'proveedores.display_sucursales'
     ]);
     
     Route::post('/proveedores/register_permisos', [
