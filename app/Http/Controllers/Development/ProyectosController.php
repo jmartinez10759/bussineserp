@@ -6,6 +6,8 @@
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Development\SysProyectosModel;
+    use App\Model\Administracion\Configuracion\SysClientesModel;
+    use App\Model\Administracion\Configuracion\SysEstatusModel;
 
     class ProyectosController extends MasterController
     {
@@ -43,6 +45,7 @@
         public function all( Request $request ){
 
             try {
+                
             $response = SysProyectosModel::where('sys_users_projects.id_empresa', 1)
                 ->leftJoin('sys_projects'   ,'sys_projects.id'  ,'=','sys_users_projects.id_proyecto')
                 ->leftJoin('sys_tasks'      ,'sys_tasks.id'     ,'=','sys_users_projects.id_tarea')
@@ -59,7 +62,13 @@
                 )
                 ->get();
 
-              return $this->_message_success( 200, $response , self::$message_success );
+                $data = [
+                    "response"      => $response
+                    ,"clientes"     => $this->_consulta(new SysClientesModel)
+                    ,"estatus"      => SysEstatusModel::where(['estatus' => 1 ])->whereIn('id',['4','5','6'])->orderby('nombre', 'asc')->get()
+                ];
+
+              return $this->_message_success( 200, $data , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -95,7 +104,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                $response = SysProyectosModel::create($request->all());
 
             DB::commit();
             $success = true;

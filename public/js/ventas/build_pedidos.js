@@ -13,9 +13,7 @@ var url_edit_productos      = "productos/edit";
 var url_edit_planes         = "planes/edit";
 var url_insert_factura      = "facturaciones/insert";
 
-
-var app = angular.module('ng-pedidos', ["ngRoute",'localytics.directives','components',"stringToNumber"]);
-app.controller('PedidosController', function( $scope, $http, $location ) {
+app.controller('PedidosController', function( masterservice, $scope, $http, $location ) {
     
     $scope.constructor = function(){
         $scope.datos  = [];

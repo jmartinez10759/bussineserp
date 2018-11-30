@@ -3,9 +3,8 @@
 <head>
     @include('layouts.template.includes-header')
 </head>
-
 <!-- <body class="hold-transition skin-blue sidebar-mini fixed"> -->
-<body class="hold-transition skin-blue sidebar-mini fixed">
+<body class="hold-transition skin-blue sidebar-mini fixed" ng-app="application">
 
     <div class="wrapper">
 

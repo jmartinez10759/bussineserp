@@ -35,16 +35,14 @@ class ClientesController extends MasterController
      *@return void
      */
     public function index(){
+      if( Session::get('permisos')['GET'] ){ return view('errors.error'); }
         
-        if( Session::get('permisos')['GET'] ){
-          return view('errors.error');
-        }
-        $data = [
-           'page_title' 	          => "Configuración"
-           ,'title'  		            => "Prospectos"
-         ];
+      $data = [
+         'page_title' 	          => "Configuración"
+         ,'title'  		            => "Prospectos"
+      ];
          #debuger($data);
-         return self::_load_view( 'administracion.configuracion.clientes', $data );
+        return self::_load_view( 'administracion.configuracion.clientes', $data );
     }
     /**
      *Metodo para realizar la consulta por medio de su id
