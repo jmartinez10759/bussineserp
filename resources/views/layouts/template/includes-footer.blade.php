@@ -49,9 +49,16 @@
     <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/dropzone.js')}}"></script>
-    <!-- script master vue -->
+    <!-- angular -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-animate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-chosen-localytics/1.9.2/angular-chosen.min.js"></script>
+    <script src="{{asset('js/angular-bootstrap-select.min.js')}}"></script>
+    <!-- script master -->
     <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
     <!-- InputMask -->
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.js')}}"></script>
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.date.extensions.js')}}"></script>
@@ -66,14 +73,6 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
     <script data-require="chosen@*" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
-    <!--  <script data-require="chosen@*" data-semver="1.0.0" src="//cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.jquery.min.js"></script>
-    <script data-require="chosen" data-semver="1.0.0" src="//cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.proto.min.js"></script> -->
-
-    <!-- angular -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-animate.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-chosen-localytics/1.9.2/angular-chosen.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.4/jspdf.plugin.autotable.min.js"></script>

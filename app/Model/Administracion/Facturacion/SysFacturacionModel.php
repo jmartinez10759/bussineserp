@@ -23,13 +23,13 @@ class SysFacturacionModel extends Model
     ,'archivo'
   ];
 
-  public function usuarios(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_facturacion','id_factura','id_users');
+  public function usuarios()
+  {
+    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_facturacion','id_factura','id_users');
   }
-
-  public function clientes(){
+  public function clientes()
+  {
     return $this->belongsToMany('App\Model\Administracion\Configuracion\SysClientesModel','sys_users_facturacion','id_factura','id_cliente');
-    #return $this->hasOne('App\Model\Administracion\Configuracion\SysClientesModel','id','id_cliente');
   }
 
   public function formasPagos(){

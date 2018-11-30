@@ -15,8 +15,8 @@
     use App\Model\Administracion\Configuracion\SysEmpresasModel;
     use App\Model\Administracion\Configuracion\SysSucursalesModel;
     use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
-    
-
+    use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
+    use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
 
     class ProveedoresController extends MasterController
     {
@@ -54,12 +54,14 @@
 
             try {
                 // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
-                $response = $this->_tabla_model::with(['estados','contactos'])->orderBy('id')->get();
+                $response = $this->_tabla_model::with(['estados','contactos'],['id' => Session::get('id_empresa')])->orderBy('id','DESC')->get();
+
         $data = [
-          'proveedores'            => $response
+          'proveedores'           => $response
+          ,'empresas'            => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
           ,'paises'               => SysPaisModel::get()
           ,'servicio_comercial'   => SysServiciosComercialesModel::get()
-          ,'regimen_fiscal'             => SysRegimenFiscalModel::get()
+          ,'regimen_fiscal'       => SysRegimenFiscalModel::get()
         ];
 
 
@@ -130,10 +132,10 @@
                $response = $this->_tabla_model::create( $string_data_proveedor );
                $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
-                     'id_empresa' => session::get('id_empresa')
-                    ,'id_proveedor' => $response->id
-                    ,'id_sucursal' => session::get('id_sucursal')
-                    ,'id_contacto' => $response_contactos->id
+                 'id_empresa'  =>  Session::get('id_empresa')  
+                ,'id_proveedor'=> $response->id
+                ,'id_sucursal' =>  Session::get('id_sucursal') 
+                ,'id_contacto' => $response_contactos->id
                 ];
                 
                SysProveedoresEmpresasModel::create($data);    
@@ -260,4 +262,93 @@
 
         }
 
+        public function display_sucursales( Request $request ){
+        // debuger($request->all());
+        try {
+            $response = SysEmpresasModel::with(['sucursales' => function($query){
+                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->groupby('id')->get();
+            }])->where(['id' => $request->id_empresa])->get();
+            $sucursales = SysProveedoresEmpresasModel::select('id_sucursal')->where($request->all())->get();
+            #debuger($sucursales);
+            #se crea la tabla 
+            $registros = [];
+            foreach ($response[0]->sucursales as $respuesta) {
+                $id['id'] = 'sucursal_'.$respuesta->id;
+                $icon = build_actions_icons($id, 'id_sucursal="' . $respuesta->id . '" ','sucursal');
+                $registros[] = [
+                    $respuesta->codigo
+                    ,$respuesta->sucursal
+                    ,$respuesta->direccion
+                    ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
+                    ,$icon
+                ];
+            }
+
+            $titulos = [ 'Codigo','Sucursal','Direccion', 'Estatus',''];
+            $table = [
+                'titulos'          => $titulos
+                ,'registros'       => $registros
+                ,'id'              => "sucursales"
+            ];
+            $data = [
+                'tabla_sucursales'  => data_table($table)
+                ,'sucursales'       => $sucursales
+            ];
+            return $this->_message_success(200, $data, self::$message_success);
+        } catch (\Exception $e) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return $this->show_error(6, $error, self::$message_error);
+        }
+
+        
     }
+    /**
+     * Metodo para insertar los permisos de los productos
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function register_permisos(Request $request){
+
+        $error = null;
+        DB::beginTransaction();
+        try {
+            // debuger($request->all());
+            $where = [
+                'id_empresa'   => Session::get('id_empresa')
+                ,'id_sucursal' => Session::get('id_sucursal')
+            ];
+            $response_producto = SysProveedoresEmpresasModel::where($where)->get();
+            if( count($response_producto) > 0){
+                SysProveedoresEmpresasModel::where($where)->delete();
+            }
+            SysProveedoresEmpresasModel::where(['id_proveedor' => $request->id_proveedor ])->delete();
+            $response = [];
+            for ($i=0; $i < count($request->matrix) ; $i++) { 
+                $matrices = explode('|', $request->matrix[$i] );
+                $id_sucursal = $matrices[0];
+                #se realiza una consulta si existe un registro.
+                $data = [
+                    'id_empresa'      => $request->id_empresa
+                    ,'id_sucursal'    => $id_sucursal
+                    ,'id_proveedor'        => $request->id_proveedor
+                ];
+                $response[] = SysProveedoresEmpresasModel::create($data);
+            }
+
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+            return $this->_message_success(201, $response, self::$message_success);
+        }
+        return $this->show_error(6, $error, self::$message_error);
+
+    }
+
+}

@@ -325,11 +325,15 @@ width: 100% !important;
 					</tr>
 				</table>
 				<div class="footer">
-					<!-- <table width="100%">
+					<table width="100%">
 						<tr>
-							<td class="aligncenter content-block"><a href="http://www.mailgun.com">Unsubscribe</a> from these alerts.</td>
+							<td class="aligncenter content-block">
+								<a href="#">
+							        Clic para Autorizar Solicitud
+							    </a>
+							</td>
 						</tr>
-					</table> -->
+					</table>
 				</div></div>
 		</td>
 		<td></td>

@@ -7,6 +7,9 @@ var redireccion  = "configuracion/proveedores";
 var url_edit_pais       = 'pais/edit';
 var url_edit_codigos    = 'codigopostal/show';
 var url_upload          = 'upload/files';
+var url_display = "proveedores/display_sucursales";
+var url_insert_permisos = "proveedores/register_permisos";
+
 var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
 app.controller('ProveedoresController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
@@ -16,7 +19,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           id_regimen_fiscal: null
           ,id_country: 151
           ,id_servicio_comercial: null
-          // ,estatus: 1
+          ,estatus: 1
         };
         $scope.update = {};
         $scope.edit   = {};
@@ -52,11 +55,16 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     $scope.insert_register = function(){
 
       var validacion = {
-            'CORREO'        : $scope.insert.correo
-            ,'ESTATUS'        : $scope.insert.estatus
-            ,'RAZON SOCIAL' : $scope.insert.razon_social
-            ,'RFC'          : $scope.insert.rfc
-            ,'PAIS'         : $scope.insert.id_country
+            'CORREO'               : $scope.insert.correo
+            ,'RAZON SOCIAL'        : $scope.insert.razon_social
+            ,'RFC'                 : $scope.insert.rfc
+            ,'PAIS'                : $scope.insert.id_country
+            ,'ESTADO'              : $scope.insert.id_estado
+            ,'CODIGO POSTAL'       : $scope.insert.id_codigo
+            ,'SERVICIO COMERCIAL'  : $scope.insert.id_servicio_comercial
+            ,'REGIMEN FISCAL'      : $scope.insert.id_regimen_fiscal
+            // ,'ESTATUS'             : $scope.insert.estatus
+
            };
            if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.insert.correo ) ){  
@@ -66,23 +74,8 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         if( !valida_rfc($scope.insert.rfc) ){
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
-        }
-        
-        // if($scope.insert.id_country == 151 ){
-          if($scope.insert.id_estado == null){
-            return toastr.warning('Debe de Seleccionar un estado');
-          }
-        // }
-        if($scope.insert.estatus == null){
-            return toastr.warning('Debe de Elegir el Estatus');
-          }
-        
-        if($scope.insert.id_servicio_comercial == null){
-            return toastr.warning('Debe de Seleccionar un Servicio');
-          }
-        if($scope.insert.id_regimen_fiscal == null){
-            return toastr.warning('Debe de Seleccionar el Regimen Fiscal');
-         }
+        }       
+
         var url = domain( url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
@@ -112,13 +105,18 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
 
     $scope.update_register = function(){
 
-      var validacionU = {
-             'CORREO'       : $scope.update.correo
-            ,'RAZON SOCIAL' : $scope.update.razon_social
-            ,'RFC'          : $scope.update.rfc
-            ,'PAIS'         : $scope.update.id_country
+      var validacion = {
+             'CORREO'              : $scope.update.correo
+            ,'RAZON SOCIAL'        : $scope.update.razon_social
+            ,'RFC'                 : $scope.update.rfc
+            ,'PAIS'                : $scope.update.id_country
+            ,'ESTADO'              : $scope.update.id_estado
+            ,'CODIGO POSTAL'       : $scope.update.id_codigo
+            ,'SERVICIO COMERCIAL'  : $scope.update.id_servicio_comercial
+            ,'REGIMEN FISCAL'      : $scope.update.id_regimen_fiscal
+            // ,'ESTATUS'             : $scope.update.estatus
           };
-        if(validaciones_fields(validacionU)){return;}
+        if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.update.correo ) ){  
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
@@ -127,22 +125,6 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        if($scope.update.estatus == null){
-            return toastr.warning('Debe de Elegir el Estatus');
-           
-          }
-        // if($scope.update.id_country == 151 ){
-          if($scope.update.id_estado == null){
-            return toastr.warning('Debe de Seleccionar un estado');
-          }
-        // }
-        
-        if($scope.update.id_servicio_comercial == null){
-            return toastr.warning('Debe de Seleccionar un Servicio');
-          }
-        if($scope.update.id_regimen_fiscal == null){
-            return toastr.warning('Debe de Seleccionar el Regimen Fiscal');
-         }
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
@@ -264,6 +246,78 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error( error.data.result , expired );  
       }); 
     }
+    $scope.display_sucursales = function( id ) {
+
+       var id_empresa = jQuery('#cmb_empresas_'+id).val().replace('number:','');
+       var url = domain( url_display );
+       var fields = { 
+           id_empresa : id_empresa
+           ,id_proveedor : id
+       };
+       $scope.fields.id_empresa = id_empresa;
+       $scope.fields.id_proveedor = id;
+       MasterController.request_http(url, fields, "get", $http ,false)
+       .then(response => {
+           jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
+           jQuery.fancybox.open({
+               'type': 'inline',
+               'src':  "#permisos",
+               'buttons': ['share', 'close']
+           });
+           for (var i = 0; i < response.data.result.sucursales.length; i++) {
+               console.log(response.data.result.sucursales[i].id_sucursal);
+               jQuery(`#sucursal_${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
+           };
+       }).catch(error => {
+           if( isset(error.response) && error.response.status == 419 ){
+            toastr.error( session_expired ); 
+            redirect(domain("/"));
+            return;
+          }
+            console.error(error);
+            toastr.error( error.result , expired );  
+
+       });
+
+    
+    }
+    $scope.insert_permisos = function(){
+
+        var matrix = [];
+        var i = 0;
+        jQuery('#sucursales input[type="checkbox"]').each(function () {
+            if (jQuery(this).is(':checked') == true) {
+                var id = jQuery(this).attr('id_sucursal');
+                matrix[i] = `${id}|${jQuery(this).is(':checked')}`;
+                i++;
+            }
+        });
+        var url = domain(url_insert_permisos);
+        var fields = {
+            'matrix' : matrix
+            , 'id_empresa': $scope.fields.id_empresa
+            , 'id_proveedor': $scope.fields.id_proveedor
+        }
+        MasterController.request_http(url, fields, "post", $http, false )
+        .then(response => {
+            //this.sucursales = response.data.result;
+            jQuery.fancybox.close({
+                'type': 'inline',
+                'src': "#permisos",
+                'buttons': ['share', 'close']
+            });
+            jQuery('#tr_'+$scope.fields.id_proveedor).effect("highlight",{},5000);
+            $scope.consulta_general();
+        }).catch(error => {
+            if( isset(error.response) && error.response.status == 419 ){
+              toastr.error( session_expired ); 
+              redirect(domain("/"));
+              return;
+            }
+              toastr.error( error.data.result , expired );  
+
+        });
+    }
     $scope.upload_file = function(update){
 
       var upload_url = domain( url_upload );
@@ -305,4 +359,6 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
       });
 
     }
+
   });
+

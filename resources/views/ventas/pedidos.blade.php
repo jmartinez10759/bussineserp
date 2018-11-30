@@ -21,7 +21,6 @@
                 </div>
 
                 <div class="col-sm-6">
-                    
                     <ul class="pagination pagination-sm">
                         <li ng-repeat="filtros in filtro" class="@{{filtros.class}}" >                    
                             <a style="cursor: pointer" ng-click="filtros_mes(filtros)"> 
@@ -64,7 +63,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     <tr ng-repeat="data in datos.response" id="tr_@{{ data.id }}" >
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{data.id}}</td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ format_date(data.created_at,'yyyy-mm-dd') }}</td>
@@ -103,12 +101,12 @@
                                         </a>
                                     </li> -->
                                     <li {{$reportes}}>
-                                        <a href="#" title="Imprimir cotización" ng-click="descargar();">
+                                        <a style="cursor:pointer;" title="Imprimir cotización" ng-click="see_reporte(data)">
                                             <i class="glyphicon glyphicon-print"></i> Reporte
                                         </a>
                                     </li>
-                                    <li {{$email}}>
-                                        <a title="Enviar Correo">
+                                    <li {{ $email }}>
+                                        <a title="Enviar Correo" style="cursor:pointer;" ng-click="send_reporte(data)">
                                             <i class="glyphicon glyphicon-envelope"></i> Enviar Email
                                         </a>
                                     </li>
@@ -124,8 +122,8 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td> 
-                            TOTAL PEDIDOS: @{{ datos.total_pedidos }}
+                        <td style="background-color:#eee"> 
+                            TOTAL PEDIDOS: <strong> @{{ datos.total_pedidos }} </strong>
                         </td>
                     </tr>
                 </tfoot>

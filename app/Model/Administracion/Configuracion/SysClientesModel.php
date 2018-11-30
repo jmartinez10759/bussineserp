@@ -29,6 +29,10 @@ class SysClientesModel extends Model
     {
       return $this->belongsToMany('App\Model\Administracion\Facturacion\SysFacturacionModel','sys_users_facturacion','id_cliente','id_factura');
     }
+    public function facturaciones()
+    {
+      return $this->belongsToMany('App\Model\Administracion\Ventas\SysFacturacionesModel','sys_users_facturaciones','id_cliente','id_facturacion');
+    }
     public function usuarios()
     {
       return $this->belongsToMany(SysUsersModel::class,'sys_users_facturacion','id_cliente','id_users');

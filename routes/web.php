@@ -394,6 +394,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProveedoresController@destroy'
         ,'as'       => 'proveedores.destroy'
     ]);
+
+    Route::get('/proveedores/display_sucursales', [
+        'uses'      => 'Administracion\Configuracion\ProveedoresController@display_sucursales'
+        ,'as'       => 'clientes.display_sucursales'
+    ]);
     
     ######################### MODULO DE PLANES ##################################
     
@@ -588,6 +593,11 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::post('/upload/register', [
         'uses'      => 'Administracion\Configuracion\ClientesController@store'
         ,'as'       => 'clientes.register'
+    ]);
+
+    Route::put('/clientes/estatus', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@estatus_update'
+        ,'as'       => 'clientes.update'
     ]);
 
 
@@ -942,9 +952,19 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'pedidos.register'
         ]);
 
+        Route::post('/pedidos/correo', [
+            'uses'      => 'Ventas\PedidosController@correo'
+            ,'as'       => 'pedidos.correo'
+        ]);
+
         Route::get('/pedidos/edit', [
             'uses'      => 'Ventas\PedidosController@show'
             ,'as'       => 'pedidos.edit'
+        ]);
+
+        Route::get('/pedidos/reportes/{id}', [
+            'uses'      => 'Ventas\PedidosController@reportes'
+            ,'as'       => 'pedidos.reportes'
         ]);
 
         Route::put('/pedidos/update', [
@@ -993,7 +1013,10 @@ Route::group(['middleware' => ['admin.only']], function() {
             'uses'      => 'Ventas\FacturacionesController@update'
             ,'as'       => 'facturaciones.update'
         ]);
-
+        Route::put('/facturaciones/estatus', [
+            'uses'      => 'Ventas\FacturacionesController@estatus'
+            ,'as'       => 'facturaciones.estatus'
+        ]);
         Route::delete('/facturaciones/destroy', [
             'uses'      => 'Ventas\FacturacionesController@destroy'
             ,'as'       => 'facturaciones.destroy'
