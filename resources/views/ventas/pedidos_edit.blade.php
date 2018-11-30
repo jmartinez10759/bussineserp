@@ -583,7 +583,7 @@
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
             <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-            <button type="button" class="btn btn-info" ng-click="send_correo()" {{$email}}><i class="glyphicon glyphicon-envelope"></i> Enviar Correo </button>
+            <button type="button" class="btn btn-info" ng-click="send_correo()" {{$email}}><i class="glyphicon glyphicon-send"></i> Enviar Correo </button>
         </div>
     </div>
     

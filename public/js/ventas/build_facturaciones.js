@@ -1,14 +1,17 @@
-var url_insert              = "facturaciones/register";
-var url_update              = "facturaciones/update";
-var url_edit                = "facturaciones/edit";
-var url_destroy             = "facturaciones/destroy";
-var url_destroy_conceptos   = "facturaciones/destroy_concepto";
-var url_all                 = "facturaciones/all";
-var redireccion             = "ventas/facturaciones";
-var url_edit_clientes       = "clientes/edit";
-var url_edit_contactos      = "contactos/edit";
-var url_edit_productos      = "productos/edit";
-var url_edit_planes         = "planes/edit";
+const URL = {
+    url_insert             :  "facturaciones/register"
+    ,url_update             :  "facturaciones/update"
+    ,url_update_estatus     :  "facturaciones/estatus"
+    ,url_edit               :  "facturaciones/edit"
+    ,url_destroy            :  "facturaciones/destroy"
+    ,url_destroy_conceptos  :  "facturaciones/destroy_concepto"
+    ,url_all                :  "facturaciones/all"
+    ,redireccion            :  "ventas/facturaciones"
+    ,url_edit_clientes      :  "clientes/edit"
+    ,url_edit_contactos     :  "contactos/edit"
+    ,url_edit_productos     :  "productos/edit"
+    ,url_edit_planes        :  "planes/edit"
+} 
 
 app.controller('FacturacionController', function( masterservice ,$scope, $http, $location ) {
     
@@ -35,30 +38,29 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
     }
 
     $scope.index = function( array = {} ){
-        var url = domain( url_all );
+        var url = domain( URL.url_all );
         var fields = (array != 0)? array :{};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( URL )){return;};
+            
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+              masterservice.session_status({},error);
         });
     
     }
 
     $scope.conceptos = function( update = false ){
-
-        var url = domain( url_edit );
+        var url = domain( URL.url_edit );
         var fields = { id: (update)? $scope.update.id : $scope.insert.id };
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( URL )){return;};
+            
            console.log(response.data.result);
           if (update) {
             $scope.update.id        = response.data.result.request.id;
@@ -79,11 +81,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             $scope.total    = response.data.result.total;
 
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
+              masterservice.session_status({},error);
               console.error(error);
               toastr.error( error.result , expired );
         });
@@ -92,7 +90,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
     $scope.insert_register = function( update = false ){
 
-        var url = domain( url_insert );
+        var url = domain( URL.url_insert );
         $scope.insertar.factura = (update)? $scope.update :$scope.insert;
         $scope.insertar.conceptos = [$scope.products];
         var validacion = {
@@ -147,6 +145,9 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
             //toastr.success( response.data.message , title );
+            //not remove function this is  verify the session
+              if(masterservice.session_status( URL )){return;};
+
             console.log(response.data.result);
             if(update){
                 $scope.conceptos(update);
@@ -162,11 +163,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             }
             $scope.products = {};
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
+              masterservice.session_status( "", error );
               console.error( error );
               toastr.error( error.result , expired );
         });
@@ -215,10 +212,13 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
                 ,'buttons'  : ['share', 'close']
             });
           }
-          var url = domain( url_update );
+          var url = domain( URL.url_update );
           var fields = {factura : $scope.insertar.factura };
           MasterController.request_http(url,fields,'put',$http, false )
           .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( URL )){return;};
+              
               toastr.info( response.data.message , title );
               jQuery.fancybox.close({
                     'type'      : 'inline'
@@ -231,8 +231,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
               var id = (update)? $scope.update.id : $scope.insert.id;
               jQuery('#tr_'+id ).effect("highlight",{},5000);
               var data = {
-                mes: $scope.meses
-                ,anio: $scope.anio
+                mes: $scope.meses ,anio: $scope.anio, usuario: $scope.usuario
               }
               $scope.index(data);
               if(response.data.result.request.id_estatus == 5){
@@ -254,13 +253,9 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
               jQuery('.update').prop('disabled',false);
 
           }).catch(function( error ){
-              if( isset(error.response) && error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-                console.error( error );
-                toastr.error( error.result , expired );
+              masterservice.session_status({},error)
+              console.error( error );
+              toastr.error( error.result , expired );
           });
     
     }
@@ -291,29 +286,25 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
     $scope.destroy_register = function( id, cancel = false ){
 
-      var url = domain( url_destroy );
+      var url = domain( URL.url_destroy );
       var fields = {id : id };
       var titulo = (cancel)? "¿Cancelar Pedido?" : "¿Borrar Registro?";
       var descripcion = (cancel)? "¿Realmente desea cancelar el pedido?" : "¿Realmente desea eliminar el registro?";
       buildSweetAlertOptions(titulo,descripcion,function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+            masterservice.session_status( URL );
             if(!cancel){
               toastr.success( response.data.message , title );
             }
             var data = {
-                mes: $scope.meses
-                ,anio: $scope.anio
+                mes: $scope.meses ,anio: $scope.anio ,usuario: $scope.usuario
               }
             $scope.index(data);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status( {},error );
+            console.error( error );
+            toastr.error( error.result , expired );
         });
           
       },"warning",true,["SI","NO"]);  
@@ -322,20 +313,16 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
     $scope.destroy_concepto = function( id , update = false ){
 
-        var url = domain( url_destroy_conceptos );
+        var url = domain( URL.url_destroy_conceptos );
         var fields = {id : id };
-
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+              masterservice.session_status( URL );
               $scope.conceptos(update);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status( {},error );
+            console.error( error );
+            toastr.error( error.result , expired );
         });                
     
     }
@@ -362,22 +349,19 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
     $scope.display_contactos = function( update = false ){
 
-      var url = domain( url_edit_clientes );
+      var url = domain( URL.url_edit_clientes );
       var fields = {id : (update)? $scope.update.id_cliente : $scope.insert.id_cliente };
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+            masterservice.session_status( URL );
             $scope.cmb_contactos = response.data.result.contactos;
             $scope.fields.rfc = response.data.result.rfc_receptor
             $scope.fields.nombre_comercial = response.data.result.nombre_comercial
             $scope.fields.telefono_empresa = response.data.result.telefono
             console.log(response);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
+              masterservice.session_status( {},error );
               console.error( error );
               toastr.error( error.result , expired );
         });
@@ -386,20 +370,17 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
     $scope.change_contactos = function( update = false ){
 
-      var url = domain( url_edit_contactos );
+      var url = domain( URL.url_edit_contactos );
       var fields = {id : (update)? $scope.update.id_contacto : $scope.insert.id_contacto };
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+            masterservice.session_status( URL );
             $scope.fields.telefono = response.data.result.telefono
             $scope.fields.correo = response.data.result.correo
             console.log(response);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
+              masterservice.session_status( {},error );
               console.error( error );
               toastr.error( error.result , expired );
         });
@@ -408,11 +389,12 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
     $scope.display_productos = function( update = false){
 
-      var url = domain( url_edit_productos );
+      var url = domain( URL.url_edit_productos );
       var fields = {id : (update)? $scope.products.id_producto : $scope.products.id_producto};
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+            masterservice.session_status( URL );
             $scope.products.id_plan = null;
             $scope.products.precio = response.data.result.total;
             $scope.products.descripcion = response.data.result.descripcion;
@@ -420,24 +402,21 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             $scope.products.total = 0;
             console.log(response);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status( {},error );
+            console.error( error );
+            toastr.error( error.result , expired );
         });
 
     }
 
     $scope.display_planes = function ( update = false ){
 
-      var url = domain( url_edit_planes );
+      var url = domain( URL.url_edit_planes );
       var fields = {id : (update)? $scope.products.id_plan : $scope.products.id_plan};
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+            masterservice.session_status( URL );
             $scope.products.id_producto = null;
             $scope.products.precio = response.data.result.total;
             $scope.products.descripcion = response.data.result.descripcion;
@@ -445,47 +424,64 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             $scope.products.total = 0;
             console.log(response);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status( {},error );
+            console.error( error );
+            toastr.error( error.result , expired );
         });
 
     }
     
     $scope.calcular_suma = function( update = false ){
-        var precio = ($scope.products.precio != "") ? $scope.products.precio : 0;
-        var cantidad = ($scope.products.cantidad != "") ? $scope.products.cantidad: 0;
-        var total  = parseFloat(precio * cantidad);
-        $scope.products.total = total.toFixed(2);
+
+      $scope.products.total = masterservice.calcular_suma( $scope.products.precio, $scope.products.cantidad );
 
     }
 
-    /*$scope.insert_facturacion = function(){
+    $scope.update_estatus = function( id ){
+        var status = parseInt(jQuery('#cmb_estatus_'+id).val().replace('number:',''));
+        var url = domain( URL.url_update_estatus );
+        var fields = {id : id, id_estatus: (status) };
+        if( status === 8 ){
+             buildSweetAlertOptions("¿Timbrar Factura?","¿Realmente desea timbrar la factura?",function(){
+              //alert("Se realiza el timbrado favor de esperar....");  
+              $scope.estatus_update(url,fields);
+              jQuery('#tr_'+id ).effect("highlight",{},5000);
+            },"warning",true,["SI","NO"],function(){
+              var data = {
+                  mes: $scope.meses, anio: $scope.anio, usuario: $scope.usuario
+              }
+                $scope.index(data);
+            });  
 
-      var url = domain( url_insert_factura );
-      var fields = $scope.update.pedidos;
-      MasterController.request_http(url,fields,'post',$http, false )
-      .then( response => {
-          buildSweetAlertOptions("Serie: A Folio: "+response.data.result.id,"Se genero la factura para timbrar",function(){
-              redirect(domain("ventas/facturaciones"));
-          },"success",false,["OK",""]);   
-      }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-          console.log(error);
-            toastr.error( error.result , expired );  
-      });
+        }else{
+           $scope.estatus_update(url,fields);
+           jQuery('#tr_'+id ).effect("highlight",{},5000);
+        }
 
-    }*/
+    }
+
+    $scope.estatus_update = function(url,fields){
+
+        MasterController.request_http(url,fields,'put',$http, false )
+        .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( URL )){return;};
+
+            toastr.info( response.data.message , title );
+            var data = {
+              mes: $scope.meses ,anio: $scope.anio, usuario: $scope.usuario
+            }
+            $scope.index(data);
+
+        }).catch(function( error ){
+            masterservice.session_status({},error);
+        });
+
+    }
     $scope.format_date = function( request, format ){
-       return masterservice.format_date( request , format )
+
+       return masterservice.format_date( request , format );
+
     }
     $scope.filtros_mes = function(data){
         for(var i in $scope.filtro){ $scope.filtro[i].class = "";}
@@ -528,13 +524,14 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
               $scope.filtro[i].class = "active";
           }
         }
+    
     }
     $scope.select_anios = function(){
         $scope.anio = masterservice.select_anios().anio;
         $scope.cmb_anios = masterservice.select_anios().cmb_anios;
         console.log($scope.cmb_anios);
+    
     }
-
     $scope.see_reporte = function( data ){
 
         jQuery.fancybox.open({
@@ -544,7 +541,6 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         });
 
     }
-
     $scope.send_reporte = function(data){
 
         $scope.correo.email        = data.contactos.correo;
@@ -563,13 +559,13 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         });
 
     }
-
     $scope.send_correo = function(){
 
-        var url = domain( url_send_correo );
+        var url = domain( URL.url_send_correo );
         var fields = $scope.correo;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+            masterservice.session_status( URL );
             toastr.success( "Se envio el correo correctamente" , title ); 
             jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -581,17 +577,15 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             });           
             $scope.correo = {};
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status( {},error );
+            console.error( error );
+            toastr.error( error.result , expired );
         }); 
 
     }
+
 });
+
 jQuery(".add").fancybox({ 
   modal: true ,width: 800 ,height: 600,autoSize: false
 });

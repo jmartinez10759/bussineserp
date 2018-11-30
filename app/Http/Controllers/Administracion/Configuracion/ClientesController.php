@@ -221,6 +221,32 @@ class ClientesController extends MasterController
           return $this->show_error(6, $error, self::$message_error );
         
     }
+     /**
+     *Metodo para la actualizacion de los registros
+     *@access public
+     *@param Request $request [Description]
+     *@return void
+     */
+    public function estatus_update( Request $request ){
+
+        $error = null;
+          DB::beginTransaction();
+          try {
+             $this->_tabla_model::where(['id' => $request->id] )->update( [ 'estatus' => $request->estatus ] );
+            DB::commit();
+            $success = true;
+          } catch (\Exception $e) {
+              $success = false;
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              DB::rollback();
+          }
+
+          if ($success) {
+            return $this->_message_success( 201, $success , self::$message_success );
+          }
+          return $this->show_error(6, $error, self::$message_error );
+
+    }
     /**
      *Metodo para borrar el registro
      *@access public

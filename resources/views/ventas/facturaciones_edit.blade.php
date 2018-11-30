@@ -355,7 +355,7 @@
                             <td class="text-right">$ @{{concepto.precio.toLocaleString() }}  </td>
                             <td class="text-right">$ @{{concepto.total.toLocaleString() }}</td>
                             <td class="text-center">
-                                <div ng-if="estatus != 5 ">
+                                <div ng-if="estatus != 8 ">
                                     <a style="cursor: pointer;" ng-click="destroy_concepto(concepto.id,1)" {{$eliminar}}>
                                         <i class="glyphicon glyphicon-trash"></i>
                                     </a>
@@ -401,7 +401,7 @@
             <button type="button" class="btn btn-danger" data-fancybox-close ng-click="cancel_pedido()">
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-info update" ng-click="update_register(1)" {{$update}} ng-if="estatus != 5 ">
+            <button type="button" class="btn btn-info update" ng-click="update_register(1)" {{$update}} ng-if="estatus !=8 ">
                 <i class="fa fa-save"></i> Actualizar
             </button>
         </div>
@@ -552,7 +552,7 @@
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
             <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-            <button type="button" class="btn btn-info agregar" ng-click="insert_register(1)" {{$insertar}} ng-if="estatus != 5"><i class="fa fa-save"></i> Agregar </button>
+            <button type="button" class="btn btn-info agregar" ng-click="insert_register(1)" {{$insertar}} ng-if="estatus!=8"><i class="fa fa-save"></i> Agregar </button>
         </div>
     </div>
     
@@ -595,7 +595,7 @@
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
             <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-            <button type="button" class="btn btn-info" ng-click="send_correo()" {{$email}}><i class="glyphicon glyphicon-envelope"></i> Enviar Correo </button>
+            <button type="button" class="btn btn-info" ng-click="send_correo()" {{$email}}><i class="glyphicon glyphicon-send"></i> Enviar Correo </button>
         </div>
     </div>
     

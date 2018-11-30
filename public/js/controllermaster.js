@@ -5,12 +5,13 @@ app.service('masterservice', function() {
 	return {
 	    
 	    format_date : function(fecha, format) {
-		      var d = new Date(fecha);
+		    var d = new Date(fecha);
 	        if( format === "yyyy-mm-dd"){
 	          return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +  ("0" +(d.getDate())).slice(-2);
 	        }else{
 	          return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
 	        }
+
 	    },
 	    calendar : function(){
 
@@ -22,6 +23,7 @@ app.service('masterservice', function() {
 		        count++;
 		    }
 		    return calendar;
+		
 		},
 		select_anios : function(){
 	        var fecha = new Date();
@@ -33,6 +35,38 @@ app.service('masterservice', function() {
 	            cont++;
 	        }
 	        return { anio: select[1].id, cmb_anios: select };
+	    
+	    },
+	    calcular_suma : function( precio = false, cantidad = false ){
+
+	        var precio = (precio != "") ? precio : 0;
+	        var cantidad = (cantidad != "") ? cantidad: 0;
+	        var total  = parseFloat(precio * cantidad);
+	        return total.toFixed(2);
+
+	    },
+	    session_status: function( url = {}, error = {} ){
+	    	//console.log(url);
+    		for(var i in url ){
+		    	if( url[i] === domain() ){
+	              toastr.error( session_expired );
+	              setTimeout(function(){ redirect(domain()); }, 1500); 
+	              return true;
+	            }
+    			
+    		}
+
+	    	if ( error.length > 0 ) {
+		    	if( isset(error.response) && error.response.status == 419 ){
+	                  toastr.error( session_expired );
+	                  setTimeout(function(){ redirect(domain()); }, 1000);  
+	                  return;
+	            }
+	            console.error( error );
+              	toastr.error( error.result , expired );
+
+	    	}
+
 	    }
 
 
@@ -42,6 +76,14 @@ app.service('masterservice', function() {
   	}
 
 });
+app.directive('habilitar', function() {
+	 return {
+		 link: function(scope, element, attrs, controller) {
+		 element[0].focus();
+		 }
+	 };
+	 });
+
 
 /*app.service('masterservice',function(){
 
