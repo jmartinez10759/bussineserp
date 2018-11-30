@@ -60,6 +60,9 @@
                         <th class="text-right">Subtotal</th>
                         <th class="text-right">Iva</th>
                         <th class="text-right">Total</th>
+                        <th class="text-right"></th>
+                        <th class="text-right"></th>
+                        <th class="text-right"></th>
                         <th class="text-right">Acciones</th>
                     </tr>
                 </thead>
@@ -76,9 +79,15 @@
                             @{{(data.usuarios != 0)? data.usuarios[0].name+" "+data.usuarios[0].first_surname: "" }}
                         </td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >
-                            <span class="label label-warning" ng-if="data.id_estatus == 6">@{{(data.id_estatus != null )? data.estatus.nombre: ""}}</span>
-                            <span class="label label-danger" ng-if="data.id_estatus == 4">@{{(data.id_estatus != null )? data.estatus.nombre: ""}}</span>
-                            <span class="label label-success" ng-if="data.id_estatus == 5">@{{(data.id_estatus != null )? data.estatus.nombre: ""}}</span>
+                            <span class="label label-warning" ng-if="data.id_estatus == 6">
+                                @{{(data.id_estatus != null )? data.estatus.nombre: ""}}
+                            </span>
+                            <span class="label label-danger" ng-if="data.id_estatus == 4">
+                                @{{(data.id_estatus != null )? data.estatus.nombre: ""}}
+                            </span>
+                            <span class="label label-success" ng-if="data.id_estatus == 8">
+                                @{{(data.id_estatus != null )? data.estatus.nombre: ""}}
+                            </span>
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">
                             $ @{{(data.subtotal)?data.subtotal.toLocaleString(): 0.00}}
@@ -88,6 +97,17 @@
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">
                             $ @{{(data.total)? data.total.toLocaleString(): 0.00 }}
+                        </td>
+                        <td class="text-right">
+                                <select class="form-control" 
+                                width="'60%'"
+                                chosen
+                                ng-model="id_estatus" 
+                                ng-options="value.id as value.nombre for (key, value) in datos.estatus" 
+                                ng-change="update_estatus(data.id )" 
+                                id="cmb_estatus_@{{data.id}}" ng-if="data.id_estatus != 8" >
+                                    <option value="">--Seleccione Opcion--</option>
+                                </select>
                         </td>
                         <td class="text-right">
                             <div class="dropdown">
@@ -111,7 +131,7 @@
                                             <i class="glyphicon glyphicon-envelope"></i> Enviar Email
                                         </a>
                                     </li>
-                                    <li {{$eliminar}} ng-if="data.id_estatus != 5">
+                                    <li {{$eliminar}} ng-if="data.id_estatus != 8">
                                         <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
                                             <i class="glyphicon glyphicon-trash"></i> Eliminar
                                         </a>

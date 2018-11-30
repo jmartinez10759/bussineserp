@@ -425,7 +425,7 @@ function pnotify(titulo, mensaje, clase) {
  *@param {success} [type][description]
  *@return void
  */
-function buildSweetAlertOptions(titulo, mensaje, success, type_message, status_cancel_button, buttonText) {
+function buildSweetAlertOptions(titulo, mensaje, success, type_message, status_cancel_button, buttonText, mistake ) {
 
     /*swal({
           title: titulo,
@@ -464,7 +464,11 @@ function buildSweetAlertOptions(titulo, mensaje, success, type_message, status_c
         function (isConfirm) {
             if (isConfirm) {
                 success();
-            } else {}
+            } else {
+                if (isset(mistake)) {
+                    mistake();
+                }
+            }
 
         });
 
@@ -1102,7 +1106,7 @@ meta = function (name) {
  *@param identificador [description]
  *@return array[description]
  */
-domain = function (url) {
+domain = function (url = "") {
     //var path_url = window.location.origin+window.location.pathname+"/"+url;
     var ruta_general = document.getElementsByTagName("META");
     var content = "";

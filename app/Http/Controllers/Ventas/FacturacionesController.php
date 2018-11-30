@@ -1,120 +1,121 @@
 <?php
-    namespace App\Http\Controllers\Ventas;
+namespace App\Http\Controllers\Ventas;
 
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\DB;
-    use App\Model\Ventas\SysPedidosModel;
-    use Illuminate\Support\Facades\Session;
-    use App\Http\Controllers\MasterController;
-    use App\Model\Ventas\SysFacturacionesModel;
-    use App\Model\Ventas\SysConceptosFacturacionesModel;
-    use App\Model\Ventas\SysUsersFacturacionesModel;
-    use App\Model\Administracion\Configuracion\SysUsersModel;
-    use App\Model\Administracion\Configuracion\SysPlanesModel;
-    use App\Model\Administracion\Configuracion\SysMonedasModel;
-    use App\Model\Administracion\Configuracion\SysEstatusModel;
-    use App\Model\Administracion\Configuracion\SysClientesModel;
-    use App\Model\Administracion\Configuracion\SysEmpresasModel;
-    use App\Model\Administracion\Configuracion\SysProductosModel;
-    use App\Model\Administracion\Configuracion\SysFormasPagosModel;
-    use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
-    use App\Model\Administracion\Configuracion\SysTiposComprobantesModel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Model\Ventas\SysPedidosModel;
+use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\MasterController;
+use App\Model\Ventas\SysFacturacionesModel;
+use App\Model\Ventas\SysConceptosFacturacionesModel;
+use App\Model\Ventas\SysUsersFacturacionesModel;
+use App\Model\Administracion\Configuracion\SysUsersModel;
+use App\Model\Administracion\Configuracion\SysPlanesModel;
+use App\Model\Administracion\Configuracion\SysMonedasModel;
+use App\Model\Administracion\Configuracion\SysEstatusModel;
+use App\Model\Administracion\Configuracion\SysClientesModel;
+use App\Model\Administracion\Configuracion\SysEmpresasModel;
+use App\Model\Administracion\Configuracion\SysProductosModel;
+use App\Model\Administracion\Configuracion\SysFormasPagosModel;
+use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
+use App\Model\Administracion\Configuracion\SysTiposComprobantesModel;
 
-    class FacturacionesController extends MasterController
-    {
-        #se crea las propiedades
-        private $_tabla_model;
+class FacturacionesController extends MasterController
+{
+    #se crea las propiedades
+    private $_tabla_model;
 
-        public function __construct(){
-            parent::__construct();
-            $this->_tabla_model = new SysFacturacionesModel;
+    public function __construct(){
+        parent::__construct();
+        $this->_tabla_model = new SysFacturacionesModel;
+    }
+    /**
+    *Metodo para obtener la vista y cargar los datos
+    *@access public
+    *@param Request $request [Description]
+    *@return void
+    */
+    public function index(){
+
+        if( Session::get("permisos")["GET"] ){
+          return view("errors.error");
         }
-        /**
-        *Metodo para obtener la vista y cargar los datos
-        *@access public
-        *@param Request $request [Description]
-        *@return void
-        */
-        public function index(){
+        
+       if (Session::get("permisos")["GET"]) {
+            return view("errors.error");
+        }
+        $data = [
+            "page_title"   => "Ventas"
+            ,"title"       => "Facturación"
+            ,"iva"         => (Session::get('id_rol') != 1 )? Session::get('iva') : 16
+        ];
+        return self::_load_view( "ventas.facturaciones",$data );
+    
+    }
+    /**
+     *Metodo para obtener los datos de manera asicronica.
+     *@access public
+     *@param Request $request [Description]
+     *@return void
+     */
+    public function all( Request $request ){
 
-            if( Session::get("permisos")["GET"] ){
-              return view("errors.error");
-            }
-            
-           if (Session::get("permisos")["GET"]) {
-                return view("errors.error");
-            }
+        try {
+            $response = $this->_consulta_facturas( $request );
             $data = [
-                "page_title"   => "Ventas"
-                ,"title"       => "Facturación"
-                ,"iva"         => (Session::get('id_rol') != 1 )? Session::get('iva') : 16
+                'response'          => $response
+                ,'total_pedidos'    => count($response)
+                ,'estatus'          => SysEstatusModel::wherein('id',[4,6,8])->get()
+                ,'formas_pagos'     => SysFormasPagosModel::where(['estatus' => 1])->get()
+                ,'metodos_pagos'    => SysMetodosPagosModel::where(['estatus' => 1])->get()
+                ,'monedas'          => SysMonedasModel::where(['estatus' => 1])->get()
+                ,'tipo_comprobante' => SysTiposComprobantesModel::where(['estatus' => 1])->get()
+                ,'clientes'         => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
+                ,'productos'        =>  $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
+                ,'planes'           => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
+                ,'usuarios'         => $this->_catalogos_bussines( new SysUsersModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
             ];
-            return self::_load_view( "ventas.facturaciones",$data );
-        }
-        /**
-         *Metodo para obtener los datos de manera asicronica.
-         *@access public
-         *@param Request $request [Description]
-         *@return void
-         */
-        public function all( Request $request ){
-
-            try {
-                $response = $this->_consulta_facturas( $request );
-                $data = [
-                    'response'          => $response
-                    ,'total_pedidos'    => count($response)
-                    ,'estatus'          => SysEstatusModel::wherein('id',[5,4,6])->get()
-                    ,'formas_pagos'     => SysFormasPagosModel::where(['estatus' => 1])->get()
-                    ,'metodos_pagos'    => SysMetodosPagosModel::where(['estatus' => 1])->get()
-                    ,'monedas'          => SysMonedasModel::where(['estatus' => 1])->get()
-                    ,'tipo_comprobante' => SysTiposComprobantesModel::where(['estatus' => 1])->get()
-                    ,'clientes'         => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
-                    ,'productos'        =>  $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
-                    ,'planes'           => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
-                    ,'usuarios'         => $this->_catalogos_bussines( new SysUsersModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
-                ];
-                #debuger($response);
-                  return $this->_message_success( 200, $data , self::$message_success );
-            } catch (\Exception $e) {
-                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-                return $this->show_error(6, $error, self::$message_error );
-            }
-
-        }
-        /**
-        *Metodo para realizar la consulta por medio de su id
-        *@access public
-        *@param Request $request [Description]
-        *@return void
-        */
-        public function show( Request $request ){
-
-            try {
-                 $response = $this->_tabla_model::with(['conceptos'=>function($query){
-                        return $query->with(['productos','planes']);
-                    },'clientes','contactos','empresas' => function($query){
-                        return $query->groupBy('id_facturacion');
-                    },'formaspagos','metodospagos','usuarios'])->where(['id' => $request->id])->get();
-                    $subtotal  = $response[0]->conceptos->sum('total');
-                    $iva       = $subtotal * Session::get('iva') / 100;
-                    $total     = ($subtotal + $iva);
-                 $data = [
-                    'request'    => $response[0]
-                    ,'subtotal'  => format_currency($subtotal,2)
-                    ,'iva'       => format_currency($iva,2)
-                    ,'total'     => format_currency($total,2)
-                    ,'subtotal_' => number_format($subtotal,2)
-                    ,'iva_'      => number_format($iva,2)
-                    ,'total_'    => number_format($total,2)
-                 ];
-            return $this->_message_success( 200, $data , self::$message_success );
-            } catch (\Exception $e) {
+            #debuger($response);
+              return $this->_message_success( 200, $data , self::$message_success );
+        } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
-            }
-
         }
+
+    }
+    /**
+    *Metodo para realizar la consulta por medio de su id
+    *@access public
+    *@param Request $request [Description]
+    *@return void
+    */
+    public function show( Request $request ){
+
+        try {
+             $response = $this->_tabla_model::with(['conceptos'=>function($query){
+                    return $query->with(['productos','planes']);
+                },'clientes','contactos','empresas' => function($query){
+                    return $query->groupBy('id_facturacion');
+                },'formaspagos','metodospagos','usuarios'])->where(['id' => $request->id])->get();
+                $subtotal  = $response[0]->conceptos->sum('total');
+                $iva       = $subtotal * Session::get('iva') / 100;
+                $total     = ($subtotal + $iva);
+             $data = [
+                'request'    => $response[0]
+                ,'subtotal'  => format_currency($subtotal,2)
+                ,'iva'       => format_currency($iva,2)
+                ,'total'     => format_currency($total,2)
+                ,'subtotal_' => number_format($subtotal,2)
+                ,'iva_'      => number_format($iva,2)
+                ,'total_'    => number_format($total,2)
+             ];
+        return $this->_message_success( 200, $data , self::$message_success );
+        } catch (\Exception $e) {
+        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+        return $this->show_error(6, $error, self::$message_error );
+        }
+
+    }
    /**
     *Metodo para insertar los datos de las facturas
     *@access public
@@ -243,7 +244,6 @@
         }
         return $this->show_error(6, $error, self::$message_error );
 
-
     }
     /**
     *Metodo para la actualizacion de los registros
@@ -340,6 +340,32 @@
         }
         return $this->show_error(6, $error, self::$message_error );
 
+    }
+   /**
+    *Metodo para la actualizacion del estatus
+    *@access public
+    *@param Request $request [Description]
+    *@return void
+    */
+    public function estatus( Request $request ){
+        
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $response = $this->_tabla_model::where(['id' => $request->id])->update(['id_estatus' => $request->id_estatus]);
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+        $success = false;
+        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+        DB::rollback();
+        }
+
+        if ($success) {
+            return $this->_message_success( 201, $response , self::$message_success );
+        }
+            return $this->show_error(6, $error, self::$message_error );
+        
     }
     /**
     * Metodo para borrar el registro de conceptos
@@ -475,7 +501,6 @@
         }
         
    }
-
 
 
 

@@ -600,6 +600,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'clientes.register'
     ]);
 
+    Route::put('/clientes/estatus', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@estatus_update'
+        ,'as'       => 'clientes.update'
+    ]);
+
 
     ############################ SECCION DE CONTACTOS ###################################
     Route::get('/configuracion/contactos', [
@@ -1013,7 +1018,10 @@ Route::group(['middleware' => ['admin.only']], function() {
             'uses'      => 'Ventas\FacturacionesController@update'
             ,'as'       => 'facturaciones.update'
         ]);
-
+        Route::put('/facturaciones/estatus', [
+            'uses'      => 'Ventas\FacturacionesController@estatus'
+            ,'as'       => 'facturaciones.estatus'
+        ]);
         Route::delete('/facturaciones/destroy', [
             'uses'      => 'Ventas\FacturacionesController@destroy'
             ,'as'       => 'facturaciones.destroy'

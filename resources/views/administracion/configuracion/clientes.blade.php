@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-app="ng-clientes" ng-controller="ClientesController" ng-init="constructor()" ng-cloak>
+<div ng-app="application" ng-controller="ClientesController" ng-init="constructor()" ng-cloak >
 
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#prospectos" id="prospectos_tabs" aria-expanded="false">Prospectos Registrados</a></li>
@@ -23,7 +23,8 @@
                             <th>Direccion</th>
                             <th>Contacto</th>
                             <th>Telefono</th>
-                            <th class="text-right">Acciones</th>
+                            <th class="text-right">Estatus</th>
+                            <th class="text-right"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,22 +33,38 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.nombre_comercial}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.razon_social }}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.rfc_receptor }}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.estatus == 1)? "Clientes":"Prospectos" }}</td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{data.calle}} @{{data.colonia}} @{{data.municipio}}
+                            </td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}
+                            </td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}
+                            </td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{ (data.estatus == 1)? "Clientes":"Prospectos" }}
+                            </td>
                             <td class="text-right">
+                                <button type="button" class="btn btn-info btn-sm" ng-click="update_estatus(data.id)" title="Convertir a Cliente">
+                                    <i class="glyphicon glyphicon-sort"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </td>
+                            <!-- <td class="text-right">
                                 <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         Acciones
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                                        <!-- <li>
+                                        <li>
                                             <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
                                                 <i class="glyphicon glyphicon-edit"></i> Editar
                                             </a>
-                                        </li> -->
+                                        </li>
                                         
                                         <li {{$eliminar}}>
                                             <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
@@ -56,8 +73,8 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </td>
-                            </tr>
+                            </td> -->
+                        </tr>
 
                     </tbody>
                 </table>
@@ -89,23 +106,34 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.nombre_comercial}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.razon_social }}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.rfc_receptor }}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}
+                            </td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{data.calle}} @{{data.colonia}} @{{data.municipio}}
+                            </td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}
+                            </td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}
+                            </td>
                             <!-- <td>@{{ (data.estatus == 1)? "Clientes":"Prospectos" }}</td> -->
                             <td class="text-right">
-                                <div class="dropdown">
+                                <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                                <!-- <div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         Acciones
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                                        <!-- <li>
+                                        <li>
                                             <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
                                                 <i class="glyphicon glyphicon-edit"></i> Editar
                                             </a>
-                                        </li> -->
+                                        </li>
                                         
                                         <li {{$eliminar}}>
                                             <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
@@ -113,7 +141,7 @@
                                             </a>
                                         </li>
                                     </ul>
-                                </div>
+                                </div> -->
                             </td>
                             <td>
                                 <select class="form-control" 

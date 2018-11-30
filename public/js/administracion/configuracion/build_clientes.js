@@ -1,43 +1,31 @@
-var url_insert  = "clientes/register";
-var url_update  = 'clientes/update';
-var url_edit    = 'clientes/edit';
-var url_all     = 'clientes/all';
-var url_destroy = "clientes/destroy";
-var redireccion = "configuracion/clientes";
-var url_display = "clientes/display_sucursales";
-var url_insert_permisos = "clientes/register_permisos";
-var url_edit_pais       = 'pais/edit';
-var url_edit_codigos    = 'codigopostal/show';
-var url_upload          = 'upload/files';
+const URL = {
+  url_insert            : "clientes/register"
+  ,url_update           : 'clientes/update'
+  ,url_edit             : 'clientes/edit'
+  ,url_all              : 'clientes/all'
+  ,url_destroy          : "clientes/destroy"
+  ,redireccion          : "configuracion/clientes"
+  ,url_display          : "clientes/display_sucursales"
+  ,url_insert_permisos  : "clientes/register_permisos"
+  ,url_edit_pais        : 'pais/edit'
+  ,url_edit_codigos     : 'codigopostal/show'
+  ,url_upload           : 'upload/files'
+  ,url_update_estatus   : 'clientes/estatus'
+}
 
-var app = angular.module('ng-clientes', ["ngRoute",'components','localytics.directives']);
-
-/*app.config(function( $routeProvider, $locationProvider ) {
-    $routeProvider
-    .when("/ruta1", {
-        template : "<h1></h1>",
-    })
-    .when("/ruta2", {
-        template : "<h1></h1>",
-    })
-    .when("/ruta3", {
-        templateUrl : "ruta3.html",
-        controller : ""
-    });
-    $locationProvider.html5Mode(true);
-});*/
-app.controller('ClientesController', function( $scope, $http, $location ) {
+app.controller('ClientesController', function( masterservice, $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
-          estatus: 1
+          estatus: 0
           ,id_country: 151
           ,id_servicio_comercial: null
         };
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
+        $scope.readonly = true;
         $scope.cmb_estatus = [{id:0 ,nombre:"Prospectos"}, {id:1, nombre:"Clientes"}];
         $scope.select_estado();
         $scope.index();
@@ -47,9 +35,16 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
       $location.path("/register");
       //$scope.index();
     }
+    $scope.prueba = function(){
+         $scope.readonly = false;
+    }
 
+    $scope.pruebas = function(){
+         $scope.readonly = true;
+    }
     $scope.index = function(){
-        var url = domain( url_all );
+
+        var url = domain( URL.url_all );
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
@@ -64,14 +59,15 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
               console.error(error);
               toastr.error( error.message , expired );
         });
-    }
     
+    }
     $scope.insert_register = function(){
 
         var validacion = {
-             'CORREO'       : $scope.insert.correo
-            ,'RAZON SOCIAL' : $scope.insert.razon_social
-            ,'RFC'          : $scope.insert.rfc_receptor
+             'CORREO'          : $scope.insert.correo
+            ,'NOMBRE CONTACTO' : $scope.insert.contacto
+            ,'RAZON SOCIAL'    : $scope.insert.razon_social
+            ,'RFC'             : $scope.insert.rfc_receptor
           };
         if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.insert.correo ) ){  
@@ -82,7 +78,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        var url = domain( url_insert );
+        var url = domain( URL.url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
@@ -114,6 +110,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
              'CORREO'       : $scope.update.correo
             ,'RAZON SOCIAL' : $scope.update.razon_social
             ,'RFC'          : $scope.update.rfc_receptor
+            ,'NOMBRE CONTACTO' : $scope.update.contacto
           };
         if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.update.correo ) ){  
@@ -124,7 +121,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-      var url = domain( url_update );
+      var url = domain( URL.url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
@@ -152,7 +149,8 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
     }
 
     $scope.edit_register = function( id ){
-      var url = domain( url_edit );
+
+      var url = domain( URL.url_edit );
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
@@ -189,7 +187,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
 
     $scope.destroy_register = function( id ){
 
-      var url = domain( url_destroy );
+      var url = domain( URL.url_destroy );
       var fields = {id : id };
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
@@ -210,7 +208,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
     }
 
     $scope.select_estado = function( update = false){
-      var url = domain( url_edit_pais );
+      var url = domain( URL.url_edit_pais );
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
@@ -229,7 +227,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
     }
 
     $scope.select_codigos = function( update = false ){
-      var url = domain( url_edit_codigos );
+      var url = domain( URL.url_edit_codigos );
       var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
@@ -247,7 +245,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
     
     $scope.display_sucursales = function( id ) {
        var id_empresa = jQuery('#cmb_empresas_'+id).val().replace('number:','');
-       var url = domain( url_display );
+       var url = domain( URL.url_display );
        var fields = { 
            id_empresa : id_empresa
            ,id_cliente : id
@@ -289,7 +287,7 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
                 i++;
             }
         });
-        var url = domain(url_insert_permisos);
+        var url = domain(URL.url_insert_permisos);
         var fields = {
             'matrix' : matrix
             , 'id_empresa': $scope.fields.id_empresa
@@ -317,9 +315,32 @@ app.controller('ClientesController', function( $scope, $http, $location ) {
 
     }
 
+    $scope.update_estatus = function( id ){
+
+        var url = domain( URL.url_update_estatus );
+        var fields = {id: id, estatus: 1 };
+        buildSweetAlertOptions("¿Cambiar a Cliente?","¿Realmente desea cambiar a cliente este prospecto?",function(){
+          MasterController.request_http(url,fields,'put',$http, false )
+          .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( URL )){return;};
+
+              toastr.info( response.data.message , title );
+              jQuery('#tr_'+id).effect("highlight",{},5000);
+              $scope.index();
+          }).catch(function( error ){
+              masterservice.session_status({},error);
+          });
+            
+        },"warning",true,["SI","NO"]); 
+
+
+
+    }
+
     $scope.upload_file = function(update){
 
-      var upload_url = domain( url_upload );
+      var upload_url = domain( URL.url_upload );
       var identificador = {
          div_content   : 'div_dropzone_file_clientes'
         ,div_dropzone  : 'dropzone_xlsx_file_clientes'
