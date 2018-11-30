@@ -670,8 +670,8 @@ new Vue({
         
     }
     ,actualizar_general(){
-        jQuery('#fecha_inicial').val('');
-        jQuery('#fecha_final').val('');
+        jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'}).datepicker("setDate", primerDia);
+        jQuery('.fechaa').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'}).datepicker("setDate", ultimoDia);
         jQuery('#cmb_estatus_ini').val(0);
         jQuery('#cmb_vendedores').val(0);
         this.consulta_general();
@@ -763,8 +763,12 @@ jQuery('#modal_dialog').css('width', '75%');
 jQuery('.add').fancybox();
 
 jQuery('#cmb_clientes').selectpicker();
-jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
-//jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,firstDay: 1}).datepicker("setDate", new Date());
+var date = new Date();
+var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
+var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+// jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
+jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'}).datepicker("setDate", primerDia);
+jQuery('.fechaa').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'}).datepicker("setDate", ultimoDia);
 
 jQuery('#cmb_formas_pagos').val(1);
 jQuery('#cmb_estatus').val(6);

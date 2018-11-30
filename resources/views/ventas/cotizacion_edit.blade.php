@@ -95,7 +95,7 @@
                             <div class="form-group row">
                                 <label for="condiciones" class="col-md-2 control-label">Descripción:</label>
                                 <div class="col-md-6">
-                                    <textarea class="form-control" id="observaciones" name="observaciones"></textarea>
+                                    <textarea class="form-control" id="observaciones" name="observaciones" style="text-transform: uppercase;"></textarea>
                                 </div>
                                 
                                 <label for="moneda" class="col-md-1 control-label">Moneda:</label>
@@ -403,7 +403,7 @@
                             <div class="form-group row">
                                 <label for="condiciones" class="col-md-2 control-label">Descripción:</label>
                                 <div class="col-md-6">
-                                    <textarea class="form-control" id="observaciones_edit" name="observaciones"></textarea>
+                                    <textarea class="form-control" id="observaciones_edit" name="observaciones" style="text-transform: uppercase;"></textarea>
                                 </div>
                                 
                                 <label for="moneda" class="col-md-1 control-label">Moneda:</label>

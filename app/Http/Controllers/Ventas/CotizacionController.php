@@ -285,27 +285,31 @@
                     $where_general = 'WHERE sys_users_cotizaciones.id_users = '.Session::get('id') .' AND sys_users_cotizaciones.id_empresa = '.Session::get('id_empresa');
                 }
                 
+                //sumar un dia a la fecha final
+                $fecha_f = $request->fecha_final;
+                $nuevafecha = strtotime ( '+1 day' , strtotime ( $fecha_f ) ) ;
+                $nuevafecha = date ( 'Y-m-j' , $nuevafecha );
                 //filtro por fechar y estatus
                 if(isset($request->estatus, $request->vendedores, $request->fecha_inicial, $request->fecha_final) && $request->estatus != 0 && $request->vendedores != 0){
-                    $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_users_cotizaciones.id_users = '$request->vendedores' AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$request->fecha_final'  ";
+                    $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_users_cotizaciones.id_users = '$request->vendedores' AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$nuevafecha'  ";
                 } elseif(isset($request->estatus, $request->fecha_inicial, $request->fecha_final) && $request->estatus != 0 ){
-                    $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$request->fecha_final'  ";
+                    $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$nuevafecha'  ";
                 } elseif(isset($request->vendedores, $request->fecha_inicial, $request->fecha_final) && $request->vendedores != 0){
-                    $slq_q = "AND sys_users_cotizaciones.id_users = '$request->vendedores' AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$request->fecha_final'  ";
+                    $slq_q = "AND sys_users_cotizaciones.id_users = '$request->vendedores' AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$nuevafecha'  ";
                 } elseif (isset($request->estatus, $request->fecha_inicial) && $request->estatus != 0) {
                         $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_cotizaciones.created_at = '$request->fecha_inicial' ";
                 } elseif (isset($request->estatus, $request->fecha_final) && $request->estatus != 0) {
-                        $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_cotizaciones.created_at = '$request->fecha_final' ";
+                        $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' AND sys_cotizaciones.created_at = '$nuevafecha' ";
                 } elseif (isset($request->estatus) && $request->estatus != 0 ) {
                         $slq_q = "AND sys_cotizaciones.id_estatus = '$request->estatus' ";
                 } elseif (isset($request->vendedores) && $request->vendedores != 0 ) {
                         $slq_q = "AND sys_users_cotizaciones.id_users = '$request->vendedores' ";
                 } elseif (isset($request->fecha_inicial, $request->fecha_final)) {
-                        $slq_q = " AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$request->fecha_final' ";
+                        $slq_q = " AND sys_cotizaciones.created_at BETWEEN '$request->fecha_inicial' AND '$nuevafecha' ";
                 } elseif (isset($request->fecha_inicial)) {
                         $slq_q = " AND sys_cotizaciones.created_at = '$request->fecha_inicial' ";
                 } elseif (isset($request->fecha_final)) {
-                        $slq_q = " AND sys_cotizaciones.created_at = '$request->fecha_final'  ";
+                        $slq_q = " AND sys_cotizaciones.created_at = '$nuevafecha'  ";
                 }else {
                         $slq_q = "AND MONTH(sys_cotizaciones.created_at)=MONTH(CURDATE())";
                 }
@@ -1063,6 +1067,7 @@
             $datos  = DB::select($sql);
             $produc = DB::select($prod); 
             $total = DB::select($sql);
+            $logo = ( isset($datos[0]->logo) && $datos[0]->logo != "" )?$datos[0]->logo: asset('img/login/company.png');
 
                 if(count($total) >= 1){
                     $subtotal = $total[0]->subtotal;
@@ -1085,6 +1090,7 @@
                     'datos'             => $datos
                     ,'prod'             => $produc
                     ,'totales'          => $totales
+                    ,'logo'             => $logo
                 ];
                 
         $pdf = PDF::loadView('ventas.pdf.pdf_cotizacion', ['data' => $response]);
@@ -1151,6 +1157,7 @@
             $datos  = DB::select($sql);
             $produc = DB::select($prod); 
             $total = DB::select($sql);
+            $logo = ( isset($datos[0]->logo) && $datos[0]->logo != "" )?$datos[0]->logo: asset('img/login/company.png');
 
                 if(count($total) >= 1){
                     $subtotal = $total[0]->subtotal;
@@ -1173,6 +1180,7 @@
                     'datos'             => $datos
                     ,'prod'             => $produc
                     ,'totales'          => $totales
+                    ,'logo'             => $logo
                 ];
                 $pdf = PDF::loadView('ventas.pdf.pdf_cotizacion', ['data' => $response]);
                 $message->to( $data['email'], $data['name'] )
