@@ -62,7 +62,7 @@
                 </thead>
                 <tbody>
 
-                    <tr ng-repeat="data in datos" id="tr_@{{ data.id }}" >
+                    <tr ng-repeat="data in datos.response" id="tr_@{{ data.id }}" >
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ data.id_proyecto }}</td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ data.titulo }}</td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ data.descripcion }}
