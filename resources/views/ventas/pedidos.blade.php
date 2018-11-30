@@ -30,13 +30,13 @@
                     </ul>
 
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2" {{ $permisos }}>
                     <select class="form-control input-sm"
                     width="'100%'"
                     chosen
                     ng-model="usuarios" 
                     ng-change="filtros_usuarios()"
-                    ng-options="value.id as value.name +' '+value.first_surname for (key, value) in datos.usuarios" {{ $permisos }}>
+                    ng-options="value.id as value.name +' '+value.first_surname for (key, value) in datos.usuarios">
                         <option value="">--Seleccione Opcion--</option>
                     </select>
 
@@ -53,6 +53,7 @@
                         <th>#</th>
                         <th>Fecha</th>
                         <th>Contacto</th>
+                        <th>Empresas</th>
                         <th>Cliente</th>
                         <th>Usuario</th>
                         <th>Estatus</th>
@@ -67,7 +68,11 @@
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{data.id}}</td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >@{{ format_date(data.created_at,'yyyy-mm-dd') }}</td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >
-                            @{{(data.id_contacto != null)? data.contactos.nombre_completo:"" }}</td>
+                            @{{(data.id_contacto != null)? data.contactos.nombre_completo:"" }}
+                        </td>
+                        <td style="cursor:pointer;" ng-click="edit_register(data)" >
+                            @{{(data.empresas.length > 0 )? data.empresas[0].razon_social:"" }}
+                        </td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >
                             @{{(data.id_cliente != null)?data.clientes.nombre_comercial:"" }}
                         </td>
