@@ -495,6 +495,10 @@ Route::group(['middleware' => ['admin.only']], function() {
        'uses'      => 'Administracion\Configuracion\SucursalesController@index'
        ,'as'       => 'configuracion.sucursales'
     ]);
+    Route::get('/sucursales/all', [
+        'uses'      => 'Administracion\Configuracion\sucursalesController@all'
+        ,'as'       => 'sucursales.all'
+    ]);
 
     Route::get('sucursales/edit', [
         'uses'      => 'Administracion\Configuracion\SucursalesController@show'

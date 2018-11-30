@@ -81,7 +81,7 @@
         public function show( Request $request ){
 
             try {
-                $response = SysProveedoresModel::with(['contactos'])->where(['id' => $request->id])->get();
+                $response = SysProveedoresModel::with(['contactos','empresas'])->where(['id' => $request->id])->get();
                 
             return $this->_message_success( 200, $response[0] , self::$message_success );
             } catch (\Exception $e) {

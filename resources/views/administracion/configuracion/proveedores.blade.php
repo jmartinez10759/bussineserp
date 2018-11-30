@@ -16,8 +16,8 @@
                             <th>Contacto</th>
                             <th>Correo</th>
                             <th>Telefono</th>
+                            <th>Empresa</th>
                             <th>Estatus</th>
-                            <th class="text-right"></th>
                             <th class="text-right"></th>
                             <th class="text-right"></th>                           
                             
@@ -31,8 +31,9 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.rfc }}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].nombre_completo: ""}}</td>
-                            <td class="text-right" ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.empresas.length > 0)? data.empresas[0].nombre_comercial: ""}}</td>
                             <td>
                             <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
                             <span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
@@ -67,6 +68,7 @@
                                     ng-options="value.id as value.nombre_comercial for (key, value) in datos.empresas" 
                                     ng-change="display_sucursales(data.id )" 
                                     id="cmb_empresas_@{{data.id}}" >
+                                    <option value="">--Seleccione Opcion--</option>
                                 </select>
                             </div>
                             </td>
