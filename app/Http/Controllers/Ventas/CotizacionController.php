@@ -214,9 +214,9 @@
             ,'attr'      => 'data-live-search="true" '                
         ]);
         $vend = "SELECT sys_users.id,CONCAT(sys_users.name,' ',sys_users.first_surname) as vendedor
-                FROM sysbussiness.sys_users_cotizaciones
-                inner join sysbussiness.sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
-                left join sysbussiness.sys_users on sys_users.id = sys_users_cotizaciones.id_users
+                FROM sys_users_cotizaciones
+                inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
+                left join sys_users on sys_users.id = sys_users_cotizaciones.id_users
                 WHERE sys_users_cotizaciones.id_empresa = ".Session::get('id_empresa')."
                 GROUP BY sys_users.id order by sys_users_cotizaciones.id_cotizacion desc";
 
