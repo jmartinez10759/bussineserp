@@ -9,9 +9,8 @@ var url_edit_pais     = 'pais/edit';
 var url_edit_codigos  = 'codigopostal/show';
 var url_upload          = 'upload/files';
 
-var app = angular.module('ng-empresas', ["ngRoute",'localytics.directives','components']);
-app.controller('EmpresasController', function( $scope, $http, $location ) {
-    
+app.controller('EmpresasController', function( masterservice, $scope, $http, $location ) {
+  
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {

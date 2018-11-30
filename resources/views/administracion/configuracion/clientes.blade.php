@@ -93,15 +93,14 @@
                             <th>Razon Social</th>
                             <th>RFC</th>
                             <th>Uso CFDI</th>
-                            <th>Direccion</th>
+                            <th>Dirección</th>
                             <th>Contacto</th>
                             <th>Telefono</th>
-                            <th class="text-right"></th>
+                            <th>Empresas</th>
                             <th class="text-right"></th>
                         </tr>
                     </thead>
                     <tbody>
-
                         <tr ng-repeat="data in datos.clientes" id="tr_@{{data.id}}">
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.nombre_comercial}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.razon_social }}</td>
@@ -118,7 +117,10 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">
                                 @{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}
                             </td>
-                            <!-- <td>@{{ (data.estatus == 1)? "Clientes":"Prospectos" }}</td> -->
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                                @{{ (data.empresas.length > 0)? data.empresas[0].razon_social: ""}}
+                            </td>
+
                             <td class="text-right">
                                 <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
                                     <i class="glyphicon glyphicon-trash"></i>
@@ -144,13 +146,17 @@
                                 </div> -->
                             </td>
                             <td>
-                                <select class="form-control" 
-                                    chosen
-                                    width="'80%'"
-                                    ng-model="data.empresas[0].id" 
-                                    ng-options="value.id as value.nombre_comercial for (key, value) in datos.empresas" ng-change="display_sucursales(data.id )" 
-                                    id="cmb_empresas_@{{data.id}}" {{$permisos}}>
-                                </select>
+                                <div class="row" {{$permisos}}>
+                                    
+                                    <select class="form-control" 
+                                        chosen
+                                        width="'80%'"
+                                        ng-model="data.empresas[0].id" 
+                                        ng-options="value.id as value.nombre_comercial for (key, value) in datos.empresas" ng-change="display_sucursales(data.id )" 
+                                        id="cmb_empresas_@{{data.id}}">
+                                    </select>
+
+                                </div>
                             </td>
                             </tr>
 
