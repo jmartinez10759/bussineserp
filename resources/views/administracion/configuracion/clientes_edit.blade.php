@@ -255,23 +255,24 @@
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Nombre: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" capitalize ng-readonly="readonly" ng-focus="prueba()" ng-blur="pruebas()">                                            
+                                            <!-- <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" capitalize ng-readonly="readonly" ng-focus="prueba()" ng-blur="pruebas()"> -->
+                                            <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" capitalize >                                            
                                         </div>
                                         <label for="model" class="col-sm-2 control-label">Departamento:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="departamento_edit" class="form-control" placeholder="Ingrese departamento o cargo " ng-model="update.departamento" capitalize ng-readonly="readonly">
+                                            <input type="text" id="departamento_edit" class="form-control" placeholder="Ingrese departamento o cargo " ng-model="update.departamento" capitalize>
                                         </div>
                                     </div>
 
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Cargo:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" placeholder="Ingrese Cargo en la empresa" ng-model="update.cargo" capitalize ng-readonly="readonly" >                                            
+                                            <input type="text" class="form-control" placeholder="Ingrese Cargo en la empresa" ng-model="update.cargo" capitalize >                                            
                                         </div>
 
                                         <label for="producto" class="col-sm-2 control-label">Teléfono:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" placeholder="Lada + número" ng-model="update.telefono" maxlength="15" ng-readonly="readonly">
+                                            <input type="text" class="form-control" placeholder="Lada + número" ng-model="update.telefono" maxlength="15" >
                                         </div>
                                         
                                     </div>
@@ -279,7 +280,7 @@
                                     <div class="form-group">
                                         <label for="modelo" class="col-sm-2 control-label">Correo:<font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="correo_edit" class="form-control" placeholder="Ingrese un correo valido" ng-model="update.correo" ng-readonly="readonly">
+                                            <input type="text" id="correo_edit" class="form-control" placeholder="Ingrese un correo valido" ng-model="update.correo" >
                                         </div>
                                     </div>
                                     <!-- <div class="form-group">
