@@ -131,8 +131,6 @@ class ChangeSelect {
             toastr.error( error, expired );
         });
 
-
-
       }
       /**
        *Metodo para obtener los resultados de la consulta de los campos seleccionados.
@@ -267,10 +265,10 @@ class ChangeSelect {
            //return;
            let fields = {
              'id_users'	        : id_users
-             ,'id_rol'		    : id_rol
-             ,'id_empresa'		: id_empresa
+             ,'id_rol'		      : id_rol
+             ,'id_empresa'		  : id_empresa
              ,'id_sucursal'	    : id_sucursal
-             ,'matrix'		    : matrix
+             ,'matrix'		      : matrix
              ,'_token'          : _token
            }
             var promise = MasterController.method_master(url,fields,"post");

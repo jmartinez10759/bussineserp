@@ -30,13 +30,13 @@
                     </ul>
 
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2" {{ $permisos }}>
                     <select class="form-control input-sm"
                     width="'100%'"
                     chosen
                     ng-model="usuarios" 
                     ng-change="filtros_usuarios()"
-                    ng-options="value.id as value.name +' '+value.first_surname for (key, value) in datos.usuarios" {{ $permisos }}>
+                    ng-options="value.id as value.name +' '+value.first_surname for (key, value) in datos.usuarios" >
                         <option value="">--Seleccione Opcion--</option>
                     </select>
 
@@ -51,9 +51,10 @@
             <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable">
                 <thead>
                     <tr style="background-color: #337ab7; color: #ffffff;">
-                        <th>#Factura</th>
+                        <th>#</th>
                         <th>Fecha</th>
                         <th>Contacto</th>
+                        <th>Empresas</th>
                         <th>Cliente</th>
                         <th>Usuario</th>
                         <th>Estatus</th>
@@ -73,8 +74,13 @@
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >
                             @{{(data.id_contacto != null)? data.contactos.nombre_completo:"" }}</td>
                         <td style="cursor:pointer;" ng-click="edit_register(data)" >
+                            @{{(data.empresas.length > 0 )?data.empresas[0].razon_social:"" }}
+                        </td>
+
+                        <td style="cursor:pointer;" ng-click="edit_register(data)" >
                             @{{(data.id_cliente != null)?data.clientes.nombre_comercial:"" }}
                         </td>
+                        
                         <td style="cursor:pointer;" ng-click="edit_register(data)">
                             @{{(data.usuarios != 0)? data.usuarios[0].name+" "+data.usuarios[0].first_surname: "" }}
                         </td>

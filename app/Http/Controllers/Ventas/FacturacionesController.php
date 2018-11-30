@@ -436,7 +436,7 @@ class FacturacionesController extends MasterController
                         ,'conceptos' =>function($query){
                             return $query->with(['productos','planes']);
                         },'empresas' => function($query){
-                            return $query->groupBy('id');
+                             return $query->where(['id' => Session::get('id_empresa')])->groupBy('id_facturacion');
                         }]);
                     if( isset( $request->mes ) && $request->mes != 13 ){
                         $response = $data->whereMonth('sys_facturaciones.created_at','=', $request->mes );
@@ -478,7 +478,7 @@ class FacturacionesController extends MasterController
                         ,'conceptos' =>function($query){
                             return $query->with(['productos','planes']);
                         },'empresas' => function($query) {
-                            return $query->groupBy('id');
+                             return $query->where(['id' => Session::get('id_empresa')])->groupBy('id_facturacion');
                         }]);
                     if( isset( $request->mes ) && $request->mes != 13 ){
                         $response = $data->whereMonth('sys_facturaciones.created_at','=', $request->mes );
@@ -496,9 +496,16 @@ class FacturacionesController extends MasterController
                 }])
             ->where(['id' => Session::get('id')])
             ->get();
-            return $data[0]->facturaciones;
+            $datos = [];
+            foreach ($data[0]->facturaciones as $respuesta) {
+                if ( count($respuesta->empresas) > 0 ){
+                    $datos[] = $respuesta;
+                }
+            }
+            return $datos;
         
         }
+        
         
    }
 

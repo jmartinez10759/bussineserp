@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysPaisModel;
+use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysUsoCfdiModel;
 use App\Model\Administracion\Configuracion\SysEstadosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
@@ -51,12 +52,11 @@ class ClientesController extends MasterController
      *@return void
      */
     public function all( Request $request ){
-      try {        
-        $response = $this->_tabla_model::with(['estados','contactos'])->where(['estatus' => 0])->orderBy('id','desc')->get();
-        $response_clientes = $this->_validate_consulta($this->_tabla_model,['usoCfdi','empresas','contactos:id,nombre_completo,correo,telefono'],['estatus' => 1 ],['id' => Session::get('id_empresa')],['estatus' => 1]);
+      try { 
+        $datos = $this->consulta_clientes();
         $data = [
-          'prospectos'            => $response
-          ,'clientes'             => $response_clientes
+          'prospectos'            => $datos['response']
+          ,'clientes'             => $datos['response_clientes']
           ,'empresas'             => SysEmpresasModel::where(['estatus' => 1])->get()
           ,'paises'               => SysPaisModel::get()
           ,'servicio_comercial'   => SysServiciosComercialesModel::get()
@@ -375,8 +375,77 @@ class ClientesController extends MasterController
         return $this->show_error(6, $error, self::$message_error);
 
     }
-    
-    
-    
+    /**
+     * Metodo para realizar la parte de consulta de clientes
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function consulta_clientes(){
+
+
+        if( Session::get('id_rol') == 1 ){
+
+            $response = SysClientesModel::with(['estados','contactos','empresas'])
+                            ->where(['estatus' => 0])
+                            ->orderBy('id','desc')
+                            ->groupby('id')
+                            ->get();
+
+            $response_clientes = SysClientesModel::with(['estados','contactos','empresas'])
+                                      ->where(['estatus' => 1])
+                                      ->orderBy('id','desc')
+                                      ->groupby('id')
+                                      ->get();
+
+        }elseif( Session::get('id_rol') == 3 ){
+            $data = SysEmpresasModel::with(['clientes'])
+            ->where(['id' => Session::get('id_empresa')])            
+            ->get();
+
+            $response = $data[0]->clientes()
+                                    ->with(['estados','contactos','empresas'])
+                                    ->where(['estatus' => 0])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+            $response_clientes = $data[0]->clientes()
+                                    ->with(['estados','contactos','empresas'])
+                                    ->where(['estatus' => 1])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+        }else{
+
+            $data = SysUsersModel::with(['empresas'])
+                                  ->where(['id' => Session::get('id')])            
+                                  ->get();
+            $empresas = $data[0]->empresas()
+                                ->with(['clientes'])
+                                ->where([ 'id' => Session::get('id_empresa') ])
+                                ->get();
+            $response = $empresas[0]->clientes()
+                                    ->with(['estados','contactos','empresas'])
+                                    ->where(['estatus' => 0])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+            $response_clientes = $empresas[0]->clientes()
+                                    ->with(['estados','contactos','empresas'])
+                                    ->where(['estatus' => 1])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+
+        }
+        
+        return [ 'response' => $response ,'response_clientes' => $response_clientes ];
+
+    }
+
+
+
 
 }

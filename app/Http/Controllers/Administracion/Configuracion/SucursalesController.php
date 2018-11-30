@@ -68,7 +68,7 @@ class SucursalesController extends MasterController
       */
      public function store( Request $request){
 
-        $response_store = $this->_model::create_model([$request->all()], self::$_tabla_model );
+        $response_store = $this->_tabla_model::create($request->all());
         if ($response_store) {
           return message( true,$response_store[0],self::$message_success );
         }
@@ -98,7 +98,7 @@ class SucursalesController extends MasterController
       */
      public function update( Request $request){
        $where = ['id' => $request->id];
-       $response_update = self::$_model::update_model($where, $request->all(), self::$_tabla_model );
+       $response_update = $this->_model::update_model($where, $request->all(), self::$_tabla_model );
        if ($response_update) {
          return message( true,$response_update[0],self::$message_success );
        }
@@ -113,7 +113,7 @@ class SucursalesController extends MasterController
       */
      public function destroy( $id ){
         $where = ['id' => $id];
-        $response_destroy = self::$_model::delete_model( $where, self::$_tabla_model );
+        $response_destroy = $this->_model::delete_model( $where, self::$_tabla_model );
         if (!$response_destroy) {
           return message( true,$response_destroy,self::$message_success );
         }
