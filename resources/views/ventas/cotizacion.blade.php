@@ -30,11 +30,11 @@
 								<div class="col-md-2">
 									{!! $estatus_in !!}
 								</div>
-
+								<div {{ $permisos }}>
 								<label for="estatus_in" class="col-md-1 control-label input-sm">Vendedor </label>
-								<div class="col-md-2">
+								<div class="col-md-2" >
 									{!! $vendedores !!}
-								</div>
+								</div></div>
 								
 								<div class="col-md-2">
 									<div class="input-group">
@@ -54,6 +54,7 @@
 									<th>#</th>
 									<th>Fecha</th>
 									<th>Contacto</th>
+									<th>Empresa</th>
 									<th>Cliente</th>
 									<th>Vendedor</th>
 									<th>Estatus</th>
@@ -71,6 +72,7 @@
 									<!--<input type="text" v-model="cot.id_cotizacion" id="id_cot"></td>-->
 								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">@{{ cot.created_at }}</td>
 								<td v-on:click.prevent="edit_register(cot);"><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="">@{{ cot.nombre_completo }}</a></td>
+								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">@{{ cot.razon_emp }}</td>
 								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">@{{ cot.nombre_comercial }}</td>
 								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">@{{ cot.vendedor }}</td>
 								<td v-on:click.prevent="edit_register(cot);" style="cursor: pointer;">

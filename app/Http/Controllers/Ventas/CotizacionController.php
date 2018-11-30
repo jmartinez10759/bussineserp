@@ -45,9 +45,9 @@
             $users    = SysUsersModel::with(['roles' => function($query){
                             return $query->where(['sys_users_roles.id_rol' => 2]);
                         },"empresas"])->where('id','=',Session::get('id'))->where(['estatus' => 1])->get();
-            #debuger($users);
+            #debuger($users); $this->_consulta(new SysClientesModel)
             $clientes = dropdown([
-                 'data'       => $this->_consulta(new SysClientesModel)
+                 'data'       => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                  ,'value'     => 'id'
                  ,'text'      => 'razon_social'
                  ,'name'      => 'cmb_clientes'
@@ -88,7 +88,7 @@
            ]);
 
             $productos = dropdown([
-                 'data'       => $this->_consulta(new SysProductosModel)
+                 'data'       => $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                  ,'value'     => 'id'
                  ,'text'      => 'nombre'
                  ,'name'      => 'cmb_productos'
@@ -99,7 +99,7 @@
            ]);
 
             $planes = dropdown([
-                 'data'       => $this->_consulta(new SysPlanesModel) 
+                 'data'       => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] ) 
                  ,'value'     => 'id'
                  ,'text'      => 'nombre'
                  ,'name'      => 'cmb_planes'
@@ -132,7 +132,7 @@
 
             /* Editar*/
             $clientes_edit = dropdown([
-                 'data'       => $this->_consulta(new SysClientesModel)
+                 'data'       => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                  ,'value'     => 'id'
                  ,'text'      => 'razon_social rfc_receptor'
                  ,'name'      => 'cmb_clientes_edit'
@@ -173,7 +173,7 @@
            ]);
 
             $productos_edit = dropdown([
-                 'data'       => $this->_consulta(new SysProductosModel)
+                 'data'       => $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                  ,'value'     => 'id'
                  ,'text'      => 'nombre'
                  ,'name'      => 'cmb_productos_edit'
@@ -184,7 +184,7 @@
            ]);
 
             $planes_edit = dropdown([
-                 'data'       => $this->_consulta(new SysPlanesModel) 
+                 'data'       => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )
                  ,'value'     => 'id'
                  ,'text'      => 'nombre'
                  ,'name'      => 'cmb_planes_edit'
@@ -348,6 +348,7 @@
                                    sys_clientes.nombre_comercial,
                                    sys_cotizaciones.id_estatus,
                                    sys_estatus.nombre,
+                                   sys_empresas.razon_social as razon_emp,
                                    sys_conceptos_cotizaciones.cantidad,sys_conceptos_cotizaciones.precio,sys_conceptos_cotizaciones.total,
                                    sys_cotizaciones.iva,sys_cotizaciones.subtotal,sys_cotizaciones.total as total_conc
                                  FROM sys_users_cotizaciones
@@ -358,7 +359,8 @@
                                  inner join sys_conceptos_cotizaciones on sys_conceptos_cotizaciones.id = sys_users_cotizaciones.id_concepto
                                  left join sys_productos on sys_productos.id = sys_conceptos_cotizaciones.id_producto
                                  left join sys_planes on sys_planes.id = sys_conceptos_cotizaciones.id_plan
-                                 left join sys_users on sys_users.id = sys_users_cotizaciones.id_users ".$where_general.' '.$slq_q.' '.$group_by_general.' '.$orderBy;
+                                 left join sys_users on sys_users.id = sys_users_cotizaciones.id_users 
+                                 left join sys_empresas on sys_empresas.id = sys_users_cotizaciones.id_empresa ".$where_general.' '.$slq_q.' '.$group_by_general.' '.$orderBy;
 
 
                 $concep = DB::select($sql);

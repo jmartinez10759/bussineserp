@@ -104,6 +104,15 @@
             $error = null;
             DB::beginTransaction();
             try {
+                $datos = [
+                    'id_users'       => Session::get('id')
+                   ,'id_rol'         => Session::get('id_rol')
+                   ,'id_empresa'     => Session::get('id_empresa')
+                   ,'id_sucursal'    => Session::get('id_sucursal')
+                   ,'id_menu'        => 28
+                   ,'id_pedido'      => $response_pedido->id
+                   ,'id_concepto'    => $response_conceptos->id
+                 ];
                 $response = SysProyectosModel::create($request->all());
 
             DB::commit();
