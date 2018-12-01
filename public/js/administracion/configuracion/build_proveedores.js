@@ -1,16 +1,17 @@
-var url_insert  = "proveedores/register";
-var url_update   = "proveedores/update";
-var url_edit     = "proveedores/edit";
-var url_destroy  = "proveedores/destroy";
-var url_all      = "proveedores/all";
-var redireccion  = "configuracion/proveedores";
-var url_edit_pais       = 'pais/edit';
-var url_edit_codigos    = 'codigopostal/show';
-var url_upload          = 'upload/files';
-var url_display = "proveedores/display_sucursales";
-var url_insert_permisos = "proveedores/register_permisos";
-
-var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
+const URL = {
+url_insert  : "proveedores/register"
+,url_update   : "proveedores/update"
+,url_edit     : "proveedores/edit"
+,url_destroy  : "proveedores/destroy"
+,url_all      : "proveedores/all"
+,redireccion  : "configuracion/proveedores"
+,url_edit_pais       : 'pais/edit'
+,url_edit_codigos    : 'codigopostal/show'
+,url_upload          : 'upload/files'
+,url_display : "proveedores/display_sucursales"
+,url_insert_permisos : "proveedores/register_permisos"
+}
+// var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
 app.controller('ProveedoresController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){

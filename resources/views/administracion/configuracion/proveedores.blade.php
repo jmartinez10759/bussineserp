@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-app="ng-proveedores" ng-controller="ProveedoresController" ng-init="constructor()" ng-cloak>
+<div ng-app="application" ng-controller="ProveedoresController" ng-init="constructor()" ng-cloak>
       <div class="tab-content">
  
             <div class="table-responsive">
