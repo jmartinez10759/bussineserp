@@ -61,10 +61,9 @@
                         <th class="text-right">Subtotal</th>
                         <th class="text-right">Iva</th>
                         <th class="text-right">Total</th>
-                        <th class="text-right"></th>
-                        <th class="text-right"></th>
-                        <th class="text-right"></th>
+                        <th class="text-right">Editar </th>
                         <th class="text-right">Acciones</th>
+                        <th class="text-right"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,6 +104,7 @@
                             $ @{{(data.total)? data.total.toLocaleString(): 0.00 }}
                         </td>
                         <td class="text-right">
+                            <div class="pull-right">
                                 <select class="form-control" 
                                 width="'60%'"
                                 chosen
@@ -112,8 +112,9 @@
                                 ng-options="value.id as value.nombre for (key, value) in datos.estatus" 
                                 ng-change="update_estatus(data.id )" 
                                 id="cmb_estatus_@{{data.id}}" ng-if="data.id_estatus != 8" >
-                                    <option value="">--Seleccione Opcion--</option>
+                                    <option value="">--Seleccione Opción--</option>
                                 </select>
+                            </div>
                         </td>
                         <td class="text-right">
                             <div class="dropdown">
@@ -121,12 +122,7 @@
                                     Acciones
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                                    <!-- <li>
-                                        <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
-                                            <i class="glyphicon glyphicon-edit"></i> Editar
-                                        </a>
-                                    </li> -->
+                                <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">                                    
                                     <li {{$reportes}}>
                                         <a style="cursor:pointer;" title="Imprimir cotización" ng-click="see_reporte(data)">
                                             <i class="glyphicon glyphicon-print"></i> Reporte

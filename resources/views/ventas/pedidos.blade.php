@@ -60,7 +60,9 @@
                         <th class="text-right">Subtotal</th>
                         <th class="text-right">Iva</th>
                         <th class="text-right">Total</th>
+                        <th class="text-right">Editar </th>
                         <th class="text-right">Acciones</th>
+                        <th class="text-right"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,6 +95,21 @@
                         <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">
                             $ @{{(data.total)? data.total.toLocaleString(): 0.00 }}
                         </td>
+
+                         <td class="text-right">
+                            <div class="pull-right" {{$permisos}}>
+                                <select class="form-control" 
+                                width="'60%'"
+                                chosen
+                                ng-model="id_estatus" 
+                                ng-options="value.id as value.nombre for (key, value) in datos.estatus" 
+                                ng-change="update_estatus(data.id )" 
+                                id="cmb_estatus_@{{data.id}}" ng-if="data.id_estatus != 5" >
+                                    <option value="">--Seleccione Opción--</option>
+                                </select>
+                            </div>
+                        </td>
+
                         <td class="text-right">
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
