@@ -18,9 +18,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
-          estatus: 0
-          ,id_country: 151
-          ,id_servicio_comercial: null
+          estatus: 0 ,id_country: 151 ,id_servicio_comercial: null, id_study : 1
         };
         $scope.update = {};
         $scope.edit   = {};
@@ -28,9 +26,18 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         $scope.readonly = true;
         $scope.cmb_estatus = [{id:0 ,nombre:"Prospectos"}, {id:1, nombre:"Clientes"}];
         $scope.select_estado();
+        $scope.estudio();
         $scope.index();
     }
 
+    $scope.estudio = function(){
+      $scope.estudios = [
+         {id:1, nombre: "ING."}
+         ,{id:2, nombre: "LIC"}
+         ,{id:3, nombre: "ARQ"}
+      ];
+    }
+    
     $scope.click = function (){
       $location.path("/register");
       //$scope.index();
@@ -45,9 +52,10 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
     $scope.index = function(){
 
         var url = domain( URL.url_all );
-        var fields = {};
+        var fields = {};        
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+            loading(true);
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
@@ -68,6 +76,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             ,'NOMBRE CONTACTO' : $scope.insert.contacto
             ,'RAZON SOCIAL'    : $scope.insert.razon_social
             ,'RFC'             : $scope.insert.rfc_receptor
+            ,'TELEFONO'        : $scope.insert.telefono
           };
         if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.insert.correo ) ){  
@@ -80,26 +89,20 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         }
         var url = domain( URL.url_insert );
         var fields = $scope.insert;
+        jQuery.fancybox.close({
+            'type'      : 'inline'
+            ,'src'      : "#modal_add_register"
+            ,'modal'    : true
+        });
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( URL )){return;};
+
             toastr.success( response.data.message , title );
-            jQuery.fancybox.close({
-                'type'      : 'inline'
-                ,'src'      : "#modal_add_register"
-                ,'modal'    : true
-                ,'width'    : 900
-                ,'height'   : 400
-                ,'autoSize' : false
-            });
             $scope.index();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+           masterservice.session_status({},error);
         });
 
     }
@@ -111,6 +114,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             ,'RAZON SOCIAL' : $scope.update.razon_social
             ,'RFC'          : $scope.update.rfc_receptor
             ,'NOMBRE CONTACTO' : $scope.update.contacto
+            ,'TELEFONO'        : $scope.update.telefono
           };
         if(validaciones_fields(validacion)){return;}
         if( !emailValidate( $scope.update.correo ) ){  
@@ -138,20 +142,13 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           }
           $scope.index();
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
-          //redirect(domain(redireccion));
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+          masterservice.session_status({},error);
       });
     }
 
     $scope.edit_register = function( id ){
-
+      
       var url = domain( URL.url_edit );
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
@@ -163,6 +160,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
                $scope.update.departamento = response.data.result.contactos[0].departamento;
                $scope.update.telefono     = response.data.result.contactos[0].telefono;
                $scope.update.correo       = response.data.result.contactos[0].correo;
+               $scope.update.cargo        = response.data.result.contactos[0].cargo;
+               $scope.update.extension    = response.data.result.contactos[0].extension;
+               $scope.update.id_study     = response.data.result.contactos[0].id_study;
            }
            $scope.select_estado(1);
            $scope.select_codigos(1);
@@ -197,13 +197,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status({},error);
         });
           
       },"warning",true,["SI","NO"]);  
@@ -326,17 +320,15 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           .then(function( response ){
               //not remove function this is  verify the session
               if(masterservice.session_status( URL )){return;};
-
-              toastr.info( response.data.message , title );
-              jQuery('#tr_'+id).effect("highlight",{},5000);
-              $scope.index();
+               toastr.info( response.data.message , title );
+               jQuery('#tr_'+id).effect("highlight",{},5000);
+               buildSweetAlert('# '+id,'Se genero el cliente con exito','success');
+               $scope.index();
           }).catch(function( error ){
               masterservice.session_status({},error);
           });
             
         },"warning",true,["SI","NO"]); 
-
-
 
     }
 

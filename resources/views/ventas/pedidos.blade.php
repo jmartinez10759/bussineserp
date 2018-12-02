@@ -20,7 +20,7 @@
 
                 </div>
 
-                <div class="col-sm-6">
+                <div class="col-sm-7">
                     <ul class="pagination pagination-sm">
                         <li ng-repeat="filtros in filtro" class="@{{filtros.class}}" >                    
                             <a style="cursor: pointer" ng-click="filtros_mes(filtros)"> 
@@ -94,6 +94,16 @@
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="edit_register(data)">
                             $ @{{(data.total)? data.total.toLocaleString(): 0.00 }}
+                        </td>
+                        <td class="text-right">
+                            <div class="col-sm-6">
+                            <button type="button" class="btn btn-success btn-sm" title="Aprobada"><i class="glyphicon glyphicon-ok"></i></button>
+                                
+                            </div>
+                            <div class="col-sm-6">
+                            <button type="button" class="btn btn-danger btn-sm" title="Cancelada"><i class="glyphicon glyphicon-remove"></i></button>
+                                
+                            </div>
                         </td>
 
                          <td class="text-right">

@@ -45,7 +45,7 @@ app.service('masterservice', function() {
 
 	    },
 	    session_status: function( url = {}, error = {} ){
-	    	//console.log(url);
+	    	loading(true);
     		for(var i in url ){
 		    	if( url[i] === domain() ){
 	              toastr.error( session_expired );

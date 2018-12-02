@@ -98,7 +98,7 @@ class ClientesController extends MasterController
           $error = null;
           DB::beginTransaction();
           try {
-              $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
+              $string_key_contactos = [ 'contacto','departamento','telefono', 'correo','id_study','extension', 'cargo' ];
                 $string_data_clientes = [];
                 $string_data_contactos = [];
                 foreach( $request->all() as $key => $value ){
@@ -128,7 +128,6 @@ class ClientesController extends MasterController
                 $data = [
                     'id_empresa'       => (Session::get('id_rol') != 1)? Session::get('id_empresa')  :0
                     ,'id_sucursal'     => (Session::get('id_rol') != 1)? Session::get('id_sucursal') :0
-                    //,'id_contacto'     => $response_contactos->id
                     ,'id_cliente'      => $response->id
                 ];
                 SysClientesEmpresasModel::create($data); 
@@ -160,8 +159,7 @@ class ClientesController extends MasterController
         $error = null;
           DB::beginTransaction();
           try {
-                $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-                $string_key_clientes = [ 'contacto','departamento','telefono', 'correo','created_at','updated_at','contactos','sucursales' ];
+                $string_key_contactos = [ 'contacto','departamento','telefono', 'correo','id_study','extension', 'cargo' ];
                 $string_data_clientes = [];
                 $string_data_contactos = [];
                 foreach( $request->all() as $key => $value ){
@@ -174,7 +172,7 @@ class ClientesController extends MasterController
                             $string_data_contactos[$key] = strtoupper($value);
                         }
                     };
-                    if( !in_array( $key, $string_key_clientes) ){
+                    if( !in_array( $key, $string_key_contactos) ){
                         if( !is_array($value)){
                             if($key == "logo"){
                               $string_data_clientes[$key] = (trim($value));

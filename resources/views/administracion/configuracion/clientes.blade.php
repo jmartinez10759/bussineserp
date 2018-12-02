@@ -89,6 +89,7 @@
                 <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable_clientes">
                     <thead>
                         <tr style="background-color: #337ab7; color: #ffffff;">
+                            <th>#</th>
                             <th>Nombre Comercial</th>
                             <th>Razon Social</th>
                             <th>RFC</th>
@@ -102,6 +103,7 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="data in datos.clientes" id="tr_@{{data.id}}">
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.id}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.nombre_comercial}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.razon_social }}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.rfc_receptor }}</td>

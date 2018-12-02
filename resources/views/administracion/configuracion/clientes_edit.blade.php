@@ -30,11 +30,22 @@
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Nombre: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="insert.contacto" capitalize>
+                                            <div class="col-sm-3">
+                                                <select class="form-control"
+                                                chosen
+                                                width="'100%'"
+                                                ng-model="insert.id_study" 
+                                                ng-options="value.id as value.nombre for (key, value) in estudios">
+                                                    <option value="">--Seleccione Opcion--</option>  
+                                                </select> 
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="insert.contacto" capitalize>
+                                            </div>
                                         </div>
                                         <label for="model" class="col-sm-2 control-label">Departamento:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" placeholder="Ingrese departamento o cargo " ng-model="insert.departamento" capitalize>
+                                            <input type="text" class="form-control" placeholder="Ingrese departamento en la empresa" ng-model="insert.departamento" capitalize>
                                         </div>
                                     </div>
 
@@ -43,9 +54,15 @@
                                         <div class="col-sm-4">
                                             <input type="text" class="form-control" placeholder="Ingrese Cargo en la empresa" ng-model="insert.cargo" capitalize >                                            
                                         </div>
-                                        <label for="producto" class="col-sm-2 control-label">Teléfono:</label>
+                                        <label for="producto" class="col-sm-2 control-label">Teléfono: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" placeholder="Lada + número" ng-model="insert.telefono" maxlength="15">
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" placeholder="Lada + número" ng-model="insert.telefono" ng-maxlength="15">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" placeholder="Extension" ng-model="insert.extension" ng-maxlength="15" capitalize>
+                                                
+                                            </div>
                                         </div>
                                         
                                         
@@ -53,6 +70,7 @@
 
 
                                     <div class="form-group">
+
                                         <label for="modelo" class="col-sm-2 control-label">Correo:<font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
                                             <input type="text" class="form-control" placeholder="Ingrese un correo valido" ng-model="insert.correo" >
@@ -220,7 +238,7 @@
                     <div class="box box-primary">
                         <center>
                         <div class="box-body box-profile">
-                            <div id="load_img" class="col-sm-12">
+                            <div id="load_img" class="col-sm-11">
                                 <div id="imagen_edit"></div>
                             </div>
                             <input type="hidden" class="form-control" ng-model="update.logo">
@@ -255,12 +273,22 @@
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Nombre: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <!-- <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" capitalize ng-readonly="readonly" ng-focus="prueba()" ng-blur="pruebas()"> -->
-                                            <input type="text" id="contacto_edit" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" capitalize >                                            
+                                            <div class="col-sm-3">
+                                                <select class="form-control"
+                                                chosen
+                                                width="'100%'"
+                                                ng-model="update.id_study" 
+                                                ng-options="value.id as value.nombre for (key, value) in estudios">
+                                                    <option value="">--Seleccione Opcion--</option>  
+                                                </select> 
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" capitalize>
+                                            </div>
                                         </div>
                                         <label for="model" class="col-sm-2 control-label">Departamento:</label>
                                         <div class="col-sm-4">
-                                            <input type="text" id="departamento_edit" class="form-control" placeholder="Ingrese departamento o cargo " ng-model="update.departamento" capitalize>
+                                            <input type="text" class="form-control" placeholder="Ingrese departamento en la empresa" ng-model="update.departamento" capitalize>
                                         </div>
                                     </div>
 
@@ -269,15 +297,22 @@
                                         <div class="col-sm-4">
                                             <input type="text" class="form-control" placeholder="Ingrese Cargo en la empresa" ng-model="update.cargo" capitalize >                                            
                                         </div>
-
-                                        <label for="producto" class="col-sm-2 control-label">Teléfono:</label>
+                                        <label for="producto" class="col-sm-2 control-label">Teléfono: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" placeholder="Lada + número" ng-model="update.telefono" maxlength="15" >
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" placeholder="Lada + número" ng-model="update.telefono" ng-maxlength="15">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" placeholder="Extension" ng-model="update.extension" ng-maxlength="15" capitalize>
+                                                
+                                            </div>
                                         </div>
+                                        
                                         
                                     </div>
 
                                     <div class="form-group">
+
                                         <label for="modelo" class="col-sm-2 control-label">Correo:<font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
                                             <input type="text" id="correo_edit" class="form-control" placeholder="Ingrese un correo valido" ng-model="update.correo" >
