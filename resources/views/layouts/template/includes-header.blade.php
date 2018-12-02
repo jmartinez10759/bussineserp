@@ -74,7 +74,7 @@
         animation: 1s ease-out 0s normal none infinite running heartbit;
         border: 5px solid #4680ff;
         border-radius: 100px;
-        height: 25px;
+        height: 25px;heartbit
         position: absolute;
         right: -4px;
         top: -20px;

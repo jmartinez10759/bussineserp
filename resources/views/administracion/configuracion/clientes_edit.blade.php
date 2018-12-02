@@ -275,7 +275,6 @@
                                         <div class="col-sm-4">
                                             <div class="col-sm-3">
                                                 <select class="form-control"
-                                                chosen
                                                 width="'100%'"
                                                 ng-model="update.id_study" 
                                                 ng-options="value.id as value.nombre for (key, value) in estudios">
@@ -299,10 +298,10 @@
                                         </div>
                                         <label for="producto" class="col-sm-2 control-label">Teléfono: <font size="3" color="red">* </font></label>
                                         <div class="col-sm-4">
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-7">
                                                 <input type="text" class="form-control" placeholder="Lada + número" ng-model="update.telefono" ng-maxlength="15">
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <input type="text" class="form-control" placeholder="Extension" ng-model="update.extension" ng-maxlength="15" capitalize>
                                                 
                                             </div>
