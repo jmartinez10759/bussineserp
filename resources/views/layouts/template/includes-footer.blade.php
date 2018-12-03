@@ -84,39 +84,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jexcel/1.5.0/js/jquery.jexcel.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jexcel/1.5.0/css/jquery.jexcel.min.css" type="text/css" />
-
     <!-- <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.min.js"></script> -->
     <script type="text/javascript">
-            jQuery('.sidebar-toggle').click(function(){
-              var toogle = jQuery('body').hasClass('sidebar-collapse');
-              $myLocalStorage.set('toogle',toogle);
-            });
-            var estatus_toogle = $myLocalStorage.get('toogle');
-            if( estatus_toogle == false ){
-              jQuery('body').removeClass();
-              jQuery('body').addClass('skin-blue sidebar-mini sidebar-collapse fixed');
-              //jQuery('body').addClass('skin-blue sidebar-mini sidebar-collapse');
+        jQuery('.sidebar-toggle').click(function(){
+          var toogle = jQuery('body').hasClass('sidebar-collapse');
+          $myLocalStorage.set('toogle',toogle);
+        });
+        var estatus_toogle = $myLocalStorage.get('toogle');
+        if( estatus_toogle == false ){
+          jQuery('body').removeClass();
+          jQuery('body').addClass('skin-blue sidebar-mini sidebar-collapse fixed');
+          //jQuery('body').addClass('skin-blue sidebar-mini sidebar-collapse');
+        }
+        if( estatus_toogle == true ){
+          jQuery('body').removeClass();
+          jQuery('body').addClass('skin-blue sidebar-mini fixed');
+          //jQuery('body').addClass('skin-blue sidebar-mini');
+        }
+        jQuery('.sidebar-menu').find('li a').each(function(){
+          var enlace = jQuery(this).attr('href');
+          if( enlace === location.href){
+            if( jQuery(this).parent().parent().hasClass('treeview-menu') ){
+              jQuery(this).parent().parent().parent().addClass('active');
             }
-            if( estatus_toogle == true ){
-              jQuery('body').removeClass();
-              jQuery('body').addClass('skin-blue sidebar-mini fixed');
-              //jQuery('body').addClass('skin-blue sidebar-mini');
-            }
+            jQuery(this).parent().addClass('active');
+          }else{
+            jQuery(this).parent().removeClass('active');
+          }
 
-            jQuery('.sidebar-menu').find('li a').each(function(){
-              var enlace = jQuery(this).attr('href');
-              if( enlace === location.href){
-                if( jQuery(this).parent().parent().hasClass('treeview-menu') ){
-                  jQuery(this).parent().parent().parent().addClass('active');
-                }
-                jQuery(this).parent().addClass('active');
-              }else{
-                jQuery(this).parent().removeClass('active');
-              }
-
-            });
-            jQuery('.select_chosen').chosen({width: "100%"});
+        });
+        jQuery('.select_chosen').chosen({width: "100%"});
         jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
+        window.onload = function() { jQuery(".loader").fadeOut("slow"); }
+
     </script>
  	 <!-- <script type="text/javascript">
  			 jQuery(".fancybox").fancybox({

@@ -1,4 +1,4 @@
-<!-- Content Header (Page header) -->
+<!-- Content Header (Page header)  -->
 <section class="content-header">
     <h1>
         {{ $page_title }}
@@ -16,21 +16,24 @@
     <div class="panel panel-primary">
 
         <div class="panel-heading">
-            <div class="btn-group pull-right">
-                <div class="pull-right">
-                    <form class="form-inline" id="form_general">
-                        {!! $upload_files !!}
-                        
-                        <input id="search_general" class="form-control" type="text" placeholder="Buscar" aria-label="Search" onkeyup="buscador_general(this,'{{ $buscador }}')" />
 
-                        {!! $modal !!}
-                    </form>
-                </div>
+            <div class="btn-group pull-right">
+                <form class="form-inline" id="form_general">
+                    {!! $upload_files !!}
+                    
+                    <input id="search_general" class="form-control" type="text" placeholder="Buscar" onkeyup="buscador_general(this,'{{ $buscador }}')" />
+
+                    {!! $modal !!}
+                </form>
             </div>
+
             <h4><i class='fa fa-tags'></i> {{ $title }} </h4>
         </div>
 
         <div class="panel-body">
+            <!-- seccion de cargador  -->
+            <!-- <div class="loader"></div> -->
+            <img class="loader" />
 
             @yield('content')
             
@@ -59,4 +62,4 @@
     </div>
 
 </section>
-<!-- /.content -->
+<!-- /.content

@@ -46,6 +46,7 @@ class MasterController {
  * @return void {description}
  */
  static request_http( url, fields, methods, $http ,headers ){
+    loading();
     var config = [];
     config['method']  = methods;
     config['url']     = url;

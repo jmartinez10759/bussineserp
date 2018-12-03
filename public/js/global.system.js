@@ -1154,21 +1154,13 @@ data_table_general = function (json, id_table) {
     $(`#${id_table} tbody`).html('');
     $(`#${id_table} tbody`).html(tbody);
 }
-/**
- *Funcion para la carga de registros
- *return void
- */
-loader_msj = function () {
-    $('#loader-msj').show();
-    $('#container-views').hide();
-}
-/**
- *Funcion para ocultar el mensaje generado.
- *@return void
- */
-loader_hide_msj = function () {
-    $('#container-views').show();
-    $('#loader-msj').hide();
+
+function loading( hide = false ){
+    if (hide) {
+      jQuery('.loader').fadeOut('hide');
+      return;
+    }
+    jQuery('.loader').fadeIn('slow');
 }
 /**
  *Funcion para dar formato a un numero

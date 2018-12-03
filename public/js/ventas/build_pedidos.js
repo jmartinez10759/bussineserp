@@ -14,7 +14,6 @@ var url_edit_planes         = "planes/edit";
 var url_insert_factura      = "facturaciones/insert";
 
 app.controller('PedidosController', function( masterservice, $scope, $http, $location ) {
-    
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
@@ -42,16 +41,14 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
         var fields = (array != 0)? array :{};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( URL )){return;};
+            loading(true);
+
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
     
     }
@@ -165,13 +162,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             }
             $scope.products = {};
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
 
     }
@@ -257,13 +248,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               jQuery('.update').prop('disabled',false);
 
           }).catch(function( error ){
-              if( isset(error.response) && error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-                console.error( error );
-                toastr.error( error.result , expired );
+              masterservice.session_status({},error);
           });
     
     }
@@ -309,13 +294,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               }
             $scope.index(data);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
           
       },"warning",true,["SI","NO"]);  
@@ -331,13 +310,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
         .then(function( response ){
               $scope.conceptos(update);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });                
     
     }
@@ -375,13 +348,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             $scope.fields.telefono_empresa = response.data.result.telefono
             console.log(response);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
 
     }
@@ -598,20 +565,21 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
     }
 
     $scope.send_correo = function(){
-
+        jQuery.fancybox.close({
+            'type'      : 'inline'
+            ,'src'      : "#modal_correo_send"
+            ,'modal'    : true
+            ,'width'    : 900
+            ,'height'   : 500
+            ,'autoSize' : false
+        });           
+        loading();
         var url = domain( url_send_correo );
         var fields = $scope.correo;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+            loading(true);
             toastr.success( "Se envio el correo correctamente" , title ); 
-            jQuery.fancybox.close({
-                'type'      : 'inline'
-                ,'src'      : "#modal_correo_send"
-                ,'modal'    : true
-                ,'width'    : 900
-                ,'height'   : 500
-                ,'autoSize' : false
-            });           
             $scope.correo = {};
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){

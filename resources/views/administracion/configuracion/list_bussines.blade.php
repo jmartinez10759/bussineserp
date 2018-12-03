@@ -22,6 +22,9 @@
 
         <!-- Styles -->
         <style>
+          [v-cloak]{display: none}
+          [ng-cloak]{display: none}
+
             .full-height {
                 height: 100vh;
             }
@@ -63,6 +66,11 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+
+            .sombra::-webkit-box-shadow: -12px 22px 23px 3px rgba(201,201,201,1);
+            .sombra::-moz-box-shadow: -12px 22px 23px 3px rgba(201,201,201,1);
+            /*.sombra::box-shadow: -12px 22px 23px 3px rgba(201,201,201,1);*/
+
         </style>
 
     </head>
@@ -83,6 +91,10 @@
                      <br>
                      <center><h2> {{ $titulo }} </h2></center>
                      <br>
+                  <div class="sombra">
+                      hola
+                  </div>
+
                    <div class="col-sm-offset-0 col-sm-12 table-responsive">
 
                           <table class="table table-hover " id="table_empresas">
