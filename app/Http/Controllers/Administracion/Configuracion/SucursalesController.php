@@ -26,7 +26,8 @@ class SucursalesController extends MasterController
      *@return void
      */
      public function index(){
-      if( Session::get('permisos')['GET'] ){ return view('errors.error'); }
+      if( Session::get('permisos')['GET'] )
+        { return view('errors.error'); }
            $data = [
              'page_title' 	     => "Configuracion"
              ,'title'  		       => "Sucursales"
@@ -112,11 +113,12 @@ class SucursalesController extends MasterController
       *@return void
       */
      public function update( Request $request){
-        $error = null;
+
+            $error = null;
             DB::beginTransaction();
             try {
-                // debuger($request->id);
-             $response = SysSucursalesModel::where(['id' => $request->id] )->update( $request->all() );
+                // debuger($request->all());
+                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
             DB::commit();
             $success = true;
             } catch (\Exception $e) {
@@ -126,7 +128,7 @@ class SucursalesController extends MasterController
             }
 
             if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 200, $response , self::$message_success );
             }
             return $this->show_error(6, $error, self::$message_error );
 
@@ -134,14 +136,14 @@ class SucursalesController extends MasterController
      /**
       *Metodo para borrar el registro
       *@access public
-      *@param $id [Description]
+      *@param Request $request [Description]
       *@return void
       */
      public function destroy( Request $request ){
          $error = null;
                 DB::beginTransaction();
                 try {
-                    // debuger($request->all());
+                    // debuger($request->id);
                     $response = $this->_tabla_model ::where(['id' => $request->id])->delete(); 
                     
                 DB::commit();

@@ -45,8 +45,11 @@
             try {
                 
                 $response = $this->_tabla_model::get();
+                $data = [
+                  'tipofactor'  => $response
+               ];
 
-              return $this->_message_success( 200, $response , self::$message_success );
+              return $this->_message_success( 200, $data, self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );
@@ -88,16 +91,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-                // $string_key_tipoFactor = [ 'clave','descripcion','fecha_inicio_vigencia','fecha_final_vigencia' ];
-                // $string_data_tipoFactor = [];
-                // foreach( $request->all() as $key => $value ){
-                    
-                //     if( in_array( $key, $string_key_tipoFactor) ){
-                //         $string_data_tipoFactor[$key] = $value;
-                //     };
-                    
-                // }
-                // debuger($string_data_tipoFactor);
+                
                $response = $this->_tabla_model::create( $request->all() );
 
             DB::commit();

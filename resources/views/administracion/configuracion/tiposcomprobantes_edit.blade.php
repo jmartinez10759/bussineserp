@@ -11,25 +11,28 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Nombre de Comprobante:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="nombre" class="form-control" placeholder="" v-model="insert.nombre">
+                                <input type="text" id="nombre" class="form-control" placeholder="" ng-model="insert.nombre">
                             </div>
 
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Descripción: <font size="3" color="red">* </font> </label>
+                            <label class="control-label col-sm-3">Descripción: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="descripcion" class="form-control" placeholder="" v-model="insert.descripcion">
+                                <textarea id="descripcion" class="form-control" placeholder="" ng-model="insert.descripcion"> </textarea>
                             </div>
 
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Estatus: </label>
-                            <div class="col-sm-7">
-                                <select class="form-control" v-model="insert.estatus">
-                                    <option value="0">Baja</option>
-                                    <option value="1">Activo</option>
-                                </select>
-                            </div>
+                            <label for="estatus" class="col-sm-3 control-label">Estatus: </label>
+                                        <div class="col-sm-7">
+                                            <select class="form-control select_chosen"
+                                                 chosen
+                                                 width="'100%'" 
+                                                 ng-model="insert.estatus" 
+                                                 ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+                                                 <option value="">--Seleccione Opcion--</option>    
+                                            </select>
+                                        </div>
                         </div>
                         
 
@@ -41,14 +44,13 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
+                    <button type="button" class="btn btn-primary" ng-click="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
                 </div>
             </div>
-
         </div>
     </div>
 </div>
-<div class="modal fade" id="modal_edit_register" role="dialog" aria-hidden="true" style="display:none;">
+<div class="" id="modal_edit_register" style="display:none;">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -61,25 +63,28 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Nombre de Comprobante:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="nombre" class="form-control" placeholder="" v-model="edit.nombre">
+                                <input type="text" id="nombre" class="form-control" placeholder="" ng-model="update.nombre">
                             </div>
 
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Descripción: <font size="3" color="red">* </font> </label>
+                            <label class="control-label col-sm-3">Descripción: </label>
                             <div class="col-sm-7">
-                                <input type="text" id="descripcion" class="form-control" placeholder="" v-model="edit.descripcion">
+                                <textarea id="descripcion" class="form-control" placeholder="" ng-model="update.descripcion"></textarea>
                             </div>
 
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Estatus: </label>
-                            <div class="col-sm-7">
-                                <select class="form-control" v-model="edit.estatus">
-                                    <option value="0">Baja</option>
-                                    <option value="1">Activo</option>
-                                </select>
-                            </div>
+                            <label for="estatus" class="col-sm-3 control-label">Estatus: </label>
+                                        <div class="col-sm-7">
+                                            <select class="form-control select_chosen"
+                                                 chosen
+                                                 width="'100%'" 
+                                                 ng-model="update.estatus" 
+                                                 ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+                                                 <option value="">--Seleccione Opcion--</option>    
+                                            </select>
+                                        </div>
                         </div>
                         
 
@@ -90,10 +95,9 @@
                 </div>
                 <div class="modal-footer">
                     <div class="btn-toolbar pull-right">
-                        <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
-                            <i class="fa fa-times-circle"></i> Cancelar
+                        <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
                         </button>
-                        <button type="button" class="btn btn-info" v-on:click="update_register()" {{$update}}>
+                        <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
                         <i class="fa fa-save"></i> Actualizar 
                         </button>
                     </div>
@@ -103,7 +107,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal_tiposComprobantes_register" role="dialog" aria-hidden="true">
+   {{--  <div class="modal fade" id="modal_tiposComprobantes_register" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -126,4 +130,4 @@
 
         </div>
     </div>
-</div>
+</div> --}}

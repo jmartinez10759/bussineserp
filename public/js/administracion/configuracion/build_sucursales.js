@@ -32,6 +32,7 @@ app.controller('SucursalesController', function( masterservice, $scope, $http, $
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+            loading(true);
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
@@ -111,7 +112,7 @@ app.controller('SucursalesController', function( masterservice, $scope, $http, $
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
-            $scope.edit = response.data.result;
+            $scope.update = response.data.result;
 
           jQuery.fancybox.open({
                 "type"      : "inline"

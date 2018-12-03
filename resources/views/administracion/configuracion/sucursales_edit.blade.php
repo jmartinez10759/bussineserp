@@ -80,28 +80,28 @@
                     <div class="form-group">
                         <label class="control-label col-sm-3">Codigo: </label>
                         <div class="col-sm-7">
-                            <input type="text" id="codigo" class="form-control" placeholder="" ng-model="edit.codigo">
+                            <input type="text" id="codigo" class="form-control" placeholder="" ng-model="update.codigo">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-sm-3">Sucursal: </label>
                         <div class="col-sm-7">
-                            <input type="text" id="sucursal" class="form-control" placeholder="" ng-model="edit.sucursal">
+                            <input type="text" id="sucursal" class="form-control" placeholder="" ng-model="update.sucursal">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-sm-3">Dirección: </label>
                         <div class="col-sm-7">
-                            <textarea id="direccion" class="form-control" placeholder="" ng-model="edit.direccion"></textarea>
+                            <textarea id="direccion" class="form-control" placeholder="" ng-model="update.direccion"></textarea>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-sm-3">Teléfono: </label>
                         <div class="col-sm-7">
-                            <input type="text" id="telefono" class="form-control" placeholder="Lada + número" ng-model="edit.telefono">
+                            <input type="text" id="telefono" class="form-control" placeholder="Lada + número" ng-model="update.telefono">
                         </div>
 
                     </div>
@@ -112,7 +112,7 @@
                                 <select class="form-control"
                                  chosen
                                  width="'100%'" 
-                                 ng-model="edit.estatus" 
+                                 ng-model="update.estatus" 
                                  ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
                                  <option value="">--Seleccione Opcion--</option>   
                                 </select>
