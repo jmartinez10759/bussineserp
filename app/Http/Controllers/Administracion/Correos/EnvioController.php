@@ -10,11 +10,11 @@ use App\Model\Administracion\Correos\SysEnviadosModel;
 class EnvioController extends MasterController
 {
     #se crea las propiedades
-    private static $_tabla_model;
+    private $_tabla_model;
 
     public function __construct(){
         parent::__construct();
-        self::$_tabla_model = new SysEnviadosModel;
+        $this->_tabla_model = new SysEnviadosModel;
     }
     /**
      *Metodo para obtener la vista y cargar los datos
@@ -22,7 +22,7 @@ class EnvioController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function index(){
+    public function index(){
 
         $data = self::page_mail();
         #debuger($data['correos']);
@@ -35,8 +35,7 @@ class EnvioController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function show( Request $request ){
-
+    public function show( Request $request ){
 
     }
     /**
@@ -45,7 +44,7 @@ class EnvioController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function store( Request $request){
+    public function store( Request $request){
 
 
 
@@ -56,7 +55,7 @@ class EnvioController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function update( Request $request){
+    public function update( Request $request){
 
 
     }
@@ -66,7 +65,7 @@ class EnvioController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function destroy( Request $request ){
+    public function destroy( Request $request ){
 
 
     }

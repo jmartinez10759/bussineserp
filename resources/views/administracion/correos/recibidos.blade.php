@@ -10,7 +10,7 @@
   <section class="content">
     <div class="row">
       <div class="col-md-3">
-        <a href="{{route('correos.redactar')}}" class="btn btn-primary btn-block margin-bottom" {{$email}}>Redactar</a>
+        <a href="{{route('correos.redactar')}}" class="btn btn-primary btn-block margin-bottom" {{$email}} >Redactar</a>
 
         <div class="box box-solid">
           <div class="box-header with-border">
@@ -104,7 +104,6 @@
             <div class="table-responsive mailbox-messages">
               <table class="table table-hover table-striped" id="bandeja_correos">
                 <tbody>
-            {{print_r($correos)}}
               @foreach($correo as $correo)
                 @if($correo->estatus_vistos == 0)
                   <tr style="cursor:pointer; font-weight: bold;" class="info" id_email="{{$correo->id}}">

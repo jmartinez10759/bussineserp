@@ -186,7 +186,7 @@
 
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
-            <button type="button" class="btn btn-danger" data-fancybox-close ng-click="cancel_pedido()">
+            <button type="button" class="btn btn-danger" data-fancybox-close ng-click="cancel_pedido()" disloading>
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
             <button type="button" class="btn btn-primary agregar" ng-click="update_register()" {{$insertar}}>
@@ -386,7 +386,7 @@
 
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
-            <button type="button" class="btn btn-danger" data-fancybox-close ng-click="cancel_pedido()">
+            <button type="button" class="btn btn-danger" data-fancybox-close ng-click="cancel_pedido()" >
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
             <button type="button" class="btn btn-info update" ng-click="update_register(1)" {{$update}} ng-if="estatus != 5 ">
@@ -441,7 +441,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Precio Unitario</label>
                 <div class="col-sm-9">
-                    <input type="number" class="form-control" readonly placeholder="$" ng-blur="calcular_suma(1)" value="0" ng-model="products.precio" string-to-number>
+                    <input type="number" class="form-control" placeholder="$" ng-blur="calcular_suma(1)" value="0" ng-model="products.precio" string-to-number>
                 </div>
             </div>
 
@@ -515,7 +515,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="">Precio Unitario</label>
                 <div class="col-sm-9">
-                    <input type="number" class="form-control" readonly placeholder="$" ng-blur="calcular_suma(1)" value="0" ng-model="products.precio" string-to-number>
+                    <input type="number" class="form-control" placeholder="$" ng-blur="calcular_suma(1)" value="0" ng-model="products.precio" string-to-number>
                 </div>
             </div>
 

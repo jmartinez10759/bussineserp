@@ -17,6 +17,7 @@
         <link type="text/css" rel="stylesheet" href="{{asset('css/sweetalert.css')}}" />
         <link type="text/css" rel="stylesheet" href="{{asset('css/toastr.css')}}" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />
+        <link rel="stylesheet" href="{{asset('admintle/bower_components/font-awesome/css/font-awesome.min.css')}}">
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
@@ -67,19 +68,46 @@
                 margin-bottom: 30px;
             }
 
-            .sombra::-webkit-box-shadow: -12px 22px 23px 3px rgba(201,201,201,1);
-            .sombra::-moz-box-shadow: -12px 22px 23px 3px rgba(201,201,201,1);
-            /*.sombra::box-shadow: -12px 22px 23px 3px rgba(201,201,201,1);*/
+            .drop-shadow {
+                position:relative;
+                float:left;
+                width:100%;
+                padding:1em;
+                margin:1em 2px 1em;
+                background:#fff;
+                cursor: pointer;
+                
+                -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3),0 0 40px rgba(0, 0, 0, 0.1) inset;
+                -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+                box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+
+                -webkit-transition:all .8s ease; /* Safari y Chrome */
+                -moz-transition:all .8s ease; /* Firefox */
+                -o-transition:all .8s ease; /* IE 9 */
+                -ms-transition:all .8s ease; /* Opera */
+
+            }
+            .drop-shadow:hover{
+              -webkit-transform:scale(1.10);
+              -moz-transform:scale(1.10);
+              -ms-transform:scale(1.10);
+              -o-transform:scale(1.10);
+              transform:scale(1.10);
+            }
+
+
+
+            
 
         </style>
 
     </head>
     <body>
         <!-- <div class="flex-center position-ref full-height"> -->
-        <div class="top-right links">
+        <div class="top-right col-sm-2">
             @if (Session::get('id'))
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-warning btn-lg">
-              <i class="fa fa-sign-out pull-right"></i>Cerrar Sesion
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-danger btn-lg" title="Cerrar Sesion">
+              <i class="fa fa-sign-out pull-right"></i>
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} </form>
             <!-- <a href="#" class="btn btn-default btn-flat">Sign out</a> -->
@@ -91,11 +119,26 @@
                      <br>
                      <center><h2> {{ $titulo }} </h2></center>
                      <br>
-                  <div class="sombra">
-                      hola
+
+                  <div class="drop-shadow col-md-12" v-for="(empresas,key) in datos" v-on:click.prevent="bussiness_sucursales( empresas.id )" title="Selecciona una Empresa" >
+                      <div class="col-md-3">
+                          <img :src="empresas.logo" width="100%" height="100%">
+                      </div>
+                      <div class="col-md-8">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-9">
+                          <h3>@{{ empresas.razon_social }}</h3>
+                          <strong>@{{ empresas.rfc_emisor }}</strong>
+                        </div>
+                        <div class="col-sm-1"></div>
+                      </div>
+                      <div class="col-md-1">
+
+                      </div>
+                      
                   </div>
 
-                   <div class="col-sm-offset-0 col-sm-12 table-responsive">
+                   <div class="col-sm-offset-0 col-sm-12 table-responsive" style="display: none;">
 
                           <table class="table table-hover " id="table_empresas">
                               <thead style="background-color: #337ab7; color: #ffffff;">
@@ -170,6 +213,11 @@
       	<script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+        <!-- angular -->
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-animate.js"></script>
+
       	<!-- script master vue -->
         <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>

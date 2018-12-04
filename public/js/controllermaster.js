@@ -84,6 +84,10 @@ app.directive('habilitar', function() {
 	 });
 
 
+
+
+
+
 /*app.service('masterservice',function(){
 
 	this.url_upload = "";

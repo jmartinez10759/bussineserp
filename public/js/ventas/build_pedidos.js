@@ -1,19 +1,22 @@
-var url_insert              = "pedidos/register";
-var url_update              = "pedidos/update";
-var url_edit                = "pedidos/edit";
-var url_destroy             = "pedidos/destroy";
-var url_destroy_conceptos   = "pedidos/destroy_concepto";
-var url_all                 = "pedidos/all";
-var url_see_report          = "pedidos/reportes";
-var url_send_correo         = "pedidos/correo";
-var redireccion             = "ventas/pedidos";
-var url_edit_clientes       = "clientes/edit";
-var url_edit_contactos      = "contactos/edit";
-var url_edit_productos      = "productos/edit";
-var url_edit_planes         = "planes/edit";
-var url_insert_factura      = "facturaciones/insert";
+const URL = {
+    url_insert             :  "pedidos/register"
+    ,url_update             :  "pedidos/update"
+    ,url_edit               :  "pedidos/edit"
+    ,url_destroy            :  "pedidos/destroy"
+    ,url_destroy_conceptos  :  "pedidos/destroy_concepto"
+    ,url_all                :  "pedidos/all"
+    ,url_see_report         :  "pedidos/reportes"
+    ,url_send_correo        :  "pedidos/correo"
+    ,redireccion            :  "ventas/pedidos"
+    ,url_edit_clientes      :  "clientes/edit"
+    ,url_edit_contactos     :  "contactos/edit"
+    ,url_edit_productos     :  "productos/edit"
+    ,url_edit_planes        :  "planes/edit"
+    ,url_insert_factura     :  "facturaciones/insert"
+} 
 
 app.controller('PedidosController', function( masterservice, $scope, $http, $location ) {
+    
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {
@@ -29,7 +32,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
         $scope.products = {
           cantidad : 0 , total: 0  
         };
-        $scope.calendar();
+        $scope.filtro = masterservice.calendar();
         $scope.select_anios();
         $scope.table_concepts = {};
         $scope.check_meses();
@@ -37,7 +40,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
     }
 
     $scope.index = function( array = {} ){
-        var url = domain( url_all );
+        var url = domain( URL.url_all );
         var fields = (array != 0)? array :{};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
@@ -55,7 +58,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
     $scope.conceptos = function( update = false ){
 
-        var url = domain( url_edit );
+        var url = domain( URL.url_edit );
         var fields = { id: (update)? $scope.update.id : $scope.insert.id };
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
@@ -77,22 +80,16 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             $scope.subtotal = response.data.result.subtotal;
             $scope.iva      = response.data.result.iva;
             $scope.total    = response.data.result.total;
-
+            loading(true);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
 
     }
 
     $scope.insert_register = function( update = false ){
 
-        var url = domain( url_insert );
+        var url = domain( URL.url_insert );
         $scope.insertar.pedidos = (update)? $scope.update :$scope.insert;
         $scope.insertar.conceptos = [$scope.products];
         var validacion = {
@@ -146,6 +143,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
           }
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+            loading(true);
             //toastr.success( response.data.message , title );
             console.log(response.data.result);
             if(update){
@@ -209,7 +207,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
                 ,'buttons'  : ['share', 'close']
             });
           }
-          var url = domain( url_update );
+          var url = domain( URL.url_update );
           var fields = {pedidos : $scope.insertar.pedidos };
           MasterController.request_http(url,fields,'put',$http, false )
           .then(function( response ){
@@ -227,6 +225,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               var data = {
                 mes: $scope.meses
                 ,anio: $scope.anio
+                ,usuarios: $scope.usuarios
               }
               $scope.index(data);
               if(response.data.result.pedidos.id_estatus == 5){
@@ -278,7 +277,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
     $scope.destroy_register = function( id, cancel = false ){
 
-      var url = domain( url_destroy );
+      var url = domain( URL.url_destroy );
       var fields = {id : id };
       var titulo = (cancel)? "¿Cancelar Pedido?" : "¿Borrar Registro?";
       var descripcion = (cancel)? "¿Realmente desea cancelar el pedido?" : "¿Realmente desea eliminar el registro?";
@@ -303,7 +302,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
     $scope.destroy_concepto = function( id , update = false ){
 
-        var url = domain( url_destroy_conceptos );
+        var url = domain( URL.url_destroy_conceptos );
         var fields = {id : id };
 
         MasterController.request_http(url,fields,'delete',$http, false )
@@ -337,7 +336,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
     $scope.display_contactos = function( update = false ){
 
-      var url = domain( url_edit_clientes );
+      var url = domain( URL.url_edit_clientes );
       var fields = {id : (update)? $scope.update.id_cliente : $scope.insert.id_cliente };
 
       MasterController.request_http(url,fields,"get",$http, false )
@@ -347,6 +346,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             $scope.fields.nombre_comercial = response.data.result.nombre_comercial
             $scope.fields.telefono_empresa = response.data.result.telefono
             console.log(response);
+            loading(true);
         }).catch(function( error ){
             masterservice.session_status({},error);
         });
@@ -355,7 +355,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
     $scope.change_contactos = function( update = false ){
 
-      var url = domain( url_edit_contactos );
+      var url = domain( URL.url_edit_contactos );
       var fields = {id : (update)? $scope.update.id_contacto : $scope.insert.id_contacto };
 
       MasterController.request_http(url,fields,"get",$http, false )
@@ -363,6 +363,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             $scope.fields.telefono = response.data.result.telefono
             $scope.fields.correo = response.data.result.correo
             console.log(response);
+            loading(true);
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 
@@ -377,7 +378,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
     $scope.display_productos = function( update = false){
 
-      var url = domain( url_edit_productos );
+      var url = domain( URL.url_edit_productos );
       var fields = {id : (update)? $scope.products.id_producto : $scope.products.id_producto};
 
       MasterController.request_http(url,fields,"get",$http, false )
@@ -388,21 +389,16 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             $scope.products.cantidad = 0;
             $scope.products.total = 0;
             console.log(response);
+            loading(true);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
 
     }
 
     $scope.display_planes = function ( update = false ){
 
-      var url = domain( url_edit_planes );
+      var url = domain( URL.url_edit_planes );
       var fields = {id : (update)? $scope.products.id_plan : $scope.products.id_plan};
 
       MasterController.request_http(url,fields,"get",$http, false )
@@ -413,14 +409,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             $scope.products.cantidad = 0;
             $scope.products.total = 0;
             console.log(response);
+            loading(true);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
 
     }
@@ -435,7 +426,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
     $scope.insert_facturacion = function(){
 
-      var url = domain( url_insert_factura );
+      var url = domain( URL.url_insert_factura );
       var fields = $scope.update.pedidos;
       MasterController.request_http(url,fields,'post',$http, false )
       .then( response => {
@@ -443,25 +434,15 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               redirect(domain("ventas/facturaciones"));
           },"success",false,["OK",""]);   
       }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-          console.log(error);
-            toastr.error( error.result , expired );  
+          masterservice.session_status({},error); 
       });
 
     }
 
     $scope.format_date = function( request, format ){
-        var d = new Date(request);
-        if( format === "yyyy-mm-dd"){
-          return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +  ("0" +(d.getDate())).slice(-2);
-        }else{
-          return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
-        }
-    
+
+        return masterservice.format_date(request,format);
+
     }
     $scope.filtros_mes = function(data){
         for(var i in $scope.filtro){ $scope.filtro[i].class = "";}
@@ -473,6 +454,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
           ,usuario: $scope.usuarios
         }
         $scope.index(fields);
+    
     }
 
     $scope.filtros_anio = function(){
@@ -492,19 +474,6 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
           ,usuario: $scope.usuarios
         }
         $scope.index(fields);
-    
-    }
-
-    $scope.calendar = function(){
-
-        var calendar = [];
-        var count = 1;
-        var nombres = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC','TODOS'];
-        for (var i = 0; i < nombres.length; i++) {
-            calendar[i] = { id: count , nombre:nombres[i] };
-            count++;
-        }
-        $scope.filtro = calendar;
     
     }
 
@@ -572,26 +541,50 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             ,'width'    : 900
             ,'height'   : 500
             ,'autoSize' : false
-        });           
-        loading();
-        var url = domain( url_send_correo );
+        });
+        var url = domain( URL.url_send_correo );
         var fields = $scope.correo;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
-            loading(true);
+            $scope.index();
             toastr.success( "Se envio el correo correctamente" , title ); 
             $scope.correo = {};
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         }); 
 
     }
+
+    $scope.update_estatus = function(id, estatus){
+        
+        var url = domain( URL.url_update );
+        var fields = { pedidos : {id: id ,id_estatus : estatus } };
+
+        buildSweetAlertOptions("¿Cambiar Estatus?","¿Realmente desea cambiar el estatus del pedido?",function(){
+            
+            MasterController.request_http(url,fields,'put',$http, false )
+            .then(function( response ){
+
+              toastr.info( response.data.message , title );
+              jQuery('#tr_'+id ).effect("highlight",{},5000);
+              var data = {
+                mes: $scope.meses ,anio: $scope.anio ,usuarios : $scope.usuarios
+              }
+              $scope.index(data);
+              
+              if(response.data.result.pedidos.id_estatus == 5){
+                  $scope.update = response.data.result;
+                  $scope.insert_facturacion();
+              }
+
+              }).catch(function( error ){
+                  masterservice.session_status({},error);
+              });
+          
+        },"warning",true,["SI","NO"]); 
+
+    }
+
 
     /*$scope.upload_file = function(update){
 

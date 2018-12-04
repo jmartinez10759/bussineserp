@@ -76,7 +76,7 @@
                                             width="'100%'"
                                             chosen
                                             ng-model="insert.id_servicio" 
-                                            ng-options="value.id as value.clave for (key, value) in datos.servicios">
+                                            ng-options="value.id as value.clave+' - '+value.descripcion for (key, value) in datos.servicios">
                                                 <option value="">--Seleccione Opcion--</option>  
                                             </select> 
                                         </div>
@@ -223,7 +223,7 @@
                     <!-- Profile Image -->
                     <div class="box box-primary">
                         <center>
-                        <div class="box-body box-profile">
+                        <div class="box-body box-profile drop-shadow">
                             <div id="load_img" class="col-sm-12">
                                 <div id="imagen_edit"></div>
                             </div>
@@ -290,7 +290,7 @@
                                             width="'100%'"
                                             chosen
                                             ng-model="update.id_servicio" 
-                                            ng-options="value.id as value.clave for (key, value) in datos.servicios">
+                                            ng-options="value.id as value.clave+' - '+value.descripcion for (key, value) in datos.servicios">
                                                 <option value="">--Seleccione Opcion--</option>  
                                             </select> 
                                         </div>

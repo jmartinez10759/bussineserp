@@ -60,7 +60,7 @@
                                                 <input type="text" class="form-control" placeholder="Lada + número" ng-model="insert.telefono" ng-maxlength="15">
                                             </div>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control" placeholder="Extension" ng-model="insert.extension" ng-maxlength="15" capitalize>
+                                                <input type="text" class="form-control" placeholder="Ext." ng-model="insert.extension" ng-maxlength="15" capitalize>
                                                 
                                             </div>
                                         </div>
@@ -233,12 +233,12 @@
 
         <section class="content">
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-md-2">
                     <!-- Profile Image -->
                     <div class="box box-primary">
                         <center>
-                        <div class="box-body box-profile">
-                            <div id="load_img" class="col-sm-11">
+                        <div class="box-body box-profile drop-shadow">
+                            <div id="load_img" class="col-sm-12">
                                 <div id="imagen_edit"></div>
                             </div>
                             <input type="hidden" class="form-control" ng-model="update.logo">
@@ -248,7 +248,7 @@
                     <!-- /.box -->
                 </div>
                 <!-- /.col -->
-                <div class="col-sm-9">
+                <div class="col-md-10">
                     <form class="form-horizontal">
 
                         <div class="nav-tabs-custom">
@@ -272,7 +272,7 @@
                                 <div class="tab-pane" id="contactos_edit">
                                     <div class="form-group ">
                                         <label for="product_code" class="col-sm-2 control-label">Nombre: <font size="3" color="red">* </font></label>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-6">
                                             <div class="col-sm-3">
                                                 <select class="form-control"
                                                 width="'100%'"
@@ -281,12 +281,12 @@
                                                     <option value="">--Seleccione Opcion--</option>  
                                                 </select> 
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-8">
                                                 <input type="text" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="update.contacto" capitalize>
                                             </div>
                                         </div>
                                         <label for="model" class="col-sm-2 control-label">Departamento:</label>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-2">
                                             <input type="text" class="form-control" placeholder="Ingrese departamento en la empresa" ng-model="update.departamento" capitalize>
                                         </div>
                                     </div>
