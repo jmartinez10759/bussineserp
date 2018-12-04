@@ -7,7 +7,7 @@
 <section class="content" id="vue-redactar">
   <div class="row">
     <div class="col-md-3">
-      <a href="{{route('correos.recibidos')}}" class="btn btn-primary btn-block margin-bottom " {{$emails_permisos}}>Regresar a Recibidos</a>
+      <a href="{{route('correos.recibidos')}}" class="btn btn-primary btn-block margin-bottom " >Regresar a Recibidos</a>
 
       <div class="box box-solid">
         <div class="box-header with-border">
@@ -103,7 +103,7 @@
           <div class="form-group">
             <div class="btn btn-default btn-file">
               <i class="fa fa-paperclip"></i> Attachment
-              <input type="file" name="attachment" v-on:change="newKeep.attachment" multiple >
+              <input type="file" name="attachment" multiple >
             </div>
             <p class="help-block">Max. 32MB</p>
           </div>
@@ -112,7 +112,7 @@
         <div class="box-footer">
           <div class="pull-right">
             <button type="button" class="btn btn-default"><i class="fa fa-pencil"></i> Borrador</button>
-            <button type="button" class="btn btn-primary" {{$emails_permisos}}  v-on:click.prevent="send_correo()"><i class="fa fa-envelope-o"></i> Enviar</button>
+            <button type="button" class="btn btn-primary" {{$email}}  v-on:click.prevent="send_correo()"><i class="fa fa-envelope-o"></i> Enviar</button>
           </div>
           <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Descartar</button>
         </div>
@@ -129,7 +129,7 @@
 @push('scripts')
   <!-- iCheck -->
   <script src="{{asset('admintle/plugins/iCheck/icheck.min.js')}}"></script>
-  <script type="text/javascript" src="{{asset('js/administrador/correos/build_correos.js')}}" ></script>
+  <script type="text/javascript" src="{{asset('js/administracion/correos/build_correos.js')}}" ></script>
   <script>
     jQuery('.btn-papelera').attr('disabled',false);
     //Add text editor

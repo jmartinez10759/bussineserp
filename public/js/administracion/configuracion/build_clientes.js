@@ -177,13 +177,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
                 ,'modal': true
             });           
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error , expired );
+            masterservice.session_status({},error);
         });
     }
 
@@ -211,35 +205,28 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           $scope.cmb_estados = {};
           $scope.cmb_estados = response.data.result.estados;
           console.log($scope.cmb_estados);
+          loading(true);
       }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-          console.log(error);
-            toastr.error( error.result , expired );   
+          masterservice.session_status({},error);
       });    
     }
 
     $scope.select_codigos = function( update = false ){
+
       var url = domain( URL.url_edit_codigos );
       var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
           $scope.cmb_codigos = response.data.result;
           console.log($scope.cmb_codigos);
+          loading(true);
       }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            toastr.error( error.data.result , expired );  
+          masterservice.session_status({},error);
       }); 
     }
     
     $scope.display_sucursales = function( id ) {
+
        var id_empresa = jQuery('#cmb_empresas_'+id).val().replace('number:','');
        var url = domain( URL.url_display );
        var fields = { 
@@ -261,13 +248,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
                jQuery(`#sucursal_${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
            };
        }).catch(error => {
-           if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            toastr.error( error.data.result , expired );  
-
+           masterservice.session_status({},error); 
        });
 
     }
@@ -300,13 +281,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             jQuery('#tr_'+$scope.fields.id_cliente).effect("highlight",{},5000);
             $scope.index();
         }).catch(error => {
-            if( isset(error.response) && error.response.status == 419 ){
-              toastr.error( session_expired ); 
-              redirect(domain("/"));
-              return;
-            }
-              toastr.error( error.data.result , expired );  
-
+           masterservice.session_status({},error);
         });
 
     }
@@ -320,6 +295,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           .then(function( response ){
               //not remove function this is  verify the session
               if(masterservice.session_status( URL )){return;};
+              
                toastr.info( response.data.message , title );
                jQuery('#tr_'+id).effect("highlight",{},5000);
                buildSweetAlert('# '+id,'Se genero el cliente con exito','success');

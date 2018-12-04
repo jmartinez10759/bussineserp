@@ -27,7 +27,7 @@ class CorreoController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-     public static function index(){
+     public function index(){
 
          $data = self::page_mail();
          #debuger( count($data['correos']) );
@@ -40,7 +40,7 @@ class CorreoController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function show( Request $request ){
+    public function show( Request $request ){
         #$where = ['id' => Session::get('id')];
         $correo = [];
         $where = ['id' => $request->id];
@@ -62,7 +62,7 @@ class CorreoController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function store( Request $request ){
+    public function store( Request $request ){
         #debuger($request->all());
         #se realiza la consulta para obtener los datos del correo a enviar
         $insert_correo_rel = [];
@@ -180,7 +180,7 @@ class CorreoController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function update( Request $request){
+    public function update( Request $request){
 
 
     }
@@ -190,7 +190,7 @@ class CorreoController extends MasterController
      *@param $id [Description]
      *@return void
      */
-    public static function destroy( $id ){
+    public function destroy( $id ){
 
 
     }
@@ -200,7 +200,7 @@ class CorreoController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-     public static function destacados( Request $request){
+     public function destacados( Request $request){
 
         $data = ['estatus_destacados' => $request->estatus_destacados];
         $where = ['id' => $request->id];
@@ -217,7 +217,7 @@ class CorreoController extends MasterController
       *@param Request $request [Description]
       *@return void
       */
-      public static function papelera( Request $request){
+      public function papelera( Request $request){
           #se realiza una transaccion
           $response = [];
           $error = null;

@@ -35,14 +35,9 @@ app.controller('EmpresasController', function( masterservice, $scope, $http, $lo
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
+            loading(true);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+            masterservice.session_estatus({},error);
         });
     }
     
@@ -77,13 +72,7 @@ app.controller('EmpresasController', function( masterservice, $scope, $http, $lo
             }); 
             $scope.index();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error.data );
-              toastr.error( error.data.message , expired );
+           masterservice.session_estatus({},error);
         });
     }
 
@@ -121,13 +110,7 @@ app.controller('EmpresasController', function( masterservice, $scope, $http, $lo
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           $scope.index();
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+          masterservice.session_estatus({},error);
       });
     }
 

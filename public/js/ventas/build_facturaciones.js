@@ -443,7 +443,6 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         var fields = {id : id, id_estatus: (status) };
         if( status === 8 ){
              buildSweetAlertOptions("¿Timbrar Factura?","¿Realmente desea timbrar la factura?",function(){
-              //alert("Se realiza el timbrado favor de esperar....");  
               $scope.estatus_update(url,fields);
               jQuery('#tr_'+id ).effect("highlight",{},5000);
             },"warning",true,["SI","NO"],function(){

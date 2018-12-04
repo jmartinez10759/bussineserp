@@ -1,15 +1,19 @@
-var url_insert  = "productos/register";
-var url_update   = "productos/update";
-var url_edit     = "productos/edit";
-var url_destroy  = "productos/destroy";
-var url_all      = "productos/all";
-var redireccion  = "configuracion/productos";
-var url_display         = "productos/display_sucursales";
-var url_insert_permisos = "productos/register_permisos";
-var url_unidades        = 'unidadesmedidas/edit';
-var url_edit_tipo       = "tasa/factor_tasa";
-var url_edit_tasa       = "impuesto/clave_impuesto";
-var url_upload          = 'upload/files';
+const URL = {
+
+  url_insert           : "productos/register"
+  ,url_update          : "productos/update"
+  ,url_edit            : "productos/edit"
+  ,url_destroy         : "productos/destroy"
+  ,url_all             : "productos/all"
+  ,redireccion         : "configuracion/productos"
+  ,url_display         : "productos/display_sucursales"
+  ,url_insert_permisos : "productos/register_permisos"
+  ,url_unidades        : 'unidadesmedidas/edit'
+  ,url_edit_tipo       : "tasa/factor_tasa"
+  ,url_edit_tasa       : "impuesto/clave_impuesto"
+  ,url_upload          : 'upload/files'
+
+}
 
 app.controller('ProductosController', function( masterservice ,$scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
@@ -24,19 +28,14 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
     }
 
     $scope.index = function(){
-        var url = domain( url_all );
+        var url = domain( URL.url_all );
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
+            loading(true);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+            masterservice.session_status({},error);
         });
     }
     
@@ -48,7 +47,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             ,'DESCRIPCION'  : $scope.insert.descripcion
           };
         if(validaciones_fields(validacion)){return;}
-        var url = domain( url_insert );
+        var url = domain( URL.url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
@@ -64,13 +63,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             $scope.index();
             for(var i in $scope.insert){ $scope.insert[i] = ""; }
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status({},error);
         });
     }
     $scope.update_register = function(){
@@ -81,7 +74,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             ,'DESCRIPCION'  : $scope.update.descripcion
           };
       if(validaciones_fields(validacion)){return;}
-      var url = domain( url_update );
+      var url = domain( URL.url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,"put",$http, false )
       .then(function( response ){
@@ -97,14 +90,9 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           $scope.index();
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+          masterservice.session_status({},error);
       });
+    
     }
 
     $scope.edit_register = function( data ){
@@ -124,11 +112,12 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
       $scope.tipo_factor(1);
       $scope.clave_impuesto(1);
       console.log($scope.update);
+    
     }
 
     $scope.destroy_register = function( id ){
 
-      var url = domain( url_destroy );
+      var url = domain( URL.url_destroy );
       var fields = {id : id };
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
@@ -136,19 +125,15 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status({},error);
         });
           
       },"warning",true,["SI","NO"]);  
+    
     }
 
     $scope.total_concepto = function(){
+
         var iva = ($scope.insert.iva) ? $scope.insert.iva : 0;
         var subtotal = ($scope.insert.subtotal) ? $scope.insert.subtotal : 0;
         //var impuesto = parseFloat( subtotal * iva / 100);
@@ -157,9 +142,11 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
         var impuesto = parseFloat( subtotal * iva );
         $scope.insert.total = parseFloat(parseFloat( subtotal ) + parseFloat(impuesto)).toFixed(2);
         console.log($scope.insert.total);
-    },
+    
+    }
 
     $scope.total_concepto_edit = function() {
+
         var iva = ($scope.update.iva) ? $scope.update.iva : 0;
         var subtotal = ($scope.update.subtotal) ? $scope.update.subtotal : 0;
         //var impuesto = parseFloat( subtotal * iva / 100);
@@ -168,11 +155,13 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
         var impuesto = parseFloat( subtotal * iva );
         $scope.update.total = parseFloat(parseFloat( subtotal ) + parseFloat(impuesto)).toFixed(2);
         console.log($scope.update.total);
+    
     }
 
     $scope.display_sucursales = function( id ) {
+
        var id_empresa = jQuery('#cmb_empresas_'+id).val().replace('number:','');
-       var url = domain( url_display );
+       var url = domain( URL.url_display );
        var fields = { 
            id_empresa : id_empresa
            ,id_producto : id
@@ -192,14 +181,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
                jQuery(`#${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
            };
        }).catch(error => {
-           if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            console.error(error);
-            toastr.error( error.result , expired );  
-
+          masterservice.session_status({},error); 
        });
 
     }
@@ -215,7 +197,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
                 i++;
             }
         });
-        var url = domain(url_insert_permisos);
+        var url = domain( URL.url_insert_permisos);
         var fields = {
             'matrix' : matrix
             , 'id_empresa': $scope.fields.id_empresa
@@ -233,38 +215,27 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             $scope.index();
 
         }).catch(error => {
-            if( isset(error.response) && error.response.status == 419 ){
-              toastr.error( session_expired ); 
-              redirect(domain("/"));
-              return;
-            }
-            console.error(error);
-              toastr.error( error.result , expired );  
-
+            masterservice.session_status({},error);
         });
 
     }
 
     $scope.tipo_factor = function( update = false){
 
-      var url = domain( url_edit_tipo );
+      var url = domain( URL.url_edit_tipo );
       var fields = {id : (update)?$scope.update.id_tipo_factor:$scope.insert.id_tipo_factor };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
             $scope.cmb_tasas = response.data.result;
+            loading(true);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+           masterservice.session_status({},error);
         });
+    
     }
-
     $scope.clave_impuesto = function( update = false ){
-      var url = domain( url_edit_tasa );
+
+      var url = domain( URL.url_edit_tasa );
       var fields = {id : (update)? $scope.update.id_tasa: $scope.insert.id_tasa };
       
       MasterController.request_http(url,fields,'get',$http, false )
@@ -275,20 +246,16 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             }else{
               $scope.insert.iva = response.data.result.valor_maximo;
             }
+            loading(true);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
+    
     }
 
     $scope.upload_file = function(update){
 
-      var upload_url = domain( url_upload );
+      var upload_url = domain( URL.url_upload );
       var identificador = {
         div_content   : 'div_dropzone_file_productos',
         div_dropzone  : 'dropzone_xlsx_file_productos',

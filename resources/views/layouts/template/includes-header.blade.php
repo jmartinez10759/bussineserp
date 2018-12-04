@@ -64,12 +64,32 @@
     .fixed_header thead tr {display: block;}
     .fixed_header thead {background: black;color:#fff;}
     .fixed_header th, .fixed_header td {padding: 5px;text-align: left;width: 500px;}
-    /*.fixed_header{width: 100%;table-layout: auto; border-collapse: collapse; display:block;}
-    .fixed_header tbody {display:block; overflow: auto; height: 350px;}
-    .fixed_header thead {background-color: rgb(51, 122, 183);color:#fff; display: block;}
-    .fixed_header thead tr {display: block;}
-    .fixed_header tfoot {display: block;}
-    .fixed_header th, .fixed_header td {padding: 5px;text-align: left; width: 500px;}*/
+    .drop-shadow {
+        position:relative;
+        float:left;
+        width:100%;
+        padding:1em;
+        margin: 1em 2px 0em;
+        background:#fff;
+        cursor: pointer;
+        
+        -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3),0 0 40px rgba(0, 0, 0, 0.1) inset;
+        -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+        box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+
+        -webkit-transition:all .8s ease; /* Safari y Chrome */
+        -moz-transition:all .8s ease; /* Firefox */
+        -o-transition:all .8s ease; /* IE 9 */
+        -ms-transition:all .8s ease; /* Opera */
+
+    }
+    .drop-shadow:hover{
+      -webkit-transform:scale(1.10);
+      -moz-transform:scale(1.10);
+      -ms-transform:scale(1.10);
+      -o-transform:scale(1.10);
+      transform:scale(1.10);
+    }
     .notify {
         animation: 1s ease-out 0s normal none infinite running heartbit;
         border: 5px solid #4680ff;

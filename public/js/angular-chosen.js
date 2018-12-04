@@ -190,3 +190,13 @@ angular.module('stringToNumber', [])
     }
   };
 });
+
+/*app.directive('disloading', function() {
+   //alert("directive");
+   return {
+    restrict: 'EA',
+     link: function(scope, element, attrs, controller) {
+      loading(true);
+     }
+   };
+});*/

@@ -184,11 +184,13 @@
                     $data[$key] = strtoupper($value);
                 }
             } 
-            $data['subtotal'] = str_replace(",", "", $data['subtotal']); 
-            $data['iva']      = str_replace(",", "", $data['iva']);
-            $data['total']    = str_replace(",", "", $data['total']);
+            if (isset($data['subtotal'],$data['iva'],$data['total']) ) {
+                $data['subtotal'] = str_replace(",", "", $data['subtotal']); 
+                $data['iva']      = str_replace(",", "", $data['iva']);
+                $data['total']    = str_replace(",", "", $data['total']);
+            }
+            #debuger($data);
             $this->_tabla_model::where(['id' => $request->pedidos['id']])->update($data);
-            #$response = $this->_tabla_model::where(['id' => $request->pedidos['id']])->get()[0];
         DB::commit();
         $success = true;
         } catch (\Exception $e) {

@@ -13,11 +13,11 @@ use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 class RedactarController extends MasterController
 {
     #se crea las propiedades
-    private static $_tabla_model;
+    private $_tabla_model;
 
     public function __construct(){
         parent::__construct();
-        self::$_tabla_model = new SysEnviadosModel;
+        $this->_tabla_model = new SysEnviadosModel;
     }
     /**
      *Metodo para obtener la vista y cargar los datos
@@ -25,10 +25,9 @@ class RedactarController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function index(){
+    public function index(){
 
         $data = self::page_mail();
-        #debuger( $data['permiso_class'] );
         return self::_load_view('administracion.correos.redactar',$data);
 
     }
@@ -38,7 +37,7 @@ class RedactarController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function show( Request $request ){
+    public function show( Request $request ){
 
 
     }
@@ -48,7 +47,7 @@ class RedactarController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function store( Request $request){
+    public function store( Request $request){
 
 
 
@@ -59,7 +58,7 @@ class RedactarController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function update( Request $request){
+    public function update( Request $request){
 
 
     }
@@ -69,7 +68,7 @@ class RedactarController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public static function destroy( Request $request ){
+    public function destroy( Request $request ){
 
 
     }
