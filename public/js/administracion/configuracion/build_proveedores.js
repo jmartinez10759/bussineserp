@@ -1,16 +1,17 @@
-var url_insert  = "proveedores/register";
-var url_update   = "proveedores/update";
-var url_edit     = "proveedores/edit";
-var url_destroy  = "proveedores/destroy";
-var url_all      = "proveedores/all";
-var redireccion  = "configuracion/proveedores";
-var url_edit_pais       = 'pais/edit';
-var url_edit_codigos    = 'codigopostal/show';
-var url_upload          = 'upload/files';
-var url_display = "proveedores/display_sucursales";
-var url_insert_permisos = "proveedores/register_permisos";
-
-var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
+const URL = {
+url_insert  : "proveedores/register"
+,url_update   : "proveedores/update"
+,url_edit     : "proveedores/edit"
+,url_destroy  : "proveedores/destroy"
+,url_all      : "proveedores/all"
+,redireccion  : "configuracion/proveedores"
+,url_edit_pais       : 'pais/edit'
+,url_edit_codigos    : 'codigopostal/show'
+,url_upload          : 'upload/files'
+,url_display : "proveedores/display_sucursales"
+,url_insert_permisos : "proveedores/register_permisos"
+}
+// var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
 app.controller('ProveedoresController', function( $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
@@ -35,7 +36,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
 
     $scope.consulta_general = function(){
-        var url = domain( url_all );
+        var url = domain( URL.url_all );
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
@@ -76,7 +77,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             return;
         }       
 
-        var url = domain( url_insert );
+        var url = domain( URL.url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
@@ -125,7 +126,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-      var url = domain( url_update );
+      var url = domain( URL.url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
@@ -154,7 +155,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
 
 
     $scope.edit_register = function( id ){
-      var url = domain( url_edit );
+      var url = domain( URL.url_edit );
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
@@ -190,7 +191,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
 
     $scope.destroy_register = function( id ){
 
-      var url = domain( url_destroy );
+      var url = domain( URL.url_destroy );
       var fields = {id : id };
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
@@ -212,7 +213,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
 
     $scope.select_estado = function( update = false){
-      var url = domain( url_edit_pais );
+      var url = domain( URL.url_edit_pais );
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
@@ -231,7 +232,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
 
     $scope.select_codigos = function( update = false ){
-      var url = domain( url_edit_codigos );
+      var url = domain( URL.url_edit_codigos );
       var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
@@ -249,7 +250,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     $scope.display_sucursales = function( id ) {
 
        var id_empresa = jQuery('#cmb_empresas_'+id).val().replace('number:','');
-       var url = domain( url_display );
+       var url = domain( URL.url_display );
        var fields = { 
            id_empresa : id_empresa
            ,id_proveedor : id
@@ -292,7 +293,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
                 i++;
             }
         });
-        var url = domain(url_insert_permisos);
+        var url = domain(URL.url_insert_permisos);
         var fields = {
             'matrix' : matrix
             , 'id_empresa': $scope.fields.id_empresa
@@ -320,7 +321,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
     }
     $scope.upload_file = function(update){
 
-      var upload_url = domain( url_upload );
+      var upload_url = domain( URL.url_upload );
       var identificador = {
          div_content   : 'div_dropzone_file_proveedores'
         ,div_dropzone  : 'dropzone_xlsx_file_proveedores'

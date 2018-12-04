@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Administracion\Configuracion;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
+use App\Model\Administracion\Configuracion\SysEstadosModel;
 
 class SucursalesController extends MasterController
 {
@@ -24,72 +26,86 @@ class SucursalesController extends MasterController
      *@return void
      */
      public function index(){
-        if( Session::get('permisos')['GET'] ){ return view('errors.error'); }
-           
-           $response = $this->_tabla_model::all();
-           $registros = [];
-           foreach ($response as $respuesta) {
-             $id['id'] = $respuesta->id;
-             $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit');
-             $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash');
-             $registros[] = [
-                $respuesta->id
-               ,$respuesta->codigo
-               ,$respuesta->sucursal
-               ,$respuesta->direccion
-               ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-               ,$editar
-               ,$borrar
-             ];
-           }
-
-           $titulos = [ 'id','Codigo','Sucursal','Dirección','Estatus','',''];
-           $table = [
-             'titulos' 		     => $titulos
-             ,'registros' 	     => $registros
-             ,'id' 			          => "datatable"
-           ];
-
+      if( Session::get('permisos')['GET'] )
+        { return view('errors.error'); }
            $data = [
              'page_title' 	     => "Configuracion"
              ,'title'  		       => "Sucursales"
-             ,'subtitle' 	       => "Creacion de Sucursales"
-             ,'data_table'  	   =>  data_table($table)
+             
            ];
             
          return self::_load_view( 'administracion.configuracion.sucursales', $data );
 
      }
+      /**
+         *Metodo para obtener los datos de manera asicronica.
+         *@access public
+         *@param Request $request [Description]
+         *@return void
+         */
+        public function all( Request $request ){
+
+            try {
+                $response = $this->_tabla_model::get();
+
+        // debuger($data);
+        $data = [
+          'sucursales'  => $response
+        ];
+              return $this->_message_success( 200, $data , self::$message_success );
+            } catch (\Exception $e) {
+                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+                return $this->show_error(6, $error, self::$message_error );
+            }
+
+        }
+        /**
+        *Metodo para realizar la consulta por medio de su id
+        *@access public
+        *@param Request $request [Description]
+        *@return void
+        */
+        public function show( Request $request ){
+
+            try {
+                $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
+                
+            return $this->_message_success( 200, $response[0] , self::$message_success );
+            } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
+            }
+
+        }
      /**
       *Metodo para
       *@access public
       *@param Request $request [Description]
       *@return void
       */
-     public function store( Request $request){
+    public function store( Request $request){
+            // debuger($request->all());
+            $error = null;
+            DB::beginTransaction();
+            try {
+              $response = $this->_tabla_model::create( $request->all());
+                // debuger($request->all());
+            DB::commit();
+            $success = true;
+            } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+            }
 
-        $response_store = $this->_tabla_model::create($request->all());
-        if ($response_store) {
-          return message( true,$response_store[0],self::$message_success );
+            if ($success) {
+            return $this->_message_success( 201, $response , self::$message_success );
+            }
+            return $this->show_error(6, $error, self::$message_error );
+
+
         }
-        return message( false,[],self::$message_error );
-
-     }
-     /**
-      *Metodo para realizar la consulta por medio de su id
-      *@access public
-      *@param Request $request [Description]
-      *@return void
-      */
-     public function show( Request $request ){
-        $where = ['id' => $request->id];
-        $response_show =self::$_model::show_model([],$where, self::$_tabla_model );
-        if ($response_show) {
-          return message( true,$response_show[0],self::$message_success );
-        }
-        return message( false,[],self::$message_error );
-
-     }
+     
      /**
       *Metodo para la actualizacion de los registros
       *@access public
@@ -97,29 +113,53 @@ class SucursalesController extends MasterController
       *@return void
       */
      public function update( Request $request){
-       $where = ['id' => $request->id];
-       $response_update = $this->_model::update_model($where, $request->all(), self::$_tabla_model );
-       if ($response_update) {
-         return message( true,$response_update[0],self::$message_success );
-       }
-       return message( false,[],self::$message_error );
 
-     }
+            $error = null;
+            DB::beginTransaction();
+            try {
+                // debuger($request->all());
+                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
+            DB::commit();
+            $success = true;
+            } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+            }
+
+            if ($success) {
+            return $this->_message_success( 200, $response , self::$message_success );
+            }
+            return $this->show_error(6, $error, self::$message_error );
+
+        }
      /**
       *Metodo para borrar el registro
       *@access public
-      *@param $id [Description]
+      *@param Request $request [Description]
       *@return void
       */
-     public function destroy( $id ){
-        $where = ['id' => $id];
-        $response_destroy = $this->_model::delete_model( $where, self::$_tabla_model );
-        if (!$response_destroy) {
-          return message( true,$response_destroy,self::$message_success );
-        }
-        return message( false,$response_destroy,self::$message_error );
+     public function destroy( Request $request ){
+         $error = null;
+                DB::beginTransaction();
+                try {
+                    // debuger($request->id);
+                    $response = $this->_tabla_model ::where(['id' => $request->id])->delete(); 
+                    
+                DB::commit();
+                $success = true;
+                } catch (\Exception $e) {
+                $success = false;
+                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+                DB::rollback();
+                }
 
-     }
+                if ($success) {
+                return $this->_message_success( 201, $response , self::$message_success );
+                }
+                return $this->show_error(6, $error, self::$message_error );
+
+            }
      /**
       *Metodo para listar las sucursales. por empresa.
       *@access public

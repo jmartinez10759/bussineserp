@@ -1,13 +1,14 @@
-var url_insert              = "cuentas/register";
-var url_update              = "cuentas/update";
-var url_edit                = "cuentas/edit";
-var url_destroy             = "cuentas/destroy";
-var url_all                 = "cuentas/all";
-var url_display_clientes    = "empresas/edit";
-var url_display_contactos   = "clientes/edit";
-var redireccion             = "configuracion/cuentas";
+const URL = {
+url_insert              : "cuentas/register"
+,url_update              : "cuentas/update"
+,url_edit                : "cuentas/edit"
+,url_destroy             : "cuentas/destroy"
+,url_all                 : "cuentas/all"
+,url_display_clientes    : "empresas/edit"
+,url_display_contactos   : "clientes/edit"
+,redireccion             : "configuracion/cuentas"
+}
 
-var app = angular.module('ng-cuentas', ["ngRoute"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
     .when("/register", {
@@ -36,7 +37,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
     }
 
     $scope.consulta_general = function(){
-        var url = domain( url_all );
+        var url = domain( URL.url_all );
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
@@ -61,7 +62,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
         $scope.insert.contacto    = jQuery('#cmb_contactos').val();
         $scope.insert.id_cliente  = jQuery('#cmb_clientes').val();
         $scope.insert.id_servicio = jQuery('#cmb_servicios').val();
-        var url = domain( url_insert );
+        var url = domain( URL.url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
@@ -101,7 +102,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
         $scope.update.id_cliente  = jQuery('#cmb_clientes_edit').val();
         $scope.update.id_servicio = jQuery('#cmb_servicios_edit').val();
         $scope.update.estatus     = jQuery('#cmb_estatus_edit').val();
-      var url = domain( url_update );
+      var url = domain( URL.url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
@@ -127,7 +128,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
     }
 
     $scope.edit_register = function( id ){
-      var url = domain( url_edit );
+      var url = domain( URL.url_edit );
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
@@ -163,7 +164,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
 
     $scope.destroy_register = function( id ){
 
-      var url = domain( url_destroy );
+      var url = domain( URL.url_destroy );
       var fields = {id : id };
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
@@ -190,7 +191,7 @@ jQuery('#cmb_empresas_edit').selectpicker();
 function display_clientes(){
     
     var id_empresa = jQuery('#cmb_empresas').val();
-    var url = domain( url_display_clientes );
+    var url = domain( URL.url_display_clientes );
     var fields = {id : id_empresa };
     var promise = MasterController.method_master(url,fields,"get");
       promise.then( response => {
@@ -254,7 +255,7 @@ function display_clientes(){
 
 function change_clientes(){
     var id_cliente = jQuery('#cmb_clientes').val();
-    var url = domain(url_display_contactos);
+    var url = domain(URL.url_display_contactos);
     var fields = { id: id_cliente };
     var promise = MasterController.method_master(url,fields,"get");
       promise.then( response => {
@@ -287,7 +288,7 @@ function change_clientes(){
 function display_clientes_edit( id_sucursal, id_clientes = {}, id_cliente, id_contacto ){
     
     var id_empresa = jQuery('#cmb_empresas_edit').val();
-    var url = domain( url_display_clientes );
+    var url = domain( URL.url_display_clientes );
     var fields = {id : id_empresa };
     var promise = MasterController.method_master(url,fields,"get");
       promise.then( response => {
@@ -354,7 +355,7 @@ function display_clientes_edit( id_sucursal, id_clientes = {}, id_cliente, id_co
 
 function change_clientes_edit( id_contacto ){
     var id_cliente = jQuery('#cmb_clientes_edit').val();
-    var url = domain(url_display_contactos);
+    var url = domain(URL.url_display_contactos);
     var fields = { id: id_cliente };
     var promise = MasterController.method_master(url,fields,"get");
       promise.then( response => {

@@ -397,7 +397,12 @@ Route::group(['middleware' => ['admin.only']], function() {
 
     Route::get('/proveedores/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@display_sucursales'
-        ,'as'       => 'clientes.display_sucursales'
+        ,'as'       => 'proveedores.display_sucursales'
+    ]);
+    
+    Route::post('/proveedores/register_permisos', [
+        'uses'      => 'Administracion\Configuracion\ProveedoresController@register_permisos'
+        ,'as'       => 'proveedores.register'
     ]);
     
     ######################### MODULO DE PLANES ##################################
@@ -489,6 +494,10 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::get('/configuracion/sucursales', [
        'uses'      => 'Administracion\Configuracion\SucursalesController@index'
        ,'as'       => 'configuracion.sucursales'
+    ]);
+    Route::get('/sucursales/all', [
+        'uses'      => 'Administracion\Configuracion\sucursalesController@all'
+        ,'as'       => 'sucursales.all'
     ]);
 
     Route::get('sucursales/edit', [

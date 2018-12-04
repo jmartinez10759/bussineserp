@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-app="ng-pais" ng-controller="PaisesController" ng-init="constructor()" ng-cloak>
+<div ng-app="application" ng-controller="PaisesController" ng-init="constructor()" ng-cloak>
 
 	<div class="table-responsive">
             <table class="table highlight table-hover fixed_header" id="datatable">

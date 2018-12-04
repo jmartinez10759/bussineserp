@@ -368,7 +368,7 @@
                                             </select>    
                                         </div>
 
-                                        <label for="estatus" class="col-sm-2 control-label">Estatus: <font size="3" color="red">* </font></label>
+                                        <label for="estatus" class="col-sm-2 control-label">Estatus: </label>
                                         <div class="col-sm-4">
                                             <select class="form-control"
                                              chosen

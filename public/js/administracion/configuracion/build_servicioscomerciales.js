@@ -1,11 +1,12 @@
-var url_insert  = "servicioscomerciales/register";
-var url_update   = "servicioscomerciales/update";
-var url_edit     = "servicioscomerciales/edit";
-var url_destroy  = "servicioscomerciales/destroy";
-var url_all      = "servicioscomerciales/all";
-var redireccion  = "configuracion/servicioscomerciales";
+const URL = {
+ url_insert  : "servicioscomerciales/register"
+ ,url_update   : "servicioscomerciales/update"
+ ,url_edit     : "servicioscomerciales/edit"
+ ,url_destroy  : "servicioscomerciales/destroy"
+ ,url_all      : "servicioscomerciales/all"
+ ,redireccion  : "configuracion/servicioscomerciales"
+}
 
-var app = angular.module("ng-servicioscomerciales", ["ngRoute","localytics.directives","components"]);
 app.config(function( $routeProvider, $locationProvider ) {
     $routeProvider
     .when("/ruta1", {
@@ -32,7 +33,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
         $scope.consulta_general();
     }
     $scope.consulta_general = function(){
-        var url = domain( url_all );
+        var url = domain( URL.url_all );
         var fields = {};
         MasterController.request_http(url,fields,"get",$http, false )
         .then(function(response){
@@ -52,7 +53,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
     
     $scope.insert_register = function(){
 
-        var url = domain( url_insert );
+        var url = domain( URL.url_insert );
         var fields = $scope.insert;
         MasterController.request_http(url,fields,"post",$http, false )
         .then(function( response ){
@@ -84,7 +85,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
     $scope.update_register = function(){
      
       $scope.update = $scope.edit;
-      var url = domain( url_update );
+      var url = domain( URL.url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,"put",$http, false )
       .then(function( response ){
@@ -113,7 +114,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
 
     $scope.edit_register = function( id ){
 
-      var url = domain( url_edit );
+      var url = domain( URL.url_edit );
       var fields = {id : id };
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
@@ -143,7 +144,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
 
     $scope.destroy_register = function( id ){
 
-      var url = domain( url_destroy );
+      var url = domain( URL.url_destroy );
       var fields = {id : id };
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,"delete",$http, false )
