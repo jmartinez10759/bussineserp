@@ -44,8 +44,11 @@
 
             try {
                 $response = $this->_tabla_model::get();
+                $data = [
+          'unidadesmedidas'  => $response
+        ];
 
-              return $this->_message_success( 201, $response , self::$message_success );
+              return $this->_message_success( 201, $data , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );

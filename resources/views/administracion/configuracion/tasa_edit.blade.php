@@ -11,56 +11,56 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Rango:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="rango" class="form-control" placeholder="" v-model="insert.rango">
+                                <input type="text" id="rango" class="form-control" placeholder="" ng-model="insert.rango">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Valor Minimo: <font size="3" color="red">* </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="valor_minimo" class="form-control" placeholder="" v-model="insert.valor_minimo">
+                                <input type="text" id="valor_minimo" class="form-control" placeholder="" ng-model="insert.valor_minimo">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Valor Maximo: <font size="3" color="red">* </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="valor_maximo" class="form-control" placeholder="" v-model="insert.valor_maximo">
+                                <input type="text" id="valor_maximo" class="form-control" placeholder="" ng-model="insert.valor_maximo">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Clave:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="clave" class="form-control" placeholder="" v-model="insert.clave">
+                                <input type="text" id="clave" class="form-control" placeholder="" ng-model="insert.clave">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Factor:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="factor" class="form-control" placeholder="" v-model="insert.factor">
+                                <input type="text" id="factor" class="form-control" placeholder="" ng-model="insert.factor">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Trasladado:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="trasladado" class="form-control" placeholder="" v-model="insert.trasladado">
+                                <input type="text" id="trasladado" class="form-control" placeholder="" ng-model="insert.trasladado">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Retencion:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="retencion" class="form-control" placeholder="" v-model="insert.retencion">
+                                <input type="text" id="retencion" class="form-control" placeholder="" ng-model="insert.retencion">
                             </div>
 
                         </div>
                         <div class="form-group">
                         <label  class="col-sm-3 control-label input-sm">Fecha Inicio </label>
                 <div class="col-sm-7">
-                    <input type="date" class="form-control fecha"  id="fecha_inicial" v-model="insert.fecha_inicio_vigencia">
+                    <input type="text" class="form-control fecha"  id="fecha_inicial" ng-model="insert.fecha_inicio_vigencia">
                 </div>
 
                                            
@@ -68,7 +68,7 @@
                         <div class="form-group">
                             <label  class="col-sm-3 control-label input-sm">Fecha Final </label>
                 <div class="col-sm-7">
-                    <input type="date" class="form-control fecha"  id="fecha_final" v-model="insert.fecha_final_vigencia">
+                    <input type="text" class="form-control fecha"  id="fecha_final" ng-model="insert.fecha_final_vigencia">
                 </div> 
                         </div>
 
@@ -82,14 +82,14 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
+                    <button type="button" class="btn btn-primary" ng-click="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
                 </div>
             </div>
 
         </div>
     </div>
 </div>
-<div class="modal fade" id="modal_edit_register" role="dialog" aria-hidden="true" style="display:none;">
+<div class="" id="modal_edit_register" style="display:none;">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -102,14 +102,14 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Rango:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="rango" class="form-control" placeholder="" v-model="edit.rango">
+                                <input type="text" id="rango" class="form-control" placeholder="" ng-model="update.rango">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Valor Minimo: <font size="3" color="red">* </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="valor_minimo" class="form-control" placeholder="" v-model="edit.valor_minimo">
+                                <input type="text" id="valor_minimo" class="form-control" placeholder="" ng-model="update.valor_minimo">
                             </div>
                             
 
@@ -117,41 +117,41 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Valor Maximo: <font size="3" color="red">* </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="valor_maximo" class="form-control" placeholder="" v-model="edit.valor_maximo">
+                                <input type="text" id="valor_maximo" class="form-control" placeholder="" ng-model="update.valor_maximo">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Clave:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="clave" class="form-control" placeholder="" v-model="edit.clave">
+                                <input type="text" id="clave" class="form-control" placeholder="" ng-model="update.clave">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Factor:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="factor" class="form-control" placeholder="" v-model="edit.factor">
+                                <input type="text" id="factor" class="form-control" placeholder="" ng-model="update.factor">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Trasladado:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="trasladado" class="form-control" placeholder="" v-model="edit.trasladado">
+                                <input type="text" id="trasladado" class="form-control" placeholder="" ng-model="update.trasladado">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Retencion:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="retencion" class="form-control" placeholder="" v-model="edit.retencion">
+                                <input type="text" id="retencion" class="form-control" placeholder="" ng-model="update.retencion">
                             </div>
 
                         </div>
                         <div class="form-group">
                         <label  class="col-sm-3 control-label input-sm">Fecha Inicio </label>
                 <div class="col-sm-7">
-                    <input type="date" class="form-control fecha"  id="fecha_inicial" v-model="edit.fecha_inicio_vigencia">
+                    <input type="text" class="form-control fecha"  id="fecha_inicial" ng-model="update.fecha_inicio_vigencia">
                 </div>
 
                                            
@@ -159,7 +159,7 @@
                         <div class="form-group">
                             <label  class="col-sm-3 control-label input-sm">Fecha Final </label>
                 <div class="col-sm-7">
-                    <input type="date" class="form-control fecha"  id="fecha_final" v-model="edit.fecha_final_vigencia">
+                    <input type="text" class="form-control fecha"  id="fecha_final" ng-model="update.fecha_final_vigencia">
                 </div> 
                         </div>
 
@@ -175,7 +175,7 @@
                         <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
                             <i class="fa fa-times-circle"></i> Cancelar
                         </button>
-                        <button type="button" class="btn btn-info" v-on:click="update_register()" {{$update}}>
+                        <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
                         <i class="fa fa-save"></i> Actualizar 
                         </button>
                     </div>
@@ -185,7 +185,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal_tiposComprobantes_register" role="dialog" aria-hidden="true">
+    {{-- <div class="modal fade" id="modal_tiposComprobantes_register" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -208,4 +208,4 @@
 
         </div>
     </div>
-</div>
+</div> --}}
