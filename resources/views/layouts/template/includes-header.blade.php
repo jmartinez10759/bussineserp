@@ -90,6 +90,34 @@
       -o-transform:scale(1.10);
       transform:scale(1.10);
     }
+
+    .drop-shadows {
+        position:relative;
+        float:left;
+        width:100%;
+        padding:1em;
+        margin: 1em 2px 0em;
+        background:#fff;
+        cursor: pointer;
+        
+        -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3),0 0 40px rgba(0, 0, 0, 0.1) inset;
+        -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+        box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+
+        -webkit-transition:all .8s ease; /* Safari y Chrome */
+        -moz-transition:all .8s ease; /* Firefox */
+        -o-transition:all .8s ease; /* IE 9 */
+        -ms-transition:all .8s ease; /* Opera */
+
+    }
+    /*.ng-show {
+      height: 0;
+      width: 0;
+      background-color: transparent;
+      top:-200px;
+      left: 200px;
+    }*/
+
     .notify {
         animation: 1s ease-out 0s normal none infinite running heartbit;
         border: 5px solid #4680ff;

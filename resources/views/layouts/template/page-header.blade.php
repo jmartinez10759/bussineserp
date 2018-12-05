@@ -63,7 +63,7 @@
                       @foreach($notifications as $notificacion)
                         <li>
                           <!-- <a href="{{$base_url}}/configuracion/clientes" style="cursor:pointer;"> -->
-                          <a onclick="update_notify({{$notificacion->id}})" style="cursor:pointer;">
+                          <a onclick="update_notify({{ $notificacion->id }})" style="cursor:pointer;">
                             <h6>
                               <i class="fa fa-bell-o text-yellow"> {{ $notificacion->portal }}</i>
                                <small> <i class="fa fa-clock-o"></i> {{ time_fechas( $notificacion->created_at, timestamp() )}} </small>

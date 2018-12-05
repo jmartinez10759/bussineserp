@@ -275,6 +275,7 @@
                                         <div class="col-sm-6">
                                             <div class="col-sm-3">
                                                 <select class="form-control"
+                                                chosen
                                                 width="'100%'"
                                                 ng-model="update.id_study" 
                                                 ng-options="value.id as value.nombre for (key, value) in estudios">
@@ -316,12 +317,68 @@
                                         <div class="col-sm-4">
                                             <input type="text" id="correo_edit" class="form-control" placeholder="Ingrese un correo valido" ng-model="update.correo" >
                                         </div>
-                                    </div>
-                                    <!-- <div class="form-group">
-                                        <div class="col-sm-6">
-                                            <div id="div_dropzone_file_empresa"></div> 
+                                        <div class="col-sm-1">
+                                            <button type="button" class="btn btn-warning btn-sm" title="Agregar Comentarios" ng-click="see_comment()">
+                                                    <i class="glyphicon glyphicon-pencil"></i>
+                                            </button>
+
                                         </div>
-                                    </div> -->
+
+                                    </div>
+                                    <div class="col-sm-12">
+                                        
+                                        <div class="drop-shadows " ng-show="comment">
+                                            <div class="col-sm-5">
+                                                <label for="modelo" class="col-sm-2 control-label">Titulo:</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" ng-model="comments.titulo" capitalize>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label for="modelo" class="col-sm-3 control-label">Comentario:</label>
+                                                <div class="col-sm-9">
+                                                    <textarea class="form-control" ng-model="comments.descripcion" capitalize></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="pull-right">
+                                                    <button type="button" class="btn btn-danger btn-sm" ng-click="see_comment(true)" title="Cancelar Comentario">
+                                                        <i class="glyphicon glyphicon-remove"></i>
+                                                    </button>
+                                                
+                                                    <button type="button" class="btn btn-success btn-sm" ng-click="register_comment(update.id)" title="Registrar Comentario">
+                                                        <i class="glyphicon glyphicon-ok"></i>
+                                                    </button>
+                                                
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="col-sm-11 ">
+                                        <div class="drop-shadow" ng-repeat="comentarios in list_comments">
+                                                <div class="col-sm-2">
+                                                    <span class="label label-success">
+                                                        @{{ comentarios.usuarios[0].name +" "+ comentarios.usuarios[0].first_surname }}
+                                                    </span><br>
+                                                    <span class="label label-info">
+                                                        @{{ comentarios.roles[0].perfil }}
+                                                    </span>
+                                                </div>
+                                                <div class="col-sm-6"> 
+                                                    <strong>@{{ comentarios.titulo }}</strong> 
+                                                    <p style="">@{{ comentarios.descripcion }}</p>
+                                                </div>
+
+                                                <div class="col-sm-2"> 
+                                                    <strong>@{{ comentarios.titulo }}</strong> 
+                                                </div>
+                                                
+                                        </div>
+                                    </div>
                                     
                                 </div>
                                 <!-- /.tab-pane -->
