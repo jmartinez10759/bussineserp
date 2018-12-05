@@ -11,6 +11,7 @@ const URL = {
   ,url_edit_codigos     : 'codigopostal/show'
   ,url_upload           : 'upload/files'
   ,url_update_estatus   : 'clientes/estatus'
+  ,url_comments         : 'clientes/comments'
 }
 
 app.controller('ClientesController', function( masterservice, $scope, $http, $location ) {
@@ -21,6 +22,8 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           estatus: 0 ,id_country: 151 ,id_servicio_comercial: null, id_study : 1
         };
         $scope.update = {};
+        $scope.comments = {};
+        $scope.list_comments = {};
         $scope.edit   = {};
         $scope.fields = {};
         $scope.readonly = true;
@@ -42,30 +45,24 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       $location.path("/register");
       //$scope.index();
     }
-    $scope.prueba = function(){
+    /*$scope.prueba = function(){
          $scope.readonly = false;
     }
 
     $scope.pruebas = function(){
          $scope.readonly = true;
-    }
+    }*/
     $scope.index = function(){
 
         var url = domain( URL.url_all );
         var fields = {};        
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
-            loading(true);
             $scope.datos = response.data.result;
             console.log($scope.datos);
+            loading(true);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+            masterservice.session_status({},error);
         });
     
     }
@@ -140,6 +137,8 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
                   ,'autoSize' : false
               });
           }
+          $scope.list_comments = response.data.result.actividades;
+          //$scope.list_comments = [{titulo: "copia", descripcion: "copia desc"}];
           $scope.index();
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
       }).catch(function( error ){
@@ -164,18 +163,20 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
                $scope.update.extension    = response.data.result.contactos[0].extension;
                $scope.update.id_study     = response.data.result.contactos[0].id_study;
            }
+           $scope.list_comments = response.data.result.actividades;
            $scope.select_estado(1);
            $scope.select_codigos(1);
             var html = '';
             html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
             jQuery('#imagen_edit').html("");        
             jQuery('#imagen_edit').html(html); 
-
+            loading(true);
           jQuery.fancybox.open({
                 'type'      : 'inline'
                 ,'src'      : "#modal_edit_register"
                 ,'modal': true
-            });           
+            });
+
         }).catch(function( error ){
             masterservice.session_status({},error);
         });
@@ -198,6 +199,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
     }
 
     $scope.select_estado = function( update = false){
+
       var url = domain( URL.url_edit_pais );
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
@@ -208,7 +210,8 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           loading(true);
       }).catch( error => {
           masterservice.session_status({},error);
-      });    
+      });
+
     }
 
     $scope.select_codigos = function( update = false ){
@@ -305,6 +308,32 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           });
             
         },"warning",true,["SI","NO"]); 
+
+    }
+
+    $scope.register_comment = function( id = false ){
+
+      var validacion = { COMENTARIO : $scope.comments.descripcion };
+      if(validaciones_fields(validacion)){return;}
+        var url = domain( URL.url_comments );
+        var fields = {id: id, comentarios : $scope.comments};
+        MasterController.request_http(url,fields,'post',$http, false )
+          .then(function( response ){
+              $scope.comment = false;
+              $scope.list_comments = response.data.result.actividades;
+              loading(true);
+              //jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
+          }).catch(function( error ){
+              masterservice.session_status({},error);
+          });
+
+    } 
+
+    $scope.see_comment = function(hide = false){
+        
+        $scope.comments = {};
+        if(hide){ $scope.comment = false;
+        }else{ $scope.comment = true; }
 
     }
 

@@ -73,5 +73,9 @@ class SysClientesModel extends Model
     {
        return $this->hasOne( SysCodigoPostalModel::class, 'id','id_codigo');
     }
+    public function actividades()
+    {
+      return $this->belongsToMany(SysActivitiesModel::class, 'sys_users_activities', 'id_cliente' ,'id_actividad');
+    }
 
 }

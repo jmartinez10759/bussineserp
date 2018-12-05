@@ -14,7 +14,9 @@ use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysClientesModel;
 use App\Model\Administracion\Facturacion\SysFacturacionModel;
 use App\Model\Administracion\Configuracion\SysContactosModel;
+use App\Model\Administracion\Configuracion\SysActivitiesModel;
 use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
+use App\Model\Administracion\Configuracion\SysUsersActivitiesModel;
 use App\Model\Administracion\Configuracion\SysClientesEmpresasModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
@@ -79,7 +81,10 @@ class ClientesController extends MasterController
     public function show( Request $request ){
         #debuger($request->all());
         try {        
-          $response = SysClientesModel::with(['contactos'])->where(['id' => $request->id])->get();
+          $response = SysClientesModel::with(['contactos','actividades' => function( $query ){
+             return $query->with(['usuarios','roles'])->orderby('id','desc')->get();
+          }])->where(['id' => $request->id])->get();
+
           return $this->_message_success( 200, $response[0] , self::$message_success );
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -186,7 +191,7 @@ class ClientesController extends MasterController
               #debuger($string_data_contactos,false);
               #debuger($string_data_clientes);
                 #debuger($request->contactos);
-             $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_clientes );
+            $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_clientes );
             if( count($request->contactos) > 0){
                SysContactosModel::where(['id' => $request->contactos[0]['id'] ])->update($string_data_contactos);
             }else{
@@ -212,11 +217,50 @@ class ClientesController extends MasterController
           }
 
           if ($success) {
-            return $this->_message_success( 201, $success , self::$message_success );
+            #return $this->_message_success( 201, $success , self::$message_success );
+            return $this->show( new Request(['id' => $request->id ] ) );
           }
           return $this->show_error(6, $error, self::$message_error );
         
     }
+     /**
+     *Metodo para la actualizacion de los registros
+     *@access public
+     *@param Request $request [Description]
+     *@return void
+     */
+     public function store_activies( Request $request ){
+        #debuger($request->all());
+        $error = null;
+          DB::beginTransaction();
+          try {
+
+              $actividad = SysActivitiesModel::create($request->comentarios);
+              $data_comments = [
+                  'id_users'      => Session::get('id')
+                  ,'id_rol'       => Session::get('id_rol')
+                  ,'id_empresa'   => Session::get('id_empresa')
+                  ,'id_sucursal'  => Session::get('id_sucursal')
+                  ,'id_cliente'   => $request->id
+                  ,'id_actividad' => $actividad->id
+              ];
+
+              SysUsersActivitiesModel::create($data_comments); 
+            DB::commit();
+            $success = true;
+          } catch (\Exception $e) {
+              $success = false;
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              DB::rollback();
+          }
+
+          if ($success) {
+            return $this->show( new Request(['id' => $request->id ] ) );
+          }
+          return $this->show_error(6, $error, self::$message_error );
+
+     }
+
      /**
      *Metodo para la actualizacion de los registros
      *@access public

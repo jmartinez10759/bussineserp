@@ -609,6 +609,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'clientes.update'
     ]);
 
+    Route::post('/clientes/comments', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@store_activies'
+        ,'as'       => 'clientes.comments'
+    ]);
+
 
     ############################ SECCION DE CONTACTOS ###################################
     Route::get('/configuracion/contactos', [
