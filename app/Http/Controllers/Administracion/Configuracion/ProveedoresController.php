@@ -54,7 +54,7 @@
 
             try {
                 // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
-                $response = $this->_tabla_model::with(['estados','contactos:id,nombre_completo,correo,telefono','empresas'],['id' => Session::get('id_empresa')])->orderBy('id','DESC')->get();
+                $response = $this->_tabla_model::with(['estados','contactos:id,nombre_completo,correo,telefono','empresas'])->orderBy('id','DESC')->get();
 
         $data = [
           'proveedores'           => $response
@@ -332,10 +332,11 @@
                 $data = [
                     'id_empresa'      => $request->id_empresa
                     ,'id_sucursal'    => $id_sucursal
-                    ,'id_proveedor'        => $request->id_proveedor
+                    ,'id_proveedor'   => $request->id_proveedor
 
                 ];
                 $response[] = SysProveedoresEmpresasModel::create($data);
+                // debuger($response);
             }
 
             DB::commit();

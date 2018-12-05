@@ -41,6 +41,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+          loading(true);
             $scope.datos = response.data.result;
         }).catch(function(error){
             if( isset(error.response) && error.response.status == 419 ){

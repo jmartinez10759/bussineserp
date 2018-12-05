@@ -11,32 +11,35 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Clave:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="clave" class="form-control" placeholder="" v-model="insert.clave">
+                                <input type="text" id="clave" class="form-control" placeholder="" ng-model="insert.clave">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Nombre:   </label>
                             <div class="col-sm-7">
-                                <input type="text" id="nombre" class="form-control" placeholder="" v-model="insert.nombre">
+                                <input type="text" id="nombre" class="form-control" placeholder="" ng-model="insert.nombre">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Descripción:   </label>
                             <div class="col-sm-7">
-                                <input type="text" id="descripcion" class="form-control" placeholder="" v-model="insert.descripcion">
+                                <input type="text" id="descripcion" class="form-control" placeholder="" ng-model="insert.descripcion">
                             </div>
 
                         </div>
 
                         
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Estatus: </label>
+                            <label for="estatus" class="col-sm-3 control-label">Estatus: </label>
                             <div class="col-sm-7">
-                                <select class="form-control" v-model="insert.estatus">
-                                    <option value="0">Baja</option>
-                                    <option value="1">Activo</option>
+                                <select class="form-control"
+                                 chosen
+                                 width="'100%'" 
+                                 ng-model="update.estatus" 
+                                 ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+                                 <option value="">--Seleccione Opcion--</option>   
                                 </select>
                             </div>
                         </div>
@@ -46,7 +49,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
+                    <button type="button" class="btn btn-primary" ng-click="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
                 </div>
             </div>
 
@@ -54,7 +57,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal_edit_register" role="dialog" aria-hidden="true" style="display:none;">
+<div class="" id="modal_edit_register" style="display:none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -67,32 +70,35 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Clave:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="clave" class="form-control" placeholder="" v-model="edit.clave">
+                                <input type="text" id="clave" class="form-control" placeholder="" ng-model="update.clave">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Nombre:   </label>
                             <div class="col-sm-7">
-                                <input type="text" id="nombre" class="form-control" placeholder="" v-model="edit.nombre">
+                                <input type="text" id="nombre" class="form-control" placeholder="" ng-model="update.nombre">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Descripción:   </label>
                             <div class="col-sm-7">
-                                <input type="text" id="descripcion" class="form-control" placeholder="" v-model="edit.descripcion">
+                                <input type="text" id="descripcion" class="form-control" placeholder="" ng-model="update.descripcion">
                             </div>
 
                         </div>
 
                         
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Estatus: </label>
+                            <label for="estatus" class="col-sm-3 control-label">Estatus: </label>
                             <div class="col-sm-7">
-                                <select class="form-control" v-model="edit.estatus">
-                                    <option value="0">Baja</option>
-                                    <option value="1">Activo</option>
+                                <select class="form-control"
+                                 chosen
+                                 width="'100%'" 
+                                 ng-model="update.estatus" 
+                                 ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+                                 <option value="">--Seleccione Opcion--</option>   
                                 </select>
                             </div>
                         </div>
@@ -101,8 +107,8 @@
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal"> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="update_register()"><i class="fa fa-save"></i> Actualizar </button> 
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-primary" ng-click="update_register()"><i class="fa fa-save"></i> Actualizar </button> 
                 </div>
             </div>
 

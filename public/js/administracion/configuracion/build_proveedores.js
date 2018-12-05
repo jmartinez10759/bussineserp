@@ -40,6 +40,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+          loading(true);
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
@@ -220,6 +221,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           $scope.cmb_estados = {};  
           $scope.cmb_estados = response.data.result.estados;
           console.log($scope.cmb_estados);
+          loading(true);
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
@@ -238,6 +240,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
       .then( response => {
           $scope.cmb_codigos = response.data.result;
           console.log($scope.cmb_codigos);
+          loading(true);
       }).catch( error => {
           if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
@@ -265,10 +268,13 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
                'src':  "#permisos",
                'buttons': ['share', 'close']
            });
+
            for (var i = 0; i < response.data.result.sucursales.length; i++) {
                console.log(response.data.result.sucursales[i].id_sucursal);
                jQuery(`#sucursal_${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
            };
+           $scope.consulta_general();
+           loading(true);
        }).catch(error => {
            if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
@@ -309,6 +315,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
             });
             jQuery('#tr_'+$scope.fields.id_proveedor).effect("highlight",{},5000);
             $scope.consulta_general();
+
         }).catch(error => {
             if( isset(error.response) && error.response.status == 419 ){
               toastr.error( session_expired ); 

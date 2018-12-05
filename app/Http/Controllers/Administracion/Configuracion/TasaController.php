@@ -26,42 +26,11 @@
         public function index(){
             if( Session::get("permisos")["GET"] ){
               return view("errors.error");
-            }
-            $response = $this->_tabla_model::get();
-            #debuger($this->_tabla_model);
-            $registros = [];
-           $registros_tiposComprobantes = [];
-           $permisos = (Session::get('permisos')['PER'] == false)? 'style="display:block" ': 'style="display:none" ';
-           foreach ($response as $respuesta) {
-             $id['id'] = $respuesta->id;
-             $editar = build_acciones_usuario($id,'v-edit_register','Editar','btn btn-primary','fa fa-edit','title="editar" ' );             
-             $borrar   = build_buttons(Session::get('permisos')['DEL'],'v-destroy_register('.$respuesta->id.')','Borrar','btn btn-danger','fa fa-trash','title="Borrar"');
-             
-             $registros[] = [
-                $respuesta->id
-               ,$respuesta->clave
-               ,$respuesta->factor
-               ,$respuesta->rango
-               ,$respuesta->valor_minimo
-               ,$respuesta->valor_maximo       
-                
-               ,$editar
-               ,$borrar
-              ];
-           }    
-           $titulos = [ 'ID','Clave','Factor','Rango','Valor Maximo','Valor Minimo','',''];
-           $table = [
-             'titulos'          => $titulos
-             ,'registros'       => $registros
-             ,'id'              => "datatable"
-             ,'class' => "fixed_header"
-           ];        
+            }                   
             $data = [
                 "page_title" 	        => "Configuración"
                 ,"title"  		        => "Tasa"
-                ,"data_table"  		    => data_table($table)
-                ,'titulo_modal'            => "Registro de Tasas"
-                ,'titulo_modal_edit'       => "Actualización de Tasas"
+                
             ];
             return self::_load_view( "administracion.configuracion.tasa",$data );
         }
@@ -74,9 +43,14 @@
         public function all( Request $request ){
 
             try {
+              $response = $this->_tabla_model::get();
+              
+        $data = [
+          'tasa'  => $response
+        ];
 
 
-              return $this->_message_success( 201, $response , self::$message_success );
+              return $this->_message_success( 200, $data , self::$message_success );
             } catch (\Exception $e) {
                 $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
                 return $this->show_error(6, $error, self::$message_error );

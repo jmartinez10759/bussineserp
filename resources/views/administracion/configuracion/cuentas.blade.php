@@ -20,11 +20,11 @@
         <tbody>
 
             <tr ng-repeat="data in datos">
-                <td>@{{data.nombre_comercial}}</td>
-                <td>@{{(data.servicios !== null )? data.servicios.clave+" - "+data.servicios.descripcion : "" }}</td>
-                <td>@{{data.empresas.length > 0 ? data.empresas[0].razon_social : "" }}</td>
-                <td>@{{data.clientes.length > 0 ? data.clientes[0].razon_social: "" }}</td>
-                <td>@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
+                <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.nombre_comercial}}</td>
+                <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{(data.servicios !== null )? data.servicios.clave+" - "+data.servicios.descripcion : "" }}</
+                <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.empresas.length > 0 ? data.empresas[0].razon_social : "" }}</td>
+                <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.clientes.length > 0 ? data.clientes[0].razon_social: "" }}</td>
+                <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
                 <td>
                 	<span class="label label-success" ng-if="data.estatus == 1">Activo</span>
                 	<span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
@@ -36,11 +36,11 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                            <li>
+                            {{-- <li>
                                 <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
                                     <i class="glyphicon glyphicon-edit"></i> Editar
                                 </a>
-                            </li>
+                            </li> --}}
                             
                             <li {{$eliminar}}>
                                 <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >

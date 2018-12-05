@@ -33,7 +33,7 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].nombre_completo: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
-                            <td class="text-left" ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.empresas.length > 0)? datos.empresas[0].nombre_comercial: ""}}</td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.empresas.length > 0)?  datos.empresas[data.empresas[0].id-1].nombre_comercial: ""}}</td>
                             <td>
                             <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
                             <span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
@@ -45,12 +45,6 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                                        <!-- <li>
-                                            <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
-                                                <i class="glyphicon glyphicon-edit"></i> Editar
-                                            </a>
-                                        </li> -->
-                                        
                                         <li {{$eliminar}}>
                                             <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
                                                 <i class="glyphicon glyphicon-trash"></i> Eliminar
