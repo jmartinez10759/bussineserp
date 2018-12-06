@@ -53,11 +53,13 @@
         public function all( Request $request ){
 
             try {
-                // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
-                $response = $this->_tabla_model::with(['estados','contactos:id,nombre_completo,correo,telefono','empresas'])->orderBy('id','DESC')->get();
+                 // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
+                // $response = $this->_tabla_model::with(['estados','contactos:id,nombre_completo,correo,telefono','empresas'])->orderBy('id','DESC')->get();
+                $datos = $this->consulta_proveedores();
+
 
         $data = [
-          'proveedores'           => $response
+          'proveedores'           => $datos['response_proveedores']
           ,'empresas'             => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
           ,'paises'               => SysPaisModel::get()
           ,'servicio_comercial'   => SysServiciosComercialesModel::get()
@@ -351,6 +353,55 @@
             return $this->_message_success(201, $response, self::$message_success);
         }
         return $this->show_error(6, $error, self::$message_error);
+
+    }
+    public function consulta_proveedores(){
+
+
+        if( Session::get('id_rol') == 1 ){
+
+            $response = SysProveedoresModel::with(['estados','contactos','empresas','productos'])
+                            ->where(['estatus' => 0])
+                            ->orderBy('id','desc')
+                            ->groupby('id')
+                            ->get();
+
+          
+
+        }elseif( Session::get('id_rol') == 3 ){
+            $data = SysEmpresasModel::with(['proveedores'])
+            ->where(['id' => Session::get('id_empresa')])            
+            ->get();
+
+            
+            $response_proveedores = $data[0]->proveedores()
+                                    ->with(['estados','contactos','empresas'])
+                                    ->where(['estatus' => 1])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+        }else{
+
+            $data = SysUsersModel::with(['empresas'])
+                                  ->where(['id' => Session::get('id')])            
+                                  ->get();
+            $empresas = $data[0]->empresas()
+                                ->with(['proveedores'])
+                                ->where([ 'id' => Session::get('id_empresa') ])
+                                ->get();
+            
+            $response_proveedores = $empresas[0]->proveedores()
+                                    ->with(['estados','contactos','empresas'])
+                                    ->where(['estatus' => 1])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+
+        }
+        
+        return [ 'response_proveedores' => $response_proveedores ];
 
     }
 

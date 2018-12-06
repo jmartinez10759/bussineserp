@@ -37,7 +37,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
         var fields = {};
         MasterController.request_http(url,fields,"get",$http, false )
         .then(function(response){
-          //devuelve un Array con todos los datos 
+          //devuelve un Array con todos los datos
+          loading(true); 
             $scope.datos = response.data.result;
             // console.log($scope.datos);
         }).catch(function(error){
@@ -130,6 +131,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
                 ,"height"   : 400
                 ,"autoSize" : false
             });        
+          loading(true);
             // console.log($scope.edit);return;  
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){

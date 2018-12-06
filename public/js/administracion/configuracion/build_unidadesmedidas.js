@@ -122,7 +122,8 @@ app.controller('UnidadesMedidasController', function( masterservice, $scope, $ht
                 ,"width"    : 900
                 ,"height"   : 400
                 ,"autoSize" : false
-            });          
+            });     
+            loading(true);     
             // console.log($scope.edit);return;        
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){

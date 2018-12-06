@@ -18,7 +18,7 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Descripción:  </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="descripcion" class="form-control" placeholder="" ng-model="insert.descripcion">
+                                <textarea id="descripcion" class="form-control" placeholder="" ng-model="insert.descripcion"> </textarea>
                             </div>
 
                         </div>
@@ -85,7 +85,8 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Descripción:  </font> </label>
                             <div class="col-sm-7">
-                                <input type="text" id="descripcion" class="form-control" placeholder="" ng-model="edit.descripcion">
+                                <textarea id="descripcion" class="form-control" placeholder="" ng-model="edit.descripcion">
+                                    </textarea>
                             </div>
 
                         </div>

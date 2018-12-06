@@ -1,133 +1,161 @@
-var url_insert  = "monedas/register";
-var url_update   = "monedas/update";
-var url_edit     = "monedas/edit";
-var url_destroy  = "monedas/destroy";
-var url_all      = "monedas/all";
-var redireccion  = "configuracion/monedas";
+const URL ={
 
-new Vue({
-  el: "#vue-monedas",
-  created: function () {
-    //this.consulta_general();
-  },
-  data: {
-    datos: [],
-    insert: {estatus:1 },
-    update: {},
-    edit: {estatus:1},
-    fields: {},
-  },
-  mixins : [mixins],
-  methods:{
-    consulta_general(){
-        var url = domain( url_all );
+url_insert  :"monedas/register"
+,url_update  : "monedas/update"
+,url_edit    : "monedas/edit"
+,url_destroy : "monedas/destroy"
+,url_all     : "monedas/all"
+,redireccion : "configuracion/monedas"
+}
+
+app.controller('MonedasController', function( masterservice, $scope, $http, $location ) {
+    /*se declaran las propiedades dentro del controller*/
+    $scope.constructor = function(){
+        $scope.datos  = [];
+        $scope.insert = {
+          estatus: 1
+        };
+        $scope.update = {};
+        $scope.edit   = {};
+        $scope.fields = {};
+        $scope.cmb_estatus = [{id:0 ,descripcion:"Baja"}, {id:1, descripcion:"Activo"}];
+        $scope.index();
+    }
+
+    $scope.click = function (){
+      $location.path("/register");
+      //$scope.index();
+    }
+    
+    $scope.index = function(){
+
+        var url = domain( URL.url_all );
         var fields = {};
-        var promise = MasterController.method_master(url,fields,"get");
-          promise.then( response => {
-              var table_data = [];
-              this.datos = response.data.result;
-              var j = 0;
-              for(var i in this.datos){
-                  table_data[j] = [
-                      this.datos[i].nombre
-                      ,this.datos[i].descripcion
-                      ,this.datos[i].estatus
-                      ,'<button type="button" v-on:click="edit_register('+this.datos[i].id+')">Editar</button>'
-                      ,'<button type="button" v-on:click="destroy_register('+this.datos[i].id+')">Borrar</button>'
-                  ]
-                  j++;
+        MasterController.request_http(url,fields,'get',$http, false )
+        .then(function(response){
+            loading(true);
+            $scope.datos = response.data.result;
+            console.log($scope.datos);
+        }).catch(function(error){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
               }
-              
-              var table = {
-                'titulos'    : ['Monedas','Descripción','Estatus','','']
-                ,'registros' : table_data
-                ,'id'        : 'data_table'
-              }              
-              jQuery('#data_table').html(data_table(table));
-          }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
-          });
-    }
-    ,insert_register(){
-        var url = domain( url_insert );
-        var fields = {};
-        var promise = MasterController.method_master(url,fields,"post");
-          promise.then( response => {
-          
-              toastr.success( response.data.message , title );
-              
-          }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
-              redirect();
-          });
-    }
-    ,update_register(){
-        var url = domain( url_update );
-        var fields = {};
-        var promise = MasterController.method_master(url,fields,"put");
-          promise.then( response => {
-          
-              toastr.success( response.data.message , title );
-              
-          }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
-              redirect();
-          });
-    }
-    ,edit_register( id ){
-        var url = domain( url_edit );
-        var fields = {id : id };
-        var promise = MasterController.method_master(url,fields,"get");
-          promise.then( response => {
-          
-              toastr.success( response.data.message , title );
-              
-          }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
-          });
-        
-    }
-    ,destroy_register( id ){
-        var url = domain( url_destroy );
-        var fields = {id : id };
-         buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
-          var promise = MasterController.method_master(url,fields,"delete");
-          promise.then( response => {
-              toastr.success( response.data.message , title );
-          }).catch( error => {
-              if( error.response.status == 419 ){
-                    toastr.error( session_expired ); 
-                    redirect(domain("/"));
-                    return;
-                }
-              toastr.error( error.response.data.message , expired );
-              redirect();
-          });
-      },"warning",true,["SI","NO"]);   
-    }
+              console.error(error);
+              toastr.error( error.message , expired );
+        });
     
-    
-  }
+    }
+    $scope.insert_register = function(){
 
+        
+        var url = domain( URL.url_insert );
+        var fields = $scope.insert;
+        MasterController.request_http(url,fields,'post',$http, false )
+        .then(function( response ){
+            toastr.success( response.data.message , title );
+            jQuery.fancybox.close({
+                'type'      : 'inline'
+                ,'src'      : "#modal_add_register"
+                ,'modal'    : true
+                ,'width'    : 900
+                ,'height'   : 400
+                ,'autoSize' : false
+            });
+            $scope.index();
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.data.result , expired );
+        });
+
+    }
+
+    $scope.update_register = function(){     
+      var url = domain( URL.url_update );
+      var fields = $scope.update;
+      MasterController.request_http(url,fields,'put',$http, false )
+      .then(function( response ){
+          toastr.info( response.data.message , title );
+          
+            jQuery.fancybox.close({
+                  'type'      : 'inline'
+                  ,'src'      : "#modal_edit_register"
+                  ,'modal'    : true
+                  ,'width'    : 900
+                  ,'height'   : 400
+                  ,'autoSize' : false
+              });
+          
+          // console.log($scope.update);return;
+          $scope.index();
+          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
+          //redirect(domain(redireccion));
+      }).catch(function( error ){
+          if( isset(error.response) && error.response.status == 419 ){
+                toastr.error( session_expired ); 
+                redirect(domain("/"));
+                return;
+            }
+            console.error( error );
+            toastr.error( error.result , expired );
+      });
+    }
+
+    $scope.edit_register = function( id ){
+
+      var url = domain( URL.url_edit );
+      var fields = {id : id };
+      MasterController.request_http(url,fields,'get',$http, false )
+        .then(function( response ){
+            $scope.update = response.data.result;
+
+          jQuery.fancybox.open({
+                "type"      : "inline"
+                ,"src"      : "#modal_edit_register"
+                ,"modal"    : true
+                ,"width"    : 900
+                ,"height"   : 400
+                ,"autoSize" : false
+            });    
+            loading(true);      
+            // console.log($scope.edit);return;        
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error , expired );
+        });
+    }
+
+    $scope.destroy_register = function( id ){
+
+      var url = domain( URL.url_destroy );
+      var fields = {id : id };
+      buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+        MasterController.request_http(url,fields,'delete',$http, false )
+        .then(function( response ){
+            toastr.success( response.data.message , title );
+            $scope.index();
+        }).catch(function( error ){
+            if( isset(error.response) && error.response.status == 419 ){
+                  toastr.error( session_expired ); 
+                  redirect(domain("/"));
+                  return;
+              }
+              console.error( error );
+              toastr.error( error.data.result , expired );
+        });
+          
+      },"warning",true,["SI","NO"]);  
+    }
 
 });

@@ -43,6 +43,7 @@ app.controller('PaisesController', function( $scope, $http ) {
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+          loading(true);  
             $scope.datos = response.data.result;
             
           //jQuery('#data_table').html(data_table(table));
@@ -128,7 +129,8 @@ app.controller('PaisesController', function( $scope, $http ) {
                 'type'      : 'inline'
                 ,'src'      : "#modal_edit_register"
                 ,'modal': true
-            });           
+            });     
+            loading(true);        
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 

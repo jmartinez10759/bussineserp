@@ -151,7 +151,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
               ,'src'      : "#modal_edit_register"
               ,'modal'    : true
           });
-
+          loading(true);
         }).catch(function( error ){
             if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired ); 

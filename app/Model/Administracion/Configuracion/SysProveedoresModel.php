@@ -30,7 +30,7 @@ class SysProveedoresModel extends Model
     return $this->belongsToMany(SysSucursalesModel::class,'sys_proveedores_empresas','id_proveedor','id_sucursal');
   }
   public function empresas(){
-    return $this->belongsToMany(SysSucursalesModel::class,'sys_proveedores_empresas','id_proveedor','id_empresa');
+    return $this->belongsToMany(SysEmpresasModel::class,'sys_proveedores_empresas','id_proveedor','id_empresa');
   }
   
   public function contactos(){

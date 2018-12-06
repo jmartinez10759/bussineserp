@@ -28,6 +28,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         $scope.consulta_general();
         $scope.select_estado();
         $scope.cmb_estatus = [{id:0 ,descripcion:"Baja"}, {id:1, descripcion:"Activo"}];
+        $scope.cmb_empresas_= "--Seleccione Opcion--"
     }
 
     $scope.click = function (){
@@ -274,7 +275,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
                jQuery(`#sucursal_${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
            };
            $scope.consulta_general();
-           loading(true);
+           // loading(true);
        }).catch(error => {
            if( isset(error.response) && error.response.status == 419 ){
             toastr.error( session_expired ); 
