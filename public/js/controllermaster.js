@@ -47,20 +47,24 @@ app.service('masterservice', function() {
 	    session_status: function( response = {}, error = {} ){
 	    	//console.log( typeof response.data );
 	    	loading(true);
-	    	if( typeof response.data != "object" ){
-              toastr.error( session_expired );
-              setTimeout(function(){ redirect(domain()); }, 2000); 
-              return true;
-            }
+	    	if (!response ) {
 
+		    	if( typeof response.data != "object" ){
+	              toastr.error( session_expired );
+	              setTimeout(function(){ redirect(domain()); }, 2000); 
+	              return true;
+	            }
+	    		
+	    	}
 	    	if ( error.length > 0 ) {
 		    	if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired );
                   setTimeout(function(){ redirect(domain()); }, 1000);  
                   return;
+	            }else{
+		            console.error( error );
+	              	toastr.error( error.result , expired );	            	
 	            }
-	            console.error( error );
-              	toastr.error( error.result , expired );
 
 	    	}
 
