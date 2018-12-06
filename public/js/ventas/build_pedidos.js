@@ -51,7 +51,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
     
     }
@@ -163,7 +163,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             }
             $scope.products = {};
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
 
     }
@@ -253,7 +253,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               jQuery('.update').prop('disabled',false);
 
           }).catch(function( error ){
-              masterservice.session_status({},error);
+              masterservice.session_status_error(error);
           });
     
     }
@@ -302,7 +302,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               }
             $scope.index(data);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error );
         });
           
       },"warning",true,["SI","NO"]);  
@@ -321,7 +321,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               
               $scope.conceptos(update);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error);
         });                
     
     }
@@ -363,7 +363,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             console.log(response);
             loading(true);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error);
         });
 
     }
@@ -383,7 +383,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             console.log(response);
             loading(true);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error);
         });
     
     }
@@ -406,7 +406,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             console.log(response);
             loading(true);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error);
         });
 
     }
@@ -429,7 +429,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             console.log(response);
             loading(true);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error);
         });
 
     }
@@ -452,7 +452,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               redirect(domain("ventas/facturaciones"));
           },"success",false,["OK",""]);   
       }).catch( error => {
-          masterservice.session_status({},error); 
+          masterservice.session_status_error(error); 
       });
 
     }
@@ -571,7 +571,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             toastr.success( "Se envio el correo correctamente" , title ); 
             $scope.correo = {};
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         }); 
 
     }
@@ -601,7 +601,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
               }
 
               }).catch(function( error ){
-                  masterservice.session_status({},error);
+                  masterservice.session_status_error(error);
               });
           
         },"warning",true,["SI","NO"]); 

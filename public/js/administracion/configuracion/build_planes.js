@@ -34,11 +34,13 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
-            loading(true);
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error);
         });
     
     }
@@ -55,6 +57,9 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             toastr.success( response.data.message , title );
             for(var i in $scope.insert){
                $scope.insert[i] = "";
@@ -71,7 +76,7 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
                 ,'autoSize' : false
             });
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
     
     }
@@ -88,6 +93,9 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
       var fields = $scope.update;
       MasterController.request_http(url,fields,"put",$http, false )
       .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -100,13 +108,13 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           $scope.index();
       }).catch(function( error ){
-          masterservice.session_status({},error);
+          masterservice.session_status_error(error);
       });
     
     }
 
     $scope.edit_register = function( data ){
-      var datos = ['empresas','unidades','updated_at','created_at','$$hashKey'];
+      var datos = ['empresas','unidades','updated_at','created_at','$$hashKey','pivot'];
       $scope.update = iterar_object(data,datos);
       //console.log($scope.update);return;
       var html = '';
@@ -131,10 +139,13 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
           
       },"warning",true,["SI","NO"]);  
@@ -189,7 +200,7 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
            };
            $scope.index();
        }).catch(error => {
-          masterservice.session_status({},error);
+          masterservice.session_status_error( error);
        });
 
     }
@@ -214,6 +225,9 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
         //console.log(fields);return;
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             jQuery.fancybox.close({
                 'type': 'inline',
                 'src': "#permisos",
@@ -221,7 +235,7 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
             });
             $scope.index();
         }).catch(error => {
-            masterservice.session_status({},error); 
+            masterservice.session_status_error(error); 
         });
 
     }
@@ -232,6 +246,9 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
       var fields = {id : id };
         MasterController.request_http(url,fields,"get",$http, false )
       .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
           $scope.fields.id_plan = id;
           $.fancybox.open({
               'type': 'inline',
@@ -244,9 +261,8 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
                     jQuery('#'+response.data.result.productos[i].id).prop('checked', true);
               };
           }
-          loading(true);
       }).catch(function( error ){
-          masterservice.session_status({},error);
+          masterservice.session_status_error(error);
       });
     
     }
@@ -270,6 +286,9 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
         //console.log(fields);return;
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             jQuery.fancybox.close({
                 'type': 'inline',
                 'src': "#permisos",
@@ -277,7 +296,7 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
             });
             $scope.index();
         }).catch(error => {
-            masterservice.session_status({},error); 
+            masterservice.session_status_error(error); 
         });
     
     }
@@ -288,10 +307,12 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
       var fields = {id : (update)? $scope.update.id_tipo_factor :$scope.insert.id_tipo_factor };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.cmb_tasas = response.data.result;
-            loading(true);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
     
     }
@@ -303,6 +324,9 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
       
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+            
             $scope.cmb_impuestos = response.data.result.response;
             if (update) {
               $scope.update.iva = response.data.result.valor_maximo;
@@ -311,7 +335,7 @@ app.controller('planesController', function( masterservice ,$scope, $http, $loca
             }
             loading(true);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
     
     }
