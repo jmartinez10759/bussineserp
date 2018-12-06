@@ -491,7 +491,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
         MasterController.request_http(url,fields,"get",$http, false )
         .then(function(response){
             //not remove function this is  verify the session
-            if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
             
             $scope.datos = response.data.result;
             console.log($scope.datos);
@@ -509,7 +509,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
         MasterController.request_http(url,fields,"post",$http, false )
         .then(function( response ){
             //not remove function this is  verify the session
-            if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
 
             toastr.success( response.data.message , title );
             jQuery.fancybox.close({
@@ -536,7 +536,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
       MasterController.request_http(url,fields,"put",$http, false )
       .then(function( response ){
           //not remove function this is  verify the session
-          if(masterservice.session_status( URL )){return;};
+          if(masterservice.session_status( response )){return;};
 
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
@@ -562,7 +562,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
           //not remove function this is  verify the session
-          if(masterservice.session_status( URL )){return;};
+          if(masterservice.session_status( response )){return;};
           
           $scope.edit = response.data.result;
           jQuery.fancybox.open({
@@ -588,7 +588,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
         MasterController.request_http(url,fields,"delete",$http, false )
         .then(function( response ){
             //not remove function this is  verify the session
-            if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
             
             toastr.success( response.data.message , title );
             $scope.index();

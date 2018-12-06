@@ -45,7 +45,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             //not remove function this is  verify the session
-            if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
             loading(true);
 
             $scope.datos = response.data.result;
@@ -144,6 +144,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
             loading(true);
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             //toastr.success( response.data.message , title );
             console.log(response.data.result);
             if(update){
@@ -211,6 +214,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
           var fields = {pedidos : $scope.insertar.pedidos };
           MasterController.request_http(url,fields,'put',$http, false )
           .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( response )){return;};
+              
               toastr.info( response.data.message , title );
               jQuery.fancybox.close({
                     'type'      : 'inline'
@@ -284,6 +290,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
       buildSweetAlertOptions(titulo,descripcion,function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+            
             if(!cancel){
               toastr.success( response.data.message , title );
             }
@@ -307,6 +316,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( response )){return;};
+              
               $scope.conceptos(update);
         }).catch(function( error ){
             masterservice.session_status({},error);
@@ -341,6 +353,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.cmb_contactos = response.data.result.contactos;
             $scope.fields.rfc = response.data.result.rfc_receptor
             $scope.fields.nombre_comercial = response.data.result.nombre_comercial
@@ -360,18 +375,15 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.fields.telefono = response.data.result.telefono
             $scope.fields.correo = response.data.result.correo
             console.log(response);
             loading(true);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
     
     }
@@ -383,6 +395,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.products.id_plan = null;
             $scope.products.precio = response.data.result.total;
             $scope.products.descripcion = response.data.result.descripcion;
@@ -403,6 +418,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.products.id_producto = null;
             $scope.products.precio = response.data.result.total;
             $scope.products.descripcion = response.data.result.descripcion;
@@ -508,7 +526,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
 
         jQuery.fancybox.open({
             'type': 'iframe'
-            ,'src': domain( url_see_report+"/"+data.id )
+            ,'src': domain( URL.url_see_report+"/"+data.id )
             ,'buttons' : ['share', 'close']
         });
 
@@ -546,6 +564,9 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
         var fields = $scope.correo;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.index();
             toastr.success( "Se envio el correo correctamente" , title ); 
             $scope.correo = {};
@@ -564,6 +585,8 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
             
             MasterController.request_http(url,fields,'put',$http, false )
             .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( response )){return;};
 
               toastr.info( response.data.message , title );
               jQuery('#tr_'+id ).effect("highlight",{},5000);
