@@ -1,4 +1,338 @@
-new Vue({
+const URL = {
+  url_insert            : "clientes/register"
+  ,url_update           : 'clientes/update'
+  ,url_edit             : 'clientes/edit'
+  ,url_all              : 'correos/all'
+  ,url_destroy          : "clientes/destroy"
+  ,redireccion          : "configuracion/clientes"
+  ,url_display          : "clientes/display_sucursales"
+  ,url_insert_permisos  : "clientes/register_permisos"
+  ,url_edit_pais        : 'pais/edit'
+  ,url_edit_codigos     : 'codigopostal/show'
+  ,url_upload           : 'upload/files'
+  ,url_update_estatus   : 'clientes/estatus'
+  ,url_comments         : 'activities/register'
+  ,url_comments_destroy : 'activities/destroy'
+}
+
+app.controller('CorreosController', function( masterservice, $scope, $http, $location, $timeout ) {
+    /*se declaran las propiedades dentro del controller*/
+    $scope.constructor = function(){
+        $scope.datos  = [];
+        $scope.insert = {};
+        $scope.update = {};
+        $scope.comments = {};
+        $scope.list_comments = {};
+        $scope.edit   = {};
+        $scope.fields = {};
+        $scope.index();
+    }
+
+    $scope.index = function(){
+
+        var url = domain( URL.url_all );
+        var fields = {};        
+        MasterController.request_http(url,fields,'get',$http, false )
+        .then(function(response){
+            //not remove function this is  verify the session
+            //if(masterservice.session_status( response )){return;};
+
+            $scope.datos = response.data.result;
+            console.log($scope.datos);
+            loading(true);
+        }).catch(function(error){
+            //masterservice.session_status({},error);
+        });
+    
+    }
+    $scope.insert_register = function(){
+
+        var validacion = {
+             'CORREO'          : $scope.insert.correo
+            ,'NOMBRE CONTACTO' : $scope.insert.contacto
+            ,'RAZON SOCIAL'    : $scope.insert.razon_social
+            ,'RFC'             : $scope.insert.rfc_receptor
+            ,'TELEFONO'        : $scope.insert.telefono
+          };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.insert.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        if( !valida_rfc($scope.insert.rfc_receptor) ){
+            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        var url = domain( URL.url_insert );
+        var fields = $scope.insert;
+        jQuery.fancybox.close({
+            'type'      : 'inline'
+            ,'src'      : "#modal_add_register"
+            ,'modal'    : true
+        });
+        MasterController.request_http(url,fields,'post',$http, false )
+        .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
+            toastr.success( response.data.message , title );
+            $scope.index();
+        }).catch(function( error ){
+           masterservice.session_status({},error);
+        });
+
+    }
+
+    $scope.update_register = function( dblclick = false ){
+
+      var validacion = {
+             'CORREO'       : $scope.update.correo
+            ,'RAZON SOCIAL' : $scope.update.razon_social
+            ,'RFC'          : $scope.update.rfc_receptor
+            ,'NOMBRE CONTACTO' : $scope.update.contacto
+            ,'TELEFONO'        : $scope.update.telefono
+          };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.update.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        if( !valida_rfc($scope.update.rfc_receptor) ){
+            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+      var url = domain( URL.url_update );
+      var fields = $scope.update;
+      MasterController.request_http(url,fields,'put',$http, false )
+      .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
+          toastr.info( response.data.message , title );
+          if (!dblclick) {
+            jQuery.fancybox.close({
+                  'type'      : 'inline'
+                  ,'src'      : "#modal_edit_register"
+                  ,'modal'    : true
+                  ,'width'    : 900
+                  ,'height'   : 400
+                  ,'autoSize' : false
+              });
+          }
+          $scope.list_comments = response.data.result.actividades;
+          //$scope.list_comments = [{titulo: "copia", descripcion: "copia desc"}];
+          $scope.index();
+          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
+      }).catch(function( error ){
+          masterservice.session_status({},error);
+      });
+    }
+
+    $scope.edit_register = function( id ){
+      
+      var url = domain( URL.url_edit );
+      var fields = {id : id };
+      MasterController.request_http(url,fields,'get',$http, false )
+        .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
+            var datos = ['updated_at','created_at'];
+            $scope.update = iterar_object(response.data.result,datos);
+           if( response.data.result.contactos.length > 0 ){
+               $scope.update.contacto     = response.data.result.contactos[0].nombre_completo;
+               $scope.update.departamento = response.data.result.contactos[0].departamento;
+               $scope.update.telefono     = response.data.result.contactos[0].telefono;
+               $scope.update.correo       = response.data.result.contactos[0].correo;
+               $scope.update.cargo        = response.data.result.contactos[0].cargo;
+               $scope.update.extension    = response.data.result.contactos[0].extension;
+               $scope.update.id_study     = response.data.result.contactos[0].id_study;
+           }
+           $scope.list_comments = response.data.result.actividades;
+           $scope.select_estado(1);
+           $scope.select_codigos(1);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html); 
+            loading(true);
+          jQuery.fancybox.open({
+                'type'      : 'inline'
+                ,'src'      : "#modal_edit_register"
+                ,'modal': true
+            });
+
+        }).catch(function( error ){
+            masterservice.session_status({},error);
+        });
+    }
+
+    $scope.destroy_register = function( id ){
+
+      var url = domain( URL.url_destroy );
+      var fields = {id : id };
+      buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+        MasterController.request_http(url,fields,'delete',$http, false )
+        .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
+            toastr.success( response.data.message , title );
+            $scope.index();
+        }).catch(function( error ){
+            masterservice.session_status({},error);
+        });
+          
+      },"warning",true,["SI","NO"]);  
+    }
+
+  /*  $scope.update_estatus = function( id ){
+
+        var url = domain( URL.url_update_estatus );
+        var fields = {id: id, estatus: 1 };
+        buildSweetAlertOptions("¿Cambiar a Cliente?","¿Realmente desea cambiar a cliente este prospecto?",function(){
+          MasterController.request_http(url,fields,'put',$http, false )
+          .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( URL )){return;};
+              
+               toastr.info( response.data.message , title );
+               jQuery('#tr_'+id).effect("highlight",{},5000);
+               buildSweetAlert('# '+id,'Se genero el cliente con exito','success');
+               $scope.index();
+          }).catch(function( error ){
+              masterservice.session_status({},error);
+          });
+            
+        },"warning",true,["SI","NO"]); 
+
+    }*/
+
+    $scope.register_comment = function(update){
+
+      var validacion = { COMENTARIO : $scope.comments.descripcion };
+      if(validaciones_fields(validacion)){return;}
+
+        var url = domain( URL.url_comments );
+        var fields = { id: (update)? $scope.update.id : $scope.insert.id , comentarios : $scope.comments};
+        MasterController.request_http(url,fields,'post',$http, false )
+          .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( response )){return;};
+
+              $scope.comment = false;
+              $scope.comments = {};
+              $scope.list_comments = response.data.result.actividades;
+              loading(true);
+              //jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
+          }).catch(function( error ){
+              masterservice.session_status({},error);
+          });
+
+    }
+
+    $scope.destroy_comment = function( id ){
+        
+        var url = domain( URL.url_comments_destroy );
+        var fields = { id: id ,id_cliente : $scope.update.id  };
+        buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea borrar el registro?",function(){
+          MasterController.request_http(url,fields,'delete',$http, false )
+          .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( response )){return;};
+
+              toastr.info( response.data.message , title );
+              $scope.list_comments = response.data.result.actividades;
+              loading(true);
+          }).catch(function( error ){
+              masterservice.session_status({},error);
+          });
+            
+        },"warning",true,["SI","NO"]); 
+
+    }
+
+    $scope.see_comment = function(hide = false){
+        
+        $scope.comments = {};
+        if(hide){ $scope.comment = false;
+        }else{ $scope.comment = true; }
+
+    }
+
+    $scope.time_fechas = function( fecha ){
+      //$timeout(masterservice.time_fechas(fecha), 60000 );
+      return masterservice.time_fechas(fecha);
+
+    }
+
+    $scope.upload_file = function(update){
+
+      var upload_url = domain( URL.url_upload );
+      var identificador = {
+         div_content   : 'div_dropzone_file_clientes'
+        ,div_dropzone  : 'dropzone_xlsx_file_clientes'
+        ,file_name     : 'file'
+      };
+      var message = "Dar Clíc aquí o arrastrar archivo";
+      $scope.update.logo = "";
+      upload_file({'nombre': 'cliente_'+$scope.update.id },upload_url,message,1,identificador,'.png',function( request ){
+          if(update){
+            $scope.update.logo = domain(request.result);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
+            jQuery('#imagen_edit').html("");        
+            jQuery('#imagen_edit').html(html);        
+          }else{
+            $scope.insert.logo = domain(request.result);
+            var html = '';
+            html = '<img class="img-responsive" src="'+$scope.insert.logo+'" height="268px" width="200px">'
+            jQuery('#imagen').html("");        
+            jQuery('#imagen').html(html);        
+            
+          }
+          jQuery.fancybox.close({
+              'type'      : 'inline'
+              ,'src'      : "#upload_file"
+              ,'modal'    : true
+          });
+      });
+
+      jQuery.fancybox.open({
+          'type'      : 'inline'
+          ,'src'      : "#upload_file"
+          ,'modal'    : true
+      });
+
+    }
+
+    $scope.see_activities = function( id ){
+
+      var url = domain( URL.url_edit );
+      var fields = {id : id };
+      MasterController.request_http(url,fields,'get',$http, false )
+        .then(function( response ){
+          $scope.update.id  = id;
+          $scope.list_comments = response.data.result.actividades;
+          loading(true);
+          jQuery.fancybox.open({
+                'type'      : 'inline'
+                ,'src'      : "#see_activities"
+                ,'modal': true
+            });
+
+        }).catch(function( error ){
+            masterservice.session_status({},error);
+        });
+
+    }
+
+
+
+});
+
+
+/*new Vue({
   el: "#vue-redactar",
   created: function () {
     this.consulta_general();
@@ -220,3 +554,4 @@ new Vue({
   }
 
 });
+*/

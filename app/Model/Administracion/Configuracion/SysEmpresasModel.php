@@ -29,12 +29,10 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany(SysMenuModel::class,'sys_rol_menu','id_empresa','id_menu')->withPivot('estatus');
   }
-
   public function sucursales()
   {
     return $this->belongsToMany(SysSucursalesModel::class,'sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
   }
-
   public function roles()
   {
     return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','id_empresa','id_rol');
@@ -106,7 +104,10 @@ class SysEmpresasModel extends Model
   {
      return $this->hasOne( SysCodigoPostalModel::class, 'id','id_codigo');
   }
-
+  public function plantillas()
+  {
+    return $this->belongsToMany('App\Model\Administracion\Correos\SysTemplatesModel','sys_users_templates','id_empresa','id_template');
+  }
 
 
 

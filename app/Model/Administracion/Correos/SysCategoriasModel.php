@@ -15,11 +15,13 @@ class SysCategoriasModel extends Model
     ,'estatus'
   ];
 
-  public function usuarios(){
+  public function usuarios()
+  {
     return $this->belongsTo('App\Model\Administracion\Configuracion\SysUsersModel','id','id_users');
   }
-  public function correos(){
-    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysCorreosModel','sys_categorias_correos','id_categorias','id_correo')->withPivot('id_users');
+  public function correos()
+  {
+    return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_categorias_correos','id_categorias','id_correo');
   }
 
 }

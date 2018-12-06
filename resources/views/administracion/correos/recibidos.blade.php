@@ -2,15 +2,15 @@
 @section('content')
 <!-- iCheck -->
 <link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}">
-
 @push('styles')
+
 <!-- Content Wrapper. Contains page content -->
-<div id="vue-recibidos">
+<div ng-app="application" ng-controller="CorreosController" ng-init="constructor()" ng-cloak >
   <!-- Main content -->
   <section class="content">
     <div class="row">
       <div class="col-md-3">
-        <a href="{{route('correos.redactar')}}" class="btn btn-primary btn-block margin-bottom" {{$email}} >Redactar</a>
+        <a href="{{ route('correos.redactar') }}" class="btn btn-primary btn-block margin-bottom" {{$email}} >Redactar</a>
 
         <div class="box box-solid">
           <div class="box-header with-border">
@@ -23,17 +23,41 @@
           </div>
           <div class="box-body no-padding">
             <ul class="nav nav-pills nav-stacked">
-              <li class="active"><a href="{{route('correos.recibidos')}}"><i class="fa fa-inbox"></i> Recibidos
-                <span class="label label-success pull-right">{{ count($correo) }}</span></a></li>
-              <li><a href="{{route('correos.envios')}}"><i class="fa fa-envelope-o"></i> Enviados
-              <span class="label label-primary pull-right">{{count($enviados)}}</span></a></li>
-              <li><a href="{{route('destacados')}}"><i class="fa fa-file-text-o"></i> Destacados
-              <span class="label label-info pull-right">{{count($destacados)}}</span></a></li>
-              <li><a href=""><i class="fa fa-align-justify"></i> Borradores
-                <span class="label label-warning pull-right">{{count($borradores)}}</span></a>
+              <li class="active">
+                <a href="{{route('correos.recibidos')}}">
+                  <i class="fa fa-inbox"></i> Recibidos
+                  <span class="label label-success pull-right">@{{ datos.correo }}</span>
+                </a>
               </li>
-              <li><a href="{{route('papelera')}}"><i class="fa fa-trash-o"></i> Papelera
-              <span class="label label-danger pull-right">{{count($papelera)}}</span></a></li>
+
+              <li>
+                <a href="{{route('correos.envios')}}">
+                  <i class="fa fa-envelope-o"></i> Enviados
+                  <span class="label label-primary pull-right">@{{ datos.enviados }}</span>
+                </a>
+              </li>
+              
+              <li>
+                <a href="{{route('destacados')}}">
+                  <i class="fa fa-file-text-o"></i> Destacados
+                  <span class="label label-info pull-right">@{{ datos.destacados }}</span>
+                </a>
+              </li>
+              
+              <li>
+                <a href="">
+                  <i class="fa fa-align-justify"></i> Borradores
+                  <span class="label label-warning pull-right">@{{ datos.borradores }}</span>
+                </a>
+              </li>
+
+              <li>
+                <a href="{{route('papelera')}}">
+                  <i class="fa fa-trash-o"></i> Papelera
+                  <span class="label label-danger pull-right">@{{ datos.papelera }}</span>
+                </a>
+              </li>
+            
             </ul>
           </div>
           <!-- /.box-body -->
@@ -54,9 +78,13 @@
             <ul class="nav nav-pills nav-stacked">
               <!-- <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
               <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li> -->
-              @foreach($categorias as $categoria)
-                <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i>{{$categoria->categoria}}</a></li>
-              @endforeach
+              <!-- seccion de categorias por usuarios -->
+                <li>
+                  <a style="cursor: pointer;">
+                    <i class="fa fa-circle-o text-light-blue"></i>
+                  </a>
+                  </li>
+              
             </ul>
           </div>
           <!-- /.box-body -->
@@ -67,7 +95,7 @@
       <div class="col-md-9">
         <div class="box box-primary">
           <div class="box-header with-border">
-            <h3 class="box-title">{{$titulo}}</h3>
+            <h3 class="box-title">{{ $titulo }}</h3>
 
             <div class="box-tools pull-right">
               <div class="has-feedback">
@@ -81,12 +109,16 @@
           <div class="box-body no-padding">
             <div class="mailbox-controls">
               <!-- Check all button -->
-              <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+              <button type="button" class="btn btn-default btn-sm checkbox-toggle">
+                <i class="fa fa-square-o"></i>
               </button>
               <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} v-on:click.prevent="estatus_papelera()" ><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} ng-click="estatus_papelera()" ><i class="fa fa-trash-o"></i>
+                </button>
                 <!-- <button type="button" class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button> -->
-                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_categorias" title="Agregar categoria"><i class="fa fa-bars"></i></button>
+                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_categorias" title="Agregar categoria">
+                    <i class="fa fa-bars"></i>
+                </button>
                 <button type="button" class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
               </div>
               <!-- /.btn-group -->
@@ -104,40 +136,56 @@
             <div class="table-responsive mailbox-messages">
               <table class="table table-hover table-striped" id="bandeja_correos">
                 <tbody>
-              @foreach($correo as $correo)
-                @if($correo->estatus_vistos == 0)
-                  <tr style="cursor:pointer; font-weight: bold;" class="info" id_email="{{$correo->id}}">
-                @else
-                  <tr style="cursor:pointer" id_email="{{$correo->id}}">
-                @endif
-                  <td><input type="checkbox" id="{{$correo->id}}"></td>
-                  @if( $correo->estatus_destacados == 1 )
-                      <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow" id_correo="{{$correo->id}}"></i></a></td>
-                  @else
-                      <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow" id_correo="{{$correo->id}}"></i></a></td>
-                  @endif
-                  <td class="mailbox-name" v-on:click.prevent="details_mails({{$correo->id}},this)">{{$correo->correo}}</td>
-                  <td class="mailbox-subject" v-on:click.prevent="details_mails({{$correo->id}},this)">{{$correo->asunto}}</td>
-                  <td class="mailbox-attachment" v-on:click.prevent="details_mails({{$correo->id}},this)">{!! substr(strip_tags($correo->descripcion),0,20)!!}</td>
-                  <td class="mailbox-date" v-on:click.prevent="details_mails({{$correo->id}},this)">{{ $correo->created_at }}</td>
+
+                  <tr class="info" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 0" id_email="@{{correo.id}}" style="cursor:pointer; font-weight: bold;">
+                  <tr style="cursor:pointer;" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 1" id_email="@{{correo.id}}" >
+                      <td><input type="checkbox" id="@{{ correo.id }}"></td>
+                      
+                      <td class="mailbox-star" >
+                        
+                        <a style="cursor: pointer;" ng-if="correo.estatus_destacados == 1">
+                          <i class="fa fa-star text-yellow" id_correo="@{{correo.id}}"></i>
+                        </a>
+                        <a style="cursor: pointer;" ng-if="correo.estatus_destacados == 0">
+                          <i class="fa fa-star-o text-yellow" id_correo="@{{ correo.id }}"></i>
+                        </a>
+
+                      </td>
+
+                      <td class="mailbox-name" ng-click="details_mails(correo.id)">
+                        @{{ correo.correo }}
+                      </td>
+                  
+                      <td class="mailbox-subject" ng-click="details_mails( correo.id )">
+                        @{{correo.asunto}}
+                      </td>
+                  
+                      <td class="mailbox-attachment" ng-click="details_mails(correo.id )">
+                        @{{ correo.descripcion }}
+                      </td>
+
+                      <td class="mailbox-date" ng-click="details_mails( correo.id )">
+                        @{{ time_fechas( correo.created_at ) }}
+                      </td>
+                  
                   <td class="">
-                    <button type="button" class="btn btn-primary btn-sm" title="Responder Correo" v-on:click.prevent="redactar({{$correo}})"><i class="fa fa-envelope"></i></button>
+                    <button type="button" class="btn btn-primary btn-sm" title="Responder Correo" ng-click="redactar(correo)">
+                      <i class="fa fa-envelope"></i>
+                    </button>
                   </td>
+
                   <td class="">
-                    <button type="button" class="btn btn-warning btn-sm" title="Notas" v-on:click.prevent="modal_show({{$correo->id}},'modal_add_notas')"><i class="fa fa-edit"></i></button>
+                    <button type="button" class="btn btn-warning btn-sm" title="Notas" ng-click="modal_show(correo.id)">
+                      <i class="fa fa-edit"></i>
+                    </button>
                   </td>
-                  <!-- <td class="">
-                    <button type="button" class="btn btn-info btn-sm" title="Agendar Cita" v-on:click.prevent="modal_show({{$correo->id}},'modal_add_citas')"><i class="fa fa-calendar"></i></button>
-                  </td>
+
                   <td class="">
-                    <button type="button" class="btn btn-success btn-sm" title="Orden de Servicio" v-on:click.prevent="modal_show({{$correo->id}},'')"><i class="fa fa-exchange"></i></button>
-                  </td> -->
-                  <td class="">
-                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" v-on:click.prevent="estatus_papelera({{$correo->id}})" {{$eliminar}} ><i class="fa fa-trash"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" ng-click="estatus_papelera(correo.id)" {{$eliminar}} >
+                      <i class="fa fa-trash"></i>
+                    </button>
                   </td>
                 </tr>
-
-              @endforeach
 
                 </tbody>
               </table>
@@ -152,7 +200,9 @@
               <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
               </button>
               <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} v-on:click.prevent="estatus_papelera()"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} ng-click="estatus_papelera()">
+                  <i class="fa fa-trash-o"></i>
+                </button>
                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_categorias" title="Agregar categoria"><i class="fa fa-bars"></i></button>
                 <button type="button" class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
               </div>
@@ -233,7 +283,7 @@
 
 @stop
 @push('scripts')
-  <script type="text/javascript" src="{{asset('js/administrador/correos/build_correos.js')}}" ></script>
+  <script type="text/javascript" src="{{asset('js/administracion/correos/build_correos.js')}}" ></script>
   <!-- iCheck -->
   <script src="{{asset('admintle/plugins/iCheck/icheck.min.js')}}"></script>
 

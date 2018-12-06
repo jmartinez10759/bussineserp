@@ -28,10 +28,24 @@ class CorreoController extends MasterController
      *@return void
      */
      public function index(){
+        $data = self::page_mail();
+        return self::_load_view('administracion.correos.recibidos',$data);
+     }
+     /**
+     *Metodo para obtener la vista y cargar los datos
+     *@access public
+     *@param Request $request [Description]
+     *@return void
+     */
+     public function all( Request $request){
 
-         $data = self::page_mail();
-         #debuger( count($data['correos']) );
-         return self::_load_view('administracion.correos.recibidos',$data);
+        try {
+          $data = $this->consulta_emails();
+          return $this->_message_success( 200, $data , self::$message_success );
+        } catch (\Exception $e) {
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              return $this->show_error(6, $error, self::$message_error );
+        }
 
      }
     /**

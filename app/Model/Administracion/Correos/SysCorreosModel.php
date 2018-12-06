@@ -21,11 +21,13 @@ class SysCorreosModel extends Model
     ,'estatus_borradores'
   ];
 
-  public function categorias(){
+  public function categorias()
+  {
       return $this->belongsToMany('App\Model\Administracion\Correos\SysCategoriasModel','sys_categorias_correos','id_correo','id_categorias')->withPivot('id_users');
   }
 
-  public function usuarios(){
+  public function usuarios()
+  {
     return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_categorias_correos','id_correo','id_users')->withPivot('id_categorias');
   }
 

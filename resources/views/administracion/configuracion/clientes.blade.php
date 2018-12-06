@@ -52,15 +52,17 @@
                                         <i class="glyphicon glyphicon-list-alt"></i>
                                     </button>
                                 </div>
-                                <div class="col-sm-4"></div>
-                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-info btn-sm" ng-click="update_estatus(data.id)" title="Convertir a Cliente">
+                                        <i class="glyphicon glyphicon-sort"></i>
+                                    </button>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </button>
+                                </div>
 
-                                <button type="button" class="btn btn-info btn-sm" ng-click="update_estatus(data.id)" title="Convertir a Cliente">
-                                    <i class="glyphicon glyphicon-sort"></i>
-                                </button>
-                                <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
-                                    <i class="glyphicon glyphicon-trash"></i>
-                                </button>
                             </td>
                             
                         </tr>

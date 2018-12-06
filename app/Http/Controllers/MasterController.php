@@ -437,87 +437,133 @@ abstract class MasterController extends Controller
 	 */
 	public static function page_mail()
 	{
-
 		$ruta_validate = substr(parse_domain()->uri, 1);
-		$correos = $papelera = $destacados = $enviados = $borradores = $etiquetas = [];
-		$where = ['id_users' => Session::get('id')];
-		#$where = [ 'id' => Session::get('id') ];
-		$response_correo = SysCategoriasCorreosModel::where($where)->orderBy('created_at', 'DESC')->get();
-		#$response_correo = SysUsersModel::with('correos','categorias')->where( $where )->orderBy('created_at','DESC')->get();
-		#debuger($response_correo);
-		#se realiza la consulta a la tabla de categorias
-		$categorias = SysCategoriasModel::where(['estatus' => 1, 'id_users' => Session::get('id')])->get();
-		if ($response_correo) {
-			foreach ($response_correo as $email) {
-					#dd( $email->categorias );
-				$correos[] = SysCorreosModel::where([
-					'id' => $email->id_correo, 'estatus_enviados' => 0, 'estatus_recibidos' => 1, 'estatus_papelera' => 0, 'estatus_borradores' => 0
-				])->get();
-				$papelera[] = SysCorreosModel::where(['id' => $email->id_correo, 'estatus_papelera' => 1])->get();
-				$destacados[] = SysCorreosModel::where(['id' => $email->id_correo, 'estatus_destacados' => 1])->get();
-				$enviados[] = SysCorreosModel::where([
-					'id' => $email->id_correo, 'estatus_enviados' => 1, 'estatus_recibidos' => 0, 'estatus_papelera' => 0, 'estatus_borradores' => 0
-						//,'estatus_vistos' 	  => 0
-				])->get();
-				$borradores[] = SysCorreosModel::where([
-					'id' => $email->id_correo,
-					'estatus_enviados' => 0, 'estatus_recibidos' => 0, 'estatus_papelera' => 0, 'estatus_destacados' => 0, 'estatus_borradores' => 1
-				])->get();
-
-				$etiquetas[] = SysCategoriasModel::where(['estatus' => 1, 'id' => $email->id_categorias])->get();
-
-			}
-		}
-		$tash = [];
-		$destacado = [];
-		$email = [];
-		$datos_correo = [];
-		$send = [];
-		$drafts = [];
 		$titulos = "";
 		switch ($ruta_validate) {
-			case 'correos/papelera':
-				$datos_correo = self::_parse_array($papelera);
+			case 'correos/papelera':				
 				$titulos = "Papelera";
 				break;
 			case "correos/destacados":
-			 #ddbuger($destacados);
-				$datos_correo = self::_parse_array($destacados);
 				$titulos = "Destacados";
 				break;
 
 			case "correos/recibidos":
-				$datos_correo = self::_parse_array($correos);
 				$titulos = "Recibidos";
 				break;
 			case "correos/envios":
-				$datos_correo = self::_parse_array($enviados);
+				$titulos = "Enviados";
+				break;
+
+			case "correos/borradores":
+				$titulos = "Borradores";
+				break;
+			default:				
+				$titulos = "Redactar";
+				break;
+		}
+		
+		$data = [
+			'page_title' 	=> "Correos"
+			, 'title' 		=> $titulos
+			, 'titulo' 		=> $titulos
+			, 'campo_1' 	=> "Categoria"
+			, 'campo_2' 	=> "Descripcion"
+			#, 'select_estados' => $estados
+
+		];
+			#debuger($data);
+		return $data;
+	}
+	/**
+	 * Metodo Donde se realizan las consultas necesarias para cargar los datos del correo.
+	 * @access public
+	 * @param $where array [description]
+	 * @return void
+	 */
+	public function consulta_emails()
+	{
+		$ruta_validate = substr(parse_domain()->urls, 1);
+		$recibidos = $papelera = $destacados = $enviados = $borradores = $etiquetas = [];
+		$categorias = SysCategoriasModel::where(['estatus' => 1, 'id_users' => Session::get('id')])->get();
+		$response_correo = SysUsersModel::with('correos','plantillas')->where(['id' => Session::get('id')])->get();
+		/*se realiza la consulta de los correos recibidos*/
+		$recibidos = $response_correo[0]->correos()
+										->with(['categorias'])
+										->where(['estatus_recibidos' => 1])
+										->orwhere(['estatus_vistos' => 1])
+										->orwhere(['estatus_vistos' => 0])
+										->orwhere(['estatus_destacados' => 1])
+										->orderby('created_at','desc')
+										->get();
+		/*se realiza la consulta para los correos enviados*/
+		$enviados  = $response_correo[0]->correos()
+										->with(['categorias'])
+										->where(['estatus_enviados' => 1])
+										->orderby('created_at','desc')
+										->get();
+
+		/*se realiza la consulta de los datos de los correos enviados a la papelera*/
+		$papelera  = $response_correo[0]->correos()
+										->with(['categorias'])
+										->where(['estatus_papelera' => 1])
+										->orderby('created_at','desc')
+										->get();
+		/*se realiza la consulta de los datos de los correos destacados*/
+		$destacados  = $response_correo[0]->correos()
+										  ->with(['categorias'])
+										  ->where(['estatus_destacados' => 1])
+										  ->orderby('created_at','desc')
+										  ->get();
+		/*se realiza la consulta de los datos de los correos borradores*/
+		$borradores  = $response_correo[0]->correos()
+										  ->with(['categorias'])
+										  ->where(['estatus_borradores' => 1])
+										  ->orderby('created_at','desc')
+										  ->get();
+	    #$tags = $response_correo[0]->correos()->categorias(); 
+		#debuger($ruta_validate);
+		$titulos = "";
+		switch ($ruta_validate) {
+			case 'correos/papelera':
+				$datos_correo = $papelera;
+				$titulos = "Papelera";
+				break;
+			case "correos/destacados":
+				$datos_correo = $destacados;
+				$titulos = "Destacados";
+				break;
+
+			case "correos/recibidos":
+				$datos_correo = $recibidos;
+				$titulos = "Recibidos";
+				break;
+			case "correos/envios":
+				$datos_correo = $enviados;
 				$titulos = "Enviados";
 
 				break;
 
 			case "correos/borradores":
-				$datos_correo = self::_parse_array($borradores);
+				$datos_correo = $borradores;
 				$titulos = "Borradores";
 				break;
+			default:
+				$datos_correo = [];
+				$titulos = "Redactar";
+				break;
 		}
-		$tash = self::_parse_array($papelera);
-		$destacado = self::_parse_array($destacados);
-		$email = self::_parse_array($correos);
-		$send = self::_parse_array($enviados);
-		$drafts = self::_parse_array($borradores);
-		$tags = self::_parse_array($etiquetas);
-		$estados = dropdown([
-			'data' => SysEstadosModel::all(), 'value' => 'id', 'text' => 'nombre', 'name' => 'cmb_estados', 'class' => 'form-control', 'leyenda' => 'Seleccione Opcion'
-			//,'event'     => 'v-change_usuario()', 'attr' => 'v-model="newKeep.id_estate" '
-		]);
-
-		 #debuger($tags);
+		#debuger($datos_correo);
 		$data = [
-			'page_title' => "Correos", 'title' => $titulos, 'subtitle' => $titulos, 'correo' => $email, 'correos' => $datos_correo, 'papelera' => $tash, 'destacados' => $destacado, 'categoria' => $tags, 'categorias' => $categorias, 'enviados' => $send, 'borradores' => $drafts, 'titulo' => $titulos, 'campo_1' => "Categoria", 'campo_2' => "Descripcion", 'select_estados' => $estados
-
+			 'correos' 		=> $datos_correo
+			, 'correo' 		=> count($recibidos)
+			, 'papelera' 	=> count($papelera)
+			, 'destacados' 	=> count($destacados)
+			#, 'categoria' 	=> count($etiquetas)
+			, 'categorias' 	=> count($categorias)
+			, 'enviados' 	=> count($enviados)
+			, 'borradores' 	=> count($borradores)
 		];
-			#debuger($data);
+
 		return $data;
 
 	}
