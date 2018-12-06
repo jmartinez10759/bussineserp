@@ -1,5 +1,5 @@
 <?php
-
+date_default_timezone_set('America/Mexico_City');
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +13,6 @@
 
 	Route::get('/failed/error', function () {
 	    return view('errors/error');
-	    #return view('welcome');
 	});
 
 	Route::get('/', [
@@ -613,6 +612,32 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ClientesController@store_activies'
         ,'as'       => 'clientes.comments'
     ]);
+    ############################ SECCION DE ACTIVIDADES ###################################
+    Route::get('/configuracion/activities', [
+        'uses'      => 'Administracion\Configuracion\ActivitiesController@index'
+        ,'as'       => 'configuracion.activities'
+    ]);
+        
+    Route::post('/activities/register', [
+        'uses'      => 'Administracion\Configuracion\ActivitiesController@store'
+        ,'as'       => 'activities.register'
+    ]);
+    
+    Route::get('/activities/edit', [
+        'uses'      => 'Administracion\Configuracion\ActivitiesController@show'
+        ,'as'       => 'clientes.edit'
+    ]);
+        
+    Route::put('/activities/update', [
+        'uses'      => 'Administracion\Configuracion\ActivitiesController@update'
+        ,'as'       => 'activities.update'
+    ]);
+
+    Route::delete('/activities/destroy', [
+        'uses'      => 'Administracion\Configuracion\ActivitiesController@destroy'
+        ,'as'       => 'activities.destroy'
+    ]);
+
 
 
     ############################ SECCION DE CONTACTOS ###################################

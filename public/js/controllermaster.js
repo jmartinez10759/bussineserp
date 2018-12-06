@@ -44,27 +44,62 @@ app.service('masterservice', function() {
 	        return total.toFixed(2);
 
 	    },
-	    session_status: function( url = {}, error = {} ){
+	    session_status: function( response = {}, error = {} ){
+	    	//console.log( typeof response.data );
 	    	loading(true);
-    		for(var i in url ){
-		    	if( url[i] === domain() ){
-	              toastr.error( session_expired );
-	              setTimeout(function(){ redirect(domain()); }, 1500); 
-	              return true;
-	            }
-    			
-    		}
+	    	if( typeof response.data != "object" ){
+              toastr.error( session_expired );
+              setTimeout(function(){ redirect(domain()); }, 2000); 
+              return true;
+            }
 
 	    	if ( error.length > 0 ) {
 		    	if( isset(error.response) && error.response.status == 419 ){
-	                  toastr.error( session_expired );
-	                  setTimeout(function(){ redirect(domain()); }, 1000);  
-	                  return;
+                  toastr.error( session_expired );
+                  setTimeout(function(){ redirect(domain()); }, 1000);  
+                  return;
 	            }
 	            console.error( error );
               	toastr.error( error.result , expired );
 
 	    	}
+
+	    },
+	    time_fechas: function( fecha ){
+
+	    	// asignar el valor de las unidades en milisegundos
+			var msecPerMinute = 1000 * 60;
+			var msecPerHour = msecPerMinute * 60;
+			var msecPerDay = msecPerHour * 24;
+			// asignar la fecha en milisegundos
+			var date = new Date(fecha);
+			var dateMsec = date.getTime();
+			// asignar la fecha el 1 de enero del a la media noche
+			date.setMonth(0);
+			date.setDate(1);
+			date.setHours(0, 0, 0, 0);
+			// Obtener la diferencia en milisegundos
+			//var interval = dateMsec - date.getTime();
+			//var interval = dateMsec - now_date.getTime();
+			var now_date = new Date();
+			var interval = now_date.getTime() - dateMsec;
+			// Calcular cuentos días contiene el intervalo. Substraer cuantos días
+			//tiene el intervalo para determinar el sobrante
+			var days = Math.floor(interval / msecPerDay );
+			interval = interval - (days * msecPerDay );
+			// Calcular las horas , minutos y segundos
+			var hours = Math.floor(interval / msecPerHour );
+			interval = interval - (hours * msecPerHour );
+			
+			var minutes = Math.floor(interval / msecPerMinute );
+			interval = interval - (minutes * msecPerMinute );
+
+			var seconds = Math.floor(interval / 1000 );
+			// Mostrar el resultado.
+			//var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": "" )+ ((seconds > 0)? seconds + " segundos." : ""); 
+			var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": " unos segundos" );
+			return  time_elapsed;
+			//Output: 164 días, 23 horas, 0 minutos, 0 segundos.
 
 	    }
 

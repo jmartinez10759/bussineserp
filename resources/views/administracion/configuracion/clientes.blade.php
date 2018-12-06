@@ -14,6 +14,7 @@
         <div id="prospectos" class="tab-pane fade in active">
         <br>
             <div class="table-responsive">
+
                 <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable">
                     <thead>
                         <tr style="background-color: #337ab7; color: #ffffff;">
@@ -46,6 +47,14 @@
                                 @{{ (data.estatus == 1)? "Clientes":"Prospectos" }}
                             </td>
                             <td class="text-right">
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-primary btn-sm" title="Visualizar Comentarios" ng-click="see_activities(data.id)">
+                                        <i class="glyphicon glyphicon-list-alt"></i>
+                                    </button>
+                                </div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+
                                 <button type="button" class="btn btn-info btn-sm" ng-click="update_estatus(data.id)" title="Convertir a Cliente">
                                     <i class="glyphicon glyphicon-sort"></i>
                                 </button>
@@ -78,6 +87,7 @@
 
                     </tbody>
                 </table>
+
             </div>
 
 
@@ -86,6 +96,7 @@
         <div id="clientes" class="tab-pane fade">
            <br>
             <div class="table-responsive">
+
                 <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable_clientes">
                     <thead>
                         <tr style="background-color: #337ab7; color: #ffffff;">
@@ -124,6 +135,7 @@
                             </td>
 
                             <td class="text-right">
+
                                 <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
                                     <i class="glyphicon glyphicon-trash"></i>
                                 </button>
@@ -131,6 +143,19 @@
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         Acciones
                                         <span class="caret"></span>
+
+                                <div class="col-sm-6">
+
+                                    <button type="button" class="btn btn-primary btn-sm" title="Visualizar Comentarios" ng-click="see_activities(data.id)">
+                                        <i class="glyphicon glyphicon-list-alt"></i>
+                                    </button>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
+                                        <i class="glyphicon glyphicon-trash"></i>
+
                                     </button>
                                     <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
                                         <li>

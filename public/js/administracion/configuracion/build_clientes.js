@@ -11,10 +11,11 @@ const URL = {
   ,url_edit_codigos     : 'codigopostal/show'
   ,url_upload           : 'upload/files'
   ,url_update_estatus   : 'clientes/estatus'
-  ,url_comments         : 'clientes/comments'
+  ,url_comments         : 'activities/register'
+  ,url_comments_destroy : 'activities/destroy'
 }
 
-app.controller('ClientesController', function( masterservice, $scope, $http, $location ) {
+app.controller('ClientesController', function( masterservice, $scope, $http, $location, $timeout ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -58,6 +59,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         var fields = {};        
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.datos = response.data.result;
             console.log($scope.datos);
             loading(true);
@@ -94,7 +98,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
             //not remove function this is  verify the session
-            if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
 
             toastr.success( response.data.message , title );
             $scope.index();
@@ -126,6 +130,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
           toastr.info( response.data.message , title );
           if (!dblclick) {
             jQuery.fancybox.close({
@@ -152,6 +159,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
             var datos = ['updated_at','created_at'];
             $scope.update = iterar_object(response.data.result,datos);
            if( response.data.result.contactos.length > 0 ){
@@ -189,6 +199,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
@@ -311,15 +324,20 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
     }
 
-    $scope.register_comment = function( id = false ){
+    $scope.register_comment = function(update){
 
       var validacion = { COMENTARIO : $scope.comments.descripcion };
       if(validaciones_fields(validacion)){return;}
+
         var url = domain( URL.url_comments );
-        var fields = {id: id, comentarios : $scope.comments};
+        var fields = { id: (update)? $scope.update.id : $scope.insert.id , comentarios : $scope.comments};
         MasterController.request_http(url,fields,'post',$http, false )
           .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( response )){return;};
+
               $scope.comment = false;
+              $scope.comments = {};
               $scope.list_comments = response.data.result.actividades;
               loading(true);
               //jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
@@ -327,13 +345,40 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
               masterservice.session_status({},error);
           });
 
-    } 
+    }
+
+    $scope.destroy_comment = function( id ){
+        
+        var url = domain( URL.url_comments_destroy );
+        var fields = { id: id ,id_cliente : $scope.update.id  };
+        buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea borrar el registro?",function(){
+          MasterController.request_http(url,fields,'delete',$http, false )
+          .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( response )){return;};
+
+              toastr.info( response.data.message , title );
+              $scope.list_comments = response.data.result.actividades;
+              loading(true);
+          }).catch(function( error ){
+              masterservice.session_status({},error);
+          });
+            
+        },"warning",true,["SI","NO"]); 
+
+    }
 
     $scope.see_comment = function(hide = false){
         
         $scope.comments = {};
         if(hide){ $scope.comment = false;
         }else{ $scope.comment = true; }
+
+    }
+
+    $scope.time_fechas = function( fecha ){
+      //$timeout(masterservice.time_fechas(fecha), 60000 );
+      return masterservice.time_fechas(fecha);
 
     }
 
@@ -376,6 +421,29 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       });
 
     }
+
+    $scope.see_activities = function( id ){
+
+      var url = domain( URL.url_edit );
+      var fields = {id : id };
+      MasterController.request_http(url,fields,'get',$http, false )
+        .then(function( response ){
+          $scope.update.id  = id;
+          $scope.list_comments = response.data.result.actividades;
+          loading(true);
+          jQuery.fancybox.open({
+                'type'      : 'inline'
+                ,'src'      : "#see_activities"
+                ,'modal': true
+            });
+
+        }).catch(function( error ){
+            masterservice.session_status({},error);
+        });
+
+    }
+
+
 
 });
 

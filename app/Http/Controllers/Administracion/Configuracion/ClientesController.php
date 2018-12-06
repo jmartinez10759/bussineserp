@@ -315,6 +315,7 @@ class ClientesController extends MasterController
           SysClientesModel::where( $where )->delete();
           SysClientesEmpresasModel::where(['id_cliente' => $request->id])->delete();
           SysContactosSistemasModel::where(['id_cliente' => $request->id])->delete();
+          SysUsersActivitiesModel::where(['id_cliente' => $request->id])->delete();
 
           DB::commit();
           $success = true;

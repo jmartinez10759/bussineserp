@@ -346,7 +346,10 @@
                                                         <i class="glyphicon glyphicon-remove"></i>
                                                     </button>
                                                 
-                                                    <button type="button" class="btn btn-success btn-sm" ng-click="register_comment(update.id)" title="Registrar Comentario">
+                                                    <button type="button" 
+                                                            class="btn btn-success btn-sm" 
+                                                            ng-click="register_comment(true)" 
+                                                            title="Registrar Comentario">
                                                         <i class="glyphicon glyphicon-ok"></i>
                                                     </button>
                                                 
@@ -356,8 +359,8 @@
                                         </div>
 
 
-
                                     </div>
+
                                     <div class="col-sm-11 ">
                                         <div class="drop-shadow" ng-repeat="comentarios in list_comments">
                                                 <div class="col-sm-2">
@@ -368,13 +371,22 @@
                                                         @{{ comentarios.roles[0].perfil }}
                                                     </span>
                                                 </div>
-                                                <div class="col-sm-6"> 
+
+                                                <div class="col-sm-5"> 
                                                     <strong>@{{ comentarios.titulo }}</strong> 
                                                     <p style="">@{{ comentarios.descripcion }}</p>
                                                 </div>
 
                                                 <div class="col-sm-2"> 
-                                                    <strong>@{{ comentarios.titulo }}</strong> 
+                                                    <small>
+                                                        <i class="fa fa-clock-o"></i> 
+                                                        Hace @{{ time_fechas( comentarios.created_at ) }} 
+                                                    </small>
+                                                </div>
+                                                <div class="col-sm-1 pull-right"> 
+                                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_comment(comentarios.id)" title="Borrar Comentario">
+                                                        <i class="glyphicon glyphicon-trash"></i>
+                                                    </button>
                                                 </div>
                                                 
                                         </div>
@@ -579,3 +591,100 @@
         </div>
     </div>
 </div>
+
+
+<div id="see_activities" style="display:none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Comentarios del Cliente </h3>
+            </div>
+            <div class="modal-body">
+                
+                <div class="col-sm-12">
+                                        
+                    <div class="drop-shadows " ng-show="true">
+                        <div class="col-sm-5">
+                            <label for="modelo" class="col-sm-2 control-label">Titulo:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" ng-model="comments.titulo" capitalize>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="modelo" class="col-sm-3 control-label">Comentario:</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" ng-model="comments.descripcion" capitalize></textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-danger btn-sm" ng-click="see_comment(true)" title="Cancelar Comentario">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                </button>
+                            
+                                <button type="button" 
+                                        class="btn btn-success btn-sm" 
+                                        ng-click="register_comment(true)" 
+                                        title="Registrar Comentario">
+                                    <i class="glyphicon glyphicon-ok"></i>
+                                </button>
+                            
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-sm-12" style="overflow-y:scroll; height:480px;"> 
+                    <div class="drop-shadows" ng-repeat="comentarios in list_comments">
+                        <div class="col-sm-2">
+                            <span class="label label-success">
+                                @{{ comentarios.usuarios[0].name +" "+ comentarios.usuarios[0].first_surname }}
+                            </span><br>
+                            <span class="label label-info">
+                                @{{ comentarios.roles[0].perfil }}
+                            </span>
+                        </div>
+
+                        <div class="col-sm-5"> 
+                            <strong>@{{ comentarios.titulo }}</strong> 
+                            <p style="">@{{ comentarios.descripcion }}</p>
+                        </div>
+
+                        <div class="col-sm-2"> 
+                            <small>
+                                <i class="fa fa-clock-o"></i> 
+                                Hace @{{ time_fechas( comentarios.created_at ) }} 
+                            </small>
+                        </div>
+                        <div class="col-sm-1 pull-right"> 
+                            <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_comment(comentarios.id)" title="Borrar Comentario">
+                                <i class="glyphicon glyphicon-trash"></i>
+                            </button>
+                        </div>
+                            
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close>
+                        <i class="fa fa-times-circle"></i> Cerrar
+                    </button>
+                    <!-- <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}>
+                        <i class="fa fa-save"></i> Aceptar 
+                    </button> -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

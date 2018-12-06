@@ -43,7 +43,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             //not remove function this is  verify the session
-            if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
             
             $scope.datos = response.data.result;
             console.log($scope.datos);
@@ -59,7 +59,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             //not remove function this is  verify the session
-            if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
             
            console.log(response.data.result);
           if (update) {
@@ -146,7 +146,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         .then(function( response ){
             //toastr.success( response.data.message , title );
             //not remove function this is  verify the session
-              if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
 
             console.log(response.data.result);
             if(update){
@@ -217,7 +217,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
           MasterController.request_http(url,fields,'put',$http, false )
           .then(function( response ){
               //not remove function this is  verify the session
-              if(masterservice.session_status( URL )){return;};
+              if(masterservice.session_status( response )){return;};
               
               toastr.info( response.data.message , title );
               jQuery.fancybox.close({
@@ -253,9 +253,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
               jQuery('.update').prop('disabled',false);
 
           }).catch(function( error ){
-              masterservice.session_status({},error)
-              console.error( error );
-              toastr.error( error.result , expired );
+              masterservice.session_status({},error);
           });
     
     }
@@ -293,7 +291,9 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
       buildSweetAlertOptions(titulo,descripcion,function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
-            masterservice.session_status( URL );
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             if(!cancel){
               toastr.success( response.data.message , title );
             }
@@ -317,12 +317,12 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         var fields = {id : id };
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
-              masterservice.session_status( URL );
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
               $scope.conceptos(update);
         }).catch(function( error ){
             masterservice.session_status( {},error );
-            console.error( error );
-            toastr.error( error.result , expired );
         });                
     
     }
@@ -354,7 +354,9 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
-            masterservice.session_status( URL );
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.cmb_contactos = response.data.result.contactos;
             $scope.fields.rfc = response.data.result.rfc_receptor
             $scope.fields.nombre_comercial = response.data.result.nombre_comercial
@@ -362,8 +364,6 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             console.log(response);
         }).catch(function( error ){
               masterservice.session_status( {},error );
-              console.error( error );
-              toastr.error( error.result , expired );
         });
 
     }
@@ -375,14 +375,14 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
-            masterservice.session_status( URL );
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.fields.telefono = response.data.result.telefono
             $scope.fields.correo = response.data.result.correo
             console.log(response);
         }).catch(function( error ){
               masterservice.session_status( {},error );
-              console.error( error );
-              toastr.error( error.result , expired );
         });
     
     }
@@ -394,7 +394,9 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
-            masterservice.session_status( URL );
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.products.id_plan = null;
             $scope.products.precio = response.data.result.total;
             $scope.products.descripcion = response.data.result.descripcion;
@@ -403,8 +405,6 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             console.log(response);
         }).catch(function( error ){
             masterservice.session_status( {},error );
-            console.error( error );
-            toastr.error( error.result , expired );
         });
 
     }
@@ -416,7 +416,9 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
       MasterController.request_http(url,fields,"get",$http, false )
         .then(function( response ){
-            masterservice.session_status( URL );
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.products.id_producto = null;
             $scope.products.precio = response.data.result.total;
             $scope.products.descripcion = response.data.result.descripcion;
@@ -425,8 +427,6 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             console.log(response);
         }).catch(function( error ){
             masterservice.session_status( {},error );
-            console.error( error );
-            toastr.error( error.result , expired );
         });
 
     }
@@ -464,7 +464,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
         MasterController.request_http(url,fields,'put',$http, false )
         .then(function( response ){
             //not remove function this is  verify the session
-            if(masterservice.session_status( URL )){return;};
+            if(masterservice.session_status( response )){return;};
 
             toastr.info( response.data.message , title );
             var data = {
@@ -535,7 +535,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
 
         jQuery.fancybox.open({
             'type': 'iframe'
-            ,'src': domain( url_see_report+"/"+data.id )
+            ,'src': domain( URL.url_see_report+"/"+data.id )
             ,'buttons' : ['share', 'close']
         });
 

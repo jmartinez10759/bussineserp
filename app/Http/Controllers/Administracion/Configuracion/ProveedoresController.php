@@ -34,15 +34,14 @@
         *@return void
         */
         public function index(){
-        if( Session::get('permisos')['GET'] ){
-          return view('errors.error');
-        }        
-                $data = [
+        if( Session::get('permisos')['GET'] ){ return view('errors.error'); }  
+
+            $data = [
              "page_title" 	        => "Almacén"
              ,"title"  		        => "Proveedores"
            ];
                 
-                return self::_load_view( "administracion.configuracion.proveedores",$data );
+            return self::_load_view( "administracion.configuracion.proveedores",$data );
         }
         /**
          *Metodo para obtener los datos de manera asicronica.
