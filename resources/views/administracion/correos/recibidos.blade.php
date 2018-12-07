@@ -1,7 +1,8 @@
 @extends('layouts.template.app')
 @section('content')
 <!-- iCheck -->
-<link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}">
+<!-- <link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}"> -->
+
 @push('styles')
 
 <!-- Content Wrapper. Contains page content -->
@@ -112,6 +113,7 @@
               <button type="button" class="btn btn-default btn-sm checkbox-toggle">
                 <i class="fa fa-square-o"></i>
               </button>
+              <!-- <input type="checkbox" ng-model="checkbox" class="btn btn-default btn-sm"> -->
               <div class="btn-group">
                 <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} ng-click="estatus_papelera()" ><i class="fa fa-trash-o"></i>
                 </button>
@@ -136,10 +138,12 @@
             <div class="table-responsive mailbox-messages">
               <table class="table table-hover table-striped" id="bandeja_correos">
                 <tbody>
-
                   <tr class="info" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 0" id_email="@{{correo.id}}" style="cursor:pointer; font-weight: bold;">
                   <tr style="cursor:pointer;" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 1" id_email="@{{correo.id}}" >
-                      <td><input type="checkbox" id="@{{ correo.id }}"></td>
+                      <td>
+                        <!-- <input type="checkbox" ng-checked="checkbox"> -->
+                        <input icheck type="checkbox" ng-model="selected">
+                      </td>
                       
                       <td class="mailbox-star" >
                         
@@ -147,25 +151,25 @@
                           <i class="fa fa-star text-yellow" id_correo="@{{correo.id}}"></i>
                         </a>
                         <a style="cursor: pointer;" ng-if="correo.estatus_destacados == 0">
-                          <i class="fa fa-star-o text-yellow" id_correo="@{{ correo.id }}"></i>
+                            <i class="fa fa-star-o text-yellow" id_correo="@{{ correo.id }}"></i>
                         </a>
 
                       </td>
 
                       <td class="mailbox-name" ng-click="details_mails(correo.id)">
-                        @{{ correo.correo }}
+                        <small>@{{ correo.correo }}</small>
                       </td>
                   
                       <td class="mailbox-subject" ng-click="details_mails( correo.id )">
-                        @{{correo.asunto}}
+                        <small>@{{correo.asunto}}</small>
                       </td>
                   
                       <td class="mailbox-attachment" ng-click="details_mails(correo.id )">
-                        @{{ correo.descripcion }}
+                        <!-- @{{ correo.descripcion }} -->
                       </td>
 
                       <td class="mailbox-date" ng-click="details_mails( correo.id )">
-                        @{{ time_fechas( correo.created_at ) }}
+                        <small>@{{ time_fechas( correo.created_at ) }}</small>
                       </td>
                   
                   <td class="">
@@ -283,11 +287,12 @@
 
 @stop
 @push('scripts')
-  <script type="text/javascript" src="{{asset('js/administracion/correos/build_correos.js')}}" ></script>
   <!-- iCheck -->
-  <script src="{{asset('admintle/plugins/iCheck/icheck.min.js')}}"></script>
+  <!-- <script src="{{asset('admintle/plugins/iCheck/icheck.min.js')}}"></script> -->
 
-  <script>
+  <script type="text/javascript" src="{{asset('js/administracion/correos/build_correos.js')}}" ></script>
+
+<!--   <script>
     jQuery('.btn-papelera').attr('disabled',false);
     //Add text editor
     //jQuery("#compose-textarea").wysihtml5();
@@ -365,5 +370,5 @@
         }
       });
 
-  </script>
+  </script> -->
 @endpush

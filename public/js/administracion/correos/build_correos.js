@@ -35,13 +35,13 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             //not remove function this is  verify the session
-            //if(masterservice.session_status( response )){return;};
+            if(masterservice.session_status( response )){return;};
 
             $scope.datos = response.data.result;
             console.log($scope.datos);
-            loading(true);
+            
         }).catch(function(error){
-            //masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
     
     }
