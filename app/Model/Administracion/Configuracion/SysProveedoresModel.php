@@ -38,7 +38,7 @@ class SysProveedoresModel extends Model
   }
 
   public function productos(){
-        return $this->belongsToMany(SysProductosModel::class, 'sys_planes_productos', 'id_proveedor', 'id_producto');
+        return $this->belongsToMany(SysProductosModel::class, 'sys_proveedores_productos', 'id_proveedor', 'id_producto');
   }
   public function regimenes()
   {

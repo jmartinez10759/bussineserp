@@ -403,6 +403,15 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProveedoresController@register_permisos'
         ,'as'       => 'proveedores.register'
     ]);
+    Route::get('/proveedores/asing_producto', [
+        'uses'      => 'Administracion\Configuracion\ProveedoresController@asignar'
+        ,'as'       => 'proveedores.asing_producto'
+    ]);
+    
+    Route::post('/proveedores/asing_insert', [
+        'uses'      => 'Administracion\Configuracion\ProveedoresController@asignar_insert'
+        ,'as'       => 'proveedores.asing_insert'
+    ]);
     
     ######################### MODULO DE PLANES ##################################
     

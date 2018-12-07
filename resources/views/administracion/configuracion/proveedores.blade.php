@@ -45,6 +45,11 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+                                        <li>
+                                            <a title="Asignar Producto" style="cursor:pointer;" ng-click="asignar_producto(data.id)">
+                                                <i class="fa fa-cart-plus"></i> Asignar Producto
+                                            </a>
+                                        </li>
                                         <li {{$eliminar}}>
                                             <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
                                                 <i class="glyphicon glyphicon-trash"></i> Eliminar
@@ -56,8 +61,7 @@
                             <td>
                             <div {{$permisos}}>
                             <select class="form-control "  
-                                    chosen
-                                    
+                                    chosen                                    
                                     width="'80%'"
                                     ng-model="data.empresas[0].id" 
                                     ng-options="value.id as value.nombre_comercial for (key, value) in datos.empresas" 

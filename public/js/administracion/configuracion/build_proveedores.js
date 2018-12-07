@@ -1,18 +1,20 @@
 const URL = {
-url_insert  : "proveedores/register"
+url_insert    : "proveedores/register"
 ,url_update   : "proveedores/update"
 ,url_edit     : "proveedores/edit"
 ,url_destroy  : "proveedores/destroy"
 ,url_all      : "proveedores/all"
 ,redireccion  : "configuracion/proveedores"
 ,url_edit_pais       : 'pais/edit'
-,url_edit_codigos    : 'codigopostal/show'
 ,url_upload          : 'upload/files'
-,url_display : "proveedores/display_sucursales"
+,url_edit_codigos    : 'codigopostal/show'
+,url_asign_insert    : "proveedores/asing_insert"
+,url_productos       : "proveedores/asing_producto"
 ,url_insert_permisos : "proveedores/register_permisos"
+,url_display         : "proveedores/display_sucursales"
 }
 // var app = angular.module('ng-proveedores', ["ngRoute",'components','localytics.directives'])
-app.controller('ProveedoresController', function( $scope, $http, $location ) {
+app.controller('ProveedoresController', function( masterservice, $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -28,7 +30,7 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
         $scope.consulta_general();
         $scope.select_estado();
         $scope.cmb_estatus = [{id:0 ,descripcion:"Baja"}, {id:1, descripcion:"Activo"}];
-        $scope.cmb_empresas_= "--Seleccione Opcion--"
+        
     }
 
     $scope.click = function (){
@@ -367,6 +369,60 @@ app.controller('ProveedoresController', function( $scope, $http, $location ) {
           ,'modal'    : true
       });
 
+    }
+    $scope.asignar_producto = function( id ){
+      
+      var url = domain( URL.url_productos);
+      var fields = {id : id };
+        MasterController.request_http(url,fields,"get",$http, false )
+      .then(function( response ){
+          $scope.fields.id_proveedor = id;
+          $.fancybox.open({
+              'type': 'inline',
+              'src': "#modal_asing_producto",
+              'buttons': ['share', 'close']
+          });
+          jQuery('#datatable_productos input[type="checkbox"]').prop('checked',false);
+          if(response.data.result.productos.length > 0){
+              for (var i = 0; i < response.data.result.productos.length; i++) {
+                    jQuery('#'+response.data.result.productos[i].id).prop('checked', true);
+              };
+          }
+          loading(true);
+      }).catch(function( error ){
+          masterservice.session_status({},error);
+      });
+    
+    }
+    $scope.save_asign_producto = function(){
+
+        var matrix = [];
+        var i = 0;
+        jQuery('#datatable_productos input[type="checkbox"]').each(function () {
+            if (jQuery(this).is(':checked') == true) {
+                var id = jQuery(this).attr('id_producto');
+                matrix[i] = `${id}|${jQuery(this).is(':checked')}`;
+                i++;
+            }
+        });
+        var url = domain( URL.url_asign_insert);
+        var fields = {
+            'matrix' : matrix
+            , 'id_proveedor': $scope.fields.id_proveedor
+        }
+        // console.log(fields);return;
+        MasterController.request_http(url, fields, "post", $http, false )
+        .then(response => {
+            jQuery.fancybox.close({
+                'type': 'inline',
+                'src': "#permisos",
+                'buttons': ['share', 'close']
+            });
+            $scope.index();
+        }).catch(error => {
+            masterservice.session_status({},error); 
+        });
+    
     }
 
   });

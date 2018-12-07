@@ -467,4 +467,24 @@
     </div>
 </div>
 
+<input type="hidden" id="id_proveedor" /> 
+<div class="" id="modal_asing_producto" style="display:none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Listado de Productos</h3>
+            </div>
+            <div class="modal-body">
+                {!! $data_table_producto !!}
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-primary" ng-click="save_asign_producto()"><i class="fa fa-save"></i> Registrar </button> 
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 
