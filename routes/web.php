@@ -80,6 +80,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'correos.recibidos'
     ]);
 
+    Route::get('/correos/all', [
+        'uses'      => 'Administracion\Correos\CorreoController@all'
+        ,'as'       => 'correos.all'
+    ]);
+
 		Route::get('/correos/detalles', [
         'uses'      => 'Administracion\Correos\CorreoController@show'
         ,'as'       => 'correos.detalles'
@@ -100,7 +105,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'correos.envios'
     ]);
 
-		Route::get('/correos/redactar', [
+	Route::get('/correos/redactar', [
         'uses'      => 'Administracion\Correos\RedactarController@index'
         ,'as'       => 'correos.redactar'
     ]);

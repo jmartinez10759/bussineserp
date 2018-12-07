@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysTasaModel;
+use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysPlanesModel;
 use App\Model\Administracion\Configuracion\SysProductosModel;
 use App\Model\Administracion\Configuracion\SysTipoFactorModel;
@@ -32,25 +33,26 @@ class PlanesController extends MasterController
     *@return void
     */
     public function index(){
-        
-        if( Session::get('permisos')['GET'] ){
-            return view('errors.error');
-        }
-        #$productos = $this->_validate_consulta( new SysProductosModel ,[], [], [], []);
-        $productos = $this->_validate_consulta( new SysProductosModel, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
-        #debuger($productos[0]->empresas[0]->razon_social);
-        foreach ($productos as $respuesta) {
-            $id['id'] = $respuesta->id;
-            $checkbox = build_actions_icons($id,'id_producto= "'.$respuesta->id.'" ');
-            $producto[] = [
-                 (isset($respuesta->empresas[0]) )? $respuesta->empresas[0]->razon_social: ""
-                ,$respuesta->codigo
-                ,$respuesta->nombre
-                ,format_currency($respuesta->subtotal,2)
-                ,format_currency($respuesta->total,2)                   
-                ,$checkbox
-            ];
 
+      if( Session::get('permisos')['GET'] ){ return view('errors.error'); }
+
+       $productos = $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] );
+        $producto = [];
+        if ($productos) {
+            foreach ($productos as $respuesta) {
+                $id['id'] = $respuesta->id;
+                $checkbox = build_actions_icons($id,'id_producto= "'.$respuesta->id.'" ');
+                $producto[] = [
+                     (isset($respuesta->empresas[0]) )? $respuesta->empresas[0]->razon_social: ""
+                    ,$respuesta->codigo
+                    ,$respuesta->nombre
+                    ,format_currency($respuesta->subtotal,2)
+                    ,format_currency($respuesta->total,2)                   
+                    ,$checkbox
+                ];
+
+            }
+            
         }
         $titulos_producto = ['Empresa','Clave','Producto', 'SubTotal','Total'];
         $table_producto = [
@@ -77,7 +79,7 @@ class PlanesController extends MasterController
     public function all( Request $request ){
 
         try {
-           $response = $this->_validate_consulta( $this->_tabla_model, ['unidades'], [], ['id' => Session::get('id_empresa')] );
+            $response = $this->consulta_planes();
            #debuger($response);
            $data = [
              'response'             => $response
@@ -370,6 +372,51 @@ class PlanesController extends MasterController
             return $this->_message_success(201, $response, self::$message_success);
         }
         return $this->show_error(6, $error, self::$message_error);
+
+    }
+     /**
+     * Metodo para realizar la parte de consulta de planes
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function consulta_planes(){
+
+        if( Session::get('id_rol') == 1 ){
+
+            $response = SysPlanesModel::with(['unidades'])
+                            ->orderBy('id','desc')
+                            ->groupby('id')
+                            ->get();
+
+        }elseif( Session::get('id_rol') == 3 ){
+            $data = SysEmpresasModel::with(['planes'])
+                                    ->where(['id' => Session::get('id_empresa')])            
+                                    ->get();
+
+            $response = $data[0]->planes()
+                                ->with(['unidades'])
+                                ->orderBy('id','desc')
+                                ->groupby('id')
+                                ->get();
+
+        }else{
+
+            $data = SysUsersModel::with(['empresas'])
+                                  ->where(['id' => Session::get('id')])            
+                                  ->get();
+            $empresas = $data[0]->empresas()
+                                ->with(['planes'])
+                                ->where([ 'id' => Session::get('id_empresa') ])
+                                ->get();
+            $response = $empresas[0]->planes()
+                                    ->with(['unidades'])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+        }
+        return $response;
 
     }
 

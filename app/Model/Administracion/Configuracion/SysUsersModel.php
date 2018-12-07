@@ -93,6 +93,11 @@ class SysUsersModel extends Model
     {
       return $this->belongsToMany('App\Model\Ventas\SysFacturacionesModel','sys_users_facturaciones','id_users','id_facturacion');
     }
+    public function plantillas()
+    {
+      return $this->belongsToMany('App\Model\Administracion\Correos\SysTemplatesModel','sys_users_templates','id_users','id_template');
+    }
+
 
 
 }

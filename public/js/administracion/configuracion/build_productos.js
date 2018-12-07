@@ -32,10 +32,13 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             $scope.datos = response.data.result;
             loading(true);
         }).catch(function(error){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error );
         });
     }
     
@@ -51,6 +54,9 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             toastr.success( response.data.message , title );
             jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -63,7 +69,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             $scope.index();
             for(var i in $scope.insert){ $scope.insert[i] = ""; }
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
     }
     $scope.update_register = function(){
@@ -78,6 +84,9 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
       var fields = $scope.update;
       MasterController.request_http(url,fields,"put",$http, false )
       .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -90,14 +99,14 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           $scope.index();
       }).catch(function( error ){
-          masterservice.session_status({},error);
+          masterservice.session_status_error( error );
       });
     
     }
 
     $scope.edit_register = function( data ){
 
-      var datos = ['empresas','categorias','unidades','updated_at','created_at','$$hashKey'];
+      var datos = ['empresas','categorias','unidades','updated_at','created_at','$$hashKey','pivot'];
       $scope.update = iterar_object(data,datos);
       var html = '';
       html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
@@ -122,10 +131,13 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
           
       },"warning",true,["SI","NO"]);  
@@ -170,6 +182,9 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
        $scope.fields.id_producto = id;
        MasterController.request_http(url, fields, "get", $http ,false)
        .then(response => {
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
            jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
            jQuery.fancybox.open({
                'type': 'inline',
@@ -181,7 +196,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
                jQuery(`#${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
            };
        }).catch(error => {
-          masterservice.session_status({},error); 
+          masterservice.session_status_error(error); 
        });
 
     }
@@ -205,6 +220,8 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
         }
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
+            //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
 
             jQuery.fancybox.close({
                 'type': 'inline',
@@ -215,7 +232,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             $scope.index();
 
         }).catch(error => {
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error );
         });
 
     }
@@ -226,10 +243,13 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
       var fields = {id : (update)?$scope.update.id_tipo_factor:$scope.insert.id_tipo_factor };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
             $scope.cmb_tasas = response.data.result;
             loading(true);
         }).catch(function( error ){
-           masterservice.session_status({},error);
+           masterservice.session_status_error(error);
         });
     
     }
@@ -240,6 +260,9 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
       
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
+            //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+          
             $scope.cmb_impuestos = response.data.result.response;
             if (update) {
               $scope.update.iva = response.data.result.valor_maximo;
@@ -248,7 +271,7 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             }
             loading(true);
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error( error );
         });
     
     }

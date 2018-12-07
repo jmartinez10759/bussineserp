@@ -496,9 +496,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
-            masterservice.session_status({} ,error );
-            console.error(error);
-            toastr.error( error.result , expired );
+            masterservice.session_status_error( error );
         });
     }
     
@@ -522,9 +520,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
             });
             $scope.index();
         }).catch(function( error ){
-            masterservice.session_status( {},error );
-            console.error( error );
-            toastr.error( error.result , expired );
+            masterservice.session_status_error( error );
         });
 
     }
@@ -549,9 +545,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
             });
           $scope.index();
       }).catch(function( error ){
-            masterservice.session_status({},error);
-            console.error( error );
-            toastr.error( error.result , expired );
+            masterservice.session_status_error( error );
       });
     }
 
@@ -574,9 +568,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
                 ,"autoSize" : false
             });          
         }).catch(function( error ){
-            masterservice.session_status({},error);
-            console.error( error );
-            toastr.error( error.result , expired );
+            masterservice.session_status_error( error );
         });
     }
 
@@ -593,9 +585,7 @@ app.controller("'.strtolower($vista).'Controller", function( masterservice ,$sco
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-              masterservice.session_status({},error);
-              console.error( error );
-              toastr.error( error.result , expired );
+              masterservice.session_status_error( error );
         });
           
       },"warning",true,["SI","NO"]);  

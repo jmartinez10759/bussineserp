@@ -44,7 +44,7 @@ app.service('masterservice', function() {
 	        return total.toFixed(2);
 
 	    },
-	    session_status: function( response = {}, error = {} ){
+	    session_status: function( response = {} ){
 	    	//console.log( typeof response.data );
 	    	loading(true);
 	    	if( typeof response.data != "object" ){
@@ -53,14 +53,18 @@ app.service('masterservice', function() {
               return true;
             }
 
+	    },
+	    session_status_error: function( error = {} ){
+
+	    	loading(true);
 	    	if ( error.length > 0 ) {
 		    	if( isset(error.response) && error.response.status == 419 ){
                   toastr.error( session_expired );
                   setTimeout(function(){ redirect(domain()); }, 1000);  
                   return;
 	            }
-	            console.error( error );
-              	toastr.error( error.result , expired );
+		        console.error( error );
+	            toastr.error( error.result , expired );	            	
 
 	    	}
 

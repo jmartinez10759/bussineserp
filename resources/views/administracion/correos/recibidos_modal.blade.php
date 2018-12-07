@@ -88,7 +88,7 @@
 							<label class="col-sm-3 control-label">Estado <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-							{!! $select_estados !!}
+							
 						</div>
 					</div>
 

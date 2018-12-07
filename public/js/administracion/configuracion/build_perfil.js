@@ -35,6 +35,7 @@ new Vue({
         var url = domain(url_edit);
         var fields = {};
         axios.get( url, { params: fields }, csrf_token ).then(response => {
+          loading(true);
             console.log( response.data.result );
             if( response.data.success == true ){
               this.datos = response.data.result;

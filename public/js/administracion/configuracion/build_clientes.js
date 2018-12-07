@@ -64,9 +64,8 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
             $scope.datos = response.data.result;
             console.log($scope.datos);
-            loading(true);
         }).catch(function(error){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
     
     }
@@ -103,7 +102,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-           masterservice.session_status({},error);
+           masterservice.session_status_error(error);
         });
 
     }
@@ -149,7 +148,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           $scope.index();
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
       }).catch(function( error ){
-          masterservice.session_status({},error);
+          masterservice.session_status_error(error);
       });
     }
 
@@ -188,7 +187,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             });
 
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
     }
 
@@ -205,7 +204,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
           
       },"warning",true,["SI","NO"]);  
@@ -217,12 +216,15 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
           $scope.cmb_estados = {};
           $scope.cmb_estados = response.data.result.estados;
           console.log($scope.cmb_estados);
           loading(true);
       }).catch( error => {
-          masterservice.session_status({},error);
+          masterservice.session_status_error(error);
       });
 
     }
@@ -233,11 +235,14 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
           $scope.cmb_codigos = response.data.result;
           console.log($scope.cmb_codigos);
           loading(true);
       }).catch( error => {
-          masterservice.session_status({},error);
+          masterservice.session_status_error(error);
       }); 
     }
     
@@ -253,6 +258,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
        $scope.fields.id_cliente = id;
        MasterController.request_http(url, fields, "get", $http ,false)
        .then(response => {
+            //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
            jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
            jQuery.fancybox.open({
                'type': 'inline',
@@ -264,7 +272,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
                jQuery(`#sucursal_${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
            };
        }).catch(error => {
-           masterservice.session_status({},error); 
+           masterservice.session_status_error(error); 
        });
 
     }
@@ -288,7 +296,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         }
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
-            //this.sucursales = response.data.result;
+            //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
             jQuery.fancybox.close({
                 'type': 'inline',
                 'src': "#permisos",
@@ -297,7 +307,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             jQuery('#tr_'+$scope.fields.id_cliente).effect("highlight",{},5000);
             $scope.index();
         }).catch(error => {
-           masterservice.session_status({},error);
+           masterservice.session_status_error(error);
         });
 
     }
@@ -310,14 +320,14 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           MasterController.request_http(url,fields,'put',$http, false )
           .then(function( response ){
               //not remove function this is  verify the session
-              if(masterservice.session_status( URL )){return;};
+              if(masterservice.session_status( response )){return;};
               
                toastr.info( response.data.message , title );
                jQuery('#tr_'+id).effect("highlight",{},5000);
                buildSweetAlert('# '+id,'Se genero el cliente con exito','success');
                $scope.index();
           }).catch(function( error ){
-              masterservice.session_status({},error);
+              masterservice.session_status_error(error);
           });
             
         },"warning",true,["SI","NO"]); 
@@ -342,7 +352,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
               loading(true);
               //jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           }).catch(function( error ){
-              masterservice.session_status({},error);
+              masterservice.session_status_error( error);
           });
 
     }
@@ -361,7 +371,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
               $scope.list_comments = response.data.result.actividades;
               loading(true);
           }).catch(function( error ){
-              masterservice.session_status({},error);
+              masterservice.session_status_error(error);
           });
             
         },"warning",true,["SI","NO"]); 
@@ -428,6 +438,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+          
           $scope.update.id  = id;
           $scope.list_comments = response.data.result.actividades;
           loading(true);
@@ -438,7 +451,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             });
 
         }).catch(function( error ){
-            masterservice.session_status({},error);
+            masterservice.session_status_error(error);
         });
 
     }
