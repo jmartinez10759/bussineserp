@@ -31,17 +31,13 @@ app.controller('ImpuestoController', function( masterservice, $scope, $http, $lo
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
-            loading(true);
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+            // loading(true);
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+             masterservice.session_status_error(error);
         });
     
     }
@@ -52,6 +48,8 @@ app.controller('ImpuestoController', function( masterservice, $scope, $http, $lo
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -63,13 +61,7 @@ app.controller('ImpuestoController', function( masterservice, $scope, $http, $lo
             });
             $scope.index();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+             masterservice.session_status_error(error);
         });
 
     }
@@ -79,6 +71,8 @@ app.controller('ImpuestoController', function( masterservice, $scope, $http, $lo
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
           toastr.info( response.data.message , title );
           
             jQuery.fancybox.close({
@@ -95,13 +89,7 @@ app.controller('ImpuestoController', function( masterservice, $scope, $http, $lo
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           //redirect(domain(redireccion));
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+           masterservice.session_status_error(error);
       });
     }
 
@@ -111,6 +99,8 @@ app.controller('ImpuestoController', function( masterservice, $scope, $http, $lo
       var fields = {id : id };
       MasterController.request_http(url,fields,'get',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             $scope.update = response.data.result;
 
           jQuery.fancybox.open({
@@ -124,13 +114,7 @@ app.controller('ImpuestoController', function( masterservice, $scope, $http, $lo
             // console.log($scope.edit);return;
             loading(true);        
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error , expired );
+             masterservice.session_status_error(error);
         });
     }
 
@@ -141,16 +125,12 @@ app.controller('ImpuestoController', function( masterservice, $scope, $http, $lo
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+             masterservice.session_status_error(error);
         });
           
       },"warning",true,["SI","NO"]);  

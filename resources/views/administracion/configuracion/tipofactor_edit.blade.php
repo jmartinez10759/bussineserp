@@ -16,7 +16,7 @@
 
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Descripción:  </font> </label>
+                            <label class="control-label col-sm-3">Descripción:   </label>
                             <div class="col-sm-7">
                                 <textarea id="descripcion" class="form-control" placeholder="" ng-model="insert.descripcion"></textarea>
                             </div>
@@ -70,7 +70,7 @@
 
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-3">Descripción: <font size="3" color="red">* </font> </label>
+                            <label class="control-label col-sm-3">Descripción:   </label>
                             <div class="col-sm-7">
                                 <textarea id="descripcion" class="form-control" placeholder="" ng-model="update.descripcion"></textarea>
                             </div>

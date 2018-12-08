@@ -432,8 +432,12 @@
     }
     public function asignar( Request $request ){
         try {
-         $response = SysProveedoresModel::with(['productos'])->where(['id' => $request->id])->get();
-        return $this->_message_success( 201, $response[0] , self::$message_success );
+         $response = SysProveedoresModel::with(['productos'])
+                                            ->where(['id' => $request->id])
+                                            ->get();
+         #$response = $proveedores[0]->productos()->get();
+
+        return $this->_message_success( 200, $response[0] , self::$message_success );
         } catch (\Exception $e) {
         $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
         return $this->show_error(6, $error, self::$message_error );
@@ -453,7 +457,8 @@
                     ,'id_rol'  =>  Session::get('id_rol')
                     ,'id_users' =>  Session::get('id')
                 ];
-                // $provedoresProductos = SysProveedoresProductosModel::select('id','id_users','id_rol','id_empresa','id_sucursal','id_proveedor','id_producto')->where(['id_users' => $request->id,'id_rol'=>$request->id_rol,'id_empresa'=>$request->id_empresa,'id_sucursal'=>$request->id_sucursal,'id_proveedor'=>$request->id_proveedor,'id_producto'=>$request->id_producto])->get();    
+               
+
                 SysProveedoresProductosModel::where( $where )->delete();
                 for($i = 0; $i < count($request->matrix); $i++){
                     $matrices = explode('|',$request->matrix[$i]);

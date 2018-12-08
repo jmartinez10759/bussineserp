@@ -43,17 +43,13 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
-          loading(true);
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+          // loading(true);
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+            masterservice.session_status_error(error);
         });
     }
     
@@ -85,6 +81,8 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -97,13 +95,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
             $scope.insert = {};
             $scope.consulta_general();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status_error(error);
         });
 
     }
@@ -134,6 +126,8 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -147,13 +141,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           //redirect(domain(redireccion));
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+          masterservice.session_status_error(error);
       });
     }
 
@@ -183,13 +171,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
                 ,'modal': true
             });           
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error , expired );
+            masterservice.session_status_error(error);
         });
     }
 
@@ -200,17 +182,13 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             // redirect(domain(redireccion));
             $scope.consulta_general();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status_error(error);
         });
           
       },"warning",true,["SI","NO"]);  
@@ -221,18 +199,14 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
       var fields = { id: (!update)? $scope.insert.id_country: $scope.update.id_country};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
           $scope.cmb_estados = {};  
           $scope.cmb_estados = response.data.result.estados;
           console.log($scope.cmb_estados);
-          loading(true);
+          // loading(true);
       }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-          console.log(error);
-            toastr.error( error.result , expired );   
+          masterservice.session_status_error(error); 
       });    
     }
 
@@ -241,16 +215,13 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
       var fields = {id: (!update)? $scope.insert.id_estado:$scope.update.id_estado};
       MasterController.request_http(url,fields,"get",$http,false)
       .then( response => {
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
           $scope.cmb_codigos = response.data.result;
           console.log($scope.cmb_codigos);
-          loading(true);
+          // loading(true);
       }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            toastr.error( error.data.result , expired );  
+          masterservice.session_status_error(error); 
       }); 
     }
     $scope.display_sucursales = function( id ) {
@@ -265,6 +236,8 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
        $scope.fields.id_proveedor = id;
        MasterController.request_http(url, fields, "get", $http ,false)
        .then(response => {
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
            jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
            jQuery.fancybox.open({
                'type': 'inline',
@@ -279,13 +252,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
            $scope.consulta_general();
            // loading(true);
        }).catch(error => {
-           if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-          }
-            console.error(error);
-            toastr.error( error.result , expired );  
+           masterservice.session_status_error(error); 
 
        });
 
@@ -310,6 +277,8 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
         }
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             //this.sucursales = response.data.result;
             jQuery.fancybox.close({
                 'type': 'inline',
@@ -376,6 +345,10 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
       var fields = {id : id };
         MasterController.request_http(url,fields,"get",$http, false )
       .then(function( response ){
+        // console.log(response.data.result.productos);
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
           $scope.fields.id_proveedor = id;
           $.fancybox.open({
               'type': 'inline',
@@ -388,9 +361,9 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
                     jQuery('#'+response.data.result.productos[i].id).prop('checked', true);
               };
           }
-          loading(true);
+
       }).catch(function( error ){
-          masterservice.session_status({},error);
+          masterservice.session_status_error(error);
       });
     
     }
@@ -413,6 +386,8 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
         // console.log(fields);return;
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             jQuery.fancybox.close({
                 'type': 'inline',
                 'src': "#permisos",
