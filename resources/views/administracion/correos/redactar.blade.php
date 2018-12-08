@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}">
 @push('styles')
 <!-- Main content -->
-<section class="content" id="vue-redactar">
+<section class="content" ng-app="appication" ng-controller="CorreosController" ng-init="constructor()" ng-cloak>
   <div class="row">
     <div class="col-md-3">
       <a href="{{route('correos.recibidos')}}" class="btn btn-primary btn-block margin-bottom " >Regresar a Recibidos</a>
@@ -18,21 +18,45 @@
             </button>
           </div>
         </div>
-        <div class="box-body no-padding">
-          <ul class="nav nav-pills nav-stacked">
-            <li class="active"><a href="{{route('correos.recibidos')}}"><i class="fa fa-inbox"></i> Recibidos
-              <span class="label label-success pull-right">{{count($correo)}}</span></a></li>
-            <li><a href="{{route('correos.envios')}}"><i class="fa fa-envelope-o"></i> Enviados
-            <span class="label label-primary pull-right">{{count($enviados)}}</span></a></li>
-            <li><a href="{{route('destacados')}}"><i class="fa fa-file-text-o"></i> Destacados
-            <span class="label label-info pull-right">{{count($destacados)}}</span></a></li>
-            <li><a href=""><i class="fa fa-align-justify"></i> Borradores
-              <span class="label label-warning pull-right">{{count($borradores)}}</span></a>
-            </li>
-            <li><a href="{{route('papelera')}}"><i class="fa fa-trash-o"></i> Papelera
-            <span class="label label-danger pull-right">{{count($papelera)}}</span></a></li>
-          </ul>
-        </div>
+           <div class="box-body no-padding">
+            <ul class="nav nav-pills nav-stacked">
+              <li class="active">
+                <a href="{{route('correos.recibidos')}}">
+                  <i class="fa fa-inbox"></i> Recibidos
+                  <span class="label label-success pull-right">@{{ datos.correo }}</span>
+                </a>
+              </li>
+
+              <li>
+                <a href="{{route('correos.envios')}}">
+                  <i class="fa fa-envelope-o"></i> Enviados
+                  <span class="label label-primary pull-right">@{{ datos.enviados }}</span>
+                </a>
+              </li>
+              
+              <li>
+                <a href="{{route('destacados')}}">
+                  <i class="fa fa-file-text-o"></i> Destacados
+                  <span class="label label-info pull-right">@{{ datos.destacados }}</span>
+                </a>
+              </li>
+              
+              <li>
+                <a href="">
+                  <i class="fa fa-align-justify"></i> Borradores
+                  <span class="label label-warning pull-right">@{{ datos.borradores }}</span>
+                </a>
+              </li>
+
+              <li>
+                <a href="{{route('papelera')}}">
+                  <i class="fa fa-trash-o"></i> Papelera
+                  <span class="label label-danger pull-right">@{{ datos.papelera }}</span>
+                </a>
+              </li>
+            
+            </ul>
+          </div>
         <!-- /.box-body -->
       </div>
       <!-- /. box -->
@@ -49,9 +73,6 @@
             <ul class="nav nav-pills nav-stacked">
               <!-- <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
               <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li> -->
-              @foreach($categorias as $categoria)
-                <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i>{{$categoria->categoria}}</a></li>
-              @endforeach
             </ul>
           </div>
           <!-- /.box-body -->
@@ -68,13 +89,13 @@
         <!-- /.box-header -->
         <div class="box-body">
           <div class="form-group">
-            <input type="text"class="form-control" placeholder="Para:" v-model="newKeep.emisor" id="emisor">
+            <input type="text"class="form-control" placeholder="Para:" ng-model="insert.emisor">
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Asunto:" v-model="newKeep.asunto" id="asunto">
+            <input type="text" class="form-control" placeholder="Asunto:" ng-model="insert.asunto">
           </div>
           <div class="form-group">
-                <textarea id="compose-textarea" class="form-control compose-textarea" style="height: 300px">
+                <textarea class="form-control compose-textarea" style="height: 300px" ng-model="insert.descripcion">
                   <h1><u>Heading Of Message</u></h1>
                   <h4>Subheading</h4>
                   <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain
@@ -111,8 +132,17 @@
         <!-- /.box-body -->
         <div class="box-footer">
           <div class="pull-right">
-            <button type="button" class="btn btn-default"><i class="fa fa-pencil"></i> Borrador</button>
-            <button type="button" class="btn btn-primary" {{$email}}  v-on:click.prevent="send_correo()"><i class="fa fa-envelope-o"></i> Enviar</button>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-default">
+                  <i class="fa fa-pencil"></i> Borrador
+              </button>
+              
+            </div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-primary" {{$email}}  ng-click="send_correo()">
+                <i class="fa fa-envelope-o"></i> Enviar
+              </button>
+            </div>
           </div>
           <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Descartar</button>
         </div>
@@ -129,11 +159,12 @@
 @push('scripts')
   <!-- iCheck -->
   <script src="{{asset('admintle/plugins/iCheck/icheck.min.js')}}"></script>
+
   <script type="text/javascript" src="{{asset('js/administracion/correos/build_correos.js')}}" ></script>
   <script>
     jQuery('.btn-papelera').attr('disabled',false);
     //Add text editor
-    jQuery("#compose-textarea").wysihtml5();
+    jQuery(".compose-textarea").wysihtml5();
       //Enable iCheck plugin for checkboxes
       //iCheck for checkbox and radio inputs
       jQuery('.mailbox-messages input[type="checkbox"]').iCheck({

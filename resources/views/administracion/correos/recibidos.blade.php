@@ -1,7 +1,10 @@
 @extends('layouts.template.app')
 @section('content')
 <!-- iCheck -->
-<!-- <link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}"> -->
+<link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}">
+<style type="text/css">
+
+</style>
 
 @push('styles')
 
@@ -110,8 +113,9 @@
           <div class="box-body no-padding">
             <div class="mailbox-controls">
               <!-- Check all button -->
-              <button type="button" class="btn btn-default btn-sm checkbox-toggle">
-                <i class="fa fa-square-o"></i>
+              <button type="button" class="btn btn-default btn-sm checkbox-toggle" ng-click="checkbox()">
+                <i class="fa fa-square-o" ng-if="selections == 0"></i>
+                <i class="fa fa-square" ng-if="selections == 1"></i>
               </button>
               <!-- <input type="checkbox" ng-model="checkbox" class="btn btn-default btn-sm"> -->
               <div class="btn-group">
@@ -138,20 +142,20 @@
             <div class="table-responsive mailbox-messages">
               <table class="table table-hover table-striped" id="bandeja_correos">
                 <tbody>
-                  <tr class="info" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 0" id_email="@{{correo.id}}" style="cursor:pointer; font-weight: bold;">
-                  <tr style="cursor:pointer;" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 1" id_email="@{{correo.id}}" >
+                  <tr class="info" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 0" style="cursor:pointer; font-weight: bold;">
+                  <tr style="cursor:pointer;" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 1" >
                       <td>
                         <!-- <input type="checkbox" ng-checked="checkbox"> -->
-                        <input icheck type="checkbox" ng-model="selected">
+                        <input type="checkbox" ng-checked="selected">
                       </td>
                       
                       <td class="mailbox-star" >
                         
-                        <a style="cursor: pointer;" ng-if="correo.estatus_destacados == 1">
-                          <i class="fa fa-star text-yellow" id_correo="@{{correo.id}}"></i>
+                        <a style="cursor: pointer;" ng-if="correo.estatus_destacados == 1" ng-click="update_register(correo.id, {estatus_destacados : correo.estatus_destacados} )">
+                          <i class="fa fa-star text-yellow"></i>
                         </a>
-                        <a style="cursor: pointer;" ng-if="correo.estatus_destacados == 0">
-                            <i class="fa fa-star-o text-yellow" id_correo="@{{ correo.id }}"></i>
+                        <a style="cursor: pointer;" ng-if="correo.estatus_destacados == 0" ng-click="update_register(correo.id, {estatus_destacados : correo.estatus_destacados})">
+                            <i class="fa fa-star-o text-yellow"></i>
                         </a>
 
                       </td>
@@ -165,7 +169,8 @@
                       </td>
                   
                       <td class="mailbox-attachment" ng-click="details_mails(correo.id )">
-                        <!-- @{{ correo.descripcion }} -->
+                        <div ng-bind-html-unsafe="correo.descripcion.substring(0, 35)"></div>
+                        <!-- @{{ correo.descripcion.substring(1, 25); }} -->
                       </td>
 
                       <td class="mailbox-date" ng-click="details_mails( correo.id )">
@@ -185,7 +190,7 @@
                   </td>
 
                   <td class="">
-                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" ng-click="estatus_papelera(correo.id)" {{$eliminar}} >
+                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" ng-click="update_register(correo.id,{estatus_papelera: correo.estatus_papelera })" {{$eliminar}} >
                       <i class="fa fa-trash"></i>
                     </button>
                   </td>
@@ -204,7 +209,7 @@
               <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
               </button>
               <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} ng-click="estatus_papelera()">
+                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} ng-click="update_register()">
                   <i class="fa fa-trash-o"></i>
                 </button>
                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_categorias" title="Agregar categoria"><i class="fa fa-bars"></i></button>
@@ -288,8 +293,7 @@
 @stop
 @push('scripts')
   <!-- iCheck -->
-  <!-- <script src="{{asset('admintle/plugins/iCheck/icheck.min.js')}}"></script> -->
-
+  <script src="{{asset('admintle/plugins/iCheck/icheck.min.js')}}"></script>
   <script type="text/javascript" src="{{asset('js/administracion/correos/build_correos.js')}}" ></script>
 
 <!--   <script>

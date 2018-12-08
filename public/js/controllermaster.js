@@ -1,4 +1,4 @@
-var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber"]);
+var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe']);
 app.service('masterservice', function() {
 
 	return {

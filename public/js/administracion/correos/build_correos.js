@@ -1,16 +1,17 @@
 const URL = {
-  url_insert            : "clientes/register"
-  ,url_update           : 'clientes/update'
-  ,url_edit             : 'clientes/edit'
+  url_insert            : "correos/register"
+  ,url_update           : 'correos/update'
+  ,url_edit             : 'correos/edit'
   ,url_all              : 'correos/all'
-  ,url_destroy          : "clientes/destroy"
-  ,redireccion          : "configuracion/clientes"
-  ,url_display          : "clientes/display_sucursales"
-  ,url_insert_permisos  : "clientes/register_permisos"
+  ,url_destroy          : "correos/destroy"
+  ,redireccion          : "configuracion/recibidos"
+  ,url_envios           : "correos/send"
+  ,url_display          : "correos/display_sucursales"
+  ,url_insert_permisos  : "correos/register_permisos"
   ,url_edit_pais        : 'pais/edit'
   ,url_edit_codigos     : 'codigopostal/show'
   ,url_upload           : 'upload/files'
-  ,url_update_estatus   : 'clientes/estatus'
+  ,url_update_estatus   : 'correos/estatus'
   ,url_comments         : 'activities/register'
   ,url_comments_destroy : 'activities/destroy'
 }
@@ -41,7 +42,7 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
             console.log($scope.datos);
             
         }).catch(function(error){
-            masterservice.session_status_error(error);
+            masterservice.session_status_error( error );
         });
     
     }
@@ -83,50 +84,34 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
 
     }
 
-    $scope.update_register = function( dblclick = false ){
+    $scope.send_correo =  function(){
 
-      var validacion = {
-             'CORREO'       : $scope.update.correo
-            ,'RAZON SOCIAL' : $scope.update.razon_social
-            ,'RFC'          : $scope.update.rfc_receptor
-            ,'NOMBRE CONTACTO' : $scope.update.contacto
-            ,'TELEFONO'        : $scope.update.telefono
+        var validacion = {
+             'CORREO'   : $scope.insert.emisor
+            ,'ASUNTO'   : $scope.insert.asunto
           };
         if(validaciones_fields(validacion)){return;}
-        if( !emailValidate( $scope.update.correo ) ){  
+        if( !emailValidate( $scope.insert.emisor ) ){  
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        if( !valida_rfc($scope.update.rfc_receptor) ){
-            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
-            return;
-        }
-      var url = domain( URL.url_update );
-      var fields = $scope.update;
-      MasterController.request_http(url,fields,'put',$http, false )
-      .then(function( response ){
-          //not remove function this is  verify the session
-          if(masterservice.session_status( response )){return;};
+        $scope.insert.descripcion = jQuery('.compose-textarea').val();
+        var url = domain(URL.url_envios);
+        var fields = $scope.insert;
 
-          toastr.info( response.data.message , title );
-          if (!dblclick) {
-            jQuery.fancybox.close({
-                  'type'      : 'inline'
-                  ,'src'      : "#modal_edit_register"
-                  ,'modal'    : true
-                  ,'width'    : 900
-                  ,'height'   : 400
-                  ,'autoSize' : false
-              });
-          }
-          $scope.list_comments = response.data.result.actividades;
-          //$scope.list_comments = [{titulo: "copia", descripcion: "copia desc"}];
-          $scope.index();
-          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
-      }).catch(function( error ){
-          masterservice.session_status({},error);
-      });
-    }
+        MasterController.request_http(url,fields,'post',$http, false )
+        .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
+            toastr.success( response.data.message , title );
+            $scope.index();
+        }).catch(function( error ){
+           masterservice.session_status_error(error);
+        });
+
+
+    }    
 
     $scope.edit_register = function( id ){
       
@@ -185,28 +170,6 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
           
       },"warning",true,["SI","NO"]);  
     }
-
-  /*  $scope.update_estatus = function( id ){
-
-        var url = domain( URL.url_update_estatus );
-        var fields = {id: id, estatus: 1 };
-        buildSweetAlertOptions("¿Cambiar a Cliente?","¿Realmente desea cambiar a cliente este prospecto?",function(){
-          MasterController.request_http(url,fields,'put',$http, false )
-          .then(function( response ){
-              //not remove function this is  verify the session
-              if(masterservice.session_status( URL )){return;};
-              
-               toastr.info( response.data.message , title );
-               jQuery('#tr_'+id).effect("highlight",{},5000);
-               buildSweetAlert('# '+id,'Se genero el cliente con exito','success');
-               $scope.index();
-          }).catch(function( error ){
-              masterservice.session_status({},error);
-          });
-            
-        },"warning",true,["SI","NO"]); 
-
-    }*/
 
     $scope.register_comment = function(update){
 
@@ -324,6 +287,32 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         }).catch(function( error ){
             masterservice.session_status({},error);
         });
+
+    }
+
+    $scope.checkbox = function(){
+        $scope.selections =  !$scope.selections;
+        $scope.selected = !$scope.selected;
+    }
+
+    $scope.update_register = function( id, destacados ){
+        var estatus = {};
+        for(var i in destacados){
+            estatus = {id: id};
+            estatus[i] = !destacados[i];
+        }
+        //console.log(estatus);return;
+        var url = domain( URL.url_update );
+        var fields = estatus
+        MasterController.request_http(url,fields,'put',$http, false )
+          .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+            $scope.index();
+            
+          }).catch(function( error ){
+              masterservice.session_status_error( error );
+          });
 
     }
 

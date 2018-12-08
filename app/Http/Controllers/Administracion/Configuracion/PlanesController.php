@@ -384,7 +384,7 @@ class PlanesController extends MasterController
 
         if( Session::get('id_rol') == 1 ){
 
-            $response = SysPlanesModel::with(['unidades'])
+            $response = SysPlanesModel::with(['unidades','empresas'])
                             ->orderBy('id','desc')
                             ->groupby('id')
                             ->get();
@@ -395,7 +395,7 @@ class PlanesController extends MasterController
                                     ->get();
 
             $response = $data[0]->planes()
-                                ->with(['unidades'])
+                                ->with(['unidades','empresas'])
                                 ->orderBy('id','desc')
                                 ->groupby('id')
                                 ->get();
@@ -410,7 +410,7 @@ class PlanesController extends MasterController
                                 ->where([ 'id' => Session::get('id_empresa') ])
                                 ->get();
             $response = $empresas[0]->planes()
-                                    ->with(['unidades'])
+                                    ->with(['unidades','empresas'])
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();

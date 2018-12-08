@@ -31,6 +31,23 @@ class RedactarController extends MasterController
         return self::_load_view('administracion.correos.redactar',$data);
 
     }
+   /**
+    *Metodo para obtener la vista y cargar los datos
+    *@access public
+    *@param Request $request [Description]
+    *@return void
+    */
+    public function all( Request $request){
+
+        try {
+          $data = $this->consulta_emails();
+          return $this->_message_success( 200, $data , self::$message_success );
+        } catch (\Exception $e) {
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              return $this->show_error(6, $error, self::$message_error );
+        }
+
+    }
     /**
      *Metodo para realizar la consulta por medio de su id
      *@access public
