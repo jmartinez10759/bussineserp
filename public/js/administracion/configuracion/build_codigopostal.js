@@ -8,7 +8,7 @@ url_insert : "codigopostal/register"
 }
 
 
-app.controller('CodigoPostal', function( $scope, $http ) {
+app.controller('CodigoPostal', function( masterservice, $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
     $scope.datos  = [];
@@ -16,6 +16,7 @@ app.controller('CodigoPostal', function( $scope, $http ) {
     $scope.update = {};
     $scope.edit   = {};
     $scope.fields = {};
+    $scope.consulta_general();
   }
 
     $scope.consulta_general = function(){
@@ -24,37 +25,11 @@ app.controller('CodigoPostal', function( $scope, $http ) {
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
             $scope.datos = response.data.result;
-        //     var registros = [];
-        //     var j = 0;
-        //     for (var i = 0; i < $scope.datos.length; i++) {
-        //       registros[j] = [
-        //         $scope.datos[i].id
-        //         ,$scope.datos[i].codigo_postal
-        //         ,$scope.datos[i].estado
-        //         ,$scope.datos[i].municipio
-        //         ,$scope.datos[i].localidad
-        //         ,'<button type="button" class="btn btn-primary" ng-click="edit_register('+$scope.datos[i].id+')">Editar</button>'
-        //         ,'<button type="button" class="btn btn-danger" ng-click="delete_register('+$scope.datos[i].id+')">Borrar</button>'
-        //       ];
-        //       j++;
-        //     }
-        // var titulos = ['id', 'Código Postal','Estado','Municipio','Localidad','',''];
-        // var table = {
-        //     'titulos'         : titulos
-        //     ,'registros'      : registros
-        //     ,'id'             : "datatable"
-        //     ,'class'          : "fixed_header"
-        //   };
-        //   $scope.fields = data_table(table);
-          //jQuery('#data_table').html(data_table(table));
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+            // loading(true);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+           masterservice.session_status_error(error);
         });
     }
     $scope.consulta_general();
@@ -64,6 +39,8 @@ app.controller('CodigoPostal', function( $scope, $http ) {
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             //$scope.consulta_general();
             toastr.success( response.data.message , title );
             jQuery.fancybox.close({
@@ -76,13 +53,7 @@ app.controller('CodigoPostal', function( $scope, $http ) {
             });
             $scope.consulta_general();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+            masterservice.session_status_error(error);
         });
     }
 
@@ -96,6 +67,8 @@ app.controller('CodigoPostal', function( $scope, $http ) {
       var fields = $scope.edit;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -108,13 +81,7 @@ app.controller('CodigoPostal', function( $scope, $http ) {
           $scope.consulta_general();
           
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+          masterservice.session_status_error(error);
       });
     }
     $scope.edit_register = function( id ){
@@ -129,15 +96,10 @@ app.controller('CodigoPostal', function( $scope, $http ) {
                 'type'      : 'inline'
                 ,'src'      : "#modal_edit_register"
                 ,'modal': true
-            });           
+            });    
+            loading(true);       
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error , expired );
+            masterservice.session_status_error(error);
         });
     }
     $scope.destroy_register = function( id ){
@@ -147,16 +109,12 @@ app.controller('CodigoPostal', function( $scope, $http ) {
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             $scope.consulta_general();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status_error(error);
         });
           
       },"warning",true,["SI","NO"]);  

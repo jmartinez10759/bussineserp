@@ -39,7 +39,7 @@
                                     Acciones
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+                                <ul class="dropdown-menu pull-left" aria-labelledby="dropdownMenu1">
                                     {{-- <li>
                                         <a title="Editar" style="cursor:pointer;" ng-click="insert_register(data.id)">
                                             <i class="glyphicon glyphicon-edit"></i> Editar

@@ -46,7 +46,7 @@ app.controller('PedidosController', function( masterservice, $scope, $http, $loc
         .then(function(response){
             //not remove function this is  verify the session
             if(masterservice.session_status( response )){return;};
-            loading(true);
+         
 
             $scope.datos = response.data.result;
             console.log($scope.datos);

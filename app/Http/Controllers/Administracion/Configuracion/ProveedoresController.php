@@ -17,6 +17,8 @@
     use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
     use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
     use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
+    use App\Model\Administracion\Configuracion\SysProveedoresProductosModel;
+    use App\Model\Administracion\Configuracion\SysProductosModel;
 
     class ProveedoresController extends MasterController
     {
@@ -34,11 +36,37 @@
         *@return void
         */
         public function index(){
-        if( Session::get('permisos')['GET'] ){ return view('errors.error'); }  
+        if( Session::get('permisos')['GET'] ){ 
+            return view('errors.error'); 
+        }  
+        $productos = $this->_validate_consulta( new SysProductosModel, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')] );
+        // debuger($productos[0]->empresas[0]->razon_social);
+        foreach ($productos as $respuesta) {
+            $id['id'] = $respuesta->id;
+            $checkbox = build_actions_icons($id,'id_producto= "'.$respuesta->id.'" ');
+            $producto[] = [
+                 (isset($respuesta->empresas[0]) )? $respuesta->empresas[0]->razon_social: ""
+                ,$respuesta->codigo
+                ,$respuesta->nombre
+                ,format_currency($respuesta->subtotal,2)
+                ,format_currency($respuesta->total,2)                   
+                ,$checkbox
+            ];
+
+        }
+        $titulos_producto = ['Empresa','Clave','Producto', 'SubTotal','Total'];
+        $table_producto = [
+            'titulos'          => $titulos_producto
+            ,'registros'       => $producto
+            ,'id'              => "datatable_productos"
+            ,'class'           => "fixed_header"
+        ];
 
             $data = [
-             "page_title" 	        => "Almacén"
-             ,"title"  		        => "Proveedores"
+             "page_title" 	         => "Almacén"
+             ,"title"  		         => "Proveedores"
+             ,"data_table"           => "data_table(table)"
+             ,"data_table_producto"  => data_table($table_producto)
            ];
                 
             return self::_load_view( "administracion.configuracion.proveedores",$data );
@@ -52,11 +80,13 @@
         public function all( Request $request ){
 
             try {
-                // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
-                $response = $this->_tabla_model::with(['estados','contactos:id,nombre_completo,correo,telefono','empresas'])->orderBy('id','DESC')->get();
+                 // $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
+                // $response = $this->_tabla_model::with(['estados','contactos:id,nombre_completo,correo,telefono','empresas'])->orderBy('id','DESC')->get();
+                $datos = $this->consulta_proveedores();
+
 
         $data = [
-          'proveedores'           => $response
+          'proveedores'           => $datos['response_proveedores']
           ,'empresas'             => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
           ,'paises'               => SysPaisModel::get()
           ,'servicio_comercial'   => SysServiciosComercialesModel::get()
@@ -321,7 +351,6 @@
         DB::beginTransaction();
         try { 
            // debuger($request->all());
-           
             SysProveedoresEmpresasModel::where(['id_proveedor' => $request->id_proveedor ])->delete();
             $response = [];
             for ($i=0; $i < count($request->matrix) ; $i++) { 
@@ -350,6 +379,115 @@
             return $this->_message_success(201, $response, self::$message_success);
         }
         return $this->show_error(6, $error, self::$message_error);
+
+    }
+    public function consulta_proveedores(){
+
+
+        if( Session::get('id_rol') == 1 ){
+
+            $response = SysProveedoresModel::with(['estados','contactos','empresas','productos'])
+                            ->where(['estatus' => 0])
+                            ->orderBy('id','desc')
+                            ->groupby('id')
+                            ->get();
+
+          
+
+        }elseif( Session::get('id_rol') == 3 ){
+            $data = SysEmpresasModel::with(['proveedores'])
+            ->where(['id' => Session::get('id_empresa')])            
+            ->get();
+
+            
+            $response_proveedores = $data[0]->proveedores()
+                                    ->with(['estados','contactos','empresas'])
+                                    ->where(['estatus' => 1])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+        }else{
+
+            $data = SysUsersModel::with(['empresas'])
+                                  ->where(['id' => Session::get('id')])            
+                                  ->get();
+            $empresas = $data[0]->empresas()
+                                ->with(['proveedores'])
+                                ->where([ 'id' => Session::get('id_empresa') ])
+                                ->get();
+            
+            $response_proveedores = $empresas[0]->proveedores()
+                                    ->with(['estados','contactos','empresas'])
+                                    ->where(['estatus' => 1])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+
+        }
+        
+        return [ 'response_proveedores' => $response_proveedores ];
+
+    }
+    public function asignar( Request $request ){
+        try {
+         $response = SysProveedoresModel::with(['productos'])
+                                            ->where(['id' => $request->id])
+                                            ->get();
+         #$response = $proveedores[0]->productos()->get();
+
+        return $this->_message_success( 200, $response[0] , self::$message_success );
+        } catch (\Exception $e) {
+        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+        return $this->show_error(6, $error, self::$message_error );
+        }
+
+    }
+    public function asignar_insert( Request $request ){
+            #debuger($request->all());
+           $error = null;
+            DB::beginTransaction();
+            try {
+                $proveedores = SysProveedoresModel::with(['empresas','sucursales'])->where(['id'=> $request->id_proveedor])->get();
+                $where = [
+                     'id_empresa' => (Session::get('id_rol') == 1 && isset($proveedores[0]->empresas[0]) )? $proveedores[0]->empresas[0]->id : Session::get('id_empresa')
+                    ,'id_sucursal' => ( Session::get('id_rol') == 1 && isset($proveedores[0]->sucursales[0])  )? $proveedores[0]->sucursales[0]->id:Session::get('id_sucursal')
+                    ,'id_proveedor' => $request->id_proveedor
+                    ,'id_rol'  =>  Session::get('id_rol')
+                    ,'id_users' =>  Session::get('id')
+                ];
+               
+
+                SysProveedoresProductosModel::where( $where )->delete();
+                for($i = 0; $i < count($request->matrix); $i++){
+                    $matrices = explode('|',$request->matrix[$i]);
+                    $id_producto = $matrices[0];
+                    $productos = SysProductosModel::with(['empresas','sucursales'])->where(['id' => $id_producto])->get();
+                    #debuger($productos[0]->empresas[0]->id);
+                    $data = [
+                         'id_empresa' => (Session::get('id_rol') == 1 && isset($productos[0]->empresas[0]) )? $productos[0]->empresas[0]->id : Session::get('id_empresa')
+                        ,'id_sucursal'=> ( Session::get('id_rol') == 1 && isset($productos[0]->sucursales[0])  )? $productos[0]->sucursales[0]->id:Session::get('id_sucursal')
+                        ,'id_proveedor' => $request->id_proveedor
+                        ,'id_producto' => $id_producto
+                        ,'id_rol'  =>  Session::get('id_rol')
+                        ,'id_users' =>  Session::get('id')
+                    ];
+                    // debuger($data);
+                    $response[] = SysProveedoresProductosModel::create($data);
+                }
+            DB::commit();
+            $success = true;
+            } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+            }
+
+            if ($success) {
+            return $this->_message_success( 201, $response , self::$message_success );
+            }
+            return $this->show_error(6, $error, self::$message_error );
 
     }
 

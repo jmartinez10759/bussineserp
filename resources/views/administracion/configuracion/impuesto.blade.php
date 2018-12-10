@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div id="vue-impuesto">
+<div ng-app="application" ng-controller="ImpuestoController" ng-init="constructor()" ng-cloak >
     {{-- {!! $data_table !!} --}}
     <div class="panel-body">
         
@@ -22,14 +22,14 @@
                 </thead>
                 <tbody>
 
-                    <tr v-for="data in datos">
+                    <tr ng-repeat="data in datos.impuesto" id="tr_@{{data.id}}">
 
-                        <td>@{{data.id}}</td>
-                        <td>@{{data.clave }}</td>
-                        <td>@{{data.descripcion }}</td>
-                        <td>@{{data.retencion }}</td>
-                        <td>@{{data.traslado}}</td>
-                        <td>@{{data.localfederal}}</td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.id}}</td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.clave }}</td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.descripcion }}</td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.retencion }}</td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.traslado}}</td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.localfederal}}</td>
                         <td class="text-right">
                             <div class="dropdown">
                                 <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -37,14 +37,14 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                                    <li>
+                                    {{-- <li>
                                         <a title="Editar" style="cursor:pointer;" v-on:click.prevent="edit_register(data.id)">
                                             <i class="glyphicon glyphicon-edit"></i> Editar
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     
                                     <li {{$eliminar}}>
-                                        <a style="cursor:pointer;" title="Borrar" v-on:click.prevent="destroy_register(data.id)" >
+                                        <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
                                             <i class="glyphicon glyphicon-trash"></i> Eliminar
                                         </a>
                                     </li>

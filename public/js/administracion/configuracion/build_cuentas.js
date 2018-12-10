@@ -25,7 +25,7 @@ app.config(function( $routeProvider, $locationProvider ) {
     });
     $locationProvider.html5Mode(true); //activamos el modo HTML5
 });
-app.controller('CuentasController', function( $scope, $http, $location ) {
+app.controller('CuentasController', function(masterservice, $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -41,16 +41,12 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
-          loading(true);
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+          // loading(true);
             $scope.datos = response.data.result;
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+             masterservice.session_status_error(error);
         });
     }
     
@@ -67,6 +63,8 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             $scope.insert = {};
             var values = ['cmb_empresas','cmb_sucursales','cmb_clientes_asignados','cmb_contactos','cmb_clientes','cmb_servicios'];
@@ -81,13 +79,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
                 ,'autoSize' : false
             });
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status_error(error);
         });
     }
 
@@ -107,6 +99,8 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -118,13 +112,7 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
             });
           $scope.constructor();
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+           masterservice.session_status_error(error);
       });
     }
 
@@ -151,15 +139,9 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
               ,'src'      : "#modal_edit_register"
               ,'modal'    : true
           });
-
+          loading(true);
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error , expired );
+             masterservice.session_status_error(error);
         });
     }
 
@@ -170,16 +152,12 @@ app.controller('CuentasController', function( $scope, $http, $location ) {
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             $scope.constructor();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+             masterservice.session_status_error(error);
         });
           
       },"warning",true,["SI","NO"]);  
@@ -196,6 +174,7 @@ function display_clientes(){
     var fields = {id : id_empresa };
     var promise = MasterController.method_master(url,fields,"get");
       promise.then( response => {
+       
         console.log(response.data.result.clientes);
         var clientes = {
              'data'    : response.data.result.clientes
@@ -244,12 +223,7 @@ function display_clientes(){
         //toastr.success( response.data.message , title );
 
       }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-          toastr.error( error.result , expired );              
+           masterservice.session_status_error(error);              
       });
      
 }
@@ -260,6 +234,7 @@ function change_clientes(){
     var fields = { id: id_cliente };
     var promise = MasterController.method_master(url,fields,"get");
       promise.then( response => {
+       
         console.log(response.data.result.contactos);
         var contactos = {
              'data'    : response.data.result.contactos
@@ -276,12 +251,7 @@ function change_clientes(){
          jQuery('#cmb_contactos').selectpicker();
          toastr.success( response.data.message , title );
       }).catch( error => {
-          if( error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-          toastr.error( error.response.data.message , expired );              
+           masterservice.session_status_error(error);              
       });
     
 }
@@ -293,6 +263,7 @@ function display_clientes_edit( id_sucursal, id_clientes = {}, id_cliente, id_co
     var fields = {id : id_empresa };
     var promise = MasterController.method_master(url,fields,"get");
       promise.then( response => {
+       
         console.log(response.data.result.clientes);
         var clientes = {
              'data'    : response.data.result.clientes
@@ -344,12 +315,7 @@ function display_clientes_edit( id_sucursal, id_clientes = {}, id_cliente, id_co
 
       }).catch( error => {
           
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-          toastr.error( error.result , expired );              
+           masterservice.session_status_error(error);              
       });
      
 }
@@ -360,6 +326,7 @@ function change_clientes_edit( id_contacto ){
     var fields = { id: id_cliente };
     var promise = MasterController.method_master(url,fields,"get");
       promise.then( response => {
+       
         console.log(response.data.result.contactos);
         var contactos = {
              'data'    : response.data.result.contactos
@@ -376,12 +343,7 @@ function change_clientes_edit( id_contacto ){
          jQuery('#cmb_contactos_edit').selectpicker();
          //toastr.success( response.data.message , title );
       }).catch( error => {
-          if( isset(error.response) && error.response.status == 419 ){
-            toastr.error( session_expired ); 
-            redirect(domain("/"));
-            return;
-         }
-         toastr.error( error , expired );           
+           masterservice.session_status_error(error);         
       });
     
 }

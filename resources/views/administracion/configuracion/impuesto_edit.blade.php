@@ -11,14 +11,14 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Clave:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="nombre" class="form-control" placeholder="" v-model="insert.clave">
+                                <input type="text" id="nombre" class="form-control" placeholder="" ng-model="insert.clave">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Descripción:   </label>
                             <div class="col-sm-7">
-                                <input type="text" id="descripcion" class="form-control" placeholder="" v-model="insert.descripcion">
+                                <textarea id="descripcion" class="form-control" placeholder="" ng-model="insert.descripcion"></textarea>
                             </div>
 
                         </div>
@@ -26,14 +26,14 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Retencion:   </label>
                             <div class="col-sm-7">
-                                <input type="text" id="retencion" class="form-control" placeholder="" v-model="insert.retencion">
+                                <input type="text" id="retencion" class="form-control" placeholder="" ng-model="insert.retencion">
                             </div>
 
                         </div>
                         <div class="form-group">
                         <label  class="col-sm-3 control-label input-sm">Traslado : </label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control"  id="traslado" v-model="insert.traslado">
+                    <input type="text" class="form-control"  id="traslado" ng-model="insert.traslado">
                 </div>
 
                                            
@@ -41,7 +41,7 @@
                         <div class="form-group">
                             <label  class="col-sm-3 control-label input-sm">Local Federal: </label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control"  id="localfederal" v-model="insert.localfederal">
+                    <input type="text" class="form-control"  id="localfederal" ng-model="insert.localfederal">
                 </div> 
                         </div>
                     </form>                
@@ -50,7 +50,7 @@
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
                     <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
+                    <button type="button" class="btn btn-primary" ng-click="insert_register()"><i class="fa fa-save"></i> Registrar </button> 
                 </div>
             </div>
 
@@ -59,7 +59,7 @@
 </div>
 
 
-<div class="modal fade" id="modal_edit_register" role="dialog" aria-hidden="true" style="display:none;">
+<div class="" id="modal_edit_register"  style="display:none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -72,14 +72,15 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Clave:  </label>
                             <div class="col-sm-7">
-                                <input type="text" id="nombre" class="form-control" placeholder="" v-model="edit.clave">
+                                <input type="text" id="nombre" class="form-control" placeholder="" ng-model="update.clave">
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Descripción:   </label>
                             <div class="col-sm-7">
-                                <input type="text" id="descripcion" class="form-control" placeholder="" v-model="edit.descripcion">
+                                <textarea id="descripcion" class="form-control" placeholder="" ng-model="update.descripcion">
+                                    </textarea>
                             </div>
 
                         </div>
@@ -87,14 +88,14 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3">Retencion:   </label>
                             <div class="col-sm-7">
-                                <input type="text" id="retencion" class="form-control" placeholder="" v-model="edit.retencion">
+                                <input type="text" id="retencion" class="form-control" placeholder="" ng-model="update.retencion">
                             </div>
 
                         </div>
                         <div class="form-group">
                         <label  class="col-sm-3 control-label input-sm">Traslado : </label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control"  id="traslado" v-model="edit.traslado">
+                    <input type="text" class="form-control"  id="traslado" ng-model="update.traslado">
                 </div>
 
                                            
@@ -102,7 +103,7 @@
                         <div class="form-group">
                             <label  class="col-sm-3 control-label input-sm">Local Federal: </label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control"  id="localfederal" v-model="edit.localfederal">
+                    <input type="text" class="form-control"  id="localfederal" ng-model="update.localfederal">
                 </div> 
                         </div>
                     </form> 
@@ -111,8 +112,8 @@
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="update_register()"><i class="fa fa-save"></i> Actualizar </button> 
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-primary" ng-click="update_register()"><i class="fa fa-save"></i> Actualizar </button> 
                 </div>
             </div>
 
