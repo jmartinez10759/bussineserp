@@ -77,7 +77,29 @@ class CorreoController extends MasterController
      *@return void
      */
     public function store( Request $request ){
-        #debuger($request->all());
+      debuger( $request->all() );
+
+      
+      $error = null;
+      DB::beginTransaction();
+      try {
+          
+        DB::commit();
+        $success = true;
+      } catch (\Exception $e) {
+          $success = false;
+          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+          DB::rollback();
+      }
+
+      if ($success) {
+        return $this->_message_success( 201, $response , self::$message_success );
+      }
+      return $this->show_error(6, $error, self::$message_error );
+
+
+
+
         #se realiza la consulta para obtener los datos del correo a enviar
         $insert_correo_rel = [];
         $datos_envio = SysUsersModel::where(['email' => $request->emisor ])->get();
@@ -195,7 +217,24 @@ class CorreoController extends MasterController
      *@return void
      */
     public function update( Request $request){
+        #debuger($request->all());
+        $error = null;
+        DB::beginTransaction();
+        try {
+           SysCorreosModel::where(['id' => $request->id])->update($request->all());
+           $response = SysCorreosModel::where(['id' => $request->id])->get();
+        DB::commit();
+        $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+        }
 
+        if ($success) {
+          return $this->_message_success( 201, $response , self::$message_success );
+        }
+        return $this->show_error(6, $error, self::$message_error );
 
     }
     /**

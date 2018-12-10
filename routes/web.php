@@ -85,22 +85,27 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'correos.all'
     ]);
 
-		Route::get('/correos/detalles', [
+    Route::put('/correos/update', [
+        'uses'      => 'Administracion\Correos\CorreoController@update'
+        ,'as'       => 'correos.update'
+    ]);
+
+	Route::get('/correos/detalles', [
         'uses'      => 'Administracion\Correos\CorreoController@show'
         ,'as'       => 'correos.detalles'
     ]);
 
-		Route::get('correos/destacados', [
+	Route::get('correos/destacados', [
         'uses'      => 'Administracion\Correos\CorreoController@index'
         ,'as'       => 'destacados'
     ]);
 
-		Route::get('correos/papelera', [
+	Route::get('correos/papelera', [
         'uses'      => 'Administracion\Correos\CorreoController@index'
         ,'as'       => 'papelera'
     ]);
 
-		Route::get('/correos/envios', [
+	Route::get('/correos/envios', [
         'uses'      => 'Administracion\Correos\EnvioController@index'
         ,'as'       => 'correos.envios'
     ]);
@@ -115,17 +120,17 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'correos.send'
     ]);
 
-		Route::get('/correos/show', [
+	Route::get('/correos/show', [
         'uses'      => 'Administracion\Correos\RecibidoController@show'
         ,'as'       => 'correos.show'
     ]);
 
-		Route::post('/correos/destacados', [
+	Route::post('/correos/destacados', [
         'uses'      => 'Administracion\Correos\CorreoController@destacados'
         ,'as'       => 'correos.destacados'
     ]);
 
-		Route::post('/correos/papelera', [
+	Route::post('/correos/papelera', [
         'uses'      => 'Administracion\Correos\CorreoController@papelera'
         ,'as'       => 'correos.papelera'
     ]);

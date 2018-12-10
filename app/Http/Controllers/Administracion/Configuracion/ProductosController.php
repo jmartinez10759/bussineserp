@@ -290,7 +290,7 @@ class ProductosController extends MasterController
 
         if( Session::get('id_rol') == 1 ){
 
-            $response = SysProductosModel::with(['unidades','categorias'])
+            $response = SysProductosModel::with(['unidades','categorias','empresas'])
                             ->orderBy('id','desc')
                             ->groupby('id')
                             ->get();
@@ -301,7 +301,7 @@ class ProductosController extends MasterController
                                     ->get();
 
             $response = $data[0]->productos()
-                                ->with(['unidades','categorias'])
+                                ->with(['unidades','categorias','empresas'])
                                 ->orderBy('id','desc')
                                 ->groupby('id')
                                 ->get();
@@ -316,7 +316,7 @@ class ProductosController extends MasterController
                                 ->where([ 'id' => Session::get('id_empresa') ])
                                 ->get();
             $response = $empresas[0]->productos()
-                                    ->with(['unidades','categorias'])
+                                    ->with(['unidades','categorias','empresas'])
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();
