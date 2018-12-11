@@ -29,6 +29,7 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         $scope.selections = 0;
         $scope.checkboxes = {};
         $scope.index();
+        $scope.iterar_correo();
     }
 
     $scope.index = function(){
@@ -117,7 +118,7 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
 
 
     }    
-
+/*
     $scope.edit_register = function( id ){
       
       var url = domain( URL.url_edit );
@@ -155,9 +156,9 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         }).catch(function( error ){
             masterservice.session_status({},error);
         });
-    }
+    }*/
 
-    $scope.destroy_register = function( id ){
+   /* $scope.destroy_register = function( id ){
 
       var url = domain( URL.url_destroy );
       var fields = {id : id };
@@ -174,9 +175,9 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         });
           
       },"warning",true,["SI","NO"]);  
-    }
+    }*/
 
-    $scope.register_comment = function(update){
+    /*$scope.register_comment = function(update){
 
       var validacion = { COMENTARIO : $scope.comments.descripcion };
       if(validaciones_fields(validacion)){return;}
@@ -197,9 +198,9 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
               masterservice.session_status({},error);
           });
 
-    }
+    }*/
 
-    $scope.destroy_comment = function( id ){
+    /*$scope.destroy_comment = function( id ){
         
         var url = domain( URL.url_comments_destroy );
         var fields = { id: id ,id_cliente : $scope.update.id  };
@@ -218,15 +219,15 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
             
         },"warning",true,["SI","NO"]); 
 
-    }
+    }*/
 
-    $scope.see_comment = function(hide = false){
+   /* $scope.see_comment = function(hide = false){
         
         $scope.comments = {};
         if(hide){ $scope.comment = false;
         }else{ $scope.comment = true; }
 
-    }
+    }*/
 
     $scope.time_fechas = function( fecha ){
       //$timeout(masterservice.time_fechas(fecha), 60000 );
@@ -234,7 +235,7 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
 
     }
 
-    $scope.upload_file = function(update){
+   /* $scope.upload_file = function(update){
 
       var upload_url = domain( URL.url_upload );
       var identificador = {
@@ -272,26 +273,24 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
           ,'modal'    : true
       });
 
+    }*/
+    $scope.iterar_correo = function(){
+      
+      $scope.insert.emisor = $myLocalStorage.get('correos').correo;
+      $scope.insert.asunto = $myLocalStorage.get('correos').asunto;
+      $scope.insert.descripcion = $myLocalStorage.get('correos').descripcion;
+      console.log($scope.insert); 
+      //$myLocalStorage.remove('correos');
+
     }
 
-    $scope.see_activities = function( id ){
+    $scope.details_mails = function( data ){
 
-      var url = domain( URL.url_edit );
-      var fields = {id : id };
-      MasterController.request_http(url,fields,'get',$http, false )
-        .then(function( response ){
-          $scope.update.id  = id;
-          $scope.list_comments = response.data.result.actividades;
-          loading(true);
-          jQuery.fancybox.open({
-                'type'      : 'inline'
-                ,'src'      : "#see_activities"
-                ,'modal': true
-            });
-
-        }).catch(function( error ){
-            masterservice.session_status({},error);
-        });
+      var datos = ['asunto','correo','descripcion'];
+      var fields = iterar_object(data,datos,true);
+      $myLocalStorage.set('correos',fields);
+      redirect( domain('correos/redactar') );
+      $scope.iterar_correo();
 
     }
 
@@ -318,14 +317,17 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
 
     }
 
-    $scope.activity_register = function( id, destacados ){
+    $scope.activity_register = function( id, destacados, estatus ){
 
       var ruta = window.location.pathname.split('/');
       ruta = ruta[2]+"/"+ruta[3];
+
       if (ruta == "correos/papelera") {
-        console.log($scope.checkboxes);
         var url = domain(URL.url_destroy);
-        var fields = $scope.checkboxes;
+        var object = {};
+        object[id] = estatus;
+        var fields = (!estatus)? $scope.checkboxes : object;
+
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
           //not remove function this is  verify the session
@@ -341,7 +343,6 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
           $scope.update_register( id, destacados );
       }
         
-
     }
 
     $scope.update_register = function( id, destacados ){

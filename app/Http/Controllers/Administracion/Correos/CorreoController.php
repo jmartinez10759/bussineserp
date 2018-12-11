@@ -185,8 +185,32 @@ class CorreoController extends MasterController
      *@return void
      */
     public function destroy( Request $request ){
-        debuger($request->all());
+        
+        $error = null;
+        DB::beginTransaction();
+        try {
+          $delete = [];
+          foreach ($request->all() as $key => $value) {
+            if ($value === "true" ) {
+              $delete[] = $key;
+            }
 
+          }
+          SysCorreosModel::destroy( $delete );
+          SysUsersCorreosModel::where('id_correo' , $delete )->delete();
+          
+          DB::commit();
+          $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+          return $this->_message_success( 201, $success , self::$message_success );
+        }
+        return $this->show_error(6, $error, self::$message_error );
     }
     /**
      *Metodo para actualizar el estatus de destacado
@@ -194,7 +218,7 @@ class CorreoController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-     public function destacados( Request $request){
+     /*public function destacados( Request $request){
 
         $data = ['estatus_destacados' => $request->estatus_destacados];
         $where = ['id' => $request->id];
@@ -204,14 +228,14 @@ class CorreoController extends MasterController
         }
         return message(false,[],self::$message_error);
 
-     }
+     }*/
      /**
       *Metodo que actualiza el estatus de papelera
       *@access public
       *@param Request $request [Description]
       *@return void
       */
-      public function papelera( Request $request){
+      /*public function papelera( Request $request){
           #se realiza una transaccion
           $response = [];
           $error = null;
@@ -245,7 +269,7 @@ class CorreoController extends MasterController
           return message( false, $error ,'¡Ocurrio un error, favor de verificar!');
 
       }
-
+*/
 
 
 

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Session;
 use App\Model\Administracion\Correos\SysCorreosModel;
 use App\Model\Administracion\Correos\SysEnviadosModel;
 use App\Model\Administracion\Correos\SysCategoriasModel;
+use App\Model\Administracion\Correos\SysUsersCorreosModel;
 use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysEstadosModel;
@@ -233,7 +234,7 @@ abstract class MasterController extends Controller
 	 * @param array $data [ Description ]
 	 * @return void
 	 */
-	protected static function menus($response, $estatus = false)
+	protected static function menus( $response, $estatus = false)
 	{
 		$menus_array = [];
 		$permisos = [];
@@ -262,51 +263,57 @@ abstract class MasterController extends Controller
 	protected function _load_view($view = false, $parse = [])
 	{
 		$emails = [];
-		$response = SysUsersModel::with(['menus' => function ($query) {
+		$response = SysUsersModel::with(['menus' => function($query){
 			$where = [
-				'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
+				'sys_rol_menu.estatus' 		=> 1
+				,'sys_rol_menu.id_empresa' 	=> Session::get('id_empresa')
+				,'sys_rol_menu.id_sucursal' => Session::get('id_sucursal')
+				,'sys_rol_menu.id_rol' 		=> Session::get('id_rol')
 			];
-			return $query->where($where)->orderBy('orden', 'asc')->get();
-		}, 'roles' => function ($query) {
-			/*return $query->with(['notificaciones' => function ($query) {
-				return $query->where(['sys_notificaciones.estatus' => 1])->orderBy('created_at', 'desc')->get();
-			}])->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');*/
-		}, 'details'])->where(['id' => Session::get('id')])->get();
+			return $query->where($where)->orderBy('orden', 'asc');
 
-		$by_users = SysCategoriasCorreosModel::where(['id_users' => Session::get('id')])->get();
-		foreach ($by_users as $correo) {
-			$condicion = ['id' => $correo->id_correo, 'estatus_recibidos' => 1, 'estatus_vistos' => 0];
-			$emails[] = SysCorreosModel::where($condicion)->get();
+		},'roles','details','empresas','correos'])->where(['id' => Session::get('id')])->get();
+		$by_users = $response[0]->correos()
+								->where(['estatus_recibidos' => 1, 'estatus_vistos' => 0])
+								->orderBy('id','desc')
+								->get();
+
+
+		if( Session::get('id_rol') != 1){
+			$empresa = SysEmpresasModel::with(['notificaciones'])->where(['id' => Session::get('id_empresa')])->get();
+			$notificaciones = $empresa[0]->notificaciones()->get();
+		}else{
+			$notificaciones = SysNotificacionesModel::get();
 		}
-		$notificaciones = $this->_consulta(new SysNotificacionesModel);
-
-		$parse['MENU_DESKTOP'] = self::menus($response);
+		$parse['MENU_DESKTOP'] 		= self::menus($response);
 		self::$_titulo = (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
-		$parse['APPTITLE'] = utf8_decode(ucwords(strtolower(self::$_titulo)));
-		$parse['IMG_PATH'] = domain() . 'images/';
-		$parse['icon'] = "img/login/buro_laboral.ico";
-		$parse['anio'] = date('Y');
-		$parse['version'] = "2.0.1";
-		$parse['base_url'] = domain();
-		$parse['nombre_completo'] = Session::get('name') . " " . Session::get('first_surname');
-		$parse['desarrollo'] = utf8_decode(self::$_desarrollo);
-		$parse['link_desarrollo'] = utf8_decode(self::$_link_desarrollo);
-		$parse['welcome'] = "Bienvenid@";
-		$parse['photo_profile'] = isset($response[0]->details->foto) ? $response[0]->details->foto : asset('img/profile/profile.png');
-		$parse['rol'] = isset($response[0]->roles[0]->perfil) ? $response[0]->roles[0]->perfil : "Perfil No Asignado";
-		$parse['empresa'] = (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
-		$parse['sucursal'] = (isset(SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal)) ? SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal : "Sucursal No Asignada";
-		$parse['url_previus'] = (Session::get('id_empresa') != 0 && Session::get('id_sucursal') != 0) ? route('list.empresas') : route("/");
+		$parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower(self::$_titulo)));
+		$parse['IMG_PATH'] 			= domain() . 'images/';
+		$parse['icon'] 				= "img/login/buro_laboral.ico";
+		$parse['anio'] 				= date('Y');
+		$parse['version'] 			= "2.0.1";
+		$parse['base_url'] 			= domain();
+		$parse['nombre_completo'] 	= Session::get('name') . " " . Session::get('first_surname');
+		$parse['desarrollo'] 		= utf8_decode(self::$_desarrollo);
+		$parse['link_desarrollo'] 	= utf8_decode(self::$_link_desarrollo);
+		$parse['welcome'] 			= "Bienvenid@";
+		$parse['photo_profile'] 	= isset($response[0]->details->foto)?$response[0]->details->foto : asset('img/profile/profile.png');
+		$parse['rol'] 				= isset($response[0]->roles[0])? $response[0]->roles[0]->perfil : "Perfil No Asignado";
+		$parse['empresa'] 			= (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
+		$parse['sucursal'] 			= (isset(SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal)) ? SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal : "Sucursal No Asignada";
+		$parse['url_previus'] 		= (Session::get('id_empresa') != 0 && Session::get('id_sucursal') != 0) ? route('list.empresas') : route("/");
 
-		$parse['page_title'] = isset($parse['page_title']) ? $parse['page_title'] : " ";
-		$parse['title'] = isset($parse['title']) ? $parse['title'] : "";
-		$parse['subtitle'] = isset($parse['subtitle']) ? $parse['subtitle'] : "";
-		$parse['count_correo'] = count(self::_parse_array($emails));
-		$parse['efect_notify_correo'] = (count($emails) > 0) ? "notify" : "";
-		$parse['efect_notify'] = (count($notificaciones) > 0) ? "notify" : "";
-		$parse['count_notify'] = count($notificaciones);
-		$parse['notifications'] = $notificaciones;
-		$parse['emails'] = self::_parse_array($emails);
+		$parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
+		$parse['title'] 			= isset($parse['title']) ? $parse['title'] : "";
+		$parse['subtitle'] 			= isset($parse['subtitle']) ? $parse['subtitle'] : "";
+		
+		$parse['count_correo'] 			= count( $by_users );
+		$parse['efect_notify_correo'] 	= (count($by_users) > 0) ? "notify" : "";
+		$parse['efect_notify'] 			= (count($notificaciones) > 0) ? "notify" : "";
+		$parse['count_notify'] 			= count($notificaciones);
+		$parse['notifications'] 		= $notificaciones;
+		
+		$parse['emails'] 				= $by_users;
 		#$parse['permisos']        = Session::get('permisos');
 		$eliminar = (isset(Session::get('permisos')['DEL'])) ? Session::get('permisos')['DEL'] : true;
 		$insertar = (isset(Session::get('permisos')['INS'])) ? Session::get('permisos')['INS'] : true;
@@ -467,9 +474,7 @@ abstract class MasterController extends Controller
 			, 'title' 		=> $titulos
 			, 'titulo' 		=> $titulos
 			, 'campo_1' 	=> "Categoria"
-			, 'campo_2' 	=> "Descripcion"
-			#, 'select_estados' => $estados
-
+			, 'campo_2' 	=> "Descripcion"			
 		];
 			#debuger($data);
 		return $data;

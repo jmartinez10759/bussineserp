@@ -1690,35 +1690,32 @@ register_modal_general = function (identificador, modal) {
  * @param id_notify string [description]
  * @return void
  */
-update_notify = function (id_notify) {
-    var url = domain('api/sistema/token');
-    var fields = {
-        'email': "jorge.martinez@burolaboralmexico.com"
-    };
-    var response = MasterController.method_master(url, fields, 'post');
-    response.then(response => {
+update_notify = function ( id_notify ) {
+
+    var url      = domain('api/sistema/token');
+    var fields   = { email: "jorge.martinez@burolaboralmexico.com" };
+    MasterController.method_master(url, fields, 'post')
+    .then(response => {
+
         var headers = {
             'usuario': response.data.result[0].email,
             'token': response.data.result[0].api_token
         };
         var uri = domain('api/sistema/notification');
-        var data = {
-            'id': id_notify,
-            'estatus': 0
-        };
-        var response_notify = MasterController.method_master(uri, data, 'put', headers);
-        response_notify.then(response => {
-            redirect(domain('configuracion/clientes'));
-        }).catch(error => {
-            toastr.error(error, "Ocurrio un Error");
-        });
+        var data = {id: id_notify };
+        MasterController.method_master(uri, data, 'delete', headers)
+            .then(response => {
+                //redirect(domain('configuracion/clientes'));
+                redirect(window.location.href);
+            }).catch(error => {
+                toastr.error(error, "Ocurrio un Error");
+            });
 
     }).catch(error => {
         toastr.error(error, "Ocurrio un Error");
     });
 
 }
-
 function upload_files_general() {
 
     var url = domain('upload/catalogos');
@@ -1799,12 +1796,23 @@ function data_table( data ){
     return html_result;
 
 }
-function iterar_object(data, array2 ){
+function iterar_object(data, array2, discrim = false ){
     var response = {};
     for(var i in data ){
-      if ( !array2.includes(i) ) {
-         response[i] = data[i];
+      
+      if(!discrim ){
+
+        if ( !array2.includes(i) ) {
+             response[i] = data[i];
+        }
+
       }
+      if(discrim){
+          if ( array2.includes(i) ) {
+            response[i] = data[i];
+          }
+      }
+
     }
     return response;
 }

@@ -158,11 +158,11 @@
 
                       </td>
 
-                      <td class="mailbox-name" ng-click="details_mails(correo.id)">
+                      <td class="mailbox-name" ng-click="details_mails(correo)">
                         <small>@{{ correo.correo }}</small>
                       </td>
                   
-                      <td class="mailbox-subject" ng-click="details_mails( correo.id )">
+                      <td class="mailbox-subject" ng-click="details_mails( correo )">
                         <small>@{{correo.asunto}}</small>
                       </td>
                   
@@ -170,7 +170,7 @@
                         <div ng-bind-html-unsafe="correo.descripcion.substring(0, 35)"></div>
                       </td> -->
 
-                      <td class="mailbox-date" ng-click="details_mails( correo.id )">
+                      <td class="mailbox-date" ng-click="details_mails( correo )">
                         <small>@{{ time_fechas( correo.created_at ) }}</small>
                       </td>
                   
@@ -187,7 +187,7 @@
                   </td>
 
                   <td class="">
-                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" ng-click="activity_register(correo.id,{estatus_papelera: correo.estatus_papelera })" {{$eliminar}} >
+                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" ng-click="activity_register(correo.id,{estatus_papelera: correo.estatus_papelera }, true )" {{$eliminar}} >
                       <i class="fa fa-trash"></i>
                     </button>
                   </td>

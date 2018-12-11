@@ -108,6 +108,10 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany('App\Model\Administracion\Correos\SysTemplatesModel','sys_users_templates','id_empresa','id_template');
   }
+  public function correos()
+  {
+    return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_users_correos','id_empresa','id_correo'); 
+  }
 
 
 
