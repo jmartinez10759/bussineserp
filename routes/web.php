@@ -130,9 +130,9 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'correos.destacados'
     ]);
 
-	Route::post('/correos/papelera', [
-        'uses'      => 'Administracion\Correos\CorreoController@papelera'
-        ,'as'       => 'correos.papelera'
+	Route::delete('/correos/destroy', [
+        'uses'      => 'Administracion\Correos\CorreoController@destroy'
+        ,'as'       => 'correos.destroy'
     ]);
 		######################## SECCION DE CATEGORIAS  #######################
 		Route::post('/categorias/insert', [
