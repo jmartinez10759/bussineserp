@@ -194,11 +194,10 @@ class CorreoController extends MasterController
             if ($value === "true" ) {
               $delete[] = $key;
             }
-
           }
           SysCorreosModel::destroy( $delete );
-          SysUsersCorreosModel::where('id_correo' , $delete )->delete();
-          
+          SysUsersCorreosModel::whereIn('id_correo' , $delete )->delete();
+
           DB::commit();
           $success = true;
         } catch (\Exception $e) {

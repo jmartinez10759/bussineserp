@@ -262,41 +262,40 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
-        /**
-        * Metodo para borrar el registro
-        * @access public
-        * @param Request $request [Description]
-        * @return void
-        */
-        public function destroy( Request $request ){
+    /**
+    * Metodo para borrar el registro
+    * @access public
+    * @param Request $request [Description]
+    * @return void
+    */
+    public function destroy( Request $request ){
 
-            $error = null;
-            DB::beginTransaction();
-            try {
-                // debuger($request->all());
-                $response = SysProveedoresEmpresasModel::where(['id_proveedor' => $request->id])->get(); 
-                if( count($response) > 0){
-                    for($i = 0; $i < count($response); $i++){
-                        SysContactosModel::where(['id' => $response[$i]->id_contacto])->delete();
-                    }
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $response = SysContactosSistemasModel::where(['id_proveedor' => $request->id])->get(['id_contacto']); 
+            if( count($response) > 0){
+                for($i = 0; $i < count($response); $i++){
+                    SysContactosModel::where(['id' => $response[$i]->id_contacto])->delete();
                 }
-                $this->_tabla_model::where(['id' => $request->id])->delete();
-                SysProveedoresEmpresasModel::where(['id_proveedor' => $request->id])->delete();
-
-            DB::commit();
-            $success = true;
-            } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            DB::rollback();
             }
+            $this->_tabla_model::where(['id' => $request->id])->delete();
+            SysProveedoresEmpresasModel::where(['id_proveedor' => $request->id])->delete();
 
-            if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
-            }
-            return $this->show_error(6, $error, self::$message_error );
-
+        DB::commit();
+        $success = true;
+        } catch (\Exception $e) {
+        $success = false;
+        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+        DB::rollback();
         }
+
+        if ($success) {
+        return $this->_message_success( 201, $response , self::$message_success );
+        }
+        return $this->show_error(6, $error, self::$message_error );
+
+    }
     /**
      * Metodo para borrar el registro
      * @access public
@@ -386,13 +385,19 @@
         return $this->show_error(6, $error, self::$message_error);
 
     }
+     /**
+     * Metodo para insertar los permisos de los productos
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
     public function consulta_proveedores(){
 
 
         if( Session::get('id_rol') == 1 ){
 
             $response_proveedores = SysProveedoresModel::with(['estados','contactos','empresas','productos'])
-                            ->where(['estatus' => 0])
+                            ->where(['estatus' => 1])
                             ->orderBy('id','desc')
                             ->groupby('id')
                             ->get();
@@ -435,6 +440,12 @@
         return [ 'response_proveedores' => $response_proveedores ];
 
     }
+     /**
+     * Metodo para insertar los permisos de los productos
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
     public function asignar( Request $request ){
         try {
          $response = SysProveedoresModel::with(['productos'])
@@ -449,6 +460,12 @@
         }
 
     }
+     /**
+     * Metodo para insertar los permisos de los productos
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
     public function asignar_insert( Request $request ){
             #debuger($request->all());
            $error = null;
@@ -496,4 +513,4 @@
 
     }
 
-    }
+}
