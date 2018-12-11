@@ -57,5 +57,9 @@ class SysProveedoresModel extends Model
   {
       return $this->hasOne(SysClaveProdServicioModel::class, 'id','id_servicio_comercial');
   }
+  public function almacenes()
+  {
+      return $this->belongsToMany('App\Model\Almacenes\SysAlmacenesModel', 'sys_almacenes_productos', 'id_proveedor', 'id_almacen');
+  }
 
 }

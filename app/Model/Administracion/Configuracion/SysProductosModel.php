@@ -74,6 +74,7 @@ class SysProductosModel extends Model
     {
       return $this->belongsTo('App\Model\Ventas\SysConceptosPedidosModel', 'id', 'id_producto');
     }
+    
 
     
 }

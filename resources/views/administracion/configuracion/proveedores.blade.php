@@ -34,7 +34,7 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.empresas[0].nombre_comercial }}</td>
-                            <td>
+                            <td style="cursor:pointer;" ng-click="edit_register(data)">
                             <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
                             <span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
                             </td>
