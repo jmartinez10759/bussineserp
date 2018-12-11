@@ -490,12 +490,9 @@ abstract class MasterController extends Controller
 		$recibidos = $response_correo[0]->correos()
 										->with(['categorias'])
 										->where(['estatus_recibidos' => 1])
-										->where(['estatus_papelera' => 0])
-										->where(['estatus_destacados' => 1])
-										->orwhere(['estatus_vistos' => 1])
-										->orwhere(['estatus_vistos' => 0])
 										->orderby('created_at','desc')
 										->get();
+		#debuger($recibidos);
 		/*se realiza la consulta para los correos enviados*/
 		$enviados  = $response_correo[0]->correos()
 										->with(['categorias'])

@@ -26,6 +26,8 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         $scope.list_comments = {};
         $scope.edit   = {};
         $scope.fields = {};
+        $scope.selections = 0;
+        $scope.checkboxes = {};
         $scope.index();
     }
 
@@ -39,7 +41,10 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
             if(masterservice.session_status( response )){return;};
 
             $scope.datos = response.data.result;
-            console.log($scope.datos);
+            for( var i in $scope.datos.correos){
+                $scope.checkboxes[$scope.datos.correos[i].id] = false;
+            }
+            console.log($scope.datos );
             
         }).catch(function(error){
             masterservice.session_status_error( error );
@@ -208,7 +213,7 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
               $scope.list_comments = response.data.result.actividades;
               loading(true);
           }).catch(function( error ){
-              masterservice.session_status({},error);
+              masterservice.session_status_error( error);
           });
             
         },"warning",true,["SI","NO"]); 
@@ -293,6 +298,50 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
     $scope.checkbox = function(){
         $scope.selections =  !$scope.selections;
         $scope.selected = !$scope.selected;
+        for(var i in $scope.checkboxes){
+            $scope.checkboxes[i] = $scope.selected;
+        }
+
+    }
+
+    $scope.vistos = function( estatus ){
+
+        var ruta = window.location.pathname.split('/');
+        ruta = ruta[2]+"/"+ruta[3];
+        if (estatus == 0 && ruta == "correos/recibidos") {
+            return {
+              'cursor' : 'pointer'
+              ,'font-weight' : 'bold'
+            };
+          
+        }
+
+    }
+
+    $scope.activity_register = function( id, destacados ){
+
+      var ruta = window.location.pathname.split('/');
+      ruta = ruta[2]+"/"+ruta[3];
+      if (ruta == "correos/papelera") {
+        console.log($scope.checkboxes);
+        var url = domain(URL.url_destroy);
+        var fields = $scope.checkboxes;
+        MasterController.request_http(url,fields,'delete',$http, false )
+        .then(function( response ){
+          //not remove function this is  verify the session
+          if(masterservice.session_status( response )){return;};
+
+            toastr.success( response.data.message , title );
+            $scope.index();
+        }).catch(function( error ){
+            masterservice.session_status_error(error);
+        });
+
+      }else{
+          $scope.update_register( id, destacados );
+      }
+        
+
     }
 
     $scope.update_register = function( id, destacados ){

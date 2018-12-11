@@ -13,6 +13,7 @@ use App\Model\Administracion\Correos\SysEnviadosModel;
 use App\Model\Administracion\Correos\SysCategoriasModel;
 use App\Model\Administracion\Configuracion\SysEstadosModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
+use App\Model\Administracion\Correos\SysUsersCorreosModel;
 use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 
@@ -77,137 +78,77 @@ class CorreoController extends MasterController
      *@return void
      */
     public function store( Request $request ){
-      debuger( $request->all() );
-
-      
+      #debuger( $request->all() );
       $error = null;
       DB::beginTransaction();
       try {
-          
-        DB::commit();
-        $success = true;
-      } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          DB::rollback();
-      }
+          $response_envios = SysUsersModel::with(['empresas','sucursales','roles'])
+                                            ->where(['email' => $request->emisor])
+                                            ->get();
+          #debuger($response_envios);
+          $data = [
+            'correo'                => $request->emisor
+            ,'asunto'               => $request->asunto
+            ,'descripcion'          => $request->descripcion
+            ,'estatus_enviados'     => 1
+            ,'estatus_recibidos'    => 0
+            ,'estatus_papelera'     => 0
+            ,'estatus_vistos'       => 0
+            ,'estatus_destacados'   => 0
+            ,'estatus_borradores'   => 0
+          ];
+          #debuger($data);
+          $correo = SysCorreosModel::create($data);
+          $datos = [
+               'id_users'       => Session::get('id')
+              ,'id_rol'         => Session::get('id_rol')
+              ,'id_empresa'     => Session::get('id_empresa')
+              ,'id_sucursal'    => Session::get('id_sucursal')
+              ,'id_correo'      => $correo->id
+          ];
+          #debuger($datos);
+          SysUsersCorreosModel::create($datos);
 
-      if ($success) {
-        return $this->_message_success( 201, $response , self::$message_success );
-      }
-      return $this->show_error(6, $error, self::$message_error );
+          if ( isset($response_envios[0])  ) {
 
+            $data['correo'] = Session::get('email');
+            $data['estatus_enviados'] = 0;
+            $data['estatus_recibidos'] = 1;
+            #debuger($data);
+            $store_response = SysCorreosModel::create($data);
+            $datos['id_users']      = $response_envios[0]->id;
+            $datos['id_rol']        = $response_envios[0]->roles[0]->id;
+            $datos['id_empresa']    = isset($response_envios[0]->empresas[0])? $response_envios[0]->empresas[0]->id : 0 ;
+            $datos['id_sucursal']   = isset($response_envios[0]->sucursales[0])? $response_envios[0]->sucursales[0]->id : 0;
+            $datos['id_correo']     = $store_response->id;
+            SysUsersCorreosModel::create($datos);
 
+          }
+          $envios = [
+            'emisor'           =>  $request->emisor
+            ,'email'           =>  Session::get('email')
+            ,'asunto'          =>  $request->asunto
+            ,'descripcion'     =>  $request->descripcion
+            ,'nombre_completo' =>  Session::get('name')." ".Session::get('first_surname')." ".Session::get('second_surname')
+          ];
+            Mail::send('emails.usuario' , $envios, function( $message ) use ( $envios ) {
+              $message->to( $envios['emisor'], '' )
+                      ->from($envios['email'], $envios['nombre_completo'] )
+                      ->subject( $envios['asunto'] );
+            });
 
+            DB::commit();
+            $success = true;
+          } catch (\Exception $e) {
+              $success = false;
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              DB::rollback();
+          }
 
-        #se realiza la consulta para obtener los datos del correo a enviar
-        $insert_correo_rel = [];
-        $datos_envio = SysUsersModel::where(['email' => $request->emisor ])->get();
-        $response_envio = SysRolMenuModel::select('id_sucursal','id_empresa')
-                                          ->where(['id_users' => isset($datos_envio[0]->id)?$datos_envio[0]->id: ""])
-                                          ->groupby('id_sucursal','id_empresa')->get();
-        #debuger($datos_envio);
-        $envios = $request->all();
-        $envios['nombre_completo'] = Session::get('name')." ".Session::get('first_surname')." ".Session::get('second_surname');
-        $envios['email'] = Session::get('email');
-        #se realiza una transaccion para nsertar en las dos tablas.
-        $error = null;
-        DB::beginTransaction();
-        try {
-
-            list($id_empresa_envia,$id_sucursal_envia)  = [Session::get('id_empresa'),Session::get('id_sucursal')];
-            list($envia_enviados,$envia_recibidos) = [1,0];
-            #estos son datos del que envia el correo.
-            $data = [
-              'id_users'        => Session::get('id')
-              ,'nombre'         => isset($datos_envio[0])? $datos_envio[0]->name." ".$datos_envio[0]->first_surname : $request->emisor
-              ,'correo'         => $request->emisor
-              ,'asunto'         => $request->asunto
-              ,'descripcion'    => $request->descripcion
-              ,'estatus_papelera'     => 0
-              ,'estatus_destacados'   => 0
-              ,'estatus_borradores'   => 0
-              ,'estatus_vistos'       => 1
-            ];
-            $data['estatus_enviados']   = 1;
-            $data['estatus_recibidos']  = 0;
-            $data['id_sucursal']  = $id_sucursal_envia;
-            $data['id_empresa']   = $id_empresa_envia;
-            $insert_email = SysCorreosModel::create($data);
-            #debuger($insert_email,false);
-            $id_correos = isset( $insert_email->id )?$insert_email->id: false;
-            $datos = [
-              'id_users'        => Session::get('id')
-              ,'id_register'    => 0
-              ,'id_sucursal'    => $id_sucursal_envia
-              ,'id_empresa'     => $id_empresa_envia
-              ,'id_categorias'  => 0
-              ,'id_correo'      => $id_correos
-            ];
-            #debuger($datos);
-            SysCategoriasCorreosModel::create($datos);
-            if ( sizeof($response_envio) > 0 ) {
-                  for ($i=0; $i < count( $response_envio ); $i++) {
-                      list($id_empresa_recibe, $id_sucursal_recibe) = [$response_envio[$i]->id_empresa,$response_envio[$i]->id_sucursal];
-                      list($recibe_enviados,$recibe_recibidos) = [0,1];
-                      $data = [
-                        'id_users'        => isset( $datos_envio[0]->id )? $datos_envio[0]->id: false
-                        ,'nombre'         => $envios['nombre_completo']
-                        ,'correo'         => Session::get('email')
-                        ,'asunto'         => $request->asunto
-                        ,'descripcion'    => $request->descripcion
-                        ,'estatus_papelera'     => 0
-                        ,'estatus_destacados'   => 0
-                        ,'estatus_borradores'   => 0
-                        ,'estatus_vistos'       => 0
-                      ];
-
-                      $data['estatus_enviados']   = $recibe_enviados;
-                      $data['estatus_recibidos']  = $recibe_recibidos;
-                      $data['id_sucursal']  = $id_sucursal_recibe;
-                      $data['id_empresa']   = $id_empresa_recibe;
-                      #debuger($data,false);
-                      $insert_correo = SysCorreosModel::create($data);
-                      #debuger($insert_correo->id);
-                      $id_correo = isset( $insert_correo->id )?$insert_correo->id: false;
-                      $datos = [
-                        'id_users'        => isset( $datos_envio[0]->id )? $datos_envio[0]->id: false
-                        ,'id_register'    => 0
-                        ,'id_sucursal'    => $id_sucursal_recibe
-                        ,'id_empresa'     => $id_empresa_recibe
-                        ,'id_categorias'  => 0
-                        ,'id_correo'      => $id_correo
-                      ];
-                      SysCategoriasCorreosModel::create($datos);
-
-                  }
-            }
-
-          DB::commit();
-          $success = true;
-        } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage();
-            DB::rollback();
-        }
-
-        if ($success) {
-          #envio de correo para validar si existe el correo antes ingresado.
-          Mail::send('emails.usuario' , $envios, function( $message ) use ( $envios ) {
-            $message->to( $envios['emisor'], '' )
-            ->from($envios['email'], $envios['nombre_completo'])
-            ->subject($envios['asunto']);
-              // if($envios['archivo']){
-              //   $message->attach( $files );
-              // }
-
-          });
-          #debuger($insert_correo);
-          return message(true,[], self::$message_success );
-          #return message(true,$response,"¡Se cambiaron los Permisos con exito!");
-        }
-        return message(false,$error, self::$message_error );
-
+          if ($success) {
+            return $this->_message_success( 201, $success , self::$message_success );
+          }
+          return $this->show_error(6, $error, self::$message_error );
 
     }
     /**
@@ -243,8 +184,8 @@ class CorreoController extends MasterController
      *@param $id [Description]
      *@return void
      */
-    public function destroy( $id ){
-
+    public function destroy( Request $request ){
+        debuger($request->all());
 
     }
     /**
