@@ -30,14 +30,19 @@
                     <ul class="menu">
                       @foreach ($emails as $correos)
                         <li><!-- start message -->
-                          <a href="#">
-                            <!-- <div class="pull-left">
-                              <img src="" class="img-circle" alt="User Image">
-                            </div> -->
-                            <h4>
+                          <a style="cursor:pointer;">
+                            <div class="pull-left">
+                              <img src="{{asset('img/profile/profile.png')}}" class="img-circle" alt="User Image">
+                            </div>
+                            <h6>
                               {{ $correos->asunto }}
-                              <small><i class="fa fa-clock-o"></i> {{ time_fechas($correos->created_at,timestamp() )}}</small>
-                            </h4>
+                              <small>
+                                <p class="pull-right">
+                                  <i class="fa fa-clock-o"></i> 
+                                  {{ time_fechas ($correos->created_at,timestamp() )}}
+                                </p>
+                              </small>
+                            </h6>
                             <p>{{$correos->correo}}</p>
                           </a>
                         </li>
@@ -62,11 +67,13 @@
                     <ul class="menu">
                       @foreach($notifications as $notificacion)
                         <li>
-                          <!-- <a href="{{$base_url}}/configuracion/clientes" style="cursor:pointer;"> -->
                           <a onclick="update_notify({{ $notificacion->id }})" style="cursor:pointer;">
                             <h6>
                               <i class="fa fa-bell-o text-yellow"> {{ $notificacion->portal }}</i>
-                               <small> <i class="fa fa-clock-o"></i> {{ time_fechas( $notificacion->created_at, timestamp() )}} </small>
+                               <small class="pull-right"> 
+                                  <i class="fa fa-clock-o"></i> 
+                                  {{ time_fechas( $notificacion->created_at, timestamp() )}} 
+                                </small>
                             </h6>
                             <small><p class="">{{ $notificacion->mensaje }}</p></small>
                           </a>
