@@ -236,8 +236,6 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
        $scope.fields.id_proveedor = id;
        MasterController.request_http(url, fields, "get", $http ,false)
        .then(response => {
-        //not remove function this is  verify the session
-            if(masterservice.session_status( response )){return;};
            jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
            jQuery.fancybox.open({
                'type': 'inline',
@@ -256,7 +254,6 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
 
        });
 
-    
     }
     $scope.insert_permisos = function(){
 
@@ -297,6 +294,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
               toastr.error( error.data.result , expired );  
 
         });
+        
     }
     $scope.upload_file = function(update){
 
@@ -395,7 +393,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
             });
             $scope.index();
         }).catch(error => {
-            masterservice.session_status({},error); 
+            masterservice.session_status_error(error); 
         });
     
     }

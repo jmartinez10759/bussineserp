@@ -50,6 +50,10 @@ class SysSucursalesModel extends Model
   {
     return $this->belongsToMany(SysPlanesModel::class, 'sys_planes_productos', 'id_sucursal', 'id_plan');
   }
+  public function almacenes()
+  {
+    return $this->belongsToMany('App\Model\Almacenes\SysAlmacenesModel', 'sys_almacenes_empresas', 'id_sucursal', 'id_almacen');
+  }
 
 
 }

@@ -297,8 +297,13 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
-
-        public function display_sucursales( Request $request ){
+    /**
+     * Metodo para borrar el registro
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function display_sucursales( Request $request ){
         // debuger($request->all());
         try {
             $response = SysEmpresasModel::with(['sucursales' => function($query){
@@ -386,7 +391,7 @@
 
         if( Session::get('id_rol') == 1 ){
 
-            $response = SysProveedoresModel::with(['estados','contactos','empresas','productos'])
+            $response_proveedores = SysProveedoresModel::with(['estados','contactos','empresas','productos'])
                             ->where(['estatus' => 0])
                             ->orderBy('id','desc')
                             ->groupby('id')
