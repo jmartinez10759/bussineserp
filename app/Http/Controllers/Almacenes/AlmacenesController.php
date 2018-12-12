@@ -211,7 +211,10 @@
                 $error = null;
                 DB::beginTransaction();
                 try {
-                    $response = $this->_tabla_model ::where(['id' => $request->id])->delete();
+                    $response = SysAlmacenesEmpresasModel::where(['id_almacen' => $request->id])->get(['id_empresa']); 
+            
+            $this->_tabla_model::where(['id' => $request->id])->delete();
+            SysAlmacenesEmpresasModel::where(['id_almacen' => $request->id])->delete();
 
                 DB::commit();
                 $success = true;
@@ -402,15 +405,16 @@
                $error = null;
                 DB::beginTransaction();
                 try {
+                    $response = [];
                     $almacenes = SysAlmacenesModel::with(['productos','proveedores'])->where(['id'=> $request->id_almacen])->get();
                     
-                    $proveedores = SysProveedoresModel::with(['productos','almacenes'])->get();
+                    $proveedores = SysProveedoresProductosModel::get();
                     // debuger($almacenes);
 
-                    debuger($proveedores[0]->productos);
+                    // debuger($proveedores);
 
                     $where = [
-                        'id_proveedor' => ( isset($proveedores[0]->productos[0]) )? $proveedores[0]->productos[0]->id:""        
+                        'id_proveedor' => ( isset($proveedores[0]) )? $proveedores[0]->id:""        
                         // ,'id_sucursal' => ( Session::get('id_rol') == 1 && isset($almacenes[0]->sucursales[0])  )? $almacenes[0]->sucursales[0]->id:Session::get('id_sucursal')
                         // 'id_proveedor' =>  $request->id_proveedor
                         ,'id_producto' =>  $request->id_producto
@@ -418,7 +422,7 @@
                         ,'id_almacen' => $request->id_almacen  
 
                     ];
-                    // debuger($where);
+                    // debuger($proveedores[0]);
                     SysAlmacenesProductosModel::where( $where )->delete();
 
                     // $provProd = SysProveedoresProductosModel::where( $where )->get();
@@ -432,15 +436,16 @@
                         // $proveedores = SysProveedoresModel::with(['productos'])->where(['id' => $id_proveedor])->get();
                         
                         // debuger();
+                        $proveedores = SysProveedoresProductosModel::get();
                         $data = [
-                            'id_proveedor' => ( isset($proveedores[0]->productos[0]) )? $proveedores[0]->productos[0]->id:"" 
+                            'id_proveedor' => ( isset($proveedores[0]) )? $proveedores[0]->id:"" 
                             //  'id_empresa' => (Session::get('id_rol') == 1 && isset($productos[0]->empresas[0]) )? $productos[0]->empresas[0]->id : Session::get('id_empresa')
                             // ,'id_sucursal'=> ( Session::get('id_rol') == 1 && isset($productos[0]->sucursales[0])  )? $productos[0]->sucursales[0]->id:Session::get('id_sucursal')
                             ,'id_almacen' => $request->id_almacen
                             ,'id_producto' => $id_producto
                             // ,'id_proveedor' =>  $request->id_proveedor
                         ];
-                        debuger($data);
+                        // debuger($data);
                         $response[] = SysAlmacenesProductosModel::create($data);
                     }
                 // }

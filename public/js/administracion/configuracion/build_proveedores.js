@@ -366,9 +366,11 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
     
     }
     $scope.save_asign_producto = function(){
-
         var matrix = [];
         var i = 0;
+        // var validacion = {
+        //   'Sin Datos' : matrix
+        // };
         jQuery('#datatable_productos input[type="checkbox"]').each(function () {
             if (jQuery(this).is(':checked') == true) {
                 var id = jQuery(this).attr('id_producto');
@@ -382,6 +384,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
             , 'id_proveedor': $scope.fields.id_proveedor
         }
         // console.log(fields);return;
+        // console.log(matrix);return;
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
           //not remove function this is  verify the session
@@ -391,7 +394,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
                 'src': "#permisos",
                 'buttons': ['share', 'close']
             });
-            $scope.index();
+            $scope.index();          
         }).catch(error => {
             masterservice.session_status_error(error); 
         });

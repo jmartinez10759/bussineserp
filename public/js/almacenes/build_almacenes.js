@@ -65,6 +65,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
                 ,'height'   : 400
                 ,'autoSize' : false
             });
+            $scope.insert = {};
             $scope.index();
         }).catch(function( error ){
             masterservice.session_status_error(error); 
@@ -256,7 +257,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
             'matrix' : matrix
             , 'id_almacen': $scope.fields.id_almacen
         }
-        // console.log(fields);return;
+        
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
           //not remove function this is  verify the session
