@@ -987,7 +987,7 @@ $myLocalStorage = (function () {
         },
         get: function (k) {
             var data = localStorage[k];
-            if (data === undefined) throw 'Clave No Localizada';
+            if (data === undefined) return false;
             return JSON.parse(data);
         },
         remove: function (k) {

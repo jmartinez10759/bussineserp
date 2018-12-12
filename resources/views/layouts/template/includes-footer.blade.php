@@ -113,6 +113,16 @@
           }
 
         });
+        jQuery('.listado_correos').find('li a').each(function(){
+          var enlace = jQuery(this).attr('href');
+          if( enlace === location.href){
+            jQuery(this).parent().addClass('active');
+          }else{
+            jQuery(this).parent().removeClass('active');
+          }
+
+        });
+
         jQuery('.select_chosen').chosen({width: "100%"});
         jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
         window.onload = function() { jQuery(".loader").fadeOut("slow"); }

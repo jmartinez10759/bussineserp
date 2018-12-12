@@ -14,7 +14,7 @@
   <section class="content">
     <div class="row">
       <div class="col-md-3">
-        <a href="{{ route('correos.redactar') }}" class="btn btn-primary btn-block margin-bottom" {{$email}} >Redactar</a>
+        <a href="{{ route('correos.redactar') }}" class="btn btn-primary btn-block margin-bottom" {{$email}} ng-click="remove_fiels()">Redactar</a>
 
         <div class="box box-solid">
           <div class="box-header with-border">
@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="box-body no-padding">
-            <ul class="nav nav-pills nav-stacked">
+            <ul class="nav nav-pills nav-stacked listado_correos">
               <li class="active">
                 <a href="{{route('correos.recibidos')}}">
                   <i class="fa fa-inbox"></i> Recibidos
@@ -142,7 +142,7 @@
             <div class="table-responsive mailbox-messages">
               <table class="table table-hover table-striped" id="bandeja_correos">
                 <tbody>
-                  <tr ng-repeat="correo in datos.correos" ng-style="vistos(correo.estatus_vistos)" style="cursor: pointer;">
+                  <tr ng-repeat="correo in datos.correos" ng-style="vistos_style(correo.estatus_vistos)" style="cursor: pointer;">
                       <td>
                         <input type="checkbox" ng-model="checkboxes[correo.id]" >
                       </td>

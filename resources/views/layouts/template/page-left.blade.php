@@ -16,7 +16,7 @@
         <!-- search form -->
         <form action="#" method="get" class="sidebar-form">
           <div class="input-group">
-            <!-- <input type="text" name="q" class="form-control" placeholder="Search..."> -->
+            
             <input id="search_general" class="form-control" type="text" placeholder="Buscar ..." aria-label="Search" onkeyup="buscador_general(this,'#menu_principal',true)" />
           <!--   <span class="input-group-btn">
                   <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>

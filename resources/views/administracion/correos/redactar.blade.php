@@ -19,7 +19,7 @@
           </div>
         </div>
            <div class="box-body no-padding">
-            <ul class="nav nav-pills nav-stacked">
+            <ul class="nav nav-pills nav-stacked listado_correos">
               <li class="active">
                 <a href="{{route('correos.recibidos')}}">
                   <i class="fa fa-inbox"></i> Recibidos
