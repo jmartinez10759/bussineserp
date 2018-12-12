@@ -130,9 +130,9 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'correos.destacados'
     ]);
 
-	Route::post('/correos/papelera', [
-        'uses'      => 'Administracion\Correos\CorreoController@papelera'
-        ,'as'       => 'correos.papelera'
+	Route::delete('/correos/destroy', [
+        'uses'      => 'Administracion\Correos\CorreoController@destroy'
+        ,'as'       => 'correos.destroy'
     ]);
 		######################## SECCION DE CATEGORIAS  #######################
 		Route::post('/categorias/insert', [
@@ -412,6 +412,15 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::post('/proveedores/register_permisos', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@register_permisos'
         ,'as'       => 'proveedores.register'
+    ]);
+    Route::get('/proveedores/asing_producto', [
+        'uses'      => 'Administracion\Configuracion\ProveedoresController@asignar'
+        ,'as'       => 'proveedores.asing_producto'
+    ]);
+    
+    Route::post('/proveedores/asing_insert', [
+        'uses'      => 'Administracion\Configuracion\ProveedoresController@asignar_insert'
+        ,'as'       => 'proveedores.asing_insert'
     ]);
     
     ######################### MODULO DE PLANES ##################################
@@ -1396,6 +1405,55 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::delete('/categoriasproductos/destroy', [
         'uses' => 'Administracion\Configuracion\CategoriasProductosController@destroy'
         ,'as' => 'categoriasproductos.destroy'
+    ]);
+
+##################################### MODULO DE ALMACENES######################################### 
+    Route::get('/almacen/almacenes', [
+        'uses' => 'Almacenes\AlmacenesController@index'
+        ,'as' => 'Almacenes.almacenes'
+    ]);
+
+    Route::get('/almacenes/all', [
+        'uses' => 'Almacenes\AlmacenesController@all'
+        ,'as' => 'almacenes.all'
+    ]);
+
+    Route::post('/almacenes/register', [
+        'uses' => 'Almacenes\AlmacenesController@store'
+        ,'as' => 'almacenes.register'
+    ]);
+
+    Route::get('/almacenes/edit', [
+        'uses' => 'Almacenes\AlmacenesController@show'
+        ,'as' => 'almacenes.edit'
+    ]);
+
+    Route::put('/almacenes/update', [
+        'uses' => 'Almacenes\AlmacenesController@update'
+        ,'as' => 'almacenes.update'
+    ]);
+
+    Route::delete('/almacenes/destroy', [
+        'uses' => 'Almacenes\AlmacenesController@destroy'
+        ,'as' => 'almacenes.destroy'
+    ]);
+    Route::get('/almacenes/display_sucursales', [
+        'uses'      => 'Almacenes\AlmacenesController@display_sucursales'
+        ,'as'       => 'almacenes.display_sucursales'
+    ]);
+    
+    Route::post('/almacenes/register_permisos', [
+        'uses'      => 'Almacenes\AlmacenesController@register_permisos'
+        ,'as'       => 'almacenes.register'
+    ]);
+    Route::get('/almacenes/asing_producto', [
+        'uses'      => 'Almacenes\AlmacenesController@asignar'
+        ,'as'       => 'almacenes.asing_producto'
+    ]);
+    
+    Route::post('/almacenes/asing_insert', [
+        'uses'      => 'Almacenes\AlmacenesController@asignar_insert'
+        ,'as'       => 'almacenes.asing_insert'
     ]);
 
 ##################################### COTIZACIONES #########################################    

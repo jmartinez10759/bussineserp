@@ -45,7 +45,7 @@
                                                  width="'100%'" 
                                                  ng-model="insert.estatus" 
                                                  ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
-                                                 <option value="">--Seleccione Opcion--</option>    
+                                                 <option value="" disabled selected >--Seleccione Opcion--</option>     
                                             </select>
                                         </div>
                 </div>
@@ -64,7 +64,7 @@
     </div>
 </div>
 
-<div class="" id="modal_edit_register" style="display:none;">
+<div class="" id="modal_edit_register" style="overflow-y:scroll; height:500px;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -114,7 +114,7 @@
                                  width="'100%'" 
                                  ng-model="update.estatus" 
                                  ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
-                                 <option value="">--Seleccione Opcion--</option>   
+                                 <option value="" disabled selected >--Seleccione Opcion--</option>    
                                 </select>
                             </div>
                     </div>

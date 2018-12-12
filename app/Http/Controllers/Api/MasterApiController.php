@@ -47,56 +47,58 @@ abstract class MasterApiController extends Controller
             switch ($server) {
               case 'GET':
               #debuger( in_array($datos,$request->all()) );
-              if ( in_array( 'CON', $permisson )  ) {
-                if ( isset($parametros[$indice]) ) {
-                  return $this->show( $parametros );
+                if ( in_array( 'CON', $permisson )  ) {
+                  if ( isset($parametros[$indice]) ) {
+                    return $this->show( $parametros );
+                  }
+                  if ( isset($datos) && count($datos) > 0 ) {
+                    return $this->show( new Request($datos) );
+                  }
+                  return $this->all();
                 }
-                if ( isset($datos) && count($datos) > 0 ) {
-                  return $this->show( new Request($datos) );
-                }
-                return $this->all();
-              }
-              return $this->show_error(0);
+                return $this->show_error(0);
               break;
 
               case 'POST':
-              if ( in_array( 'INS' ,$permisson  ) ){
-                $registros = [];
-                foreach ($request->all() as $key => $value) {
-                    if( !array_key_exists($key, $datos)){
-                        $registros[$key] = $value;
-                    }
+                if ( in_array( 'INS' ,$permisson  ) ){
+                  $registros = [];
+                  foreach ($request->all() as $key => $value) {
+                      if( !array_key_exists($key, $datos)){
+                          $registros[$key] = $value;
+                      }
+                  }
+                  #debuger($registros);
+                  return $this->store( new Request( $registros ) );
                 }
-                #debuger($registros);
-                return $this->store( new Request( $registros ) );
-              }
-              return $this->show_error(0);
+                return $this->show_error(0);
               break;
 
               case 'PUT':
-              $id = isset($request->$indice)? $request->$indice :false;
-              if(!$id){
-                return $this->show_error(3,['id' => $id]);
-              }
-              if ( in_array( 'UPD' ,$permisson  ) ) {
-                $register = [];
-                $keys = ['id'];
-                foreach ( $request->all() as $key => $value) {
-                  if( !in_array($key,$keys)){
-                    $register[$key] = $value;
-                  }
+                $id = isset($request->$indice)? $request->$indice :false;
+                if(!$id){
+                  return $this->show_error(3,['id' => $id]);
                 }
-                return $this->update(new Request( $register ), $id);
-              }
-              return $this->show_error(0);
+                if ( in_array( 'UPD' ,$permisson  ) ) {
+                  $register = [];
+                  $keys = ['id'];
+                  foreach ( $request->all() as $key => $value) {
+                    if( !in_array($key,$keys)){
+                      $register[$key] = $value;
+                    }
+                  }
+                  return $this->update(new Request( $register ), $id);
+                }
+                return $this->show_error(0);
               break;
 
               case 'DELETE':
-              $id = isset($request->data[$indice])? $request->data[$indice] :false;
-              if ( in_array( 'DEL' ,$permisson  ) ){
-                return $this->destroy($id);
-              }
-              return $this->show_error(0);
+                #$id = isset($request->$indice)? $request->$indice :false;
+                $id = isset( $request->$indice )? $request->$indice : false;
+                #dump($id);
+                if ( in_array( 'DEL' ,$permisson  ) ){
+                  return $this->destroy( $id );
+                }
+                return $this->show_error(0);
               break;
 
             }

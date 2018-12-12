@@ -29,7 +29,7 @@ class SysUsersModel extends Model
 
     public function correos()
     {
-      return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_categorias_correos','id_users','id_correo');
+      return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_users_correos','id_users','id_correo');
     }
 
     public function menus()

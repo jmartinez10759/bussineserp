@@ -33,8 +33,8 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].nombre_completo: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{ (data.empresas.length > 0)?  datos.empresas[data.empresas[0].id-1].nombre_comercial: ""}}</td>
-                            <td>
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.empresas[0].nombre_comercial }}</td>
+                            <td style="cursor:pointer;" ng-click="edit_register(data)">
                             <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
                             <span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
                             </td>
@@ -45,6 +45,11 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+                                        <li>
+                                            <a title="Asignar Producto" style="cursor:pointer;" ng-click="asignar_producto(data.id)">
+                                                <i class="fa fa-cart-plus"></i> Asignar Producto
+                                            </a>
+                                        </li>
                                         <li {{$eliminar}}>
                                             <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
                                                 <i class="glyphicon glyphicon-trash"></i> Eliminar
@@ -54,15 +59,15 @@
                                 </div>
                             </td>
                             <td>
-                            <div >
-                            <select class="form-control " 
-                                    chosen
+                            <div {{$permisos}}>
+                            <select class="form-control "  
+                                    chosen                                    
                                     width="'80%'"
                                     ng-model="data.empresas[0].id" 
                                     ng-options="value.id as value.nombre_comercial for (key, value) in datos.empresas" 
                                     ng-change="display_sucursales(data.id )" 
                                     id="cmb_empresas_@{{data.id}}" >
-                                    <option value="">--Seleccione Opcion--</option>
+                                    <option value="" disabled selected >--Seleccione Opcion--</option>
                                 </select>
                             </div>
                             </td>

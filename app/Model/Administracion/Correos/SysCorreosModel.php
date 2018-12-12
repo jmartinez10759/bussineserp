@@ -28,7 +28,11 @@ class SysCorreosModel extends Model
 
   public function usuarios()
   {
-    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_categorias_correos','id_correo','id_users')->withPivot('id_categorias');
+    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_correos','id_correo','id_users');
+  }
+  public function empresas()
+  {
+    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_users_correos','id_correo','id_empresa');
   }
 
 

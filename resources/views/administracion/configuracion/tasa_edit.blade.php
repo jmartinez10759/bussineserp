@@ -8,27 +8,8 @@
                     <form class="form-horizontal">
                         
 
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">Rango:  </label>
-                            <div class="col-sm-7">
-                                <input type="text" id="rango" class="form-control" placeholder="" ng-model="insert.rango">
-                            </div>
 
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">Valor Minimo: <font size="3" color="red">* </font> </label>
-                            <div class="col-sm-7">
-                                <input type="text" id="valor_minimo" class="form-control" placeholder="" ng-model="insert.valor_minimo">
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">Valor Maximo: <font size="3" color="red">* </font> </label>
-                            <div class="col-sm-7">
-                                <input type="text" id="valor_maximo" class="form-control" placeholder="" ng-model="insert.valor_maximo">
-                            </div>
-
-                        </div>
+                        
                         <div class="form-group">
                             <label class="control-label col-sm-3">Clave:  </label>
                             <div class="col-sm-7">
@@ -57,6 +38,26 @@
                             </div>
 
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Rango:  </label>
+                            <div class="col-sm-7">
+                                <input type="text" id="rango" class="form-control" placeholder="" ng-model="insert.rango">
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Valor Minimo:  </label>
+                            <div class="col-sm-7">
+                                <input type="text" id="valor_minimo" class="form-control" placeholder="" ng-model="insert.valor_minimo">
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Valor Maximo:  </label>
+                            <div class="col-sm-7">
+                                <input type="text" id="valor_maximo" class="form-control" placeholder="" ng-model="insert.valor_maximo">
+                            </div>
+                            </div>
                         <div class="form-group">
                         <label  class="col-sm-3 control-label input-sm">Fecha Inicio </label>
                 <div class="col-sm-7">
@@ -99,27 +100,7 @@
                     <form class="form-horizontal">
                         
 
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">Rango:  </label>
-                            <div class="col-sm-7">
-                                <input type="text" id="rango" class="form-control" placeholder="" ng-model="update.rango">
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">Valor Minimo: <font size="3" color="red">* </font> </label>
-                            <div class="col-sm-7">
-                                <input type="text" id="valor_minimo" class="form-control" placeholder="" ng-model="update.valor_minimo">
-                            </div>
-                            
-
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">Valor Maximo: <font size="3" color="red">* </font> </label>
-                            <div class="col-sm-7">
-                                <input type="text" id="valor_maximo" class="form-control" placeholder="" ng-model="update.valor_maximo">
-                            </div>
-                        </div>
+                        
                         <div class="form-group">
                             <label class="control-label col-sm-3">Clave:  </label>
                             <div class="col-sm-7">
@@ -149,6 +130,27 @@
 
                         </div>
                         <div class="form-group">
+                            <label class="control-label col-sm-3">Rango:  </label>
+                            <div class="col-sm-7">
+                                <input type="text" id="rango" class="form-control" placeholder="" ng-model="update.rango">
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Valor Minimo:  </label>
+                            <div class="col-sm-7">
+                                <input type="text" id="valor_minimo" class="form-control" placeholder="" ng-model="update.valor_minimo">
+                            </div>
+                            
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Valor Maximo:  </label>
+                            <div class="col-sm-7">
+                                <input type="text" id="valor_maximo" class="form-control" placeholder="" ng-model="update.valor_maximo">
+                            </div>
+                        </div>
+                        <div class="form-group">
                         <label  class="col-sm-3 control-label input-sm">Fecha Inicio </label>
                 <div class="col-sm-7">
                     <input type="text" class="form-control fecha"  id="fecha_inicial" ng-model="update.fecha_inicio_vigencia">
@@ -172,9 +174,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="btn-toolbar pull-right">
-                        <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
-                            <i class="fa fa-times-circle"></i> Cancelar
-                        </button>
+                        <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
                         <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
                         <i class="fa fa-save"></i> Actualizar 
                         </button>
@@ -183,6 +183,7 @@
 
             </div>
         </div>
+    </div>
     </div>
 
     {{-- <div class="modal fade" id="modal_tiposComprobantes_register" role="dialog" aria-hidden="true">

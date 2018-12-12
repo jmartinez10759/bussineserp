@@ -7,21 +7,21 @@ const URL = {
  ,redireccion  : "configuracion/servicioscomerciales"
 }
 
-app.config(function( $routeProvider, $locationProvider ) {
-    $routeProvider
-    .when("/ruta1", {
-        template : "<h1></h1>",
-    })
-    .when("/ruta2", {
-        template : "<h1></h1>",
-    })
-    .when("/ruta3", {
-        templateUrl : "ruta3.html",
-        controller : ""
-    });
-    $locationProvider.html5Mode(true);
-});
-app.controller("servicioscomercialesController", function( $scope, $http, $location ) {
+// app.config(function( $routeProvider, $locationProvider ) {
+//     $routeProvider
+//     .when("/ruta1", {
+//         template : "<h1></h1>",
+//     })
+//     .when("/ruta2", {
+//         template : "<h1></h1>",
+//     })
+//     .when("/ruta3", {
+//         templateUrl : "ruta3.html",
+//         controller : ""
+//     });
+//     $locationProvider.html5Mode(true);
+// });
+app.controller("servicioscomercialesController", function(masterservice, $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     //El constructor funciona para inicializar las variables 
     $scope.constructor = function(){
@@ -37,17 +37,15 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
         var fields = {};
         MasterController.request_http(url,fields,"get",$http, false )
         .then(function(response){
-          //devuelve un Array con todos los datos 
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+          //devuelve un Array con todos los datos
+
+          // loading(true);
             $scope.datos = response.data.result;
             // console.log($scope.datos);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.result , expired );
+             masterservice.session_status({},error);
         });
     }
     
@@ -57,6 +55,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
         var fields = $scope.insert;
         MasterController.request_http(url,fields,"post",$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             jQuery.fancybox.close({
                 "type"      : "inline"
@@ -71,13 +71,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
             // console.log($scope.constructor());return;
 
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+             masterservice.session_status({},error);
         });
 
     }
@@ -89,6 +83,8 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
       var fields = $scope.update;
       MasterController.request_http(url,fields,"put",$http, false )
       .then(function( response ){
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
                 "type"      : "inline"
@@ -102,13 +98,7 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
           // console.log($scope.consulta_general());return;
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+           masterservice.session_status({},error);
       });
     }
 
@@ -130,15 +120,10 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
                 ,"height"   : 400
                 ,"autoSize" : false
             });        
+          loading(true);
             // console.log($scope.edit);return;  
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+             masterservice.session_status({},error);
         });
     }
 
@@ -149,17 +134,13 @@ app.controller("servicioscomercialesController", function( $scope, $http, $locat
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,"delete",$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             $scope.consulta_general();
             // console.log($scope.consulta_general());return;
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.result , expired );
+            masterservice.session_status({},error);
         });
           
       },"warning",true,["SI","NO"]);  

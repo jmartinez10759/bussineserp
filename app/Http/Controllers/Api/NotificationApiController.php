@@ -107,9 +107,28 @@ class NotificationApiController extends MasterApiController
    *@param Request $request [Description]
    *@return void
    */
-  public static function destroy( Request $request ){
+  public function destroy( $id ){
+      $error = null;
+      DB::beginTransaction();
+      try {
+        $response = SysNotificacionesModel::where(['id' => $id])->delete();
+        SysRolesNotificacionesModel::where(['id_notificacion' => $id ])->delete();
+
+        DB::commit();
+        $success = true;
+      } catch (\Exception $e) {
+          $success = false;
+          $error = $e->getMessage()." ".$e->getLine();
+          DB::rollback();
+      }
+
+      if ($success) {
+        return $this->_message_success( 201, $response );
+      }
+        return $this->show_error(6,$error);
 
 
   }
+
 
 }

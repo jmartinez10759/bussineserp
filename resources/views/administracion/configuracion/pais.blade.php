@@ -16,25 +16,25 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="data in datos">
-                        <td>@{{data.id}}</td>
-                        <td>@{{data.clave}}</td>
-                        <td>@{{data.descripcion}}</td>
-                        <td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.id}}</td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.clave}}</td>
+                        <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.descripcion}}</td>
+                        {{-- <td>
                         	<button type="button" class="btn btn-primary" ng-click="edit_register(data.id)">
                         	 	<i class="fa fa-edit"> Editar </i>
                         	</button>
                         	<button type="button" class="btn btn-danger" ng-click="destroy_register(data.id)">
                         		<i class="fa fa-trash"> Borrar</i>
                         	</button>
-                        </td>
-                        <!-- <td class="text-right col-sm-1">
+                        </td> --}}
+                        <td class="text-right col-sm-1">
                             <div class="dropdown">
                                 <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     Acciones
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                                    <li>
+                                <ul class="dropdown-menu pull-left" aria-labelledby="dropdownMenu1">
+                                    {{-- <li>
                                         <a title="Editar" style="cursor:pointer;" ng-click="insert_register(data.id)">
                                             <i class="glyphicon glyphicon-edit"></i> Editar
                                         </a>
@@ -48,7 +48,7 @@
                                         <a title="Enviar Correo">
                                             <i class="glyphicon glyphicon-envelope"></i> Enviar Email
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li {{$eliminar}}>
                                         <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
                                             <i class="glyphicon glyphicon-trash"></i> Eliminar
@@ -56,7 +56,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </td> -->
+                        </td>
                     </tr>
 
                 </tbody>

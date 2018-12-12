@@ -30,15 +30,16 @@ class SysProveedoresModel extends Model
     return $this->belongsToMany(SysSucursalesModel::class,'sys_proveedores_empresas','id_proveedor','id_sucursal');
   }
   public function empresas(){
-    return $this->belongsToMany(SysSucursalesModel::class,'sys_proveedores_empresas','id_proveedor','id_empresa');
+    return $this->belongsToMany(SysEmpresasModel::class,'sys_proveedores_empresas','id_proveedor','id_empresa');
   }
   
   public function contactos(){
       return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_proveedor','id_contacto');
   }
 
-  public function productos(){
-        return $this->belongsToMany(SysProductosModel::class, 'sys_planes_productos', 'id_proveedor', 'id_producto');
+  public function productos()
+  {
+    return $this->belongsToMany(SysProductosModel::class, 'sys_proveedores_productos', 'id_proveedor', 'id_producto');
   }
   public function regimenes()
   {
@@ -55,6 +56,10 @@ class SysProveedoresModel extends Model
   public function servicios()
   {
       return $this->hasOne(SysClaveProdServicioModel::class, 'id','id_servicio_comercial');
+  }
+  public function almacenes()
+  {
+      return $this->belongsToMany('App\Model\Almacenes\SysAlmacenesModel', 'sys_almacenes_productos', 'id_proveedor', 'id_almacen');
   }
 
 }

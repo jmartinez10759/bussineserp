@@ -32,17 +32,13 @@ app.controller('TiposComprobantesController', function( masterservice, $scope, $
         var fields = {};
         MasterController.request_http(url,fields,'get',$http, false )
         .then(function(response){
-            loading(true);
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+            // loading(true);
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error(error);
-              toastr.error( error.message , expired );
+            masterservice.session_status_error(error);
         });
     
     }
@@ -53,6 +49,8 @@ app.controller('TiposComprobantesController', function( masterservice, $scope, $
         var fields = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -64,13 +62,7 @@ app.controller('TiposComprobantesController', function( masterservice, $scope, $
             });
             $scope.index();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status_error(error);
         });
 
     }
@@ -80,6 +72,8 @@ app.controller('TiposComprobantesController', function( masterservice, $scope, $
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
+        //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
           toastr.info( response.data.message , title );
           
             jQuery.fancybox.close({
@@ -96,13 +90,7 @@ app.controller('TiposComprobantesController', function( masterservice, $scope, $
           jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           //redirect(domain(redireccion));
       }).catch(function( error ){
-          if( isset(error.response) && error.response.status == 419 ){
-                toastr.error( session_expired ); 
-                redirect(domain("/"));
-                return;
-            }
-            console.error( error );
-            toastr.error( error.result , expired );
+          masterservice.session_status_error(error);
       });
     }
 
@@ -121,16 +109,11 @@ app.controller('TiposComprobantesController', function( masterservice, $scope, $
                 ,"width"    : 900
                 ,"height"   : 400
                 ,"autoSize" : false
-            });          
+            });     
+            loading(true);     
             // console.log($scope.edit);return;        
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error , expired );
+            masterservice.session_status_error(error);
         });
     }
 
@@ -141,16 +124,12 @@ app.controller('TiposComprobantesController', function( masterservice, $scope, $
       buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
         MasterController.request_http(url,fields,'delete',$http, false )
         .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }
-              console.error( error );
-              toastr.error( error.data.result , expired );
+            masterservice.session_status_error(error);
         });
           
       },"warning",true,["SI","NO"]);  

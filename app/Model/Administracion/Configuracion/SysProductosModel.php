@@ -60,7 +60,7 @@ class SysProductosModel extends Model
     }
     public function proveedores()
     {
-      return $this->belongsToMany(SysProveedoresModel::class,'sys_almacenes_productos','id_producto','id_proveedor');
+      return $this->belongsToMany(SysProveedoresModel::class,'sys_proveedores_productos','id_producto','id_proveedor');
     }
     public function empresas()
     {
@@ -74,6 +74,7 @@ class SysProductosModel extends Model
     {
       return $this->belongsTo('App\Model\Ventas\SysConceptosPedidosModel', 'id', 'id_producto');
     }
+    
 
     
 }

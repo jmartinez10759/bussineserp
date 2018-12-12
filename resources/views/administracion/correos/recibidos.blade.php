@@ -14,7 +14,7 @@
   <section class="content">
     <div class="row">
       <div class="col-md-3">
-        <a href="{{ route('correos.redactar') }}" class="btn btn-primary btn-block margin-bottom" {{$email}} >Redactar</a>
+        <a href="{{ route('correos.redactar') }}" class="btn btn-primary btn-block margin-bottom" {{$email}} ng-click="remove_fiels()">Redactar</a>
 
         <div class="box box-solid">
           <div class="box-header with-border">
@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="box-body no-padding">
-            <ul class="nav nav-pills nav-stacked">
+            <ul class="nav nav-pills nav-stacked listado_correos">
               <li class="active">
                 <a href="{{route('correos.recibidos')}}">
                   <i class="fa fa-inbox"></i> Recibidos
@@ -119,7 +119,7 @@
               </button>
               <!-- <input type="checkbox" ng-model="checkbox" class="btn btn-default btn-sm"> -->
               <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} ng-click="estatus_papelera()" ><i class="fa fa-trash-o"></i>
+                <button type="button" class="btn btn-default btn-sm btn-papelera" {{$eliminar}} ng-click="activity_register()" ><i class="fa fa-trash-o"></i>
                 </button>
                 <!-- <button type="button" class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button> -->
                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_categorias" title="Agregar categoria">
@@ -142,11 +142,9 @@
             <div class="table-responsive mailbox-messages">
               <table class="table table-hover table-striped" id="bandeja_correos">
                 <tbody>
-                  <tr class="info" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 0" style="cursor:pointer; font-weight: bold;">
-                  <tr style="cursor:pointer;" ng-repeat="correo in datos.correos" ng-if="correo.estatus_vistos == 1" >
+                  <tr ng-repeat="correo in datos.correos" ng-style="vistos_style(correo.estatus_vistos)" style="cursor: pointer;">
                       <td>
-                        <!-- <input type="checkbox" ng-checked="checkbox"> -->
-                        <input type="checkbox" ng-checked="selected">
+                        <input type="checkbox" ng-model="checkboxes[correo.id]" >
                       </td>
                       
                       <td class="mailbox-star" >
@@ -160,26 +158,25 @@
 
                       </td>
 
-                      <td class="mailbox-name" ng-click="details_mails(correo.id)">
+                      <td class="mailbox-name" ng-click="details_mails(correo)">
                         <small>@{{ correo.correo }}</small>
                       </td>
                   
-                      <td class="mailbox-subject" ng-click="details_mails( correo.id )">
+                      <td class="mailbox-subject" ng-click="details_mails( correo )">
                         <small>@{{correo.asunto}}</small>
                       </td>
                   
-                      <td class="mailbox-attachment" ng-click="details_mails(correo.id )">
+                      <!-- <td class="mailbox-attachment" ng-click="details_mails(correo.id )">
                         <div ng-bind-html-unsafe="correo.descripcion.substring(0, 35)"></div>
-                        <!-- @{{ correo.descripcion.substring(1, 25); }} -->
-                      </td>
+                      </td> -->
 
-                      <td class="mailbox-date" ng-click="details_mails( correo.id )">
+                      <td class="mailbox-date" ng-click="details_mails( correo )">
                         <small>@{{ time_fechas( correo.created_at ) }}</small>
                       </td>
                   
                   <td class="">
                     <button type="button" class="btn btn-primary btn-sm" title="Responder Correo" ng-click="redactar(correo)">
-                      <i class="fa fa-envelope"></i>
+                      <i class="fa fa-share"></i>
                     </button>
                   </td>
 
@@ -190,7 +187,7 @@
                   </td>
 
                   <td class="">
-                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" ng-click="update_register(correo.id,{estatus_papelera: correo.estatus_papelera })" {{$eliminar}} >
+                    <button type="button" class="btn btn-danger btn-sm" title="Eliminar" ng-click="activity_register(correo.id,{estatus_papelera: correo.estatus_papelera }, true )" {{$eliminar}} >
                       <i class="fa fa-trash"></i>
                     </button>
                   </td>

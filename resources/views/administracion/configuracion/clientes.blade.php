@@ -64,7 +64,27 @@
                                 </div>
 
                             </td>
-                            
+                            <!-- <td class="text-right">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        Acciones
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+                                        <li>
+                                            <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
+                                                <i class="glyphicon glyphicon-edit"></i> Editar
+                                            </a>
+                                        </li>
+                                        
+                                        <li {{$eliminar}}>
+                                            <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
+                                                <i class="glyphicon glyphicon-trash"></i> Eliminar
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td> -->
                         </tr>
 
                     </tbody>
@@ -91,9 +111,7 @@
                             <th>Contacto</th>
                             <th>Telefono</th>
                             <th>Empresas</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th class="text-right"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,6 +137,15 @@
                             </td>
 
                             <td class="text-right">
+
+                                <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                                <!-- <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        Acciones
+                                        <span class="caret"></span>
+
                                 <div class="col-sm-6">
 
                                     <button type="button" class="btn btn-primary btn-sm" title="Visualizar Comentarios" ng-click="see_activities(data.id)">
@@ -130,16 +157,29 @@
                                     
                                     <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
                                         <i class="glyphicon glyphicon-trash"></i>
+
                                     </button>
-                                    
-                                </div>
+                                    <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+                                        <li>
+                                            <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
+                                                <i class="glyphicon glyphicon-edit"></i> Editar
+                                            </a>
+                                        </li>
+                                        
+                                        <li {{$eliminar}}>
+                                            <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
+                                                <i class="glyphicon glyphicon-trash"></i> Eliminar
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div> -->
                             </td>
                             <td>
-                                <div class="col-sm-12" {{$permisos}}>
-
+                                <div class="row" {{$permisos}}>
+                                    
                                     <select class="form-control" 
                                         chosen
-                                        width="'100%'"
+                                        width="'80%'"
                                         ng-model="data.empresas[0].id" 
                                         ng-options="value.id as value.nombre_comercial for (key, value) in datos.empresas" ng-change="display_sucursales(data.id )" 
                                         id="cmb_empresas_@{{data.id}}">

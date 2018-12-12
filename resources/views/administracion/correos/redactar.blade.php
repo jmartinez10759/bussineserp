@@ -19,7 +19,7 @@
           </div>
         </div>
            <div class="box-body no-padding">
-            <ul class="nav nav-pills nav-stacked">
+            <ul class="nav nav-pills nav-stacked listado_correos">
               <li class="active">
                 <a href="{{route('correos.recibidos')}}">
                   <i class="fa fa-inbox"></i> Recibidos
@@ -95,8 +95,8 @@
             <input type="text" class="form-control" placeholder="Asunto:" ng-model="insert.asunto">
           </div>
           <div class="form-group">
-                <textarea class="form-control compose-textarea" style="height: 300px" ng-model="insert.descripcion">
-                  <h1><u>Heading Of Message</u></h1>
+                <textarea class="form-control compose-textarea" style="height: 300px" ng-bind-html-unsafe="insert.descripcion">
+                  <!-- <h1><u>Heading Of Message</u></h1>
                   <h4>Subheading</h4>
                   <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain
                     was born and I will give you a complete account of the system, and expound the actual teachings
@@ -118,7 +118,7 @@
                     <li>List item four</li>
                   </ul>
                   <p>Thank you,</p>
-                  <p>John Doe</p>
+                  <p>John Doe</p> -->
                 </textarea>
           </div>
           <div class="form-group">
@@ -161,10 +161,12 @@
   <script src="{{asset('admintle/plugins/iCheck/icheck.min.js')}}"></script>
 
   <script type="text/javascript" src="{{asset('js/administracion/correos/build_correos.js')}}" ></script>
-  <script>
+  <script type="text/javascript">
+    jQuery(".compose-textarea").wysihtml5();
+  </script>
+  <!-- <script>
     jQuery('.btn-papelera').attr('disabled',false);
     //Add text editor
-    jQuery(".compose-textarea").wysihtml5();
       //Enable iCheck plugin for checkboxes
       //iCheck for checkbox and radio inputs
       jQuery('.mailbox-messages input[type="checkbox"]').iCheck({
@@ -229,5 +231,5 @@
         }
       });
 
-  </script>
+  </script> -->
 @endpush

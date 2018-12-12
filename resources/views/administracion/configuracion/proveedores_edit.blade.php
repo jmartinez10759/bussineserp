@@ -101,7 +101,7 @@
                                             ng-change="select_estado()" 
                                             ng-model="insert.id_country" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.paises">
-                                            <option value="">--Seleccione Opcion--</option>  
+                                            <option value="" disabled selected >--Seleccione Opcion--</option>  
                                             </select>  
                                         </div>
                                         
@@ -113,7 +113,7 @@
                                             ng-change="select_codigos()" 
                                             ng-model="insert.id_estado" 
                                             ng-options="value.id as value.nombre for (key, value) in cmb_estados">
-                                            <option value="">--Seleccione Opcion--</option>  
+                                            <option value="" disabled selected >--Seleccione Opcion--</option>  
                                             </select>  
                                         </div>
 
@@ -128,7 +128,7 @@
                                             width="'100%'"  
                                             ng-model="insert.id_codigo" 
                                             ng-options="value.id as value.codigo_postal for (key, value) in cmb_codigos"> 
-                                            <option value="">--Seleccione Opcion--</option> 
+                                            <option value="" disabled selected >--Seleccione Opcion--</option> 
                                             </select>    
                                         </div>
 
@@ -139,7 +139,7 @@
                                             width="'100%'" 
                                             ng-model="insert.id_servicio_comercial" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
-                                            <option value="">--Seleccione Opcion--</option> 
+                                            <option value="" disabled selected >--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
 
@@ -153,7 +153,7 @@
                                             width="'100%'" 
                                             ng-model="insert.id_regimen_fiscal" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.regimen_fiscal"> 
-                                            <option value="">--Seleccione Opcion--</option> 
+                                            <option value="" disabled selected >--Seleccione Opcion--</option> 
                                             </select>    
                                         </div>
 
@@ -164,7 +164,7 @@
                                                  width="'100%'" 
                                                  ng-model="insert.estatus" 
                                                  ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
-                                                 <option value="">--Seleccione Opcion--</option>    
+                                                 <option value="" disabled selected >--Seleccione Opcion--</option>    
                                             </select>
                                         </div>
 
@@ -315,7 +315,7 @@
                                             ng-change="select_estado(1)" 
                                             ng-model="update.id_country" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.paises">
-                                            <option value="">--Seleccione Opcion--</option>  
+                                            <option value="" disabled selected >--Seleccione Opcion--</option>  
                                             </select>  
                                         </div>
                                         
@@ -326,7 +326,7 @@
                                             ng-change="select_codigos(1)" 
                                             ng-model="update.id_estado" 
                                             ng-options="value.id as value.nombre for (key, value) in cmb_estados">
-                                            <option value="">--Seleccione Opcion--</option>  
+                                            <option value="" disabled selected >--Seleccione Opcion--</option>  
                                             </select>  
                                         </div>
 
@@ -340,7 +340,7 @@
                                             chosen 
                                             ng-model="update.id_codigo" 
                                             ng-options="value.id as value.codigo_postal for (key, value) in cmb_codigos"> 
-                                            <option value="">--Seleccione Opcion--</option> 
+                                            <option value="" disabled selected >--Seleccione Opcion--</option> 
                                             </select>    
                                         </div>
 
@@ -350,7 +350,7 @@
                                             chosen 
                                             ng-model="update.id_servicio_comercial" 
                                             ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
-                                            <option value="">--Seleccione Opcion--</option> 
+                                            <option value="" disabled selected >--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
 
@@ -364,7 +364,7 @@
                                             chosen
                                             ng-model="update.id_regimen_fiscal" 
                                             ng-options="value.id as value.descripcion for (key, value) in datos.regimen_fiscal"> 
-                                            <option value="">--Seleccione Opcion--</option> 
+                                            <option value="" disabled selected >--Seleccione Opcion--</option> 
                                             </select>    
                                         </div>
 
@@ -375,7 +375,7 @@
                                              width="'100%'" 
                                              ng-model="update.estatus" 
                                              ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
-                                             <option value="">--Seleccione Opcion--</option>   
+                                             <option value="" disabled selected >--Seleccione Opcion--</option>   
                                             </select>
                                         </div>
 
@@ -467,4 +467,24 @@
     </div>
 </div>
 
+<input type="hidden" id="id_proveedor" /> 
+<div class="" id="modal_asing_producto" style="display:none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Listado de Productos</h3>
+            </div>
+            <div class="modal-body">
+                {!! $data_table_producto !!}
+            </div>
+            <div class="modal-footer">
+                <div class="btn-toolbar pull-right">
+                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-primary" ng-click="save_asign_producto()"><i class="fa fa-save"></i> Registrar </button> 
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 

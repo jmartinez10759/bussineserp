@@ -8,20 +8,20 @@ class SysNotificacionesModel extends Model
 {
   public $table = "sys_notificaciones";
   public $fillable = [
-    'id'
-      ,'portal'
-      ,'mensaje'
-      ,'estatus'
+     'id'
+    ,'portal'
+    ,'mensaje'
+    ,'estatus'
   ];
 
   public function roles()
   {
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysRolesModel','sys_rol_notificaciones','id_notificacion','id_rol')->withPivot('estatus');
+    return $this->belongsToMany(SysRolesModel::class,'sys_rol_notificaciones','id_notificacion','id_rol')->withPivot('estatus');
   }
 
   public function empresas()
   {
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_rol_notificaciones','id_notificacion','id_empresa')->withPivot('estatus');
+    return $this->belongsToMany(SysEmpresasModel::class,'sys_rol_notificaciones','id_notificacion','id_empresa')->withPivot('estatus');
   }
 
 
