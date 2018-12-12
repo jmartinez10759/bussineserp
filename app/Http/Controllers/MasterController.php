@@ -495,6 +495,14 @@ abstract class MasterController extends Controller
 		$recibidos = $response_correo[0]->correos()
 										->with(['categorias'])
 										->where(['estatus_recibidos' => 1])
+										->where(['estatus_papelera' => 0])
+										->orderby('created_at','desc')
+										->get();
+		/*se utiliza esta consulta para realizar el conteo de recibidos*/										
+		$recibidos_conteo = $response_correo[0]->correos()
+										->with(['categorias'])
+										->where(['estatus_recibidos' => 1])
+										->where(['estatus_vistos' => 0])
 										->orderby('created_at','desc')
 										->get();
 		#debuger($recibidos);
@@ -561,7 +569,7 @@ abstract class MasterController extends Controller
 		#debuger($datos_correo);
 		$data = [
 			 'correos' 		=> $datos_correo
-			, 'correo' 		=> count($recibidos)
+			, 'correo' 		=> count($recibidos_conteo)
 			, 'papelera' 	=> count($papelera)
 			, 'destacados' 	=> count($destacados)
 			#, 'categoria' 	=> count($etiquetas)

@@ -162,8 +162,10 @@ class CorreoController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-           SysCorreosModel::where(['id' => $request->id])->update($request->all());
-           $response = SysCorreosModel::where(['id' => $request->id])->get();
+          for ($i=0; $i < count( $request->all() ); $i++) { 
+            SysCorreosModel::where(['id' => $request->all()[$i]['id']])->update( $request->all()[$i] );
+          }
+           //$response = SysCorreosModel::where(['id' => $request->id])->get();
         DB::commit();
         $success = true;
         } catch (\Exception $e) {
@@ -173,7 +175,7 @@ class CorreoController extends MasterController
         }
 
         if ($success) {
-          return $this->_message_success( 201, $response , self::$message_success );
+          return $this->_message_success( 201, $success , self::$message_success );
         }
         return $this->show_error(6, $error, self::$message_error );
 
