@@ -378,11 +378,10 @@
          */   
         public function asignar( Request $request ){
             try {
-             $response = SysAlmacenesModel::with(['productos'])
+             $response = SysAlmacenesModel::with(['productos','proveedores'])
                                                 ->where(['id' => $request->id])
                                                 ->get();
-             // $response_proveedores = SysProveedoresModel::with(['productos'])
-             //                                                    ->get();
+             // $response = SysProveedoresProductosModel::get();
             
              // debuger($response); 
 
@@ -408,22 +407,26 @@
                     $response = [];
                     $almacenes = SysAlmacenesModel::with(['productos','proveedores'])->where(['id'=> $request->id_almacen])->get();
                     
-                    $proveedores = SysProveedoresProductosModel::get();
-                    // debuger($almacenes);
+                    for($i = 0; $i < count($request->matrix); $i++){
+                        $matrices = explode('|',$request->matrix[$i]);
+                        $id_proveedor = $matrices[0];
+                        
+                    // debuger($id_proveedor);
+                    $proveedores = SysProveedoresModel::get();
 
-                    // debuger($proveedores);
+                    debuger($proveedores);
 
                     $where = [
-                        'id_proveedor' => ( isset($proveedores[0]) )? $proveedores[0]->id:""        
+                        'id_proveedor' => ( isset($proveedores[0]) )? $proveedores[0]->id:""
                         // ,'id_sucursal' => ( Session::get('id_rol') == 1 && isset($almacenes[0]->sucursales[0])  )? $almacenes[0]->sucursales[0]->id:Session::get('id_sucursal')
                         // 'id_proveedor' =>  $request->id_proveedor
-                        ,'id_producto' =>  $request->id_producto
-
-                        ,'id_almacen' => $request->id_almacen  
-
+                        ,'id_producto' =>  ( isset($almacenes[0]->productos[0]) )? $almacenes[0]->productos[0]->id:""
+                        ,'id_almacen' => $request->id_almacen
                     ];
-                    // debuger($proveedores[0]);
+                    // debuger($where);
                     SysAlmacenesProductosModel::where( $where )->delete();
+                }
+
 
                     // $provProd = SysProveedoresProductosModel::where( $where )->get();
                     // debuger($provProd);
@@ -435,17 +438,17 @@
                         $productos = SysProductosModel::with(['proveedores'])->where(['id' => $id_producto])->get();
                         // $proveedores = SysProveedoresModel::with(['productos'])->where(['id' => $id_proveedor])->get();
                         
-                        // debuger();
-                        $proveedores = SysProveedoresProductosModel::get();
+                        // debuger($productos[0]);
+                        // $proveedores = SysProveedoresProductosModel::get();
                         $data = [
                             'id_proveedor' => ( isset($proveedores[0]) )? $proveedores[0]->id:"" 
                             //  'id_empresa' => (Session::get('id_rol') == 1 && isset($productos[0]->empresas[0]) )? $productos[0]->empresas[0]->id : Session::get('id_empresa')
                             // ,'id_sucursal'=> ( Session::get('id_rol') == 1 && isset($productos[0]->sucursales[0])  )? $productos[0]->sucursales[0]->id:Session::get('id_sucursal')
                             ,'id_almacen' => $request->id_almacen
-                            ,'id_producto' => $id_producto
+                            ,'id_producto' =>  ( isset($productos[0]) )? $productos[0]->id:""
                             // ,'id_proveedor' =>  $request->id_proveedor
                         ];
-                        // debuger($data);
+                        debuger($data);
                         $response[] = SysAlmacenesProductosModel::create($data);
                     }
                 // }

@@ -256,6 +256,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
         var fields = {
             'matrix' : matrix
             , 'id_almacen': $scope.fields.id_almacen
+            // , 'id_proveedor' : $scope.fields.id_proveedor
         }
         
         MasterController.request_http(url, fields, "post", $http, false )

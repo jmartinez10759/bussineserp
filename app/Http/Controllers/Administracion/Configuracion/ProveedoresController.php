@@ -397,7 +397,7 @@
         if( Session::get('id_rol') == 1 ){
 
             $response_proveedores = SysProveedoresModel::with(['estados','contactos','empresas','productos'])
-                            ->where(['estatus' => 1])
+                            
                             ->orderBy('id','desc')
                             ->groupby('id')
                             ->get();
@@ -412,7 +412,7 @@
             
             $response_proveedores = $data[0]->proveedores()
                                     ->with(['estados','contactos','empresas'])
-                                    ->where(['estatus' => 1])
+                                
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();
@@ -429,7 +429,7 @@
             
             $response_proveedores = $empresas[0]->proveedores()
                                     ->with(['estados','contactos','empresas'])
-                                    ->where(['estatus' => 1])
+                                    
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();
