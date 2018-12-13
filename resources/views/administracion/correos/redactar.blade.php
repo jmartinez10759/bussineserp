@@ -2,6 +2,20 @@
 @section('content')
 <!-- iCheck -->
 <link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}">
+
+<style type="text/css">
+    
+    /*.list-group-item:hover{
+      color: #337ab7;
+      text-shadow:  0 0 1em #337ab7;
+      cursor: pointer;
+      /*position: absolute;
+      z-index: 9999;
+    }*/
+
+  </style>
+
+
 @push('styles')
 <!-- Main content -->
 <section class="content" ng-app="appication" ng-controller="CorreosController" ng-init="constructor()" ng-cloak>
@@ -23,35 +37,35 @@
               <li class="active">
                 <a href="{{route('correos.recibidos')}}">
                   <i class="fa fa-inbox"></i> Recibidos
-                  <span class="label label-success pull-right">@{{ datos.correo }}</span>
+                  <span class="label label-success pull-right">@{{ datos.total_correos.correo }}</span>
                 </a>
               </li>
 
               <li>
                 <a href="{{route('correos.envios')}}">
                   <i class="fa fa-envelope-o"></i> Enviados
-                  <span class="label label-primary pull-right">@{{ datos.enviados }}</span>
+                  <span class="label label-primary pull-right">@{{ datos.total_correos.enviados }}</span>
                 </a>
               </li>
               
               <li>
                 <a href="{{route('destacados')}}">
                   <i class="fa fa-file-text-o"></i> Destacados
-                  <span class="label label-info pull-right">@{{ datos.destacados }}</span>
+                  <span class="label label-info pull-right">@{{ datos.total_correos.destacados }}</span>
                 </a>
               </li>
               
               <li>
                 <a href="">
                   <i class="fa fa-align-justify"></i> Borradores
-                  <span class="label label-warning pull-right">@{{ datos.borradores }}</span>
+                  <span class="label label-warning pull-right">@{{ datos.total_correos.borradores }}</span>
                 </a>
               </li>
 
               <li>
                 <a href="{{route('papelera')}}">
                   <i class="fa fa-trash-o"></i> Papelera
-                  <span class="label label-danger pull-right">@{{ datos.papelera }}</span>
+                  <span class="label label-danger pull-right">@{{ datos.total_correos.papelera }}</span>
                 </a>
               </li>
             
@@ -89,13 +103,19 @@
         <!-- /.box-header -->
         <div class="box-body">
           <div class="form-group">
-            <input type="text"class="form-control" placeholder="Para:" ng-model="insert.emisor">
+            <input type="text" class="form-control" placeholder="Para:" ng-model="insert.emisor" ng-keyup="autocomplete(insert.emisor)" />
+            <ul class="list-group" style="position: absolute;">
+              <li class="list-group-item" ng-repeat="correos in filter track by $index" ng-click="fillTextbox(correos)">
+                   @{{ correos }}
+              </li>
+            </ul>
           </div>
           <div class="form-group">
             <input type="text" class="form-control" placeholder="Asunto:" ng-model="insert.asunto">
           </div>
           <div class="form-group">
-                <textarea class="form-control compose-textarea" style="height: 300px" ng-bind-html-unsafe="insert.descripcion">
+              <textarea class="form-control compose-textarea" style="height: 300px" ng-bind-html-unsafe="insert.descripcion">
+              </textarea>
                   <!-- <h1><u>Heading Of Message</u></h1>
                   <h4>Subheading</h4>
                   <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain
@@ -119,7 +139,6 @@
                   </ul>
                   <p>Thank you,</p>
                   <p>John Doe</p> -->
-                </textarea>
           </div>
           <div class="form-group">
             <div class="btn btn-default btn-file">
