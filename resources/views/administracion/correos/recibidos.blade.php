@@ -30,35 +30,35 @@
               <li class="active">
                 <a href="{{route('correos.recibidos')}}">
                   <i class="fa fa-inbox"></i> Recibidos
-                  <span class="label label-success pull-right">@{{ datos.correo }}</span>
+                  <span class="label label-success pull-right">@{{ datos.total_correos.correo }}</span>
                 </a>
               </li>
 
               <li>
                 <a href="{{route('correos.envios')}}">
                   <i class="fa fa-envelope-o"></i> Enviados
-                  <span class="label label-primary pull-right">@{{ datos.enviados }}</span>
+                  <span class="label label-primary pull-right">@{{ datos.total_correos.enviados }}</span>
                 </a>
               </li>
               
               <li>
                 <a href="{{route('destacados')}}">
                   <i class="fa fa-file-text-o"></i> Destacados
-                  <span class="label label-info pull-right">@{{ datos.destacados }}</span>
+                  <span class="label label-info pull-right">@{{ datos.total_correos.destacados }}</span>
                 </a>
               </li>
               
               <li>
                 <a href="">
                   <i class="fa fa-align-justify"></i> Borradores
-                  <span class="label label-warning pull-right">@{{ datos.borradores }}</span>
+                  <span class="label label-warning pull-right">@{{ datos.total_correos.borradores }}</span>
                 </a>
               </li>
 
               <li>
                 <a href="{{route('papelera')}}">
                   <i class="fa fa-trash-o"></i> Papelera
-                  <span class="label label-danger pull-right">@{{ datos.papelera }}</span>
+                  <span class="label label-danger pull-right">@{{ datos.total_correos.papelera }}</span>
                 </a>
               </li>
             
@@ -142,7 +142,7 @@
             <div class="table-responsive mailbox-messages">
               <table class="table table-hover table-striped" id="bandeja_correos">
                 <tbody>
-                  <tr ng-repeat="correo in datos.correos" ng-style="vistos_style(correo.estatus_vistos)" style="cursor: pointer;">
+                  <tr ng-repeat="correo in datos.total_correos.correos" ng-style="vistos_style(correo.estatus_vistos)" style="cursor: pointer;">
                       <td>
                         <input type="checkbox" ng-model="checkboxes[correo.id]" >
                       </td>
