@@ -2,9 +2,6 @@
 @section('content')
 <!-- iCheck -->
 <link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}">
-<style type="text/css">
-
-</style>
 
 @push('styles')
 
@@ -175,16 +172,16 @@
                       </td>
                   
                   <td class="">
-                    <button type="button" class="btn btn-primary btn-sm" title="Responder Correo" ng-click="redactar(correo)">
-                      <i class="fa fa-share"></i>
+                    <button type="button" class="btn btn-success btn-sm" title="Responder Correo" ng-click="reply(correo)">
+                      <i class="glyphicon glyphicon-envelope"></i>
                     </button>
                   </td>
 
-                  <td class="">
+                  <!-- <td class="">
                     <button type="button" class="btn btn-warning btn-sm" title="Notas" ng-click="modal_show(correo.id)">
                       <i class="fa fa-edit"></i>
                     </button>
-                  </td>
+                  </td> -->
 
                   <td class="">
                     <button type="button" class="btn btn-danger btn-sm" title="Eliminar" ng-click="activity_register(correo.id,{estatus_papelera: correo.estatus_papelera }, true )" {{$eliminar}} >

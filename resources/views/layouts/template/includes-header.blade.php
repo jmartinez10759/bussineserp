@@ -114,14 +114,6 @@
         -ms-transition:all .8s ease; /* Opera */
 
     }
-    /*.ng-show {
-      height: 0;
-      width: 0;
-      background-color: transparent;
-      top:-200px;
-      left: 200px;
-    }*/
-
     .notify {
         animation: 1s ease-out 0s normal none infinite running heartbit;
         border: 5px solid #4680ff;

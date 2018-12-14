@@ -1,4 +1,4 @@
-var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe']);
+var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe','files']);
 app.service('masterservice', function() {
 
 	return {
@@ -56,7 +56,7 @@ app.service('masterservice', function() {
 	    },
 	    session_status_error: function( error = {} ){
 	    	loading(true);
-	    	if( isset(error.response) && error.response.status == 419 ){
+	    	if( isset(error.status) && error.status == 419 ){
               toastr.error( session_expired );
               setTimeout(function(){ redirect(domain()); }, 1000);  
               return;

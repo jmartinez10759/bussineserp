@@ -234,7 +234,8 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
         </button>
-        <strong style="font-size:180%">@{{datos.asunto}} </strong><span class="label label-primary"> {{$titulo}}</span>
+        <!-- <strong style="font-size:180%">@{{ edit.asunto }} </strong><span class="label label-primary"> {{$titulo}}</span> -->
+        <strong style="font-size:180%"> <span class="label label-info"> {{$titulo}}</span> </strong>
       </div>
 
       <div class="modal-body panel-body">
@@ -250,33 +251,49 @@
                       <div class="recibidos">
 
                           <div class="form-group">
-                            <strong style="font-size:110%" v-if="datos.nombre">@{{datos.nombre}}</strong>
-                            <strong style="font-size:110%" v-else>Nombre enviado</strong>
-                            <p style="font-size:90%">< @{{datos.correo}} ></p>
+                            @if( $titulo == "Enviados")
+                            	<p style="font-size:90%"><strong>Para: </strong> < @{{ edit.emisor }} ></p>
+                            	<p style="font-size:90%"><strong>De: </strong> < {{ Session::get('email') }} ></p>
+                            @else
+                            	<p style="font-size:90%"><strong>De: </strong> < @{{ edit.emisor }} ></p>
+                            	<p style="font-size:90%"><strong>Para: Mi </strong> < {{ Session::get('email') }} ></p>
+                            @endif
+                            	<p><strong>Asunto: </strong> @{{ edit.asunto }} </p>
                           </div>
                           <div class="form-group">
-                            <strong style="font-size:70%" v-for="(users,key) in datos.usuarios"> @{{users.name}} @{{users.first_surname}} @{{users.second_surname}}</strong>
-                            <p style="font-size:70%" v-for="(users,key) in datos.usuarios">< @{{users.email}} ></p>
+                            <!-- <strong style="font-size:70%" v-for="(users,key) in datos.usuarios"> @{{users.name}} @{{users.first_surname}} @{{users.second_surname}}</strong> -->
+                            <!-- <p style="font-size:70%" v-for="(users,key) in datos.usuarios">< @{{users.email}} ></p> -->
                             <!-- <strong style="font-size:110%">Nombre Recibido</strong> -->
                           </div>
                           <div class="form-group">
                               <div class="panel panel-default">
                                 <div class="panel-heading">Descripcion Mensaje</div>
-                                <div class="panel-body" v-html="datos.descripcion"></div>
+                                <div class="panel-body" ng-bind-html-unsafe="edit.descripcion" style="overflow-y:scroll; height:300px;"></div>
                               </div>
                           </div>
 
                       </div>
-
-                      <div class="form-group mensaje" style="display:none;">
-                          @include('administracion.correos.redaccion')
-                      </div>
+                      
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer ">
                       <div class="pull-right">
-                        <button type="button" class="btn btn-danger recibidos" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
-                        <button type="button" class="btn btn-primary recibidos" v-on:click.prevent="mostrar()"><i class="fa fa-mail-reply"></i> Responder</button>
+                        <button type="button" class="btn btn-danger recibidos" data-dismiss="modal" aria-hidden="true">
+                        	<i class="fa fa-times-circle"></i> 
+                        	Cerrar
+                        </button>
+                         @if( $titulo != "Recibidos")
+	                        <button type="button" class="btn btn-primary recibidos" ng-click="resend()">
+	                        	<i class="fa fa-mail-reply"></i> 
+	                        	Reenviar
+	                        </button>
+                        @endif
+                        @if( $titulo == "Recibidos")
+	                        <button type="button" class="btn btn-success recibidos" ng-click="reply()">
+	                        	<i class="glyphicon glyphicon-envelope"></i> 
+	                        	Responder
+	                        </button>
+                        @endif
                       </div>
                       <!-- <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Discard</button> -->
                     </div>
