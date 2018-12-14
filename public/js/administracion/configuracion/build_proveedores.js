@@ -394,7 +394,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
                 'src': "#permisos",
                 'buttons': ['share', 'close']
             });
-            $scope.index();          
+            $scope.consulta_general();          
         }).catch(error => {
             masterservice.session_status_error(error); 
         });
