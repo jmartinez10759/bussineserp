@@ -2,6 +2,19 @@
 @section('content')
 <!-- iCheck -->
 <link rel="stylesheet" href="{{asset('admintle/plugins/iCheck/flat/blue.css')}}">
+
+<style type="text/css">
+    .list-group-item {
+      z-index: 9999;
+    }
+    .list-group-item:hover{
+      color: #337ab7;
+      text-shadow:  0 0 1em #337ab7;
+      cursor: pointer;
+      z-index: 9999;
+    }
+    
+  </style>
 @push('styles')
 <!-- Main content -->
 <section class="content" ng-app="appication" ng-controller="CorreosController" ng-init="constructor()" ng-cloak>
@@ -23,35 +36,35 @@
               <li class="active">
                 <a href="{{route('correos.recibidos')}}">
                   <i class="fa fa-inbox"></i> Recibidos
-                  <span class="label label-success pull-right">@{{ datos.correo }}</span>
+                  <span class="label label-success pull-right">@{{ datos.total_correos.correo }}</span>
                 </a>
               </li>
 
               <li>
                 <a href="{{route('correos.envios')}}">
                   <i class="fa fa-envelope-o"></i> Enviados
-                  <span class="label label-primary pull-right">@{{ datos.enviados }}</span>
+                  <span class="label label-primary pull-right">@{{ datos.total_correos.enviados }}</span>
                 </a>
               </li>
               
               <li>
                 <a href="{{route('destacados')}}">
                   <i class="fa fa-file-text-o"></i> Destacados
-                  <span class="label label-info pull-right">@{{ datos.destacados }}</span>
+                  <span class="label label-info pull-right">@{{ datos.total_correos.destacados }}</span>
                 </a>
               </li>
               
               <li>
                 <a href="">
                   <i class="fa fa-align-justify"></i> Borradores
-                  <span class="label label-warning pull-right">@{{ datos.borradores }}</span>
+                  <span class="label label-warning pull-right">@{{ datos.total_correos.borradores }}</span>
                 </a>
               </li>
 
               <li>
                 <a href="{{route('papelera')}}">
                   <i class="fa fa-trash-o"></i> Papelera
-                  <span class="label label-danger pull-right">@{{ datos.papelera }}</span>
+                  <span class="label label-danger pull-right">@{{ datos.total_correos.papelera }}</span>
                 </a>
               </li>
             
@@ -89,13 +102,23 @@
         <!-- /.box-header -->
         <div class="box-body">
           <div class="form-group">
-            <input type="text"class="form-control" placeholder="Para:" ng-model="insert.emisor">
+            <input type="text" class="form-control" placeholder="Para:" ng-model="insert.emisor" ng-keyup="autocomplete(insert.emisor)" />
+            <ul class="list-group" style="position: absolute;">
+              <li class="list-group-item" ng-repeat="correos in filter track by $index" ng-click="fillTextbox(correos)">
+                   @{{ correos }}
+              </li>
+            </ul>
           </div>
           <div class="form-group">
             <input type="text" class="form-control" placeholder="Asunto:" ng-model="insert.asunto">
           </div>
           <div class="form-group">
-                <textarea class="form-control compose-textarea" style="height: 300px" ng-bind-html-unsafe="insert.descripcion">
+              <textarea class="form-control compose-textarea " style="height: 300px">
+                  
+              </textarea>
+
+              <!-- <textarea class="form-control compose-textarea" style="height: 300px" ng-bind-html-unsafe="insert.descripcion">
+              </textarea> -->
                   <!-- <h1><u>Heading Of Message</u></h1>
                   <h4>Subheading</h4>
                   <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain
@@ -119,13 +142,13 @@
                   </ul>
                   <p>Thank you,</p>
                   <p>John Doe</p> -->
-                </textarea>
           </div>
           <div class="form-group">
-            <div class="btn btn-default btn-file">
-              <i class="fa fa-paperclip"></i> Attachment
-              <input type="file" name="attachment" multiple >
+            <div class="btn btn-default btn-file" title="Subir Archivo">
+              <i class="fa fa-paperclip"></i>
+              <input type="file" file-model="files" multiple >
             </div>
+              <li ng-repeat="file in files">@{{ file.name }}</li>
             <p class="help-block">Max. 32MB</p>
           </div>
         </div>
@@ -144,7 +167,7 @@
               </button>
             </div>
           </div>
-          <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Descartar</button>
+          <!-- <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Descartar</button> -->
         </div>
         <!-- /.box-footer -->
       </div>
@@ -162,74 +185,7 @@
 
   <script type="text/javascript" src="{{asset('js/administracion/correos/build_correos.js')}}" ></script>
   <script type="text/javascript">
-    jQuery(".compose-textarea").wysihtml5();
+      jQuery(".compose-textarea").wysihtml5();
   </script>
-  <!-- <script>
-    jQuery('.btn-papelera').attr('disabled',false);
-    //Add text editor
-      //Enable iCheck plugin for checkboxes
-      //iCheck for checkbox and radio inputs
-      jQuery('.mailbox-messages input[type="checkbox"]').iCheck({
-        checkboxClass: 'icheckbox_flat-blue',
-        radioClass: 'iradio_flat-blue'
-      });
-      //Enable check and uncheck all functionality
-      jQuery(".checkbox-toggle").click(function () {
-        var clicks = jQuery(this).data('clicks');
-        if (clicks) {
-          //Uncheck all checkboxes
-          jQuery(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
-          jQuery(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
-          jQuery('.btn-papelera').attr('disabled',true);
-        } else {
-          //Check all checkboxes
-          jQuery(".mailbox-messages input[type='checkbox']").iCheck("check");
-          jQuery('.btn-papelera').attr('disabled',false);
-          jQuery(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
-        }
-        jQuery(this).data("clicks", !clicks);
-      });
 
-      //Handle starring for glyphicon and font awesome
-      jQuery(".mailbox-star").click(function (e) {
-        e.preventDefault();
-        //detect type
-        var $this = jQuery(this).find("a > i");
-        var glyph = $this.hasClass("glyphicon");
-        var fa = $this.hasClass("fa");
-        var id_correo = $this.attr('id_correo');
-        var estatus_destacados;
-        //se esta es 0 si no esta es 1
-        if( $this.hasClass('fa-star') ){
-          estatus_destacados = 0;
-        }else{
-          estatus_destacados = 1;
-        }
-        var fields = {'id': id_correo, 'estatus_destacados': estatus_destacados};
-        var url = domain('correos/destacados');
-        axios.post( url, fields , csrf_token ).then(response => {
-            console.log( response.data.result );
-            if( response.data.success == true ){
-              //redirect(domain('correos/recibidos'));
-              location.reload();
-            }else{
-              //toastr.error( response.data.message, "¡Bandeja de entrada Vacia !" );
-            }
-        }).catch(error => {
-            toastr.error( error, expired );
-        });
-
-        //Switch states
-        if (glyph) {
-          $this.toggleClass("glyphicon-star");
-          $this.toggleClass("glyphicon-star-empty");
-        }
-
-        if (fa) {
-          $this.toggleClass("fa-star");
-          $this.toggleClass("fa-star-o");
-        }
-      });
-
-  </script> -->
 @endpush

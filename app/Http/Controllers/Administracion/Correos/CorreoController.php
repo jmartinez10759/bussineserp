@@ -16,6 +16,7 @@ use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Correos\SysUsersCorreosModel;
 use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
+use App\Model\Administracion\Configuracion\SysContactosModel;
 
 class CorreoController extends MasterController
 {
@@ -41,11 +42,29 @@ class CorreoController extends MasterController
      public function all( Request $request){
 
         try {
-          $data = $this->consulta_emails();
+          $correos_users = SysUsersModel::get(['email']);
+          $correos_contactos = SysContactosModel::groupby('correo')->get(['correo']);
+          $datos_correos = [];
+          $datos_users = [];
+          foreach ($correos_contactos as $correos) {
+            if ($correos->correo) {
+              $datos_correos [] = $correos->correo;
+            }
+          }
+          foreach ($correos_users as $users) {
+            if($users->email){
+              $datos_users[] = $users->email;
+            }
+          }
+          $new_correos = array_merge($datos_correos,$datos_users);
+          $data = [
+            'total_correos' => $this->consulta_emails()
+            ,'contactos'    => $new_correos
+          ];
           return $this->_message_success( 200, $data , self::$message_success );
         } catch (\Exception $e) {
-              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-              return $this->show_error(6, $error, self::$message_error );
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
         }
 
      }
@@ -57,7 +76,7 @@ class CorreoController extends MasterController
      */
     public function show( Request $request ){
         #$where = ['id' => Session::get('id')];
-        $correo = [];
+        /*$correo = [];
         $where = ['id' => $request->id];
         #actualizo los datos del usuarios
         $response = SysCorreosModel::with('categorias','usuarios')->where($where)->get();
@@ -68,7 +87,7 @@ class CorreoController extends MasterController
           SysCorreosModel::where($where)->update(['estatus_vistos'=>1]);
           return message(true,$correo,"¡Detalles del correo!");
         }
-        return message(false,[],'Ocurrio un error, favor de verificar la informacion');
+        return message(false,[],'Ocurrio un error, favor de verificar la informacion');*/
 
     }
     /**

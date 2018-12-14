@@ -201,8 +201,23 @@ angular.module("html-unsafe",[])
     }
 }]);
 
+angular.module('files', [])
+ .directive('fileModel', ['$parse', function ($parse) {
+    return {
+       restrict: 'A',
+       link: function(scope, element, attrs) {
+          element.bind('change', function(){
+          $parse(attrs.fileModel).assign(scope,element[0].files)
+             scope.$apply();
+          });
+       }
+    };
+ }]);
 
-angular.module("angular-icheck",[])
+
+
+
+/*angular.module("angular-icheck",[])
 .directive('iCheck', function($timeout) {
     return {
       link: function(scope, element, attrs) {
@@ -216,4 +231,4 @@ angular.module("angular-icheck",[])
         });
       }
     };
-  })
+  })*/
