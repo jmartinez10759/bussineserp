@@ -62,6 +62,13 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
 
     }
 
+    $scope.readFile = function( $event ){
+        var count = 0;
+        $scope.files[count] = $event.target.files;  
+        count ++;
+        console.log($scope.files);
+    }
+
     $scope.send_correo =  function( resend = false ){
 
       if (!resend ) {
@@ -78,7 +85,7 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         
       }
       /*se catch el archivo si es que se mando uno y se muestra en pantalla*/     
-        var fd=new FormData();
+        var fd = new FormData();
         console.log( $scope.files );
         angular.forEach($scope.files,function(file){
           fd.append('file',file);

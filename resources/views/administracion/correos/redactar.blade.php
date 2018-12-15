@@ -146,9 +146,11 @@
           <div class="form-group">
             <div class="btn btn-default btn-file" title="Subir Archivo">
               <i class="fa fa-paperclip"></i>
-              <input type="file" file-model="files" multiple >
+              <!-- <input type="file" multiple ng-upload-change> -->
+              <input type="file" multiple ng-upload-change="readFile($event)" />
             </div>
               <li ng-repeat="file in files">@{{ file.name }}</li>
+              <!-- <embed src="upload_file/archivos/manual.pdf" width="1000px" height="1000px"> -->
             <p class="help-block">Max. 32MB</p>
           </div>
         </div>
