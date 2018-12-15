@@ -202,18 +202,23 @@ angular.module("html-unsafe",[])
 }]);
 
 angular.module('files', [])
- .directive('fileModel', ['$parse', function ($parse) {
-    return {
-       restrict: 'A',
-       link: function(scope, element, attrs) {
-          element.bind('change', function(){
-          $parse(attrs.fileModel).assign(scope,element[0].files)
-             scope.$apply();
-          });
-       }
-    };
- }]);
-
+ .directive("ngUploadChange",function(){
+    return{
+        scope:{
+            ngUploadChange:"&"
+        },
+        link:function($scope, $element, $attrs){
+            $element.on("change",function(event){
+                $scope.$apply(function(){
+                    $scope.ngUploadChange({$event: event})
+                })
+            })
+            $scope.$on("$destroy",function(){
+                $element.off();
+            });
+        }
+    }
+});
 
 
 
