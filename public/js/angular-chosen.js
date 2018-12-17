@@ -201,8 +201,28 @@ angular.module("html-unsafe",[])
     }
 }]);
 
+angular.module('files', [])
+ .directive("ngUploadChange",function(){
+    return{
+        scope:{
+            ngUploadChange:"&"
+        },
+        link:function($scope, $element, $attrs){
+            $element.on("change",function(event){
+                $scope.$apply(function(){
+                    $scope.ngUploadChange({$event: event})
+                })
+            })
+            $scope.$on("$destroy",function(){
+                $element.off();
+            });
+        }
+    }
+});
 
-angular.module("angular-icheck",[])
+
+
+/*angular.module("angular-icheck",[])
 .directive('iCheck', function($timeout) {
     return {
       link: function(scope, element, attrs) {
@@ -216,4 +236,4 @@ angular.module("angular-icheck",[])
         });
       }
     };
-  })
+  })*/

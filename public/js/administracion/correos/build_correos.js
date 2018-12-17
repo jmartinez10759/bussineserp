@@ -30,6 +30,7 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         $scope.checkboxes = {};
         $scope.index();
         $scope.iterar_correo();
+        $scope.files = {};
     }
 
     $scope.index = function(){
@@ -43,8 +44,8 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
 
             $scope.datos = response.data.result;
             $scope.list_correos = response.data.result.contactos;
-            for( var i in $scope.datos.correos){
-                $scope.checkboxes[$scope.datos.correos[i].id] = false;
+            for( var i in $scope.datos.total_correos.correos){
+                $scope.checkboxes[$scope.datos.total_correos.correos[i].id] = false;
             }
             console.log($scope.datos );
             $myLocalStorage.remove('correos');
@@ -54,8 +55,23 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         });
     
     }
-    $scope.send_correo =  function(){
 
+    $scope.resend = function(){
+      console.log($scope.edit);
+      $scope.send_correo(true);
+
+    }
+
+    $scope.readFile = function( $event ){
+        var count = 0;
+        $scope.files[count] = $event.target.files;  
+        count ++;
+        console.log($scope.files);
+    }
+
+    $scope.send_correo =  function( resend = false ){
+
+      if (!resend ) {
         var validacion = {
              'CORREO'   : $scope.insert.emisor
             ,'ASUNTO'   : $scope.insert.asunto
@@ -66,8 +82,18 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
             return;
         }
         $scope.insert.descripcion = jQuery('.compose-textarea').val();
+        
+      }
+      /*se catch el archivo si es que se mando uno y se muestra en pantalla*/     
+        var fd = new FormData();
+        console.log( $scope.files );
+        angular.forEach($scope.files,function(file){
+          fd.append('file',file);
+        });
+      
+      return;
+        var fields = (!resend)? $scope.insert : $scope.edit ;
         var url = domain(URL.url_envios);
-        var fields = $scope.insert;
 
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
@@ -89,21 +115,42 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
     }
 
     $scope.iterar_correo = function(){
-      
       $scope.insert.emisor        = (isset($myLocalStorage.get('correos')))?$myLocalStorage.get('correos').correo: "";
       $scope.insert.asunto        = (isset($myLocalStorage.get('correos')))?$myLocalStorage.get('correos').asunto: "";
       $scope.insert.descripcion   = (isset($myLocalStorage.get('correos')))?$myLocalStorage.get('correos').descripcion: "";
        
     }
 
+    $scope.reply = function( data, estatus = false ){
+
+      if (!estatus && data ) {
+        var datos = ['asunto','correo','descripcion'];
+        var fields = iterar_object(data,datos,true);
+      }else{
+        var object = {};
+        object['correo'] = $scope.edit.emisor;
+        object['asunto'] = $scope.edit.asunto;
+        var fields = object;
+      }
+      $myLocalStorage.set('correos',fields);
+      $scope.iterar_correo();
+      redirect( domain('correos/redactar') );
+      
+    }
+    
     $scope.details_mails = function( data ){
 
       var datos = ['asunto','correo','descripcion'];
       var fields = iterar_object(data,datos,true);
       $scope.update_register(data.id, { estatus_vistos : false } );
-      $myLocalStorage.set('correos',fields);
-      $scope.iterar_correo();
-      redirect( domain('correos/redactar') );
+
+      $scope.edit.emisor      = data.correo
+      $scope.edit.asunto      = data.asunto
+      $scope.edit.descripcion = data.descripcion;
+      
+      jQuery('#modal_add_detalles').modal({backdrop: 'static', keyboard: false});
+      jQuery('#modal_add_detalles').modal('show');
+      
 
     }
 
