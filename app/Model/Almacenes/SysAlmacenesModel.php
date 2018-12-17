@@ -14,6 +14,9 @@ class SysAlmacenesModel extends Model
         ,'salidas'
         ,'estatus'
       ];
+	  public function proveedores(){
+	    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProveedoresModel','sys_almacenes_productos','id_almacen','id_proveedor');
+	  }
 
 	  public function sucursales(){
 	    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_almacenes_empresas','id_almacen','id_sucursal');
@@ -21,13 +24,8 @@ class SysAlmacenesModel extends Model
 	  public function empresas(){
 	    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_almacenes_empresas','id_almacen','id_empresa');
 	  }
-	  public function productos()
-	  {
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel', 'sys_almacenes_productos', 'id_almacen', 'id_producto');
-	  }
-	  public function proveedores()
-	  {
-	    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProveedoresModel', 'sys_almacenes_productos', 'id_almacen', 'id_proveedor');
+	  public function productos(){
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysProductosModel', 'sys_almacenes_productos','id_almacen','id_producto');
 	  }
 
 }

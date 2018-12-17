@@ -397,7 +397,7 @@
         if( Session::get('id_rol') == 1 ){
 
             $response_proveedores = SysProveedoresModel::with(['estados','contactos','empresas','productos'])
-                            ->where(['estatus' => 1])
+                            
                             ->orderBy('id','desc')
                             ->groupby('id')
                             ->get();
@@ -412,7 +412,7 @@
             
             $response_proveedores = $data[0]->proveedores()
                                     ->with(['estados','contactos','empresas'])
-                                    ->where(['estatus' => 1])
+                                
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();
@@ -429,7 +429,7 @@
             
             $response_proveedores = $empresas[0]->proveedores()
                                     ->with(['estados','contactos','empresas'])
-                                    ->where(['estatus' => 1])
+                                    
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();
@@ -466,11 +466,11 @@
      * @param Request $request [Description]
      * @return void
      */
-    public function asignar_insert( Request $request ){
-            #debuger($request->all());
+    public function asignar_insert( Request $request ){            
            $error = null;
             DB::beginTransaction();
             try {
+                $response = [];
                 $proveedores = SysProveedoresModel::with(['empresas','sucursales'])->where(['id'=> $request->id_proveedor])->get();
                 $where = [
                      'id_empresa' => (Session::get('id_rol') == 1 && isset($proveedores[0]->empresas[0]) )? $proveedores[0]->empresas[0]->id : Session::get('id_empresa')
@@ -478,15 +478,15 @@
                     ,'id_proveedor' => $request->id_proveedor
                     ,'id_rol'  =>  Session::get('id_rol')
                     ,'id_users' =>  Session::get('id')
-                ];
-               
+                ];               
 
                 SysProveedoresProductosModel::where( $where )->delete();
                 for($i = 0; $i < count($request->matrix); $i++){
                     $matrices = explode('|',$request->matrix[$i]);
                     $id_producto = $matrices[0];
                     $productos = SysProductosModel::with(['empresas','sucursales'])->where(['id' => $id_producto])->get();
-                    #debuger($productos[0]->empresas[0]->id);
+                
+                    // debuger($request->matrix);
                     $data = [
                          'id_empresa' => (Session::get('id_rol') == 1 && isset($productos[0]->empresas[0]) )? $productos[0]->empresas[0]->id : Session::get('id_empresa')
                         ,'id_sucursal'=> ( Session::get('id_rol') == 1 && isset($productos[0]->sucursales[0])  )? $productos[0]->sucursales[0]->id:Session::get('id_sucursal')
@@ -494,9 +494,9 @@
                         ,'id_producto' => $id_producto
                         ,'id_rol'  =>  Session::get('id_rol')
                         ,'id_users' =>  Session::get('id')
-                    ];
-                    // debuger($data);
-                    $response[] = SysProveedoresProductosModel::create($data);
+                    ];                  
+
+                        $response[] = SysProveedoresProductosModel::create($data);
                 }
             DB::commit();
             $success = true;
