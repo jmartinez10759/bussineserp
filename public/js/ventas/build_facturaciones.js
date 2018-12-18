@@ -46,6 +46,7 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             if(masterservice.session_status( response )){return;};
             
             $scope.datos = response.data.result;
+            $scope.cmb_uso_cfdi = response.data.result.uso_cfdi;
             console.log($scope.datos);
         }).catch(function(error){
               masterservice.session_status_error(error);
@@ -351,8 +352,9 @@ app.controller('FacturacionController', function( masterservice ,$scope, $http, 
             //not remove function this is  verify the session
             if(masterservice.session_status( response )){return;};
 
-            $scope.cmb_contactos = response.data.result.contactos;
-            $scope.fields.rfc = response.data.result.rfc_receptor
+            $scope.cmb_contactos  = response.data.result.contactos;
+            //$scope.cmb_uso_cfdi   = response.data.result.id_uso_cfdi;
+            $scope.fields.rfc     = response.data.result.rfc_receptor
             $scope.fields.nombre_comercial = response.data.result.nombre_comercial
             $scope.fields.telefono_empresa = response.data.result.telefono
             console.log(response);
