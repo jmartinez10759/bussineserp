@@ -14,6 +14,7 @@ use App\Model\Administracion\Configuracion\SysPlanesModel;
 use App\Model\Administracion\Configuracion\SysMonedasModel;
 use App\Model\Administracion\Configuracion\SysEstatusModel;
 use App\Model\Administracion\Configuracion\SysClientesModel;
+use App\Model\Administracion\Configuracion\SysUsoCfdiModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysProductosModel;
 use App\Model\Administracion\Configuracion\SysFormasPagosModel;
@@ -70,6 +71,7 @@ class FacturacionesController extends MasterController
                 ,'metodos_pagos'    => SysMetodosPagosModel::where(['estatus' => 1])->get()
                 ,'monedas'          => SysMonedasModel::where(['estatus' => 1])->get()
                 ,'tipo_comprobante' => SysTiposComprobantesModel::where(['estatus' => 1])->get()
+                ,'uso_cfdi'         => SysUsoCfdiModel::get()
                 ,'clientes'         => $this->_catalogos_bussines( new SysClientesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                 ,'productos'        =>  $this->_catalogos_bussines( new SysProductosModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
                 ,'planes'           => $this->_catalogos_bussines( new SysPlanesModel, [],['estatus' => 1],['id' => Session::get('id_empresa')] )

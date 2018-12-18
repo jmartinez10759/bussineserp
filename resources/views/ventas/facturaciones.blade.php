@@ -22,7 +22,7 @@
 
                 <div class="col-sm-6">
                     <ul class="pagination pagination-sm">
-                        <li ng-repeat="filtros in filtro" class="@{{filtros.class}}" >                    
+                        <li ng-repeat="filtros in filtro" class="@{{ filtros.class }}" >                    
                             <a style="cursor: pointer" ng-click="filtros_mes(filtros)"> 
                                 @{{filtros.nombre}}
                             </a>
