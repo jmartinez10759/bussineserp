@@ -77,5 +77,10 @@ class SysClientesModel extends Model
     {
       return $this->belongsToMany(SysActivitiesModel::class, 'sys_users_activities', 'id_cliente' ,'id_actividad');
     }
+    public function archivos()
+    {
+      return $this->belongsToMany(SysFilesCompanysModel::class,'sys_users_files','id_cliente','id_archivo');
+    }
+
 
 }

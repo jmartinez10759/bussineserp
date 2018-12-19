@@ -20,23 +20,22 @@
                 </div>
 
 
-                <label for="contacto" class="col-md-1 control-label">Contacto:</label>
-                <div class="col-md-2">
+                <label for="contacto" class="col-md-1 control-label">Uso CFDI:</label>
+                <div class="col-md-3">
                     <select class="form-control input-sm"
                     width="'100%'"
                     chosen
-                    ng-model="insert.id_contacto" 
-                    ng-options="value.id as value.nombre_completo for (key, value) in cmb_contactos" 
-                    ng-change="change_contactos()" >
+                    ng-model="insert.id_uso_cfdi" 
+                    ng-options="value.id as value.clave +' '+value.descripcion for (key, value) in cmb_uso_cfdi">
                         <option value="">--Seleccione Opcion--</option>
                     </select>
                 </div>
 
 
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <input type="text" class="form-control input-sm" placeholder="Teléfono Contacto" readonly="" ng-model="fields.telefono" capitalize>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <input type="text" class="form-control input-sm" placeholder="Correo Contacto" readonly="" ng-model="fields.correo">
                 </div>
 
@@ -70,7 +69,7 @@
                     width="'100%'"
                     chosen
                     ng-model="insert.id_forma_pago" 
-                    ng-options="value.id as value.descripcion for (key, value) in datos.formas_pagos">
+                    ng-options="value.id as value.clave+' - '+value.descripcion for (key, value) in datos.formas_pagos">
                         <option value="">--Seleccione Opcion--</option>
                     </select>
                 </div>
@@ -80,7 +79,7 @@
                     width="'100%'"
                     chosen
                     ng-model="insert.id_metodo_pago" 
-                    ng-options="value.id as value.descripcion for (key, value) in datos.metodos_pagos">
+                    ng-options="value.id as value.clave+' - '+value.descripcion for (key, value) in datos.metodos_pagos">
                         <option value="">--Seleccione Opcion--</option>
                     </select>
                 </div>
@@ -111,7 +110,7 @@
                     width="'100%'"
                     chosen
                     ng-model="insert.id_moneda" 
-                    ng-options="value.id as value.descripcion for (key, value) in datos.monedas">
+                    ng-options="value.id as value.nombre+' - '+value.descripcion for (key, value) in datos.monedas">
                         <option value="">--Seleccione Opcion--</option>
                     </select>
                 </div>

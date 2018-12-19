@@ -65,6 +65,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
                 ,'height'   : 400
                 ,'autoSize' : false
             });
+            $scope.insert = {};
             $scope.index();
         }).catch(function( error ){
             masterservice.session_status_error(error); 
@@ -230,6 +231,8 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
           });
           jQuery('#datatable_productos input[type="checkbox"]').prop('checked',false);
           if(response.data.result.productos.length > 0){
+
+            // console.log(response.data.result.productos); return;
               for (var i = 0; i < response.data.result.productos.length; i++) {
                     jQuery('#'+response.data.result.productos[i].id).prop('checked', true);
               };
@@ -244,17 +247,38 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
 
         var matrix = [];
         var i = 0;
+        // var ip = 0;
+        var url = domain( URL.url_asign_insert);
+        // jQuery('#datatable_productos input[type="checkbox"]').each(function () {
+        //     if (jQuery(this).is(':checked') == true) {
+                
+        //         var id = jQuery(this).attr('id_producto');
+        //         matrix[ip] = `${id}|${jQuery(this).is(':checked')}`;
+        //         i++;
+        //     }
+        // });
+        // var fieldsP = {
+        //     'matrix' : matrix
+        //     // , 'id_almacen': $scope.fields.id_almacen
+        //     , 'id_proveedor' : $scope.fields.id_proveedor
+            
+        // }
+        // console.log(fieldsP);return;
+
         jQuery('#datatable_productos input[type="checkbox"]').each(function () {
             if (jQuery(this).is(':checked') == true) {
                 var id = jQuery(this).attr('id_producto');
+                
                 matrix[i] = `${id}|${jQuery(this).is(':checked')}`;
                 i++;
             }
         });
-        var url = domain( URL.url_asign_insert);
+        
         var fields = {
             'matrix' : matrix
             , 'id_almacen': $scope.fields.id_almacen
+            // , 'id_proveedor' : $scope.fields.id_proveedor
+            
         }
         // console.log(fields);return;
         MasterController.request_http(url, fields, "post", $http, false )

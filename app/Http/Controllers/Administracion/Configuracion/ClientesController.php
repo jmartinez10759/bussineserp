@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Administracion\Configuracion;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysPaisModel;
@@ -15,6 +16,8 @@ use App\Model\Administracion\Configuracion\SysClientesModel;
 use App\Model\Administracion\Facturacion\SysFacturacionModel;
 use App\Model\Administracion\Configuracion\SysContactosModel;
 use App\Model\Administracion\Configuracion\SysActivitiesModel;
+use App\Model\Administracion\Configuracion\SysUsersFilesModel;
+use App\Model\Administracion\Configuracion\SysFilesCompanysModel;
 use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
 use App\Model\Administracion\Configuracion\SysUsersActivitiesModel;
 use App\Model\Administracion\Configuracion\SysClientesEmpresasModel;
@@ -83,7 +86,7 @@ class ClientesController extends MasterController
         try {        
           $response = SysClientesModel::with(['contactos','actividades' => function( $query ){
              return $query->with(['usuarios','roles'])->orderby('id','desc')->get();
-          }])->where(['id' => $request->id])->get();
+          },'archivos'])->where(['id' => $request->id])->get();
 
           return $this->_message_success( 200, $response[0] , self::$message_success );
         } catch (\Exception $e) {
@@ -99,13 +102,13 @@ class ClientesController extends MasterController
      *@return void
      */
     public function store( Request $request){
-          #debuger( $request->all() );
+          #debuger( $request->all()  );
           $error = null;
           DB::beginTransaction();
           try {
               $string_key_contactos = [ 'contacto','departamento','telefono', 'correo','id_study','extension', 'cargo' ];
-                $string_data_clientes = [];
-                $string_data_contactos = [];
+              $string_data_clientes = [];
+              $string_data_contactos = [];
                 foreach( $request->all() as $key => $value ){
                     if( in_array( $key, $string_key_contactos) ){
                         if( $key == 'contacto' ){
@@ -128,11 +131,12 @@ class ClientesController extends MasterController
                 }
                 #debuger($string_data_contactos,false);
                 #debuger($string_data_clientes);
+
                 $response = $this->_tabla_model::create( $string_data_clientes );
                 $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
-                    'id_empresa'       => (Session::get('id_rol') != 1)? Session::get('id_empresa')  :0
-                    ,'id_sucursal'     => (Session::get('id_rol') != 1)? Session::get('id_sucursal') :0
+                    'id_empresa'       => Session::get('id_empresa')
+                    ,'id_sucursal'     => Session::get('id_sucursal')
                     ,'id_cliente'      => $response->id
                 ];
                 SysClientesEmpresasModel::create($data); 
@@ -487,7 +491,63 @@ class ClientesController extends MasterController
         return [ 'response' => $response ,'response_clientes' => $response_clientes ];
 
     }
+    /**
+     * Metodo para subir masivamente varios archivos al servidor eh insertarlos
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function upload_files_clientes( Request $request){
+        #debuger( $request->all() );
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $ruta_file = [];
+            for ($i=0; $i < count($request->file) ; $i++) {
 
+              $archivo        = file_get_contents($request->file[$i]);
+              $name_temp      = $request->file[$i]->getClientOriginalName();
+              $ext            = strtolower($request->file[$i]->getClientOriginalExtension());
+              $type           = $request->file[$i]->getMimeType();
+              #se manda a llamar para crear
+              #$dir = dirname( getcwd() );
+              $dir    = public_path();
+              $archivo        = $name_temp;
+              $path           = $dir."/".$request->ruta;
+              $ruta_file[]      = $request->ruta.$archivo;
+              #ddebuger($ruta_file);
+              File::makeDirectory($path, 0777, true, true);
+              $request->file[$i]->move($path,$archivo);
+            }
+            #debuger( $ruta_file );
+            for ($i=0; $i < count($ruta_file); $i++) { 
+                $files = SysFilesCompanysModel::create(['ruta_archivo' => $ruta_file[$i]]);
+                $data = [
+                   'id_archivo'  => $files->id
+                  ,'id_cliente'  => $request->id 
+                ];
+                SysUsersFilesModel::create( $data );
+            }
+
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+            return $this->_message_success(201, $ruta_file, self::$message_success);
+        }
+        return $this->show_error(6, $error, self::$message_error);
+
+
+
+
+
+
+    }
 
 
 

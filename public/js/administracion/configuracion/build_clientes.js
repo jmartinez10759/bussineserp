@@ -4,6 +4,7 @@ const URL = {
   ,url_edit             : 'clientes/edit'
   ,url_all              : 'clientes/all'
   ,url_destroy          : "clientes/destroy"
+  ,url_upload_clientes  : 'clientes/uploads'
   ,redireccion          : "configuracion/clientes"
   ,url_display          : "clientes/display_sucursales"
   ,url_insert_permisos  : "clientes/register_permisos"
@@ -22,11 +23,12 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         $scope.insert = {
           estatus: 0 ,id_country: 151 ,id_servicio_comercial: null, id_study : 1
         };
-        $scope.update = {};
-        $scope.comments = {};
-        $scope.list_comments = {};
-        $scope.edit   = {};
-        $scope.fields = {};
+        $scope.update         = {};
+        $scope.comments       = {};
+        $scope.list_comments  = {};
+        $scope.archivos       = {};
+        $scope.edit           = {};
+        $scope.fields         = {};
         $scope.readonly = true;
         $scope.cmb_estatus = [{id:0 ,nombre:"Prospectos"}, {id:1, nombre:"Clientes"}];
         $scope.select_estado();
@@ -36,7 +38,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
     $scope.estudio = function(){
       $scope.estudios = [
-         {id:1, nombre: "ING."}
+          {id:1, nombre: "ING"}
          ,{id:2, nombre: "LIC"}
          ,{id:3, nombre: "ARQ"}
       ];
@@ -72,17 +74,14 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
     $scope.insert_register = function(){
 
         var validacion = {
-             'CORREO'          : $scope.insert.correo
-            ,'NOMBRE CONTACTO' : $scope.insert.contacto
-            ,'RAZON SOCIAL'    : $scope.insert.razon_social
+            'RAZON SOCIAL'     : $scope.insert.razon_social
             ,'RFC'             : $scope.insert.rfc_receptor
-            ,'TELEFONO'        : $scope.insert.telefono
           };
         if(validaciones_fields(validacion)){return;}
-        if( !emailValidate( $scope.insert.correo ) ){  
+        /*if( !emailValidate( $scope.insert.correo ) ){  
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
-        }
+        }*/
         if( !valida_rfc($scope.insert.rfc_receptor) ){
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
@@ -99,6 +98,38 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             //not remove function this is  verify the session
             if(masterservice.session_status( response )){return;};
 
+            $scope.insert = {};
+            toastr.success( response.data.message , title );
+            $scope.index();
+        }).catch(function( error ){
+           masterservice.session_status_error(error);
+        });
+
+    }
+    $scope.insert_register_contacto = function(){
+
+        var validacion = {
+           'CORREO'          : $scope.insert.correo
+          ,'NOMBRE CONTACTO' : $scope.insert.contacto
+          ,'TELEFONO'        : $scope.insert.telefono
+        };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.insert.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+         var url = domain( URL.url_insert );
+        var fields = $scope.insert;
+        jQuery.fancybox.close({
+            'type'      : 'inline'
+            ,'src'      : "#modal_add_register"
+            ,'modal'    : true
+        });
+        MasterController.request_http(url,fields,'post',$http, false )
+        .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+            $scope.insert = {};
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
@@ -110,17 +141,14 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
     $scope.update_register = function( dblclick = false ){
 
       var validacion = {
-             'CORREO'       : $scope.update.correo
-            ,'RAZON SOCIAL' : $scope.update.razon_social
-            ,'RFC'          : $scope.update.rfc_receptor
-            ,'NOMBRE CONTACTO' : $scope.update.contacto
-            ,'TELEFONO'        : $scope.update.telefono
+            'RAZON SOCIAL'     : $scope.update.razon_social
+            ,'RFC'             : $scope.update.rfc_receptor
           };
         if(validaciones_fields(validacion)){return;}
-        if( !emailValidate( $scope.update.correo ) ){  
+        /*if( !emailValidate( $scope.update.correo ) ){  
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
-        }
+        }*/
         if( !valida_rfc($scope.update.rfc_receptor) ){
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
@@ -150,6 +178,51 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       }).catch(function( error ){
           masterservice.session_status_error(error);
       });
+
+    }
+
+    $scope.update_register_contacto = function( dblclick = false ){
+
+        var validacion = {
+             'CORREO'          : $scope.update.correo
+            ,'NOMBRE CONTACTO' : $scope.update.contacto
+            ,'TELEFONO'        : $scope.update.telefono
+          };
+        if(validaciones_fields(validacion)){return;}
+        if( !emailValidate( $scope.update.correo ) ){  
+            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }
+        /*if( !valida_rfc($scope.update.rfc_receptor) ){
+            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
+            return;
+        }*/
+        var url = domain( URL.url_update );
+        var fields = $scope.update;
+        MasterController.request_http(url,fields,'put',$http, false )
+        .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
+            toastr.info( response.data.message , title );
+            if (!dblclick) {
+              jQuery.fancybox.close({
+                    'type'      : 'inline'
+                    ,'src'      : "#modal_edit_register"
+                    ,'modal'    : true
+                    ,'width'    : 900
+                    ,'height'   : 400
+                    ,'autoSize' : false
+                });
+            }
+            $scope.list_comments = response.data.result.actividades;
+            //$scope.list_comments = [{titulo: "copia", descripcion: "copia desc"}];
+            $scope.index();
+            jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
+        }).catch(function( error ){
+            masterservice.session_status_error(error);
+        });
+      
     }
 
     $scope.edit_register = function( id ){
@@ -173,6 +246,8 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
                $scope.update.id_study     = response.data.result.contactos[0].id_study;
            }
            $scope.list_comments = response.data.result.actividades;
+           $scope.archivos = response.data.result.archivos;
+
            $scope.select_estado(1);
            $scope.select_codigos(1);
             var html = '';
@@ -430,6 +505,34 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           ,'modal'    : true
       });
 
+    }
+
+    $scope.upload_files = function( id ){
+      
+      var upload_url = domain( URL.url_upload_clientes );
+      var identificador = {
+         div_content   : 'div_dropzone_files_clientes'
+        ,div_dropzone  : 'dropzone_xlsx_files_clientes'
+        ,file_name     : 'file'
+      };
+      var message = "Dar Clíc aquí o arrastrar archivo";
+      var fields = {
+        ruta   : "upload_file/archivos/clientes/"
+        ,id     : id
+        /*,nombre : id+"-"+Math.floor((Math.random() * 99999999999) + 1)*/
+      };
+      upload_file(fields,upload_url,message,10,identificador,'.pdf, .png, .xml, .xls, .jpg, .jpeg, .txt',function( request ){
+        console.log(request);
+        toastr.success( request.message , title );
+        jQuery('#upload_files').modal('hide');
+
+      });
+        
+        jQuery('#upload_files').modal({
+          keyboard: false,
+          backdrop: "static",
+          show    : true
+        });
     }
 
     $scope.see_activities = function( id ){

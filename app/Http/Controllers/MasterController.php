@@ -609,10 +609,11 @@ abstract class MasterController extends Controller
 		$files = $request->file('file');
 		$archivo = [];
 		for ($i = 0; $i < count($files); $i++) {
-			$imagedata = file_get_contents($files[$i]);
-			$nombre_temp = $files[$i]->getClientOriginalName();
-			$extension = strtolower($files[$i]->getClientOriginalExtension());
+			
 			if ($encode_64) {
+				$imagedata = file_get_contents($files[$i]);
+				$nombre_temp = $files[$i]->getClientOriginalName();
+				$extension = strtolower($files[$i]->getClientOriginalExtension());
 				switch ($extension) {
 					case 'pdf':
 						$file = "application";
@@ -632,7 +633,7 @@ abstract class MasterController extends Controller
 			} else {
 				$upload = new Upload;
 				$upload->directorio = (isset($directorio) && $directorio != "") ? $directorio : "upload_file/catalogos/";
-				$archivo['file'][] = $upload->upload_file(new Request($request->all()));
+				$archivo['file'][] = $upload->upload_file(new Request( $request->all() ));
 			}
 
 

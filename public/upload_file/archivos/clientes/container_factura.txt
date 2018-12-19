@@ -1,0 +1,130 @@
+<div class="container">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<div class="btn-group pull-right">
+					<div class="pull-right">
+						<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modal-add-factura" title="Agregar Factura"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar</button>
+					</div>
+				</div>
+				<h4><i class='glyphicon glyphicon-search'></i> Buscar Facturas</h4>
+			</div>
+			<div class="panel-body">
+				<form class="form-horizontal" role="form" id="datos_cotizacion">
+
+					<div class="form-group row">
+						<label for="q" class="col-md-2 control-label">Cliente o # de factura</label>
+						<div class="col-md-5">
+							<input type="text" class="form-control" id="buscar" placeholder="Nombre del cliente o # de factura" onchange="buscarr()">
+						</div>
+
+						<div class="col-md-3">
+							<button type="button" class="btn btn-success">
+								<span class="glyphicon glyphicon-search" ></span> Buscar</button>
+								<span id="loader"></span>
+							</div>
+							
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-2 control-label">RfC Emisor</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" name="rfc_emisor">
+							</div>
+							<label class="col-sm-2 control-label">RfC Receptor</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" name="rfc_receptor">
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label class="col-sm-2 control-label">Fecha Inicio</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" name="fecha_inicio">
+							</div>
+							<label class="col-sm-2 control-label">Fecha Final</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" name="fecha_final">
+							</div>
+						</div>
+
+					</form>
+					<div id="resultados"></div><!-- Carga los datos ajax -->
+					<div class='outer_div'></div><!-- Carga los datos ajax -->
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<tbody><tr style="background-color: #337ab7; color: #ffffff;">
+								<th>Folio</th>
+								<th>Fecha</th>
+								<th>Cliente</th>
+								<th>Vendedor</th>
+								<th>Estatus</th>
+								<th class="text-right">Total</th>
+								<!-- 								<th class="text-right">Acciones</th> -->
+
+							</tr>
+							<tr>
+								<td data-toggle="modal" data-target="#modal-detail-factura">2517</td>
+								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
+								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 444<br><i class='glyphicon glyphicon-envelope'></i>  444@44.44">444</a></td>
+								<td>Obed Alvarado</td>
+								<td><span class="label label-success">Pagada</span></td>
+								<td class="text-right">184.76</td>					
+<!-- 								<td class="text-right">
+									<a href="editar_factura.php?id_factura=4792" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
+									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4792');"><i class="glyphicon glyphicon-download"></i></a> 
+									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2517')"><i class="glyphicon glyphicon-trash"></i> </a>
+								</td> -->
+
+							</tr>
+							<tr>
+								<td data-toggle="modal" data-target="#modal-detail-factura">2516</td>
+								<td data-toggle="modal" data-target="#modal-detail-factura">01/08/2018</td>
+								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 123<br><i class='glyphicon glyphicon-envelope'></i>  123@123">12345</a></td>
+								<td>Obed Alvarado</td>
+								<td><span class="label label-success">Pagada</span></td>
+								<td class="text-right">227.13</td>					
+<!-- 								<td class="text-right">
+									<a href="editar_factura.php?id_factura=4791" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
+									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4791');"><i class="glyphicon glyphicon-download"></i></a> 
+									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2516')"><i class="glyphicon glyphicon-trash"></i> </a>
+								</td> -->
+
+							</tr>
+
+							<tr>
+								<td>2509</td>
+								<td>31/07/2018</td>
+								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 0990998372<br><i class='glyphicon glyphicon-envelope'></i>  daniel.cajas@hotmail.com">Daniel Cajas</a></td>
+								<td>Obed Alvarado</td>
+								<td><span class="label label-success">Pagada</span></td>
+								<td class="text-right">1,273.51</td>					
+<!-- 								<td class="text-right">
+									<a href="editar_factura.php?id_factura=4781" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
+									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4781');"><i class="glyphicon glyphicon-download"></i></a> 
+									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2509')"><i class="glyphicon glyphicon-trash"></i> </a>
+								</td> -->
+
+							</tr>
+							<tr>
+								<td>2508</td>
+								<td>30/07/2018</td>
+								<td><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="<i class='glyphicon glyphicon-phone'></i> 5555555<br><i class='glyphicon glyphicon-envelope'></i>  ejemplo@gmail.com">ROBERTO SERPA LANDAVERRY</a></td>
+								<td>Obed Alvarado</td>
+								<td><span class="label label-success">Pagada</span></td>
+								<td class="text-right">89.84</td>					
+<!-- 								<td class="text-right">
+									<a href="editar_factura.php?id_factura=4780" class="btn btn-default" title="Editar factura"><i class="glyphicon glyphicon-edit"></i></a> 
+									<a href="#" class="btn btn-default" title="Descargar factura" onclick="imprimir_factura('4780');"><i class="glyphicon glyphicon-download"></i></a> 
+									<a href="#" class="btn btn-default" title="Borrar factura" onclick="eliminar('2508')"><i class="glyphicon glyphicon-trash"></i> </a>
+								</td> -->
+
+							</tr>
+							<tr>
+								<td colspan="7"><span class="pull-right"><ul class="pagination pagination-large"><li class="disabled"><span><a>‹ Prev</a></span></li><li class="active"><a>1</a></li><li><a href="javascript:void(0);" onclick="load(2)">2</a></li><li><a href="javascript:void(0);" onclick="load(3)">3</a></li><li><a href="javascript:void(0);" onclick="load(4)">4</a></li><li><a href="javascript:void(0);" onclick="load(5)">5</a></li><li><a>...</a></li><li><a href="javascript:void(0);" onclick="load(225)">225</a></li><li><span><a href="javascript:void(0);" onclick="load(2)">Next ›</a></span></li></ul></span></td>
+							</tr>
+						</tbody></table>
+					</div>
+				</div>
+			</div>	
+
+		</div>
+		<?php include('add_factura.php');?>

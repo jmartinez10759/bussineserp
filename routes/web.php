@@ -631,6 +631,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ClientesController@store_activies'
         ,'as'       => 'clientes.comments'
     ]);
+
+    Route::post('/clientes/uploads', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@upload_files_clientes'
+        ,'as'       => 'clientes.uploads'
+    ]);
+
     ############################ SECCION DE ACTIVIDADES ###################################
     Route::get('/configuracion/activities', [
         'uses'      => 'Administracion\Configuracion\ActivitiesController@index'
