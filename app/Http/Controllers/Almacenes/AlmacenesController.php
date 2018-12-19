@@ -411,41 +411,33 @@
                 DB::beginTransaction();
                 try {
                     $response = [];
+                    $almacenes = SysAlmacenesModel::with(['productos','proveedores'])->where(['id'=> $request->id_almacen])->get();
+                    // debuger($almacenes);
+                        $datos = [                             
+                            'id_proveedor' => ( isset($almacenes[0]->productos[0]->proveedores[0])  )? $almacenes[0]->productos[0]->proveedores[0]->id:""
+                            ,'id_almacen' => $request->id_almacen                            
+                        ];        
+                        // debuger($almacenes);       
+                        debuger($datos);  
 
-                    $almacenes = SysAlmacenesModel::with(['productos'])->where(['id'=> $request->id_almacen])->get();
-                    debuger($almacenes);
-                for($i = 0; $i < count($request->matrix); $i++){
-                $matrices = explode('|',$request->matrix[$i]);
-                $id_proveedor = $matrices[0];
-                $proveedores = SysProveedoresModel::get();
-                // debuger($proveedores);
-
-                }
-                $where = [
-                     'id_producto' => ( isset($almacenes[0]->productos[0]) )? $almacenes[0]->productos[0]->id : ""
-                    ,'id_proveedor' => ( isset($proveedores[0])  )? $proveedores[0]->id:""
-                    ,'id_almacen' => $request->id_almacen
-                    
-                ];             
-                debuger($where);  
-
-                SysAlmacenesProductosModel::where($where)->delete();
+                        SysAlmacenesProductosModel::where($datos)->delete();
+                               
 
                 for($i = 0; $i < count($request->matrix); $i++){
                     $matrices = explode('|',$request->matrix[$i]);
                     $id_producto = $matrices[0];
-                    $productos = SysProductosModel::with(['empresas','sucursales'])->where(['id' => $id_producto])->get();
-                
-                    // debuger($request->matrix);
+                    $productos = SysProductosModel::with(['proveedores'])->where(['id' => $id_producto])->get();
+
+                    // debuger($productos[0]->proveedores);
                     $data = [
-                         'id_proveedor' => ( isset($proveedores[0]) )? $proveedores[0]->id:"" 
+                            'id_producto' =>  ( isset($productos[0]) )? $productos[0]->id:""
+                            ,'id_proveedor' => ( isset($productos[0]->proveedores[0]) )? $productos[0]->proveedores[0]->id:"" 
                             ,'id_almacen' => $request->id_almacen
-                            ,'id_producto' =>  ( isset($productos[0]) )? $productos[0]->id:""
                         
                     ];        
-                    debuger($data);          
+                    // debuger($data);          
 
-                        $response[] = SysProveedoresProductosModel::create($data);
+                        $response[] = SysAlmacenesProductosModel::create($data);
                 }
                 DB::commit();
                 $success = true;

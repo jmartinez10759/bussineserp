@@ -478,7 +478,8 @@
                     ,'id_proveedor' => $request->id_proveedor
                     ,'id_rol'  =>  Session::get('id_rol')
                     ,'id_users' =>  Session::get('id')
-                ];               
+                ]; 
+                // debuger($where);              
 
                 SysProveedoresProductosModel::where( $where )->delete();
                 for($i = 0; $i < count($request->matrix); $i++){

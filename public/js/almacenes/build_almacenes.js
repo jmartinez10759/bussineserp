@@ -247,24 +247,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
 
         var matrix = [];
         var i = 0;
-        // var ip = 0;
         var url = domain( URL.url_asign_insert);
-        // jQuery('#datatable_productos input[type="checkbox"]').each(function () {
-        //     if (jQuery(this).is(':checked') == true) {
-                
-        //         var id = jQuery(this).attr('id_producto');
-        //         matrix[ip] = `${id}|${jQuery(this).is(':checked')}`;
-        //         i++;
-        //     }
-        // });
-        // var fieldsP = {
-        //     'matrix' : matrix
-        //     // , 'id_almacen': $scope.fields.id_almacen
-        //     , 'id_proveedor' : $scope.fields.id_proveedor
-            
-        // }
-        // console.log(fieldsP);return;
-
         jQuery('#datatable_productos input[type="checkbox"]').each(function () {
             if (jQuery(this).is(':checked') == true) {
                 var id = jQuery(this).attr('id_producto');
@@ -276,9 +259,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
         
         var fields = {
             'matrix' : matrix
-            , 'id_almacen': $scope.fields.id_almacen
-            // , 'id_proveedor' : $scope.fields.id_proveedor
-            
+            , 'id_almacen': $scope.fields.id_almacen            
         }
         // console.log(fields);return;
         MasterController.request_http(url, fields, "post", $http, false )
