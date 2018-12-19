@@ -1,0 +1,204 @@
+		<div class="modal fade" id="modal-add-factura" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Nueva Factura</h4>
+					</div>
+
+					<div class="modal-body ">
+
+						<form class="form-horizontal" >
+							<div class="form-group">
+								<label class="control-label col-sm-2" for="email">Fecha de pago</label>
+								<div class="col-sm-4">
+									<input type="text" name="fecha_pago" class="form-control" placeholder="" style="text-transform: uppercase;">
+								</div>
+
+								<label class="control-label col-sm-2" for="pwd">Pago</label>
+								<div class="col-sm-4">
+									<input type="text" name="pago" class="form-control" placeholder="$" >
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-sm-2" for="pwd">Pago menos impuestos</label>
+								<div class="col-sm-4">
+									<input type="text" name="pago_menos_impuestos" class="form-control" placeholder="$" >
+								</div>
+
+								<label class="control-label col-sm-2" for="pwd">Factura Folio </label>
+								<div class="col-sm-4">
+									<input type="text" name="folio_factura" class="form-control" placeholder="$" >
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-sm-2" for="pwd">Fecha de Factura</label>
+								<div class="col-sm-4">
+									<input type="text" name="fecha_factura" class="form-control" placeholder="$" >
+								</div>
+
+							</div>
+							<div id="div_dropzone_file"></div>
+							<!-- <div id="dropzone" class="dropzone"><div class="dz-default dz-message"><span>Dar Click aqui o arrastrar archivo</span></div></div -->
+<!-- 							<div class="form-group">
+								<label class="control-label col-sm-2" >Monto Pago factura</label>
+								<div class="col-sm-4">
+									<input type="date" id="fecha_inicio" class="form-control dateDropper" placeholder="$" >
+								</div>
+
+								<label class="control-label col-sm-2" >Monto pago factura menos impuestos</label>
+								<div class="col-sm-4">
+									<input type="text" id="fecha_final" class="form-control dateDropper" placeholder="$">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-sm-2" >Monto Pago factura</label>
+								<div class="col-sm-4">
+									<input type="text" id="fecha_inicio" class="form-control dateDropper" placeholder="$" >
+								</div>
+
+								<label class="control-label col-sm-2" >Monto pago factura menos impuestos</label>
+								<div class="col-sm-4">
+									<input type="text" id="fecha_final" class="form-control dateDropper" placeholder="$">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-sm-2" >Comision electronica</label>
+								<div class="col-sm-4">
+									<input type="text" id="fecha_inicio" class="form-control dateDropper" placeholder="$" >
+								</div>
+
+								<label class="control-label col-sm-2" >Total de pago recibido</label>
+								<div class="col-sm-4">
+									<input type="text" id="fecha_final" class="form-control dateDropper" placeholder="$">
+								</div>
+							</div> -->
+
+    					</form>
+
+    				</div>
+
+    				<div class="modal-footer">
+    					<button type="button" class="btn btn-success" v-on:click.prevent="insert_skills()">Agregar</button>
+    					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+    				</div>
+
+    			</div>
+    		</div>
+
+    	</div>
+
+    	<div class="modal fade" id="modal-detail-factura" tabindex="-1" role="dialog" aria-hidden="true">
+    		<div class="modal-dialog modal-lg">
+    			<div class="modal-content">
+    				<div class="modal-header">
+    					<button type="button" class="close" data-dismiss="modal">&times;</button>
+    					<h4 class="modal-title">Detalle Factura</h4>
+    				</div>
+
+    				<div class="modal-body ">
+
+    					<form class="form-horizontal" >
+    						<div class="form-group">
+    							<label class="control-label col-sm-2" for="email">Fecha de pago</label>
+    							<div class="col-sm-4">
+    								<input type="text" name="fecha_pago" class="form-control" placeholder="" style="text-transform: uppercase;">
+    							</div>
+
+    							<label class="control-label col-sm-2" for="pwd">Pago</label>
+    							<div class="col-sm-4">
+    								<input type="text" name="pago" class="form-control" placeholder="$" >
+    							</div>
+    						</div>
+
+    						<div class="form-group">
+    							<label class="control-label col-sm-2" for="pwd">Pago menos impuestos</label>
+    							<div class="col-sm-4">
+    								<input type="text" name="pago_menos_impuestos" class="form-control" placeholder="$" >
+    							</div>
+
+    							<label class="control-label col-sm-2" for="pwd">Factura Folio </label>
+    							<div class="col-sm-4">
+    								<input type="text" name="folio_factura" class="form-control" placeholder="$" >
+    							</div>
+    						</div>
+
+    						<div class="form-group">
+    							<label class="control-label col-sm-2" for="pwd">Fecha de Factura</label>
+    							<div class="col-sm-4">
+    								<input type="text" name="fecha_factura" class="form-control" placeholder="$" >
+    							</div>
+
+    						</div>
+    						
+    						<hr>	
+
+    						<div class="table-responsive">
+
+    							<table class="table">
+    								<tbody><tr>
+    									<th class="text-center">CODIGO</th>
+    									<th class="text-center">CANT.</th>
+    									<th>DESCRIPCION</th>
+    									<th class="text-right">PRECIO UNIT.</th>
+    									<th class="text-right">PRECIO TOTAL</th>
+    									<th></th>
+    								</tr>
+    								<tr>
+    									<td class="text-center">00002</td>
+    									<td class="text-center">3</td>
+    									<td>Shampoo</td>
+    									<td class="text-right">4.50</td>
+    									<td class="text-right">13.50</td>
+    									<td class="text-center"><a href="#" onclick="eliminar('17353')"><i class="glyphicon glyphicon-trash"></i></a></td>
+    								</tr>		
+    								<tr>
+    									<td class="text-center">999910</td>
+    									<td class="text-center">1</td>
+    									<td>Test motherboard</td>
+    									<td class="text-right">150.00</td>
+    									<td class="text-right">150.00</td>
+    									<td class="text-center"><a href="#" onclick="eliminar('17352')"><i class="glyphicon glyphicon-trash"></i></a></td>
+    								</tr>		
+    								<tr>
+    									<td class="text-right" colspan="4">SUBTOTAL $</td>
+    									<td class="text-right">163.50</td>
+    									<td></td>
+    								</tr>
+    								<tr>
+    									<td class="text-right" colspan="4">IVA (13)% $</td>
+    									<td class="text-right">21.26</td>
+    									<td></td>
+    								</tr>
+    								<tr>
+    									<td class="text-right" colspan="4">TOTAL $</td>
+    									<td class="text-right">184.76</td>
+    									<td></td>
+    								</tr>
+
+    							</tbody></table>
+
+    						</div>
+    						  <!-- <div class="form-group">
+    						    <label class="control-label col-sm-2" for="">Posicion</label>
+    						    <div class="col-sm-2">
+    						      <input type="text" class="form-control" placeholder="" v-model="datos.skill_orden">
+    						    </div>
+    						</div> -->
+    					</form>
+
+    				</div>
+
+    				<div class="modal-footer">
+    					<!-- <button type="button" class="btn btn-success" v-on:click.prevent="insert_skills()">Agregar</button> -->
+    					<button type="button" class="btn btn-info" data-dismiss="modal">Aceptar</button>
+    				</div>
+
+    			</div>
+    		</div>
+
+    	</div>

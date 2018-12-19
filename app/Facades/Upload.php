@@ -31,6 +31,8 @@ class Upload extends Facade
             #$dir = dirname( getcwd() );
             $dir  = public_path();
             $archivo        = (isset($request->nombre))? $request->nombre.".".$tipo[1] : $name_temp;
+            #debuger($tipo);
+            #debuger($archivo);
             $path           = $dir."/".$this->directorio;
             $ruta_file[]    = $path.$archivo;
             $ruta_update    = $this->directorio.$archivo;
