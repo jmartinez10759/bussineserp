@@ -4,7 +4,7 @@
 		<meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; />
 		<meta name=&quot;description&quot; content=&quot;Esta Tienda está desarrollada con PrestaShop&quot; />
         <meta charset="utf-8">
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <style>
             ::-moz-selection {background: #b3d4fc; text-shadow: none;}
             ::selection {background: #b3d4fc; text-shadow: none;}
@@ -19,8 +19,9 @@
         </style>
     </head>
     <body>
-
-            <a class="btn btn-primary btn-lg" href="{{ URL::previous() }}"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Regresar</a>
+            <a class="btn btn-primary btn-lg" href="{{ url( Session::get('ruta') ) }}">
+                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Regresar
+            </a>
 
         <div class=&quot;container&quot;>
             <h2 align="center"><b>Error</b> 401</h2>

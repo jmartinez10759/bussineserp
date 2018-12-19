@@ -97,6 +97,10 @@ class SysUsersModel extends Model
     {
       return $this->belongsToMany('App\Model\Administracion\Correos\SysTemplatesModel','sys_users_templates','id_users','id_template');
     }
+    public function notificaciones()
+    {
+      return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_users','id_notificacion')->withPivot('estatus');
+    }
 
 
 

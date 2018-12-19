@@ -33,6 +33,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         $scope.cmb_estatus = [{id:0 ,nombre:"Prospectos"}, {id:1, nombre:"Clientes"}];
         $scope.select_estado();
         $scope.estudio();
+        $scope.tareas();
         $scope.index();
     }
 
@@ -43,18 +44,17 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
          ,{id:3, nombre: "ARQ"}
       ];
     }
+    $scope.tareas = function(){
+      $scope.tasks = [
+          {id:1, nombre: "LLAMADA"}
+         ,{id:2, nombre: "REUNION"}
+      ];
+    }
     
     $scope.click = function (){
       $location.path("/register");
       //$scope.index();
     }
-    /*$scope.prueba = function(){
-         $scope.readonly = false;
-    }
-
-    $scope.pruebas = function(){
-         $scope.readonly = true;
-    }*/
     $scope.index = function(){
 
         var url = domain( URL.url_all );
@@ -162,14 +162,15 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
           toastr.info( response.data.message , title );
           if (!dblclick) {
-            jQuery.fancybox.close({
+            /*jQuery.fancybox.close({
                   'type'      : 'inline'
                   ,'src'      : "#modal_edit_register"
                   ,'modal'    : true
                   ,'width'    : 900
                   ,'height'   : 400
                   ,'autoSize' : false
-              });
+              });*/
+              jQuery('#modal_edit_register').modal('hide');
           }
           $scope.list_comments = response.data.result.actividades;
           //$scope.list_comments = [{titulo: "copia", descripcion: "copia desc"}];
@@ -206,14 +207,15 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
             toastr.info( response.data.message , title );
             if (!dblclick) {
-              jQuery.fancybox.close({
+              /*jQuery.fancybox.close({
                     'type'      : 'inline'
                     ,'src'      : "#modal_edit_register"
                     ,'modal'    : true
                     ,'width'    : 900
                     ,'height'   : 400
                     ,'autoSize' : false
-                });
+                });*/
+                jQuery('#modal_edit_register').modal('hide');
             }
             $scope.list_comments = response.data.result.actividades;
             //$scope.list_comments = [{titulo: "copia", descripcion: "copia desc"}];
@@ -255,10 +257,15 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             jQuery('#imagen_edit').html("");        
             jQuery('#imagen_edit').html(html); 
             loading(true);
-          jQuery.fancybox.open({
+          /*jQuery.fancybox.open({
                 'type'      : 'inline'
                 ,'src'      : "#modal_edit_register"
                 ,'modal': true
+            });*/
+            jQuery('#modal_edit_register').modal({
+              keyboard: false,
+              backdrop: "static",
+              show    : true
             });
 
         }).catch(function( error ){
@@ -409,25 +416,29 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
     }
 
-    $scope.register_comment = function(update){
+    $scope.save_activities = function(update){
 
-      var validacion = { COMENTARIO : $scope.comments.descripcion };
+      var validacion = { 
+        ASUNTO          : $scope.activities.titulo 
+        ,ASIGNADO       : $scope.activities.id_users 
+        ,ACTIVIDAD      : $scope.activities.descripcion 
+      };
       if(validaciones_fields(validacion)){return;}
 
-        var url = domain( URL.url_comments );
-        var fields = { id: (update)? $scope.update.id : $scope.insert.id , comentarios : $scope.comments};
+        var url     = domain( URL.url_comments );
+        var fields  = { id: (update)? $scope.update.id : $scope.insert.id , comentarios : $scope.activities};
+
         MasterController.request_http(url,fields,'post',$http, false )
           .then(function( response ){
               //not remove function this is  verify the session
               if(masterservice.session_status( response )){return;};
-
-              $scope.comment = false;
-              $scope.comments = {};
+              //$scope.comment = false;
+              $scope.activities = {};
               $scope.list_comments = response.data.result.actividades;
-              loading(true);
+              jQuery('#modal_see_activities').modal('hide');
               //jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
           }).catch(function( error ){
-              masterservice.session_status_error( error);
+              masterservice.session_status_error( error );
           });
 
     }
@@ -444,7 +455,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
               toastr.info( response.data.message , title );
               $scope.list_comments = response.data.result.actividades;
-              loading(true);
           }).catch(function( error ){
               masterservice.session_status_error(error);
           });
@@ -549,7 +559,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           loading(true);
           jQuery.fancybox.open({
                 'type'      : 'inline'
-                ,'src'      : "#see_activities"
+                ,'src'      : "#modal_see_activities"
                 ,'modal': true
             });
 
@@ -563,8 +573,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
 });
 
-//jQuery('#cmb_estados').selectpicker();
-//jQuery('#cmb_estados_edit').selectpicker();
 jQuery('#clientes_tabs').click(function(){
    jQuery('#form_general > #search_general').removeAttr('onkeyup');
    jQuery('#form_general > #search_general').attr("onkeyup","buscador_general(this,'#datatable_clientes',false)");
@@ -577,3 +585,5 @@ jQuery('#prospectos_tabs').click(function(){
    jQuery('#form_general > #search_general').val("");
    jQuery('#form_general > #search_general').keyup();
 });
+//jQuery('#cmb_estados').selectpicker();
+//jQuery('#cmb_estados_edit').selectpicker();

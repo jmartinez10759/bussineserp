@@ -66,6 +66,7 @@ class ClientesController extends MasterController
           ,'paises'               => SysPaisModel::get()
           ,'servicio_comercial'   => SysServiciosComercialesModel::get()
           ,'uso_cfdi'             => SysUsoCfdiModel::get()
+          ,'usuarios'             => $this->_catalogos_bussines( new SysUsersModel,[],['estatus' => 1],['id' => Session::get('id_empresa')] )
         ];
 
         return $this->_message_success( 200, $data , self::$message_success );
@@ -302,24 +303,19 @@ class ClientesController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-          $where = ['id' => $request->id];
-          $users_facturas = SysUsersFacturacionModel::where(['id_cliente' => $request->id])->get();
-          $clientes_empresas = SysClientesEmpresasModel::where(['id_cliente' => $request->id])->get(); 
-            #debuger($clientes_empresas);
-          if( count($users_facturas) > 0){
-              foreach ($users_facturas as $tbl_factura) {
-                SysFacturacionModel::where(['id' => $tbl_factura->id_factura])->delete();
-              }
-          }
-            if( count($clientes_empresas) > 0){
-               foreach ($clientes_empresas as $tbl_clientes) {
-                SysContactosModel::where(['id' => $tbl_clientes->id_contacto])->delete();
-              } 
-            }
-          SysClientesModel::where( $where )->delete();
+
+          $destroy_register = SysClientesModel::with(['contactos:id','actividades:id','archivos:id','empresas:id'])
+                                                ->where(['id' => $request->id])
+                                                ->get();
+          $destroy_register[0]->archivos()->delete();
+          $destroy_register[0]->actividades()->delete();
+          $destroy_register[0]->contactos()->delete();
+          #unlink( public_path().$destroy_register[0]->logo );
+          SysClientesModel::where( ['id' => $request->id ] )->delete();
           SysClientesEmpresasModel::where(['id_cliente' => $request->id])->delete();
           SysContactosSistemasModel::where(['id_cliente' => $request->id])->delete();
           SysUsersActivitiesModel::where(['id_cliente' => $request->id])->delete();
+          SysUsersFilesModel::where(['id_cliente' => $request->id])->delete();
 
           DB::commit();
           $success = true;
@@ -523,8 +519,12 @@ class ClientesController extends MasterController
             for ($i=0; $i < count($ruta_file); $i++) { 
                 $files = SysFilesCompanysModel::create(['ruta_archivo' => $ruta_file[$i]]);
                 $data = [
-                   'id_archivo'  => $files->id
-                  ,'id_cliente'  => $request->id 
+                   'id_users'     => Session::get('id')
+                   ,'id_rol'       => Session::get('id_rol')
+                   ,'id_empresa'   => Session::get('id_empresa')
+                   ,'id_sucursal'  => Session::get('id_sucursal')
+                   ,'id_cliente'   => $request->id 
+                   ,'id_archivo'   => $files->id
                 ];
                 SysUsersFilesModel::create( $data );
             }

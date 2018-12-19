@@ -9,6 +9,7 @@ class SysActivitiesModel extends Model
     public $table = "sys_activities";
     public $fillable = [
         'id'
+        ,'id_type_task'
         ,'titulo'
         ,'descripcion'
         ,'estatus'

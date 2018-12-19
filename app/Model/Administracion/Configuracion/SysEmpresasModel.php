@@ -82,7 +82,7 @@ class SysEmpresasModel extends Model
   }
   public function notificaciones()
   {
-    return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_notificacion','id_empresa')->withPivot('estatus');
+    return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_empresa','id_notificacion')->withPivot('estatus');
   }
   public function regimenes()
   {
