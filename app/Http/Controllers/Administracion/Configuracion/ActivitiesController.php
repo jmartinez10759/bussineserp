@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
+use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysActivitiesModel;
 use App\Model\Administracion\Configuracion\SysUsersActivitiesModel;
+use App\Model\Administracion\Configuracion\SysNotificacionesModel;
+use App\Model\Administracion\Configuracion\SysRolesNotificacionesModel;
 use App\Http\Controllers\Administracion\Configuracion\ClientesController;
 
 class ActivitiesController extends MasterController
@@ -76,20 +79,38 @@ class ActivitiesController extends MasterController
      *@return void
      */
     public function store( Request $request){
+    	
       $error = null;
       DB::beginTransaction();
       try {
+      	  $users = SysUsersModel::with(['roles:id','empresas','sucursales:id',])
+      	  						->where(['id' => $request->comentarios['id_users'] ])
+      	  						->get();
+      	  	$notifications =[
+      	  		'portal' 	=> $users[0]->empresas[0]->razon_social
+      	  		,'titulo' 	=> $request->comentarios['titulo']
+      	  		,'mensaje' 	=> $request->comentarios['descripcion']
+      	  	]; 
+      	  	$register_notifications = SysNotificacionesModel::create( $notifications );
+      	  	$pivot = [
+      	  	   'id_users'      	    => $request->comentarios['id_users']
+	          ,'id_rol'       		=> $users[0]->roles[0]->id
+	          ,'id_empresa'   		=> $users[0]->empresas[0]->id
+	          ,'id_sucursal'  		=> $users[0]->sucursales[0]->id
+	          ,'id_notificacion'  	=> $register_notifications->id
+      	  	];
+      	  	SysRolesNotificacionesModel::create( $pivot );
 
-      	  $actividad = SysActivitiesModel::create($request->comentarios);
-	      $data_comments = [
-	          'id_users'      => Session::get('id')
-	          ,'id_rol'       => Session::get('id_rol')
-	          ,'id_empresa'   => Session::get('id_empresa')
-	          ,'id_sucursal'  => Session::get('id_sucursal')
+      	  $actividad = SysActivitiesModel::create( $request->comentarios );
+	      $data_activities = [
+	          'id_users'      => $request->comentarios['id_users']
+	          ,'id_rol'       => $users[0]->roles[0]->id
+	          ,'id_empresa'   => $users[0]->empresas[0]->id
+	          ,'id_sucursal'  => $users[0]->sucursales[0]->id
 	          ,'id_cliente'   => $request->id
 	          ,'id_actividad' => $actividad->id
 	      ];
-	      SysUsersActivitiesModel::create($data_comments); 
+	      SysUsersActivitiesModel::create($data_activities); 
 	      $cliente = new ClientesController();
 
         DB::commit();

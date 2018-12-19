@@ -13,31 +13,29 @@
        
         <div id="prospectos" class="tab-pane fade in active">
         <br>
-            <div class="table-responsive">
-
+             
+            <div class="table-responsive">   
                 <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable">
                     <thead>
                         <tr style="background-color: #337ab7; color: #ffffff;">
-                            <th>Contacto</th>
-                            <th>Telefono</th>
-                            <th>Nombre Comercial</th>
-                            <th>Razon Social</th>
-                            <th>RFC</th>
-                            <th>Direccion</th>
-                            <th class="text-right">Estatus</th>
-                            <th class="text-right"></th>
+                            <th style="width: 263px">Contacto</th>
+                            <th style="width: 187px">Telefono</th>                            
+                            <th style="width: 187px">Razon Social</th>
+                            <th style="width: 193px">RFC</th>
+                            <th style="width: 193px">Direccion</th>
+                            <th style="width: 193px">Estatus</th>
+                            <th style="width: 193px"></th>
                         </tr>
                     </thead>
                     <tbody>
 
                         <tr ng-repeat="data in datos.prospectos" id="tr_@{{data.id}}">
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;" class="col-md-1">
                                 @{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}
                             </td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
+                            <td ng-click="edit_register(data.id)" style="cursor: pointer;" class="col-md-1">
                                 @{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}
                             </td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.nombre_comercial}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.razon_social }}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.rfc_receptor }}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">
@@ -46,20 +44,23 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;">
                                 @{{ (data.estatus == 1)? "Clientes":"Prospectos" }}
                             </td>
-                            <td class="text-right btn-toolbar">
+                            <td class="btn-toolbar">
                                 
-                                <button type="button" class="btn btn-info btn-sm" ng-click="update_estatus(data.id)" title="Convertir a Cliente">
-                                    <i class="glyphicon glyphicon-sort"></i>
-                                </button>
-                                
-                                <button type="button" class="btn btn-warning btn-sm" ng-click="upload_files(data.id)" title="Subir Archivos">
-                                    <i class="glyphicon glyphicon-upload"></i>
-                                </button>
-
-                                <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
-                                    <i class="glyphicon glyphicon-trash"></i>
-                                </button>
-
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-info btn-sm" ng-click="update_estatus(data.id)" title="Convertir a Cliente">
+                                        <i class="glyphicon glyphicon-sort"></i>
+                                    </button>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-warning btn-sm" ng-click="upload_files(data.id)" title="Subir Archivos">
+                                        <i class="glyphicon glyphicon-upload"></i>
+                                    </button>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </button>
+                                </div>
                                 
                                 <!-- <div class="col-sm-4">
                                     <button type="button" class="btn btn-primary btn-sm" title="Visualizar Comentarios" ng-click="see_activities(data.id)">
@@ -83,7 +84,6 @@
 
                     </tbody>
                 </table>
-
             </div>
 
 
@@ -91,23 +91,25 @@
         </div>
         <div id="clientes" class="tab-pane fade">
            <br>
-            <div class="table-responsive">
-
+            <div class="table-responsive">                
                 <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable_clientes">
                     <thead>
                         <tr style="background-color: #337ab7; color: #ffffff;">
-                            <th>#</th>
-                            <th>Nombre Comercial</th>
-                            <th>Razon Social</th>
-                            <th>RFC</th>
-                            <th>Dirección</th>
-                            <th>Contacto</th>
-                            <th>Telefono</th>
-                            <th>Empresas</th>
-                            <th></th>
+                            <th style="width: 51px">#</th>
+                            <th style="width: 123px">Nombre Comercial</th>
+                            <th style="width: 146px">Razon Social</th>
+                            <th style="width: 123px">RFC</th>
+                            <th style="width: 156px">Dirección</th>
+                            <th style="width: 263px">Contacto</th>
+                            <th style="width: 107px">Telefono</th>
+                            <th style="width: 105px">Empresas</th>
+                            <th style="width: 93px"></th>
+                            <th style="width: 226px"></th>
                         </tr>
                     </thead>
+                        
                     <tbody>
+                        
                         <tr ng-repeat="data in datos.clientes" id="tr_@{{data.id}}">
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;" class="col-md-1">@{{data.id}}</td>
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;" class="col-md-2">
@@ -135,18 +137,21 @@
                                 @{{ (data.empresas.length > 0)? data.empresas[0].razon_social: ""}}
                             </td>
 
-                            <td class="btn-toolbar text-right ">
-                                <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
-                                    <i class="glyphicon glyphicon-trash"></i>
-                                </button>
-
-                                <button type="button" class="btn btn-warning btn-sm" ng-click="upload_files(data.id)" title="Subir Archivos">
-                                    <i class="glyphicon glyphicon-upload"></i>
-                                </button>
+                            <td class="btn-toolbar">
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn-warning btn-sm" ng-click="upload_files(data.id)" title="Subir Archivos">
+                                        <i class="glyphicon glyphicon-upload"></i>
+                                    </button>
+                                </div>
 
                             </td>
                             <td>
-                                <div class="row" {{$permisos}}>
+                                <div class="col-sm-12" {{$permisos}}>
                                     
                                     <select class="form-control" 
                                         chosen

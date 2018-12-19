@@ -280,8 +280,8 @@ abstract class MasterController extends Controller
 
 
 		if( Session::get('id_rol') != 1){
-			$empresa = SysEmpresasModel::with(['notificaciones'])->where(['id' => Session::get('id_empresa')])->get();
-			$notificaciones = $empresa[0]->notificaciones()->get();
+			$users = SysUsersModel::with(['notificaciones'])->where(['id' => Session::get('id')])->get();
+			$notificaciones = $users[0]->notificaciones()->get();
 		}else{
 			$notificaciones = SysNotificacionesModel::get();
 		}
