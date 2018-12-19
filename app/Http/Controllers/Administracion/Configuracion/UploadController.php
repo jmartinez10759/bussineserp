@@ -292,8 +292,11 @@ class UploadController extends MasterController
      * @return void
      */
      public function uploads_files( Request $request ){
-         try { 
-             $response = self::upload_file($request ,false, "upload_file/archivos/");
+         try {
+             $ruta = isset($request->ruta) ? $request->ruta : "upload_file/archivos/";
+             $base64 =  isset($request->base64) ? $request->base64 : false;
+             //debuger( $ruta );
+             $response = self::upload_file( $request ,$base64 , $ruta );
              #debuger($response['file']);
              if($response['file'][0]->success == false){
                 return $this->show_error(6, $response['file'][0]->result , $response['file'][0]->message );    

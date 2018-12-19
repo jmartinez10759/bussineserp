@@ -65,9 +65,10 @@
 
     .fixed_header{width: 100%;table-layout: auto;border-collapse: collapse;}
     .fixed_header tbody{display:block;width: 100%;overflow: auto;height: 350px;}
-    .fixed_header thead tr {display: block;}
+    /*.fixed_header thead tr {display: block; width: 100% }*/
+    .fixed_header thead tr {display: inline-block; width: 100% }
     .fixed_header thead {background: black;color:#fff;}
-    .fixed_header th, .fixed_header td {padding: 5px;text-align: left;width: 500px;}
+    .fixed_header th, .fixed_header td {padding: 5px;text-align: left; width: 500px;}
     .drop-shadow {
         position:relative;
         float:left;
