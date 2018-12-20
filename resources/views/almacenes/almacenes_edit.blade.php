@@ -151,7 +151,7 @@
             <div class="modal-header">
                 <h3> Listado de Productos</h3>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" >
                 {!! $data_table_producto !!}
             </div>
             <div class="modal-footer">

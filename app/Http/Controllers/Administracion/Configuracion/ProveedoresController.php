@@ -485,9 +485,9 @@
                 for($i = 0; $i < count($request->matrix); $i++){
                     $matrices = explode('|',$request->matrix[$i]);
                     $id_producto = $matrices[0];
-                    $productos = SysProductosModel::with(['empresas','sucursales'])->where(['id' => $id_producto])->get();
+                    $productos = SysProductosModel::with(['proveedores'])->where(['id' => $id_producto])->get();
                 
-                    // debuger($request->matrix);
+                    debuger($productos);
                     $data = [
                          'id_empresa' => (Session::get('id_rol') == 1 && isset($productos[0]->empresas[0]) )? $productos[0]->empresas[0]->id : Session::get('id_empresa')
                         ,'id_sucursal'=> ( Session::get('id_rol') == 1 && isset($productos[0]->sucursales[0])  )? $productos[0]->sucursales[0]->id:Session::get('id_sucursal')
