@@ -406,19 +406,18 @@
          * @return void
          */ 
         public function asignar_insert( Request $request ){
-                #debuger($request->all());
+                // debuger($request->all());
                $error = null;
-                DB::beginTransaction();
+                DB::beginTransaction("error");
                 try {
                     $response = [];
                     $almacenes = SysAlmacenesModel::with(['productos','proveedores'])->where(['id'=> $request->id_almacen])->get();
                     // debuger($almacenes);
-                        $datos = [                             
-                            'id_proveedor' => ( isset($almacenes[0]->productos[0]->proveedores[0])  )? $almacenes[0]->productos[0]->proveedores[0]->id:""
-                            ,'id_almacen' => $request->id_almacen                            
+                        $datos = [                           
+                            'id_almacen' => $request->id_almacen                            
                         ];        
                         // debuger($almacenes);       
-                        debuger($datos);  
+                        // debuger($datos);  
 
                         SysAlmacenesProductosModel::where($datos)->delete();
                                
@@ -427,17 +426,27 @@
                     $matrices = explode('|',$request->matrix[$i]);
                     $id_producto = $matrices[0];
                     $productos = SysProductosModel::with(['proveedores'])->where(['id' => $id_producto])->get();
+                    // debuger($productos);          
 
-                    // debuger($productos[0]->proveedores);
                     $data = [
                             'id_producto' =>  ( isset($productos[0]) )? $productos[0]->id:""
                             ,'id_proveedor' => ( isset($productos[0]->proveedores[0]) )? $productos[0]->proveedores[0]->id:"" 
                             ,'id_almacen' => $request->id_almacen
                         
-                    ];        
-                    // debuger($data);          
-
+                    ];  
+                    debuger($data);      
+                        debuger( $response );
                         $response[] = SysAlmacenesProductosModel::create($data);
+
+                    // if (empty( $productos[0]->proveedores[0]->id ) ) {
+                    
+
+                    // }
+                    // else{
+
+                    // debuger( $productos[0]);
+                    // }
+                                        
                 }
                 DB::commit();
                 $success = true;

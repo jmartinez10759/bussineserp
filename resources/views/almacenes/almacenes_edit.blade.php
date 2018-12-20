@@ -127,6 +127,7 @@
             <div class="modal-body">
                 <input type="hidden" id="id_empresa">
                 <input type="hidden" id="id_almacen">
+                <input type="hidden" id="id_producto" >
                 <div id="sucursal_empresa"></div>
             </div>
             <div class="modal-footer">
