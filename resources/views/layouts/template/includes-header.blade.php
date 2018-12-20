@@ -68,7 +68,8 @@
     /*.fixed_header thead tr {display: block; width: 100% }*/
     .fixed_header thead tr {display: inline-block; width: 100% }
     .fixed_header thead {background: black;color:#fff;}
-    .fixed_header th, .fixed_header td {padding: 5px;text-align: left; width: 500px;}
+    .fixed_header th, .fixed_header td {padding: 5px;text-align: left; width: 200px;}
+  
     .drop-shadow {
         position:relative;
         float:left;
@@ -168,7 +169,28 @@
             background: url('img/loading04.gif') 50% 50% no-repeat rgb(249,249,249);
             opacity: .8;
         }
+  </style>
+  <style type="text/css">
+    .fixed_headers{
+      width: 400px;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
 
+    .fixed_headers tbody{
+      overflow: auto;
+      height: 100px;
+    }
 
+    .fixed_headers thead {
+      background: black;
+      color:#fff;
+    }
+
+    .fixed_headers th, .fixed_headers td {
+      padding: 5px;
+      text-align: left;
+      width: 200px;
+    }
   </style>
    @stack('styles')
