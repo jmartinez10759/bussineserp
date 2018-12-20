@@ -637,6 +637,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'clientes.uploads'
     ]);
 
+    Route::delete('/clientes/files_destroy', [
+        'uses'      => 'Administracion\Configuracion\ClientesController@destroy_files'
+        ,'as'       => 'clientes.files_destroy'
+    ]);
+
     ############################ SECCION DE ACTIVIDADES ###################################
     Route::get('/configuracion/activities', [
         'uses'      => 'Administracion\Configuracion\ActivitiesController@index'
@@ -650,7 +655,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     
     Route::get('/activities/edit', [
         'uses'      => 'Administracion\Configuracion\ActivitiesController@show'
-        ,'as'       => 'clientes.edit'
+        ,'as'       => 'activities.edit'
     ]);
         
     Route::put('/activities/update', [

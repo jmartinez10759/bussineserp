@@ -51,11 +51,11 @@
                                         <i class="glyphicon glyphicon-sort"></i>
                                     </button>
                                 </div>
-                                <div class="col-sm-4">
+                                <!-- <div class="col-sm-4">
                                     <button type="button" class="btn btn-warning btn-sm" ng-click="upload_files(data.id)" title="Subir Archivos">
                                         <i class="glyphicon glyphicon-upload"></i>
                                     </button>
-                                </div>
+                                </div> -->
                                 <div class="col-sm-4">
                                     <button type="button" class="btn btn-danger btn-sm" ng-click="destroy_register(data.id)" title="Eliminar Registro">
                                         <i class="glyphicon glyphicon-trash"></i>
@@ -121,9 +121,7 @@
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;" class="col-md-2">
                                 @{{data.rfc_receptor }}
                             </td>
-                            <!-- <td ng-click="edit_register(data.id)" style="cursor: pointer;">
-                                @{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}
-                            </td> -->
+                            
                             <td ng-click="edit_register(data.id)" style="cursor: pointer;" class="col-md-1">
                                 @{{data.calle}} @{{data.colonia}} @{{data.municipio}}
                             </td>
@@ -143,11 +141,11 @@
                                         <i class="glyphicon glyphicon-trash"></i>
                                     </button>
                                 </div>
-                                <div class="col-sm-6">
+                                <!-- <div class="col-sm-6">
                                     <button type="button" class="btn btn-warning btn-sm" ng-click="upload_files(data.id)" title="Subir Archivos">
                                         <i class="glyphicon glyphicon-upload"></i>
                                     </button>
-                                </div>
+                                </div> -->
 
                             </td>
                             <td>

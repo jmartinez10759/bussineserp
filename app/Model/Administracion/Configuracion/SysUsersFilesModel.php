@@ -16,6 +16,7 @@ class SysUsersFilesModel extends Model
         ,'id_proveedor'
         ,'id_producto'
         ,'id_planes'
+        ,'id_correo'
         ,'id_archivo'
     ];
 
