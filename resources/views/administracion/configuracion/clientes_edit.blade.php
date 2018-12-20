@@ -579,10 +579,28 @@
                                             <h1>Listado de archivos</h1>
                                             <div class="row">
                                                 
-                                                <ul>
-                                                    <li ng-repeat="files in archivos">
+                                                <ul class="mailbox-attachments clearfix">
+                                                    <!-- <li ng-repeat="files in archivos">
                                                         <a href="@{{files.ruta_archivo}}" target="_blank"> @{{files.ruta_archivo}} </a>
+                                                    </li> -->
+                                                    <li ng-repeat="files in archivos">
+                                                      <span class="mailbox-attachment-icon">
+                                                            <i class="fa fa-file-pdf-o" ng-if="files.ruta_archivo == 'upload_file/archivos/clientes/Pagos10 (1).pdf'"></i>
+                                                            <i class="fa fa-file-excel-o" ng-if="files.ruta_archivo == 'upload_file/archivos/clientes/catPagos.xls'"></i>
+                                                        </span>
+
+                                                      <div class="mailbox-attachment-info">
+                                                        <a href="@{{files.ruta_archivo}}" class="mailbox-attachment-name" target="_blank">
+                                                            <i class="fa fa-paperclip"></i> 
+                                                            @{{files.ruta_archivo.replace('upload_file/archivos/clientes/','') }}
+                                                        </a>
+                                                        <span class="mailbox-attachment-size">
+                                                          1,245 KB
+                                                          <a href="@{{files.ruta_archivo}}" class="btn btn-default btn-xs pull-right" target="_blank"><i class="fa fa-cloud-download"></i></a>
+                                                        </span>
+                                                      </div>
                                                     </li>
+
                                                 </ul>
 
 
@@ -637,7 +655,6 @@
                                                         
                                                 </div>
                                             </div>
-
 
                                         </div>
                                         
