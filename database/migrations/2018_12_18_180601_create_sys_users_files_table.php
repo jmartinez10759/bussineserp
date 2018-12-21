@@ -22,6 +22,7 @@ class CreateSysUsersFilesTable extends Migration
             $table->integer('id_proveedor')->nullable();
             $table->integer('id_producto')->nullable();
             $table->integer('id_planes')->nullable();
+            $table->integer('id_correo')->nullable();
             $table->integer('id_archivo')->nullable();
             $table->timestamps();
         });
