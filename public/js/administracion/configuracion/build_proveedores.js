@@ -354,6 +354,7 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
               'buttons': ['share', 'close']
           });
           jQuery('#datatable_productos input[type="checkbox"]').prop('checked',false);
+          console.log(response.data.result.productos);return;
           if(response.data.result.productos.length > 0){
               for (var i = 0; i < response.data.result.productos.length; i++) {
                     jQuery('#'+response.data.result.productos[i].id).prop('checked', true);

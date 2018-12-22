@@ -388,9 +388,15 @@
                                                 ->where(['id' => $request->id])
                                                 ->get();
 
-             // $response = SysProveedoresModel::with(['almacenes'])
-             //                                    ->get();
-            
+            //  $almacenes = SysAlmacenesModel::with(['productos','proveedores'])
+            //                                     ->where(['id' => $request->id])
+            //                                     ->get();
+            // $productos = SysProductosModel::with(['proveedores'])->get();
+
+            //     $data[
+            //         'almacenes' => $almacenes
+                   
+            //     ];
              // debuger($response); 
 
 
@@ -430,8 +436,6 @@
                     $id_producto = $matrices[0];
                     $productos = SysProductosModel::with(['proveedores'])->where(['id' => $id_producto])->get();
                     // debuger($productos);
-
-
                     $data = [
                             'id_producto' =>  ( isset($productos[0]) )? $productos[0]->id:""
                             ,'id_proveedor' => ( isset($productos[0]->proveedores[0]) )? $productos[0]->proveedores[0]->id:"" 

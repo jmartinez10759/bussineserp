@@ -229,7 +229,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
               'src': "#modal_asing_producto",
               'buttons': ['share', 'close']
           });
-          jQuery('#datatable_productos input[type="checkbox"]').prop('checked',false);
+          jQuery('#datatable_productos input[type="checkbox"]').attr('disabled', !$('#datatable_productos input[type="checkbox"]').attr('disabled')).prop('checked',false);
           if(response.data.result.productos.length > 0){
 
             // console.log(response.data.result.productos); return;
