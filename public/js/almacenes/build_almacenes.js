@@ -219,9 +219,9 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
       var fields = {id : id };
         MasterController.request_http(url,fields,"get",$http, false )
       .then(function( response ){
-        // console.log(response.data.result.productos);
           //not remove function this is  verify the session
           if(masterservice.session_status( response )){return;};
+        // console.log(response.data.result);return;
 
           $scope.fields.id_almacen = id;
           $.fancybox.open({
@@ -229,13 +229,13 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
               'src': "#modal_asing_producto",
               'buttons': ['share', 'close']
           });
-          jQuery('#datatable_productos input[type="checkbox"]').attr('disabled', !$('#datatable_productos input[type="checkbox"]').attr('disabled')).prop('checked',false);
+          jQuery('#datatable_productos input[type="checkbox"]').prop('checked',false);
           if(response.data.result.productos.length > 0){
 
-            // console.log(response.data.result.productos); return;
               for (var i = 0; i < response.data.result.productos.length; i++) {
                     jQuery('#'+response.data.result.productos[i].id).prop('checked', true);
               };
+            // console.log(response.data.result.productos); return;
           }
 
       }).catch(function( error ){

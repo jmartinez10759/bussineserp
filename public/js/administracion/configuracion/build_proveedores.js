@@ -348,13 +348,14 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
           if(masterservice.session_status( response )){return;};
 
           $scope.fields.id_proveedor = id;
+          // console.log($scope.fields.id_producto);return;
           $.fancybox.open({
               'type': 'inline',
               'src': "#modal_asing_producto",
               'buttons': ['share', 'close']
           });
-          jQuery('#datatable_productos input[type="checkbox"]').prop('checked',false);
-          console.log(response.data.result.productos);return;
+          jQuery('#datatable_productos  input[type="checkbox" ]').prop('checked',false).attr('disabled', !$('#datatable_productos input[type="checkbox"]').attr('disabled'));
+          // console.log(response.data.result.productos);return;
           if(response.data.result.productos.length > 0){
               for (var i = 0; i < response.data.result.productos.length; i++) {
                     jQuery('#'+response.data.result.productos[i].id).prop('checked', true);
@@ -372,20 +373,20 @@ app.controller('ProveedoresController', function( masterservice, $scope, $http, 
         // var validacion = {
         //   'Sin Datos' : matrix
         // };
-        jQuery('#datatable_productos input[type="checkbox"]').each(function () {
+        jQuery('#datatable_productos input[type="checkbox"] disabled').each(function () {
             if (jQuery(this).is(':checked') == true) {
                 var id = jQuery(this).attr('id_producto');
                 matrix[i] = `${id}|${jQuery(this).is(':checked')}`;
                 i++;
             }
+        // console.log(id);return;
         });
         var url = domain( URL.url_asign_insert);
         var fields = {
             'matrix' : matrix
             , 'id_proveedor': $scope.fields.id_proveedor
         }
-        // console.log(fields);return;
-        // console.log(matrix);return;
+        console.log(fields);return;
         MasterController.request_http(url, fields, "post", $http, false )
         .then(response => {
           //not remove function this is  verify the session
