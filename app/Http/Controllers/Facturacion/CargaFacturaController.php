@@ -16,11 +16,11 @@ use App\Model\Administracion\Facturacion\SysParcialidadesFechasModel;
 class CargaFacturaController extends MasterController
 {
   #se crea las propiedades
-  private static $_tabla_model;
+  private $_tabla_model;
 
   public function __construct(){
       parent::__construct();
-      self::$_tabla_model = "";
+      $this->_tabla_model = "";
   }
 /**
  *Metodo para obtener la vista y cargar los datos
@@ -28,7 +28,7 @@ class CargaFacturaController extends MasterController
  *@param Request $request [Description]
  *@return void
  */
-  public static function index(){
+  public function index(){
 
     if( Session::get('permisos')['GET'] ){
       return view('errors.error');
@@ -71,7 +71,7 @@ class CargaFacturaController extends MasterController
  * @param Request $request [Description]
  * @return void
  */
-  public static function all(){
+  public function all(){
     
     $ejecutivos = self::reporte_general();
     $total    = 0;
@@ -99,7 +99,7 @@ class CargaFacturaController extends MasterController
  *@param Request $request [Description]
  *@return void
  */
-  public static function show( Request $request ){
+  public function show( Request $request ){
 
   try {
     $response = SysUsersModel::with(['facturas' => function( $query ){
@@ -132,7 +132,7 @@ class CargaFacturaController extends MasterController
  *@param Request $request [Description]
  *@return void
  */
-  public static function show_clientes( Request $request ){
+  public function show_clientes( Request $request ){
 
       try {
         $clientes = SysClientesModel::with(['facturas' => function($query){
@@ -155,7 +155,7 @@ class CargaFacturaController extends MasterController
  *@param Request $request [Description]
  *@return void
  */
-  public static function store( Request $request){
+  public function store( Request $request){
 
 
   }
@@ -165,7 +165,7 @@ class CargaFacturaController extends MasterController
  *@param Request $request [Description]
  *@return void
  */
-  public static function update( Request $request){
+  public function update( Request $request){
 
   }
 /**
@@ -174,7 +174,7 @@ class CargaFacturaController extends MasterController
  *@param Request $request [Description]
  *@return void
  */
-  public static function destroy( Request $request ){
+  public function destroy( Request $request ){
 
 
 }
@@ -184,7 +184,7 @@ class CargaFacturaController extends MasterController
  * @param Request $request [Description]
  * @return void
  */
-  public static function upload_masiva( Request $request ){
+  public function upload_masiva( Request $request ){
     #debuger($request->all());
     $files = $request->file('file');
     $response_users = SysUsersModel::with(['roles' => function( $query ){
@@ -245,7 +245,7 @@ class CargaFacturaController extends MasterController
  * @param Request $request [Description]
  * @return void
  */
-  public static function filters( Request $request){
+  public function filters( Request $request){
 
           $id_ejecutivo = isset($request->ejecutivo)? $request->ejecutivo : [];
           $fecha_inicio = isset($request->fecha_inicio)? $request->fecha_inicio : "";
