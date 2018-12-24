@@ -1,4 +1,4 @@
- <header class="main-header">
+ <header class="main-header" ng-controller="ApplicationController as services" ng-init="services.constructor()" ng-cloak>
         <!-- Logo -->
         <!-- <a href="{{route('list.empresas')}}" class="logo"> -->
         <a href="{{$url_previus}}" class="logo" title="Regresar a Listado de Empresas">
@@ -54,31 +54,34 @@
                 </ul>
               </li>
               <!-- Notifications: style can be found in dropdown.less -->
-              <li class="dropdown notifications-menu" {{$notify}}>
+              <!-- <li class="dropdown notifications-menu" {{ $notify }} > -->
+              <li class="dropdown notifications-menu" >
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="label label-primary {{$efect_notify}}">.</span>
-                  <span class="label label-warning">{{$count_notify}}</span>
+                  <span class="label label-primary notify" ng-if="notificaciones.length > 0">.</span>
+                  <span class="label label-primary " ng-if="notificaciones.length == 0">.</span>
+                  <span class="label label-warning">@{{ notificaciones.length }}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">Tu Tienes {{$count_notify}} Notificaciones</li>
+                  <li class="header">Tu Tienes @{{ notificaciones.length }} Notificaciones</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      @foreach($notifications as $notificacion)
-                        <li>
-                          <a onclick="update_notify({{ $notificacion->id }})" style="cursor:pointer;">
+
+                      <li ng-repeat="notify in notificaciones ">
+                          <a ng-click="update_notify( notify.id )" style="cursor:pointer;">
                             <h6>
-                              <i class="fa fa-bell-o text-yellow"> {{ $notificacion->portal }}</i>
+                              <i class="fa fa-bell-o text-yellow"> @{{ notify.portal }}</i>
                                <small class="pull-right"> 
                                   <i class="fa fa-clock-o"></i> 
-                                  {{ time_fechas( $notificacion->created_at, timestamp() )}} 
+                                  @{{time_fechas(notify.created_at)}}
                                 </small>
                             </h6>
-                            <small><p class="">{{ $notificacion->mensaje }}</p></small>
+                            <small><p class="">@{{ notify.mensaje }}</p></small>
                           </a>
                         </li>
-                      @endforeach
+
+
 
                       <!-- <li>
                         <a href="#">

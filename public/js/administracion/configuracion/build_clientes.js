@@ -79,10 +79,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             ,'RFC'             : $scope.insert.rfc_receptor
           };
         if(validaciones_fields(validacion)){return;}
-        /*if( !emailValidate( $scope.insert.correo ) ){  
-            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
-            return;
-        }*/
         if( !valida_rfc($scope.insert.rfc_receptor) ){
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
@@ -162,14 +158,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
           toastr.info( response.data.message , title );
           if (!dblclick) {
-            /*jQuery.fancybox.close({
-                  'type'      : 'inline'
-                  ,'src'      : "#modal_edit_register"
-                  ,'modal'    : true
-                  ,'width'    : 900
-                  ,'height'   : 400
-                  ,'autoSize' : false
-              });*/
               jQuery('#modal_edit_register').modal('hide');
           }
           $scope.list_comments = response.data.result.actividades;

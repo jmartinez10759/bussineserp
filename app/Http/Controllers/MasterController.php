@@ -53,7 +53,7 @@ abstract class MasterController extends Controller
 		self::$_model = new MasterModel();
 		self::$message_success = "¡Transacción Exitosa!";
 		self::$message_error = "¡Ocurrio un error, favor de verificar!";
-		$this->middleware('permisos.menus', ['except' => ['load_lista_sucursal', 'lista', 'lista_sucursal', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code']]);
+		$this->middleware('permisos.menus', ['except' => ['load_lista_sucursal', 'lista', 'lista_sucursal', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code'] ] );
 		$this->middleware('permisos.rutas', ['only' => ['index']]);
 	}
 	/**
@@ -213,7 +213,6 @@ abstract class MasterController extends Controller
 
 		];
 		return response()->json($errors[$id], $codigo);
-
 	}
 	/**
 	 * Se crea un metodo en el cual se establece el formato en el que se enviara la informacion del REST
@@ -272,21 +271,23 @@ abstract class MasterController extends Controller
 			];
 			return $query->where($where)->orderBy('orden', 'asc');
 
-		},'roles','details','empresas','correos'])->where(['id' => Session::get('id')])->get();
+		},'roles','details','empresas','correos'])->whereId( Session::get('id') )->get();
 		$by_users = $response[0]->correos()
-								->where(['estatus_recibidos' => 1, 'estatus_vistos' => 0])
+								//->where(['estatus_recibidos' => 1, 'estatus_vistos' => 0])
+								->whereEstatus_recibidosAndEstatus_vistos(1,0)
 								->orderBy('id','desc')
 								->get();
-
+		#debuger($by_users);
 
 		if( Session::get('id_rol') != 1){
-			$users = SysUsersModel::with(['notificaciones'])->where(['id' => Session::get('id')])->get();
-			$notificaciones = $users[0]->notificaciones()->get();
+			$users = SysUsersModel::with(['notificaciones'])->whereId( Session::get('id') )->first();
+			$notificaciones = $users->notificaciones()->get();
 		}else{
-			$notificaciones = SysNotificacionesModel::get();
+			$notificaciones = SysNotificacionesModel::all();
 		}
+
 		$parse['MENU_DESKTOP'] 		= self::menus($response);
-		self::$_titulo = (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
+		self::$_titulo = (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial : "Empresa No Asignada";
 		$parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower(self::$_titulo)));
 		$parse['IMG_PATH'] 			= domain() . 'images/';
 		$parse['icon'] 				= "img/login/buro_laboral.ico";

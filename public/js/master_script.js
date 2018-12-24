@@ -1,6 +1,6 @@
 
 /**
- *Se crea una class maestra para obtener un crud
+ * Se crea una class maestra para obtener un crud
  * @author Jorge Martinez Quezada.
  */
 class MasterController {
@@ -57,6 +57,7 @@ class MasterController {
     return $http(config);
 
  }
+
 
 
 

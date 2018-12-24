@@ -911,6 +911,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'upload.files'
     ]);
 
+    Route::get('/services', [
+        'uses'      => 'ServicesController@services'
+        ,'as'       => 'services'
+    ]);
+
+
     #SE REALIZA UNA URL DINAMICA
     // Route::get('/configuracion/{url}',[
     //   'uses'      => 'Administracion\Configuracion\ActionsController@show'

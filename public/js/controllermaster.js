@@ -1,6 +1,7 @@
 var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe']);
-app.service('masterservice', function() {
-
+app.service('masterservice', function( $http ) {
+	this.notificaciones = {};
+	this.correos = {};
 	return {
 	    
 	    format_date : function(fecha, format) {
@@ -45,14 +46,20 @@ app.service('masterservice', function() {
 
 	    },
 	    session_status: function( response = {} ){
-	    	//console.log( typeof response.data );
 	    	loading(true);
+	    	/*se carga el metodo para obtener los correos y/o las notificaciones*/
+	    	//this.request_method();
 	    	if( typeof response.data != "object" ){
               toastr.error( session_expired );
               setTimeout(function(){ redirect(domain()); }, 2000); 
               return true;
             }
 
+	    },
+	    request_method : function(){
+	    	var url = domain('services');
+	    	var fields = {};
+	    	return MasterController.request_http(url,fields,'get',$http, false );
 	    },
 	    session_status_error: function( error = {} ){
 	    	loading(true);
@@ -63,6 +70,7 @@ app.service('masterservice', function() {
             }
 	        console.error( error );
             toastr.error( error.result , expired );
+	    
 	    },
 	    time_fechas: function( fecha ){
 
@@ -99,11 +107,8 @@ app.service('masterservice', function() {
 			var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": " unos segundos" );
 			return  time_elapsed;
 			//Output: 164 días, 23 horas, 0 minutos, 0 segundos.
-
+	    
 	    }
-
-
-
 
 
   	}
@@ -116,7 +121,35 @@ app.directive('habilitar', function() {
 		 }
 	 };
 	 });
+app.controller('ApplicationController', function( masterservice, $scope ) {
 
+	$scope.constructor = function(){
+		$scope.services();
+	}
+	$scope.services = function(){
+
+		masterservice.request_method()
+			.then(function( response ){
+	        	loading(true);
+	    		$scope.notificaciones = response.data.result.notification;
+	            $scope.correos = response.data.result.correos;
+
+	        }).catch(function( error ){
+	        	loading(true);
+	        	console.error( error );
+	        });
+	}
+	$scope.update_notify = function( id ){
+		alert(id);
+	}
+	$scope.time_fechas = function( fecha ){
+      return masterservice.time_fechas(fecha);
+    }
+
+
+
+
+});
 
 
 
