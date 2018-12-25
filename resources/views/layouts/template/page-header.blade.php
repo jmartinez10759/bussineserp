@@ -1,4 +1,4 @@
- <header class="main-header" ng-controller="ApplicationController as services" ng-init="services.constructor()" ng-cloak>
+ <header class="main-header" ng-controller="ApplicationController as services" ng-init="constructor()" ng-cloak>
         <!-- Logo -->
         <!-- <a href="{{route('list.empresas')}}" class="logo"> -->
         <a href="{{$url_previus}}" class="logo" title="Regresar a Listado de Empresas">
@@ -63,7 +63,9 @@
                   <span class="label label-warning">@{{ notificaciones.length }}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">Tu Tienes @{{ notificaciones.length }} Notificaciones</li>
+                  <li class="header" ng-if="notificaciones.length > 0">Tu Tienes @{{ notificaciones.length }} Notificaciones</li>
+                  <li class="header" ng-if="notificaciones.length == 0">Tu Tienes 0 Notificaciones</li>
+
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
@@ -71,13 +73,13 @@
                       <li ng-repeat="notify in notificaciones ">
                           <a ng-click="update_notify( notify.id )" style="cursor:pointer;">
                             <h6>
-                              <i class="fa fa-bell-o text-yellow"> @{{ notify.portal }}</i>
-                               <small class="pull-right"> 
-                                  <i class="fa fa-clock-o"></i> 
-                                  @{{time_fechas(notify.created_at)}}
-                                </small>
+                              <i class="fa fa-bell-o text-blue"> @{{ notify.portal }}</i>
                             </h6>
                             <small><p class="">@{{ notify.mensaje }}</p></small>
+                            <small class="pull-right"> 
+                              <i class="fa fa-clock-o"></i> 
+                              @{{time_fechas(notify.created_at)}}
+                            </small>
                           </a>
                         </li>
 

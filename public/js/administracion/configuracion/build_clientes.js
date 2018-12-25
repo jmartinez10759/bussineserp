@@ -17,7 +17,7 @@ const URL = {
   ,url_comments_destroy : 'activities/destroy'
 }
 
-app.controller('ClientesController', function( masterservice, $scope, $http, $location, $timeout ) {
+app.controller('ClientesController', function( masterservice, $scope, $http, $location, $timeout, $rootScope ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -54,7 +54,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
     
     $scope.click = function (){
       $location.path("/register");
-      //$scope.index();
     }
     $scope.index = function(){
 
@@ -66,6 +65,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             if(masterservice.session_status( response )){return;};
 
             $scope.datos = response.data.result;
+            //$rootScope.$emit("services", {});
             console.log($scope.datos);
         }).catch(function(error){
             masterservice.session_status_error(error);

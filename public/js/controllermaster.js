@@ -1,7 +1,6 @@
 var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe']);
-app.service('masterservice', function( $http ) {
-	this.notificaciones = {};
-	this.correos = {};
+app.service('masterservice', function( $http , $rootScope ) {
+  
 	return {
 	    
 	    format_date : function(fecha, format) {
@@ -15,17 +14,17 @@ app.service('masterservice', function( $http ) {
 	    },
 	    calendar : function(){
 
-		    var calendar = [];
-		    var count = 1;
-		    var nombres = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC','TODOS'];
-		    for (var i = 0; i < nombres.length; i++) {
-		        calendar[i] = { id: count , nombre:nombres[i] };
-		        count++;
-		    }
-		    return calendar;
-		
-		},
-		select_anios : function(){
+  		    var calendar = [];
+  		    var count = 1;
+  		    var nombres = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC','TODOS'];
+  		    for (var i = 0; i < nombres.length; i++) {
+  		        calendar[i] = { id: count , nombre:nombres[i] };
+  		        count++;
+  		    }
+  		    return calendar;
+  		
+  		},
+		  select_anios : function(){
 	        var fecha = new Date();
 	        var year = (fecha.getFullYear());
 	        var select = [];
@@ -48,18 +47,14 @@ app.service('masterservice', function( $http ) {
 	    session_status: function( response = {} ){
 	    	loading(true);
 	    	/*se carga el metodo para obtener los correos y/o las notificaciones*/
-	    	//this.request_method();
-	    	if( typeof response.data != "object" ){
+        $rootScope.$emit("services", {});
+	    	
+        if( typeof response.data != "object" ){
               toastr.error( session_expired );
               setTimeout(function(){ redirect(domain()); }, 2000); 
               return true;
             }
 
-	    },
-	    request_method : function(){
-	    	var url = domain('services');
-	    	var fields = {};
-	    	return MasterController.request_http(url,fields,'get',$http, false );
 	    },
 	    session_status_error: function( error = {} ){
 	    	loading(true);
@@ -75,38 +70,38 @@ app.service('masterservice', function( $http ) {
 	    time_fechas: function( fecha ){
 
 	    	// asignar el valor de las unidades en milisegundos
-			var msecPerMinute = 1000 * 60;
-			var msecPerHour = msecPerMinute * 60;
-			var msecPerDay = msecPerHour * 24;
-			// asignar la fecha en milisegundos
-			var date = new Date(fecha);
-			var dateMsec = date.getTime();
-			// asignar la fecha el 1 de enero del a la media noche
-			date.setMonth(0);
-			date.setDate(1);
-			date.setHours(0, 0, 0, 0);
-			// Obtener la diferencia en milisegundos
-			//var interval = dateMsec - date.getTime();
-			//var interval = dateMsec - now_date.getTime();
-			var now_date = new Date();
-			var interval = now_date.getTime() - dateMsec;
-			// Calcular cuentos días contiene el intervalo. Substraer cuantos días
-			//tiene el intervalo para determinar el sobrante
-			var days = Math.floor(interval / msecPerDay );
-			interval = interval - (days * msecPerDay );
-			// Calcular las horas , minutos y segundos
-			var hours = Math.floor(interval / msecPerHour );
-			interval = interval - (hours * msecPerHour );
-			
-			var minutes = Math.floor(interval / msecPerMinute );
-			interval = interval - (minutes * msecPerMinute );
+  			var msecPerMinute = 1000 * 60;
+  			var msecPerHour = msecPerMinute * 60;
+  			var msecPerDay = msecPerHour * 24;
+  			// asignar la fecha en milisegundos
+  			var date = new Date(fecha);
+  			var dateMsec = date.getTime();
+  			// asignar la fecha el 1 de enero del a la media noche
+  			date.setMonth(0);
+  			date.setDate(1);
+  			date.setHours(0, 0, 0, 0);
+  			// Obtener la diferencia en milisegundos
+  			//var interval = dateMsec - date.getTime();
+  			//var interval = dateMsec - now_date.getTime();
+  			var now_date = new Date();
+  			var interval = now_date.getTime() - dateMsec;
+  			// Calcular cuentos días contiene el intervalo. Substraer cuantos días
+  			//tiene el intervalo para determinar el sobrante
+  			var days = Math.floor(interval / msecPerDay );
+  			interval = interval - (days * msecPerDay );
+  			// Calcular las horas , minutos y segundos
+  			var hours = Math.floor(interval / msecPerHour );
+  			interval = interval - (hours * msecPerHour );
+  			
+  			var minutes = Math.floor(interval / msecPerMinute );
+  			interval = interval - (minutes * msecPerMinute );
 
-			var seconds = Math.floor(interval / 1000 );
-			// Mostrar el resultado.
-			//var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": "" )+ ((seconds > 0)? seconds + " segundos." : ""); 
-			var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": " unos segundos" );
-			return  time_elapsed;
-			//Output: 164 días, 23 horas, 0 minutos, 0 segundos.
+  			var seconds = Math.floor(interval / 1000 );
+  			// Mostrar el resultado.
+  			//var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": "" )+ ((seconds > 0)? seconds + " segundos." : ""); 
+  			var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": " unos segundos" );
+  			return  time_elapsed;
+  			//Output: 164 días, 23 horas, 0 minutos, 0 segundos.
 	    
 	    }
 
@@ -121,33 +116,36 @@ app.directive('habilitar', function() {
 		 }
 	 };
 	 });
-app.controller('ApplicationController', function( masterservice, $scope ) {
+app.controller('ApplicationController',function( masterservice, $scope, $http ,$rootScope ) {
 
-	$scope.constructor = function(){
-		$scope.services();
-	}
-	$scope.services = function(){
+  $rootScope.$on("services", function(){ 
+      $scope.services(); 
+  });
+  $scope.constructor = function(){
+      $scope.services();
+      $scope.notificaciones = {};
+      $scope.correos = {};
+  }
+  $scope.services = function(){
+    var url = domain('services');
+    var fields = {};
+    MasterController.request_http(url,fields,'get',$http, false )
+      .then(function( response ){
+          loading(true);
+          $scope.notificaciones = response.data.result.notification;
+          $scope.correos = response.data.result.correos;
 
-		masterservice.request_method()
-			.then(function( response ){
-	        	loading(true);
-	    		$scope.notificaciones = response.data.result.notification;
-	            $scope.correos = response.data.result.correos;
-
-	        }).catch(function( error ){
-	        	loading(true);
-	        	console.error( error );
-	        });
-	}
-	$scope.update_notify = function( id ){
-		alert(id);
-	}
-	$scope.time_fechas = function( fecha ){
-      return masterservice.time_fechas(fecha);
-    }
-
-
-
+      }).catch(function( error ){
+        loading(true);
+        console.error( error );
+      });
+  }
+  $scope.update_notify = function( id ){
+    alert(id);
+  }
+  $scope.time_fechas = function( fecha ){
+    return masterservice.time_fechas(fecha);
+  }
 
 });
 
