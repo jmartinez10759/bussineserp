@@ -329,10 +329,45 @@ class ClientesController extends MasterController
           return $this->_message_success(201,$request->all(),self::$message_success );
         }
         return $this->show_error(6,$error,self::$message_error);
-
-        #return message(true,$request->all(),self::$message_success);
     
     }
+    /**
+     * Metodo para borrar el registro de los archivos
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    public function destroy_files( Request $request ){
+        #debuger($request->all());
+        $error = null;
+        DB::beginTransaction();
+        try {
+          
+          $destroy_register = SysClientesModel::with(['contactos:id','actividades:id','archivos:id','empresas:id'])
+                                                ->where(['id' => $request->id_cliente])
+                                                ->get();
+          $files_cliente = $destroy_register[0]->archivos()->where(['id' => $request->id])->get();
+          if( file_exists(public_path()."/".$files_cliente[0]->ruta_archivo ) ){
+            unlink( public_path()."/".$files_cliente[0]->ruta_archivo );
+          }
+          $destroy_register[0]->archivos()->where(['id' => $request->id])->delete();
+          SysUsersFilesModel::where(['id_cliente' => $request->id_cliente, 'id_archivo' => $request->id])->delete();
+
+          DB::commit();
+          $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getFile()." ".$e->getMessage()." ".$e->getLine();
+            DB::rollback();
+        }
+
+        if ($success) {
+          #return $this->_message_success(201,$request->all(),self::$message_success );
+          return $this->show( new Request(['id' => $request->id_cliente ]) );
+        }
+        return $this->show_error(6,$error,self::$message_error);
+
+    } 
     /**
      * Metodo para borrar el registro
      * @access public
@@ -538,14 +573,10 @@ class ClientesController extends MasterController
         }
 
         if ($success) {
-            return $this->_message_success(201, $ruta_file, self::$message_success);
+            #return $this->_message_success(201, $ruta_file, self::$message_success);
+            return $this->show( new Request( ['id' => $request->id ] ) );
         }
         return $this->show_error(6, $error, self::$message_error);
-
-
-
-
-
 
     }
 

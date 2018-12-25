@@ -97,10 +97,10 @@
                                         <div class="col-sm-12">
                                             <div class="btn-toolbar pull-right">
                                                 <button type="button" class="btn btn-danger" data-fancybox-close> 
-                                                    <i class="fa fa-times-circle"></i> Cancelar
+                                                    <i class="fa fa-times-circle"></i> Cerrar
                                                 </button>
                                                 <button type="button" class="btn btn-success" ng-click="insert_register_contacto()" {{ $insertar }}>
-                                                    <i class="fa fa-save"></i> Registrar 
+                                                    <i class="fa fa-save"></i> Guardar 
                                                 </button>
                                             </div>
                                             
@@ -227,44 +227,16 @@
                                         <div class="col-sm-12">
                                             <div class="btn-toolbar pull-right">
                                                 <button type="button" class="btn btn-danger" data-fancybox-close> 
-                                                    <i class="fa fa-times-circle"></i> Cancelar
+                                                    <i class="fa fa-times-circle"></i> Cerrar
                                                 </button>
                                                 <button type="button" class="btn btn-success" ng-click="insert_register()" {{ $insertar }}>
-                                                    <i class="fa fa-save"></i> Registrar 
+                                                    <i class="fa fa-save"></i> Guardar 
                                                 </button>
                                             </div>
                                             
                                         </div>
 
                                     </div>
-
-
-                                   <!--  
-                                    
-                                    <div class="form-group">
-
-                                        <label for="subtotal" class="col-sm-2 control-label">Uso CFDI: </label>
-                                        <div class="col-sm-4">
-                                            <select class="form-control select_chosen"
-                                            chosen
-                                            width="'100%'" 
-                                            ng-model="insert.id_uso_cfdi" 
-                                            ng-options="value.id as value.descripcion for (key, value) in datos.uso_cfdi">
-                                                <option value="">--Seleccione Opcion--</option> 
-                                            </select>
-                                        </div>
-
-                                        <label for="estatus" class="col-sm-2 control-label">Estatus</label>
-                                        <div class="col-sm-4">
-                                             <select class="form-control"
-                                             chosen
-                                             width="'100%'" 
-                                             ng-model="insert.estatus" 
-                                             ng-options="value.id as value.nombre for (key, value) in cmb_estatus"> 
-                                            </select>
-                                        </div>
-
-                                    </div> -->
 
                                 </div>
                                 <!-- /.tab-pane -->
@@ -315,6 +287,12 @@
                                     <input type="hidden" class="form-control" ng-model="update.logo">
                                 </div>
                                 </center>
+                            </div>
+                            <br><br><br>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-warning" ng-click="upload_file(1)" {{$upload}}>
+                                    <i class="fa fa-upload"></i> Subir Logo  
+                                </button>
                             </div>
                             <!-- /.box -->
                         </div>
@@ -424,7 +402,7 @@
                                                 <div class="col-sm-12">
                                                     <div class="btn-toolbar pull-right">
                                                         <button type="button" class="btn btn-danger" data-dismiss="modal"> 
-                                                            <i class="fa fa-times-circle"></i> Cancelar
+                                                            <i class="fa fa-times-circle"></i> Cerrar
                                                         </button>
                                                         <button type="button" class="btn btn-primary" ng-click="update_register_contacto()" {{ $update }}>
                                                             <i class="fa fa-save"></i> Actualizar 
@@ -483,15 +461,6 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group">
-
-                                                        <button type="button" class="btn btn-warning" ng-click="upload_file(1)" {{$upload}}>
-                                                            <i class="fa fa-upload"></i> Subir Imagen  
-                                                        </button>
-
-                                                    </div>
-
-
                                                 </div>
 
                                                 <div class="col-sm-6">
@@ -507,12 +476,12 @@
                                                         <label for="iva" class="col-sm-4 control-label">Pais: </label>
                                                         <div class="col-sm-8">
                                                             <select class="form-control"
-                                                            chosen
-                                                            width="'100%'"
-                                                            ng-change="select_estado()" 
-                                                            ng-model="update.id_country" 
-                                                            ng-options="value.id as value.descripcion for (key, value) in datos.paises">
-                                                            <option value="">--Seleccione Opcion--</option>  
+                                                                chosen
+                                                                width="'100%'"
+                                                                ng-change="select_estado()" 
+                                                                ng-model="update.id_country" 
+                                                                ng-options="value.id as value.descripcion for (key, value) in datos.paises">
+                                                                <option value="">--Seleccione Opcion--</option>  
                                                             </select>  
                                                         </div>
                                                     </div>
@@ -562,7 +531,7 @@
                                                 <div class="col-sm-12">
                                                     <div class="btn-toolbar pull-right">
                                                         <button type="button" class="btn btn-danger" data-dismiss="modal"> 
-                                                            <i class="fa fa-times-circle"></i> Cancelar
+                                                            <i class="fa fa-times-circle"></i> Cerrar
                                                         </button>
                                                         <button type="button" class="btn btn-primary" ng-click="update_register()" {{$update}}>
                                                             <i class="fa fa-save"></i> Actualizar 
@@ -577,20 +546,51 @@
                                         <!-- /.tab-pane -->
                                         <div class="tab-pane" id="files_edit">
                                             <h1>Listado de archivos</h1>
+                                                
                                             <div class="row">
                                                 
-                                                <ul>
+                                                <ul class="mailbox-attachments clearfix">
+
                                                     <li ng-repeat="files in archivos">
-                                                        <a href="@{{files.ruta_archivo}}" target="_blank"> @{{files.ruta_archivo}} </a>
+                                                        <span class="mailbox-attachment-icon">
+                                                            <i class="fa fa-file-pdf-o" ng-if="files.ruta_archivo.substr(-3) =='pdf'"></i>
+                                                            <i class="fa fa-file-excel-o" ng-if="files.ruta_archivo.substr(-3) == 'xls'"></i>
+                                                            <i class="fa fa-file-photo-o" ng-if="files.ruta_archivo.substr(-3) == 'png'"></i>
+                                                            <i class="fa fa-file-photo-o" ng-if="files.ruta_archivo.substr(-3) == 'jpg'"></i>
+                                                            <i class="fa fa-file-photo-o" ng-if="files.ruta_archivo.substr(-3) == 'jpeg'"></i>
+                                                            <i class="fa fa-file-word-o" ng-if="files.ruta_archivo.substr(-3) == 'doc'"></i>
+                                                            <i class="fa fa-file-word-o" ng-if="files.ruta_archivo.substr(-4) == 'docx'"></i>
+                                                        </span>
+
+                                                      <div class="mailbox-attachment-info">
+                                                        <a href="@{{files.ruta_archivo}}" class="mailbox-attachment-name" target="_blank">
+                                                            <i class="fa fa-paperclip"></i>  
+                                                            @{{files.ruta_archivo.replace('upload_file/archivos/clientes/','') }}
+                                                        </a>
+                                                        <span class="mailbox-attachment-size">
+                                                          @{{files.size }} KB
+                                                          <button type="button" class="btn btn-default btn-xs pull-right" ng-click="destroy_files(files.id)" title="Eliminar sArchivo">
+                                                              <i class="fa fa-trash"></i>
+                                                          </button>
+                                                          <!-- <a href="@{{files.ruta_archivo}}" class="btn btn-default btn-xs pull-right" target="_blank"><i class="fa fa-cloud-download"></i></a> -->
+                                                        </span>
+                                                      </div>
                                                     </li>
+
                                                 </ul>
 
 
                                                 <div class="col-sm-12">
                                                     <div class="btn-toolbar pull-right">
-                                                        <button type="button" class="btn btn-danger" data-dismiss="modal"> 
+
+                                                        <button type="button" class="btn btn-warning btn-sm" ng-click="upload_files( update.id )" title="Subir Archivos" {{ $upload }} >
+                                                            <i class="glyphicon glyphicon-upload"></i> Subir Archivos
+                                                        </button>
+                                                        
+                                                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"> 
                                                             <i class="fa fa-times-circle"></i> Cerrar
                                                         </button>
+
                                                     </div>
                                                 </div>
 
@@ -637,7 +637,6 @@
                                                         
                                                 </div>
                                             </div>
-
 
                                         </div>
                                         
@@ -764,13 +763,13 @@
                                 </div>
                             </div>
 
-                            <!-- <div class="form-group">
+                            <div class="form-group">
 
                                 <label for="" class="col-sm-4 control-label">Fecha y/o Hora: <font size="3" color="red">* </font></label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" placeholder="" ng-model="activities.fecha_inicio" capitalize>
                                 </div>
-                            </div> -->
+                            </div>
 
                             <div class="form-group">
 

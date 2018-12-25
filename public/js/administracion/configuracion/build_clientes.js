@@ -4,6 +4,7 @@ const URL = {
   ,url_edit             : 'clientes/edit'
   ,url_all              : 'clientes/all'
   ,url_destroy          : "clientes/destroy"
+  ,url_destroy_files    : "clientes/files_destroy"
   ,url_upload_clientes  : 'clientes/uploads'
   ,redireccion          : "configuracion/clientes"
   ,url_display          : "clientes/display_sucursales"
@@ -137,7 +138,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         });
 
     }
-
     $scope.update_register = function( dblclick = false ){
 
       var validacion = {
@@ -181,7 +181,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       });
 
     }
-
     $scope.update_register_contacto = function( dblclick = false ){
 
         var validacion = {
@@ -226,7 +225,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         });
       
     }
-
     $scope.edit_register = function( id ){
       
       var url = domain( URL.url_edit );
@@ -271,8 +269,8 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         }).catch(function( error ){
             masterservice.session_status_error(error);
         });
+    
     }
-
     $scope.destroy_register = function( id ){
 
       var url = domain( URL.url_destroy );
@@ -290,8 +288,31 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         });
           
       },"warning",true,["SI","NO"]);  
+    
     }
+    $scope.destroy_files =  function(id){
 
+        var url = domain( URL.url_destroy_files );
+        var fields = {
+           id         : id 
+          ,id_cliente : $scope.update.id 
+        };
+
+        buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+          MasterController.request_http(url,fields,'delete',$http, false )
+          .then(function( response ){
+            //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
+              toastr.success( response.data.message , title );
+              $scope.archivos = response.data.result.archivos;
+          }).catch(function( error ){
+              masterservice.session_status_error(error);
+          });
+            
+        },"warning",true,["SI","NO"]);  
+
+    }
     $scope.select_estado = function( update = false){
 
       var url = domain( URL.url_edit_pais );
@@ -358,7 +379,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
        });
 
     }
-
     $scope.insert_permisos = function(){
 
         var matrix = [];
@@ -393,7 +413,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         });
 
     }
-
     $scope.update_estatus = function( id ){
 
         var url = domain( URL.url_update_estatus );
@@ -415,7 +434,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         },"warning",true,["SI","NO"]); 
 
     }
-
     $scope.save_activities = function(update){
 
       var validacion = { 
@@ -442,7 +460,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           });
 
     }
-
     $scope.destroy_comment = function( id ){
         
         var url = domain( URL.url_comments_destroy );
@@ -462,21 +479,18 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         },"warning",true,["SI","NO"]); 
 
     }
-
-    $scope.see_comment = function(hide = false){
+   /* $scope.see_comment = function(hide = false){
         
         $scope.comments = {};
         if(hide){ $scope.comment = false;
         }else{ $scope.comment = true; }
 
-    }
-
+    }*/
     $scope.time_fechas = function( fecha ){
       //$timeout(masterservice.time_fechas(fecha), 60000 );
       return masterservice.time_fechas(fecha);
 
     }
-
     $scope.upload_file = function(update){
 
       var upload_url = domain( URL.url_upload );
@@ -516,7 +530,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
       });
 
     }
-
     $scope.upload_files = function( id ){
       
       var upload_url = domain( URL.url_upload_clientes );
@@ -531,9 +544,11 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         ,id     : id
         /*,nombre : id+"-"+Math.floor((Math.random() * 99999999999) + 1)*/
       };
-      upload_file(fields,upload_url,message,10,identificador,'.pdf, .png, .xml, .xls, .jpg, .jpeg, .txt',function( request ){
-        console.log(request);
+      upload_file(fields,upload_url,message,10,identificador,'.pdf, .png, .xml, .xls, .jpg, .jpeg, .txt, .doc , .docx',function( request ){
+        console.log($scope.archivos);
         toastr.success( request.message , title );
+        $scope.archivos = request.result.archivos;
+        $scope.index();
         jQuery('#upload_files').modal('hide');
 
       });
@@ -543,8 +558,8 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
           backdrop: "static",
           show    : true
         });
+    
     }
-
     $scope.see_activities = function( id ){
 
       var url = domain( URL.url_edit );
