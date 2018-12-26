@@ -20,33 +20,31 @@
               <li class="dropdown messages-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-envelope-o"></i>
-                  <span class="label label-primary {{$efect_notify_correo}}">.</span>
-                  <span class="label label-success ">{{( $count_correo) }}</span>
+                  <span class="label label-primary notify" ng-if="correos.length > 0">.</span>
+                  <span class="label label-success ">@{{ correos.length }}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">Tu Tienes {{ ($count_correo) }} Mensajes </li>
+                  <li class="header">Tu Tienes @{{ correos.length }} Mensajes </li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      @foreach ($emails as $correos)
-                        <li><!-- start message -->
+                        <li ng-repeat="correos in correos"><!-- start message -->
                           <a style="cursor:pointer;">
                             <div class="pull-left">
                               <img src="{{asset('img/profile/profile.png')}}" class="img-circle" alt="User Image">
                             </div>
                             <h6>
-                              {{ $correos->asunto }}
+                              @{{ correos.asunto }}
                               <small>
                                 <p class="pull-right">
                                   <i class="fa fa-clock-o"></i> 
-                                  {{ time_fechas ($correos->created_at,timestamp() )}}
+                                  @{{time_fechas(correos.created_at)}}
                                 </p>
                               </small>
                             </h6>
-                            <p>{{$correos->correo}}</p>
+                            <p>@{{correos.correo}}</p>
                           </a>
                         </li>
-                      @endforeach
                       <!-- end message -->
                     </ul>
                   </li>
@@ -82,30 +80,6 @@
                             </small>
                           </a>
                         </li>
-
-
-
-                      <!-- <li>
-                        <a href="#">
-                          <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
-                          page and may cause design problems
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <i class="fa fa-users text-red"></i> 5 new members joined
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <i class="fa fa-user text-red"></i> You changed your username
-                        </a>
-                      </li> -->
 
                     </ul>
                   </li>

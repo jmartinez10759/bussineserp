@@ -31,27 +31,26 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         $scope.edit           = {};
         $scope.fields         = {};
         $scope.readonly = true;
-        $scope.cmb_estatus = [{id:0 ,nombre:"Prospectos"}, {id:1, nombre:"Clientes"}];
+        $scope.active_detalles = "";
+        $scope.active_contactos = "active";
         $scope.select_estado();
-        $scope.estudio();
-        $scope.tareas();
+        $scope.dropdown();
         $scope.index();
     }
-
-    $scope.estudio = function(){
+    $scope.dropdown = function(){
       $scope.estudios = [
-          {id:1, nombre: "ING"}
-         ,{id:2, nombre: "LIC"}
-         ,{id:3, nombre: "ARQ"}
+          {id:1, nombre: "ING"} ,{id:2, nombre: "LIC"} ,{id:3, nombre: "ARQ"}
       ];
-    }
-    $scope.tareas = function(){
+      
       $scope.tasks = [
-          {id:1, nombre: "LLAMADA"}
-         ,{id:2, nombre: "REUNION"}
+          {id:1, nombre: "LLAMADA"} ,{id:2, nombre: "REUNION"}
       ];
+
+      $scope.cmb_estatus = [
+        {id:0 ,nombre:"Prospectos"}, {id:1, nombre:"Clientes"}
+      ];
+
     }
-    
     $scope.click = function (){
       $location.path("/register");
     }
@@ -96,6 +95,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             if(masterservice.session_status( response )){return;};
 
             $scope.insert = {};
+            $scope.insert.estatus  = 0;
             toastr.success( response.data.message , title );
             $scope.index();
         }).catch(function( error ){
@@ -115,20 +115,38 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-         var url = domain( URL.url_insert );
-        var fields = $scope.insert;
-        jQuery.fancybox.close({
-            'type'      : 'inline'
-            ,'src'      : "#modal_add_register"
-            ,'modal'    : true
-        });
+          var url = domain( URL.url_insert );
+          var fields = $scope.insert;
+        
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
             //not remove function this is  verify the session
             if(masterservice.session_status( response )){return;};
-            $scope.insert = {};
-            toastr.success( response.data.message , title );
-            $scope.index();
+            
+             $scope.active_contactos = "";
+             $scope.active_detalles  = "active";
+            buildSweetAlertOptions("¡Detalles de Facturación!","¿Desea capturar los Detalles de Facturación?",function(){
+                 
+                  toastr.success( response.data.message , title );
+                  console.log($scope.active_detalles);
+                  console.log($scope.active_contactos);
+                  /*$scope.insert = {};
+                  $scope.insert.estatus  = 0;*/
+                  $scope.index();
+
+            },"warning",true,["SI","NO"],function(){
+                $scope.active_contactos = "active";
+                $scope.active_detalles  = "";
+                $scope.insert = {};
+                $scope.insert.estatus  = 0;
+                $scope.index();
+                jQuery.fancybox.close({
+                    'type'      : 'inline'
+                    ,'src'      : "#modal_add_register"
+                    ,'modal'    : true
+                });      
+            });
+
         }).catch(function( error ){
            masterservice.session_status_error(error);
         });
@@ -141,10 +159,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             ,'RFC'             : $scope.update.rfc_receptor
           };
         if(validaciones_fields(validacion)){return;}
-        /*if( !emailValidate( $scope.update.correo ) ){  
-            toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
-            return;
-        }*/
         if( !valida_rfc($scope.update.rfc_receptor) ){
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
@@ -158,7 +172,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
           toastr.info( response.data.message , title );
           if (!dblclick) {
-              jQuery('#modal_edit_register').modal('hide');
+            jQuery('#modal_edit_register').modal('hide');
           }
           $scope.list_comments = response.data.result.actividades;
           //$scope.list_comments = [{titulo: "copia", descripcion: "copia desc"}];
@@ -181,10 +195,6 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        /*if( !valida_rfc($scope.update.rfc_receptor) ){
-            toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
-            return;
-        }*/
         var url = domain( URL.url_update );
         var fields = $scope.update;
         MasterController.request_http(url,fields,'put',$http, false )
@@ -194,15 +204,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
 
             toastr.info( response.data.message , title );
             if (!dblclick) {
-              /*jQuery.fancybox.close({
-                    'type'      : 'inline'
-                    ,'src'      : "#modal_edit_register"
-                    ,'modal'    : true
-                    ,'width'    : 900
-                    ,'height'   : 400
-                    ,'autoSize' : false
-                });*/
-                jQuery('#modal_edit_register').modal('hide');
+               jQuery('#modal_edit_register').modal('hide');
             }
             $scope.list_comments = response.data.result.actividades;
             //$scope.list_comments = [{titulo: "copia", descripcion: "copia desc"}];

@@ -85,13 +85,13 @@ app.controller('CorreosController', function( masterservice, $scope, $http, $loc
         
       }
       /*se catch el archivo si es que se mando uno y se muestra en pantalla*/     
-        var fd = new FormData();
+      /*  var fd = new FormData();
         console.log( $scope.files );
         angular.forEach($scope.files,function(file){
           fd.append('file',file);
         });
       
-      return;
+      return;*/
         var fields = (!resend)? $scope.insert : $scope.edit ;
         var url = domain(URL.url_envios);
 

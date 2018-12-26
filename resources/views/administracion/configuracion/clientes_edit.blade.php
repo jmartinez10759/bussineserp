@@ -11,13 +11,13 @@
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs">
 
-                                <li class="active">
+                                <li class="@{{active_contactos}}">
                                     <a href="#contactos" data-toggle="tab" aria-expanded="false">
                                         Detalles del Contacto
                                     </a>
                                 </li>
 
-                                <li class="">
+                                <li class="@{{active_detalles}}">
                                     <a href="#detalles" data-toggle="tab" aria-expanded="false">
                                         Detalles de Facturación
                                     </a>
@@ -25,7 +25,7 @@
 
                             </ul>
                             <div class="tab-content">
-                                <div class="tab-pane active" id="contactos">
+                                <div class="tab-pane @{{active_contactos}}" id="contactos">
 
                                     <div class="row">
                                         
@@ -110,7 +110,7 @@
 
                                 </div>
                                 <!-- /.tab-pane -->
-                                <div class="tab-pane" id="detalles">
+                                <div class="tab-pane @{{active_detalles}}" id="detalles">
 
                                     <div class="row">
 
