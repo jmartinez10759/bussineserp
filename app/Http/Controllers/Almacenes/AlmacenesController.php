@@ -36,6 +36,8 @@
             if( Session::get("permisos")["GET"] ){
               return view("errors.error");
             }
+
+
             $productos = $this->_validate_consulta( new SysProductosModel, ['categorias','unidades'], [], ['id' => Session::get('id_empresa')]);
         // debuger($productos[0]->proveedores[0]->nombre_comercial);
 
@@ -45,7 +47,7 @@
             $checkbox = build_actions_icons($id,'id_producto= "'.$respuesta->id.'" ');
             $producto[] = [
                  (isset($respuesta->empresas[0]) )? $respuesta->empresas[0]->razon_social: ""
-                 // ,(isset($respuesta->proveedores[0]) )? $respuesta->proveedores[0]->nombre_comercial: ""
+                 ,(isset($respuesta->proveedores[0]) )? $respuesta->proveedores[0]->nombre_comercial: ""
                 ,$respuesta->codigo
                 ,$respuesta->nombre
                 ,format_currency($respuesta->subtotal,2)
@@ -54,8 +56,8 @@
             ];
 
         }
-        // $titulos_producto = ['Empresa','Proveedor','Clave','Producto', 'SubTotal','Total'];
-        $titulos_producto = ['Empresa','Clave','Producto', 'SubTotal','Total'];
+        $titulos_producto = ['Empresa','Proveedor','Clave','Producto', 'SubTotal','Total'];
+        // $titulos_producto = ['Empresa','Clave','Producto', 'SubTotal','Total'];
             $table_producto = [
                 'titulos'          => $titulos_producto
                 ,'registros'       => $producto
@@ -386,8 +388,15 @@
                                                 ->where(['id' => $request->id])
                                                 ->get();
 
-             // $response = SysProveedoresProductosModel::get();
-            
+            //  $almacenes = SysAlmacenesModel::with(['productos','proveedores'])
+            //                                     ->where(['id' => $request->id])
+            //                                     ->get();
+            // $productos = SysProductosModel::with(['proveedores'])->get();
+
+            //     $data[
+            //         'almacenes' => $almacenes
+                   
+            //     ];
              // debuger($response); 
 
 
@@ -405,45 +414,47 @@
          * @return void
          */ 
         public function asignar_insert( Request $request ){
-                #debuger($request->all());
+                // debuger($request->all());
                $error = null;
-                DB::beginTransaction();
+                DB::beginTransaction("error");
                 try {
                     $response = [];
-
-                for($i = 0; $i < count($request->matrix); $i++){
-                $matrices = explode('|',$request->matrix[$i]);
-                $id_proveedor = $matrices[0];
-                $proveedores = SysProveedoresModel::get();
-                // debuger($proveedores);
-
                     $almacenes = SysAlmacenesModel::with(['productos','proveedores'])->where(['id'=> $request->id_almacen])->get();
-                $where = [
-                     'id_producto' => ( isset($almacenes[0]->productos[0]) )? $almacenes[0]->productos[0]->id : ""
-                    ,'id_proveedor' => ( isset($proveedores[0])  )? $proveedores[0]->id:""
-                    ,'id_almacen' => $request->id_almacen
-                    
-                ];             
-                // debuger($where);  
+                    // debuger($almacenes);}
 
-                SysAlmacenesProductosModel::where( $where )->delete();
+                        $datos = [                           
+                            'id_almacen' => $request->id_almacen                            
+                        ];        
+                        // debuger($almacenes);       
+                        // debuger($datos);  
+
+                        SysAlmacenesProductosModel::where($datos)->delete();
+                               
 
                 for($i = 0; $i < count($request->matrix); $i++){
                     $matrices = explode('|',$request->matrix[$i]);
                     $id_producto = $matrices[0];
-                    $productos = SysProductosModel::with(['empresas','sucursales'])->where(['id' => $id_producto])->get();
-                
-                    // debuger($request->matrix);
+                    $productos = SysProductosModel::with(['proveedores'])->where(['id' => $id_producto])->get();
+                    // debuger($productos);
                     $data = [
-                         'id_empresa' => (Session::get('id_rol') == 1 && isset($productos[0]->empresas[0]) )? $productos[0]->empresas[0]->id : Session::get('id_empresa')
-                        ,'id_sucursal'=> ( Session::get('id_rol') == 1 && isset($productos[0]->sucursales[0])  )? $productos[0]->sucursales[0]->id:Session::get('id_sucursal')
-                        ,'id_proveedor' => $request->id_proveedor
-                        ,'id_producto' => $id_producto
+                            'id_producto' =>  ( isset($productos[0]) )? $productos[0]->id:""
+                            ,'id_proveedor' => ( isset($productos[0]->proveedores[0]) )? $productos[0]->proveedores[0]->id:"" 
+                            ,'id_almacen' => $request->id_almacen
                         
-                    ];                  
+                    ];  
+                    // debuger($data);      
+                        // debuger( $response );
+                        $response[] = SysAlmacenesProductosModel::create($data);
 
-                        $response[] = SysProveedoresProductosModel::create($data);
-                }
+                    // if (empty( $productos[0]->proveedores[0]->id ) ) {
+                    
+
+                    // }
+                    // else{
+
+                    // debuger( $productos[0]);
+                    // }
+                                        
                 }
                 DB::commit();
                 $success = true;

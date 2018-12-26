@@ -219,9 +219,9 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
       var fields = {id : id };
         MasterController.request_http(url,fields,"get",$http, false )
       .then(function( response ){
-        // console.log(response.data.result.productos);
           //not remove function this is  verify the session
           if(masterservice.session_status( response )){return;};
+        // console.log(response.data.result);return;
 
           $scope.fields.id_almacen = id;
           $.fancybox.open({
@@ -232,10 +232,10 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
           jQuery('#datatable_productos input[type="checkbox"]').prop('checked',false);
           if(response.data.result.productos.length > 0){
 
-            // console.log(response.data.result.productos); return;
               for (var i = 0; i < response.data.result.productos.length; i++) {
                     jQuery('#'+response.data.result.productos[i].id).prop('checked', true);
               };
+            // console.log(response.data.result.productos); return;
           }
 
       }).catch(function( error ){
@@ -247,24 +247,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
 
         var matrix = [];
         var i = 0;
-        // var ip = 0;
         var url = domain( URL.url_asign_insert);
-        // jQuery('#datatable_productos input[type="checkbox"]').each(function () {
-        //     if (jQuery(this).is(':checked') == true) {
-                
-        //         var id = jQuery(this).attr('id_producto');
-        //         matrix[ip] = `${id}|${jQuery(this).is(':checked')}`;
-        //         i++;
-        //     }
-        // });
-        // var fieldsP = {
-        //     'matrix' : matrix
-        //     // , 'id_almacen': $scope.fields.id_almacen
-        //     , 'id_proveedor' : $scope.fields.id_proveedor
-            
-        // }
-        // console.log(fieldsP);return;
-
         jQuery('#datatable_productos input[type="checkbox"]').each(function () {
             if (jQuery(this).is(':checked') == true) {
                 var id = jQuery(this).attr('id_producto');
@@ -276,9 +259,7 @@ app.controller('AlmacenesController', function( masterservice, $scope, $http, $l
         
         var fields = {
             'matrix' : matrix
-            , 'id_almacen': $scope.fields.id_almacen
-            // , 'id_proveedor' : $scope.fields.id_proveedor
-            
+            , 'id_almacen': $scope.fields.id_almacen            
         }
         // console.log(fields);return;
         MasterController.request_http(url, fields, "post", $http, false )

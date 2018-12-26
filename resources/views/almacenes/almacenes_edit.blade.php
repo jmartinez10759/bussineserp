@@ -127,6 +127,7 @@
             <div class="modal-body">
                 <input type="hidden" id="id_empresa">
                 <input type="hidden" id="id_almacen">
+                <input type="hidden" id="id_producto" >
                 <div id="sucursal_empresa"></div>
             </div>
             <div class="modal-footer">
@@ -150,7 +151,7 @@
             <div class="modal-header">
                 <h3> Listado de Productos</h3>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" >
                 {!! $data_table_producto !!}
             </div>
             <div class="modal-footer">

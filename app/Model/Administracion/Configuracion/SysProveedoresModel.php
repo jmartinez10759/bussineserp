@@ -24,10 +24,10 @@ class SysProveedoresModel extends Model
     ,'logo'
     ,'estatus'
 ];
-  public function almacenes()
-  {
-    return $this->belongsToMany('App\Model\Almacenes\SysAlmacenesModel', 'sys_almacenes_productos', 'id_proveedor', 'id_almacen');
-  }
+  // public function almacenes()
+  // {
+  //   return $this->belongsToMany('App\Model\Almacenes\SysAlmacenesModel', 'sys_almacenes_productos', 'id_proveedor', 'id_almacen');
+  // }
   
   public function sucursales(){
     return $this->belongsToMany(SysSucursalesModel::class,'sys_proveedores_empresas','id_proveedor','id_sucursal');
