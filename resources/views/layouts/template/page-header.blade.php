@@ -71,12 +71,13 @@
                       <li ng-repeat="notify in notificaciones ">
                           <a ng-click="update_notify( notify.id )" style="cursor:pointer;">
                             <h6>
-                              <i class="fa fa-bell-o text-blue"> @{{ notify.portal }}</i>
+                              <i class="fa fa-bell-o text-blue" ng-bind="notify.portal"></i>
                             </h6>
-                            <small><p class="">@{{ notify.mensaje }}</p></small>
+                            <small><p ng-bind="notify.mensaje"></p></small>
                             <small class="pull-right"> 
-                              <i class="fa fa-clock-o"></i> 
-                              @{{time_fechas(notify.created_at)}}
+                              <i class="fa fa-clock-o"> 
+                                @{{time_fechas(notify.created_at)}}
+                              </i>
                             </small>
                           </a>
                         </li>

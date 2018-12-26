@@ -141,7 +141,33 @@ app.controller('ApplicationController',function( masterservice, $scope, $http ,$
       });
   }
   $scope.update_notify = function( id ){
-    alert(id);
+    
+    var url      = domain('api/sistema/token');
+    var fields   = { email: "jorge.martinez@burolaboralmexico.com" };
+    jQuery('#modal_notificaciones').modal({
+      keyboard: false, backdrop: "static",
+      //show    : true
+    });
+
+    MasterController.method_master(url, fields, 'post')
+    .then( response => {
+
+        var headers = {
+           usuario: response.data.result[0].email, token: response.data.result[0].api_token
+        };
+        var uri = domain('api/sistema/notification');
+        var data = {id: id };
+        MasterController.method_master(uri, data, 'delete', headers)
+        .then(response => {
+            $scope.services();
+        }).catch(error => {
+            toastr.error(error, "Ocurrio un Error");
+        });
+
+    }).catch(error => {
+        toastr.error(error, "Ocurrio un Error");
+    });
+
   }
   $scope.time_fechas = function( fecha ){
     return masterservice.time_fechas(fecha);
