@@ -19,11 +19,15 @@
 
             <div class="btn-group pull-right">
                 <form class="form-inline" id="form_general">
-                    {!! $upload_files !!}
+                    <div class="row">
+                        {!! $upload_files !!}
                     
-                    <input id="search_general" class="form-control" type="text" placeholder="Buscar" onkeyup="buscador_general(this,'{{ $buscador }}')" />
+                        <input id="search_general" class="form-control" type="text" placeholder="Buscar" onkeyup="buscador_general(this,'{{ $buscador }}')" />
+                    
+                        {!! $modal !!}
+                    </div>
+                    
 
-                    {!! $modal !!}
                 </form>
             </div>
 
@@ -32,11 +36,10 @@
 
         <div class="panel-body">
             <!-- seccion de cargador  -->
-            <!-- <div class="loader"></div> -->
             <img class="loader" />
-
-            @yield('content')
             
+            @yield('content')
+
             <div class="" id="seccion_upload" style="display:none;">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -57,6 +60,63 @@
                 </div>
             </div>
 
+            <div id="modal_notificaciones" class="modal fade">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                          <h4 class="modal-title">Notificaciones</h4>
+                      </div>
+                      <div class="modal-body">
+                          
+                          <form class="form-horizontal">
+                              
+                              <div class="row">
+                                  <div class="col-sm-8">
+                                      
+                                      <div class="form-group">
+
+                                          <label for="" class="col-sm-4 control-label">Portal: </label>
+                                          <div class="col-sm-8">
+                                              <p ng-bind="update.portal"></p>
+                                          </div>
+                                      </div>
+
+                                      <div class="form-group">
+
+                                          <label for="" class="col-sm-4 control-label">Titulo: </label>
+                                          <div class="col-sm-8">
+                                              <p ng-bind="update.titulo"></p>
+                                          </div>
+                                      </div>
+
+                                      <div class="form-group">
+
+                                          <label for="" class="col-sm-4 control-label">Mensaje: </label>
+                                          <p ng-bind="update.mensaje"></p>
+                                      </div>
+                                  </div>
+
+                              </div>
+
+                          </form>
+
+
+                      </div>
+                      
+                      <div class="modal-footer">
+                          <!-- <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button> -->
+                          <button type="button" class="btn btn-success" ng-click="update_notify()">
+                              <i class="fa fa-save"></i> Aceptar
+                          </button>
+                      </div>
+
+                  </div>
+              </div>
+            
+            </div>
+
+            
         </div>
 
     </div>

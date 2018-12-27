@@ -37,13 +37,13 @@
                                                         <select class="form-control"
                                                         chosen
                                                         width="'100%'"
-                                                        ng-model="insert.id_study" 
+                                                        ng-model="contact.id_study" 
                                                         ng-options="value.id as value.nombre for (key, value) in estudios">
                                                             <option value="">--Seleccione Opcion--</option>  
                                                         </select> 
                                                     </div>
                                                     <div class="col-sm-9">
-                                                        <input type="text" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="insert.contacto" capitalize>
+                                                        <input type="text" class="form-control" placeholder="Ingrese Nombre de contacto" ng-model="contact.contacto" capitalize>
                                                     </div>
                                                 </div>
 
@@ -52,7 +52,7 @@
                                             <div class="form-group">
                                                 <label for="" class="col-sm-4 control-label">Cargo:</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" placeholder="Ingrese Cargo en la empresa" ng-model="insert.cargo" capitalize >
+                                                    <input type="text" class="form-control" placeholder="Ingrese Cargo en la empresa" ng-model="contact.cargo" capitalize >
                                                 </div>
                                             </div>
 
@@ -61,7 +61,7 @@
                                                     <font size="3" color="red">* </font>
                                                 </label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" placeholder="Ingrese un correo valido" ng-model="insert.correo" >
+                                                    <input type="text" class="form-control" placeholder="Ingrese un correo valido" ng-model="contact.correo" >
                                                 </div>   
                                             </div>
 
@@ -72,7 +72,7 @@
                                             <div class="form-group">
                                                 <label for="" class="col-sm-4 control-label">Departamento:</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" placeholder="Ingrese departamento en la empresa" ng-model="insert.departamento" capitalize>
+                                                    <input type="text" class="form-control" placeholder="Ingrese departamento en la empresa" ng-model="contact.departamento" capitalize>
                                                 </div>
                                             </div>
 
@@ -82,10 +82,10 @@
                                                 </label>
                                                 <div class="col-sm-8">
                                                     <div class="col-sm-9">
-                                                        <input type="text" class="form-control" placeholder="Lada + número" ng-model="insert.telefono" maxlength="15" onkeyup="numerico(this)">
+                                                        <input type="text" class="form-control" placeholder="Lada + número" ng-model="contact.telefono" maxlength="15" onkeyup="numerico(this)">
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <input type="text" class="form-control" placeholder="Ext." ng-model="insert.extension" maxlength="6" capitalize onkeyup="numerico(this)">
+                                                        <input type="text" class="form-control" placeholder="Ext." ng-model="contact.extension" maxlength="6" capitalize onkeyup="numerico(this)">
                                                         
                                                     </div>
                                                 </div>
@@ -99,7 +99,7 @@
                                                 <button type="button" class="btn btn-danger" data-fancybox-close> 
                                                     <i class="fa fa-times-circle"></i> Cerrar
                                                 </button>
-                                                <button type="button" class="btn btn-success" ng-click="insert_register_contacto()" {{ $insertar }}>
+                                                <button type="button" class="btn btn-success" ng-click="insert_register_contacto()" {{ $insertar }} >
                                                     <i class="fa fa-save"></i> Guardar 
                                                 </button>
                                             </div>
@@ -266,13 +266,13 @@
 </div>
 
 <div id="modal_edit_register" class="modal fade">
-    <div class="modal-dialog" style="width: 101%;">
+    <div class="modal-dialog" style="width: 100%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">Detalles del Cliente</h4>
             </div>
-            <div class="modal-body" style="overflow-y:scroll; height:500px;">
+            <div class="modal-body" style="overflow-y:scroll; height:550px;">
 
                 <section class="content">
                     <div class="row">
@@ -557,7 +557,7 @@
                                                             <i class="fa fa-file-excel-o" ng-if="files.ruta_archivo.substr(-3) == 'xls'"></i>
                                                             <i class="fa fa-file-photo-o" ng-if="files.ruta_archivo.substr(-3) == 'png'"></i>
                                                             <i class="fa fa-file-photo-o" ng-if="files.ruta_archivo.substr(-3) == 'jpg'"></i>
-                                                            <i class="fa fa-file-photo-o" ng-if="files.ruta_archivo.substr(-3) == 'jpeg'"></i>
+                                                            <i class="fa fa-file-photo-o" ng-if="files.ruta_archivo.substr(-4) == 'jpeg'"></i>
                                                             <i class="fa fa-file-word-o" ng-if="files.ruta_archivo.substr(-3) == 'doc'"></i>
                                                             <i class="fa fa-file-word-o" ng-if="files.ruta_archivo.substr(-4) == 'docx'"></i>
                                                         </span>
@@ -664,10 +664,7 @@
     </div>
 </div>
 
-
-
-
-<div class="" id="permisos" style="display:none;">
+<div id="permisos" style="display:none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -694,7 +691,7 @@
 </div>
 
 
-<div class="" id="upload_file" style="display:none;">
+<div id="upload_file" style="display:none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

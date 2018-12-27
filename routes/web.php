@@ -57,7 +57,8 @@ date_default_timezone_set('America/Mexico_City');
 	]);
 
 Route::group(['middleware' => ['admin.only']], function() {
-  ##################################### RUTAS DE ADMINISTRADORES #############################################
+
+##################################### RUTAS DE ADMINISTRADORES #############################################
     Route::get('/dashboard', [
         'uses'      => 'Administracion\DashboardController@index'
         ,'as'       => 'dashboard'
@@ -73,7 +74,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'dashboard.postulaciones'
     ]);
 
-		############### MODULO DE CORREOS ESTE SERA PARTE DEL SISTEMA.#############
+############### MODULO DE CORREOS ESTE SERA PARTE DEL SISTEMA.#############
 
     Route::get('/correos/recibidos', [
         'uses'      => 'Administracion\Correos\CorreoController@index'
@@ -134,19 +135,20 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Correos\CorreoController@destroy'
         ,'as'       => 'correos.destroy'
     ]);
-		######################## SECCION DE CATEGORIAS  #######################
-		Route::post('/categorias/insert', [
+
+######################## SECCION DE CATEGORIAS  #######################
+	Route::post('/categorias/insert', [
         'uses'      => 'Administracion\Correos\CategoriaController@store'
         ,'as'       => 'categorias.insert'
     ]);
 
-		Route::get('/categorias/eliminar', [
+	Route::get('/categorias/eliminar', [
         'uses'      => 'Administracion\Correos\CategoriaController@destroy'
         ,'as'       => 'categorias.eliminar'
     ]);
 
-		############################ SECCION DE CITAS ###############################
-		Route::post('/citas/insert', [
+############################ SECCION DE CITAS ###############################
+	Route::post('/citas/insert', [
         'uses'      => 'Administracion\CitasController@store'
         ,'as'       => 'citas.insert'
     ]);
@@ -171,7 +173,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'registros.destroy'
     ]);
 
-	###################### MODULO DE MENUS #####################################
+###################### MODULO DE MENUS #####################################
     Route::get('/configuracion/menus', [
         'uses'      => 'Administracion\Configuracion\MenuController@index'
         ,'as'       => 'configuracion.menus'
@@ -202,7 +204,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'menus.update'
     ]);
 
-    ############################ MODULO DE GENERAR PERMISOS #####################
+############################ MODULO DE GENERAR PERMISOS #####################
     Route::get('/configuracion/permisos', [
         'uses'      => 'Administracion\Configuracion\PermisosController@index'
         ,'as'       => 'configuracion.permisos'
@@ -243,7 +245,7 @@ Route::group(['middleware' => ['admin.only']], function() {
       ,'as'       => 'permisos.actions'
     ]);
 
-    ##################### MODULO DE GENERAR ROLES.##############################
+##################### MODULO DE GENERAR ROLES.##############################
     Route::get('/configuracion/roles', [
         'uses'      => 'Administracion\Configuracion\RolesController@index'
         ,'as'       => 'configuracion.roles'
@@ -269,7 +271,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'roles.update'
     ]);
 
-    ########################### MODULO DE ACCIONES ##############################.
+########################### MODULO DE ACCIONES ##############################.
     Route::get( "/configuracion/actions", [
       'uses'      => 'Administracion\Configuracion\ActionsController@index'
       ,'as'       => 'configuracion.actions'
@@ -295,7 +297,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'actions.edit'
     ]);
 
-    ########################## MODULO DE USUARIOS.##############################
+########################## MODULO DE USUARIOS.##############################
     Route::get('/configuracion/usuarios', [
         'uses'      => 'Administracion\Configuracion\UsuariosController@index'
         ,'as'       => 'usuarios'
@@ -320,6 +322,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\UsuariosController@update'
         ,'as'       => 'usuarios.update'
     ]);
+
 ############################# MODULO DE EMPRESAS ######################################
 
     Route::get('/configuracion/empresas', [
@@ -575,7 +578,8 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'perfiles.upload'
     ]);
 
-############################ SECCION DE CLIENTES ###################################
+############################ CATALOGO DE CLIENTES ###################################
+    
     Route::get('/configuracion/clientes', [
         'uses'      => 'Administracion\Configuracion\ClientesController@index'
         ,'as'       => 'configuracion.clientes'
@@ -585,7 +589,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ClientesController@store'
         ,'as'       => 'clientes.register'
     ]);
-    
+
     Route::post('/clientes/register_permisos', [
         'uses'      => 'Administracion\Configuracion\ClientesController@register_permisos'
         ,'as'       => 'clientes.register'
@@ -642,7 +646,8 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'clientes.files_destroy'
     ]);
 
-    ############################ SECCION DE ACTIVIDADES ###################################
+############################ CATALOGO DE ACTIVIDADES ###################################
+    
     Route::get('/configuracion/activities', [
         'uses'      => 'Administracion\Configuracion\ActivitiesController@index'
         ,'as'       => 'configuracion.activities'
@@ -668,9 +673,8 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'activities.destroy'
     ]);
 
-
-
-    ############################ SECCION DE CONTACTOS ###################################
+############################ CATALOGO DE CONTACTOS ###################################
+    
     Route::get('/configuracion/contactos', [
         'uses'      => 'Administracion\Configuracion\ContactosController@index'
         ,'as'       => 'configuracion.clientes'
@@ -701,8 +705,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ContactosController@destroy'
         ,'as'       => 'contactos.destroy'
     ]);
-    
-    
+        
 ############################ SECCION DE PRODUCTOS #######################################
     
     Route::get('/configuracion/productos', [
@@ -798,6 +801,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProductosController@destroy'
         ,'as'       => 'clientes.destroy'
     ]);
+
 ############################ SECCION PAISES #######################################
     
     Route::get('/configuracion/pais', [
@@ -829,6 +833,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\PaisController@destroy'
         ,'as'       => 'pais.destroy'
     ]);
+
 ############################ SECCION CODIGOS POSTALES #######################################
     
     Route::get('/configuracion/codigopostal', [
@@ -865,7 +870,8 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@destroy'
         ,'as'       => 'codigopostal.destroy'
     ]);
-############################ SECCION PAISES #######################################
+
+############################ SECCION SERVICIOS COMERCIALES #######################################
     
     Route::get('/configuracion/servicioscomerciales', [
         'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@index'
@@ -897,9 +903,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'servicioscomerciales.destroy'
     ]);
 
-
-    
-############################ SECCION DE CARGA DE ARCHIVOS #######################################
+################################## SECCION DE CARGA DE ARCHIVOS #######################################
     
     Route::post('/upload/catalogos', [
         'uses'      => 'Administracion\Configuracion\UploadController@upload_catalogos'
@@ -1010,7 +1014,7 @@ Route::group(['middleware' => ['admin.only']], function() {
 				,'as'       => 'ejecutivos.filtros'
 		]);
 
-################################## MODULO DE VENTAS SECCION DE PEDIDOS ################################
+################################## MODULO DE VENTAS PEDIDOS ################################
             
         Route::get('/ventas/pedidos', [
             'uses'      => 'Ventas\PedidosController@index'
@@ -1057,7 +1061,7 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'pedidos.destroy_concepto'
         ]);
 
-############################# MODULO DE VENTAS SECCION DE FACTURACIONES ##########################
+################################## MODULO DE VENTAS FACTURACIONES ##########################
             
         Route::get('/ventas/facturaciones', [
             'uses'      => 'Ventas\FacturacionesController@index'
@@ -1102,7 +1106,6 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'facturaciones.destroy_concepto'
         ]);
 
-
 ################################## CATALOGO DE TIPO DE COMPROBANTES ################################
 
     Route::get('/configuracion/tiposcomprobantes', [
@@ -1134,6 +1137,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\TiposComprobantesController@destroy'
         ,'as' => 'tiposcomprobantes.destroy'
     ]);
+
 ################################## CATALOGO REGIMEN FISCAL ################################
 
     Route::get('/configuracion/regimenfiscal', [
@@ -1165,6 +1169,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\RegimenFiscalController@destroy'
         ,'as' => 'regimenfiscal.destroy'
     ]);
+
 ################################## CATALOGO USOCFDI  ################################
 
     Route::get('/configuracion/usocfdi', [
@@ -1196,6 +1201,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\UsoCfdiController@destroy'
         ,'as' => 'usocfdi.destroy'
     ]);
+
 ################################## CATALOGO TIPO FACTOR ################################
 
     Route::get('/configuracion/tipofactor', [
@@ -1227,6 +1233,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\TipoFactorController@destroy'
         ,'as' => 'tipofactor.destroy'
     ]);
+
 ################################## CATALOGO TASA ################################
 
     Route::get('/configuracion/tasa', [
@@ -1263,7 +1270,40 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\TasaController@factor_tasa'
         ,'as' => 'tasa.factor_tasa'
     ]);
-    
+
+################################## CATALOGO NOTIFICACIONES ################################
+
+    Route::get('/notificaciones', [
+        'uses' => 'Administracion\NotificationController@index'
+        ,'as'  => 'configuracion'
+    ]);
+
+    Route::get('/notificaciones/all', [
+        'uses' => 'Administracion\NotificationController@all'
+        ,'as'  => 'notificaciones.all'
+    ]);
+
+    Route::post('/notificaciones/register', [
+        'uses' => 'Administracion\NotificationController@store'
+        ,'as' => 'notificaciones.register'
+    ]);
+
+    Route::get('/notificaciones/edit', [
+        'uses' => 'Administracion\NotificationController@show'
+        ,'as' => 'notificaciones.edit'
+    ]);
+
+    Route::put('/notificaciones/update', [
+        'uses' => 'Administracion\NotificationController@update'
+        ,'as' => 'notificaciones.update'
+    ]);
+
+    Route::delete('/notificaciones/destroy', [
+        'uses' => 'Administracion\NotificationController@destroy'
+        ,'as' => 'notificaciones.destroy'
+    ]);
+
+
 ################################## CATALOGO IMPUESTO ################################
 
     Route::get('/configuracion/impuesto', [
@@ -1300,6 +1340,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\ImpuestoController@destroy'
         ,'as' => 'impuesto.destroy'
     ]);
+
 ################################## CATALOGO CLAVE SERVICIO PRODUCTO ################################
 
     Route::get('/configuracion/claveprodservicio', [
@@ -1331,6 +1372,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\ClaveProdServicioController@destroy'
         ,'as' => 'claveprodservicio.destroy'
     ]);
+
 ################################## CATALOGO DE UNIDAD DE MEDIDAS ################################
 
     Route::get('/configuracion/unidadesmedidas', [
@@ -1475,7 +1517,7 @@ Route::group(['middleware' => ['admin.only']], function() {
 
 ##################################### COTIZACIONES #########################################    
 
-Route::get('/ventas/cotizacion', [
+    Route::get('/ventas/cotizacion', [
         'uses' => 'Ventas\CotizacionController@index'
         ,'as' => 'ventas.cotizacion'
     ]);
@@ -1575,7 +1617,7 @@ Route::get('/ventas/cotizacion', [
                 ,'as'       => 'atencion'
         ]);
 
- ################################## CATALOGO DE PROYECTOS ################################
+################################## CATALOGO DE PROYECTOS ################################
     Route::get('/proyectos/listado', [
         'uses' => 'Development\ProyectosController@index'
         ,'as' => 'proyectos.listado'

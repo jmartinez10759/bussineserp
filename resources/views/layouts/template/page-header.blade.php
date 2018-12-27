@@ -1,4 +1,4 @@
- <header class="main-header" ng-controller="ApplicationController as services" ng-init="constructor()" ng-cloak>
+<header class="main-header">
         <!-- Logo -->
         <!-- <a href="{{route('list.empresas')}}" class="logo"> -->
         <a href="{{$url_previus}}" class="logo" title="Regresar a Listado de Empresas">
@@ -69,7 +69,7 @@
                     <ul class="menu">
 
                       <li ng-repeat="notify in notificaciones ">
-                          <a ng-click="update_notify( notify.id )" style="cursor:pointer;">
+                          <a ng-click="users_notify( notify.id )" style="cursor:pointer;">
                             <h6>
                               <i class="fa fa-bell-o text-blue" ng-bind="notify.portal"></i>
                             </h6>
@@ -222,4 +222,5 @@
             </ul>
           </div>
         </nav>
-      </header>
+
+</header>

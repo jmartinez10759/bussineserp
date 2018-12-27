@@ -125,6 +125,7 @@ app.controller('ApplicationController',function( masterservice, $scope, $http ,$
       $scope.services();
       $scope.notificaciones = {};
       $scope.correos = {};
+      $scope.update = {};
   }
   $scope.services = function(){
     var url = domain('services');
@@ -140,30 +141,26 @@ app.controller('ApplicationController',function( masterservice, $scope, $http ,$
         console.error( error );
       });
   }
-  $scope.update_notify = function( id ){
+  $scope.update_notify = function(){
+    
     
     var url      = domain('api/sistema/token');
     var fields   = { email: "jorge.martinez@burolaboralmexico.com" };
-    jQuery('#modal_notificaciones').modal({
-      keyboard: false, backdrop: "static",
-      //show    : true
-    });
+    jQuery('#modal_notificaciones').modal('hide');
 
     MasterController.method_master(url, fields, 'post')
     .then( response => {
-
         var headers = {
            usuario: response.data.result[0].email, token: response.data.result[0].api_token
         };
         var uri = domain('api/sistema/notification');
-        var data = {id: id };
+        var data = {id:  $scope.update.id };
         MasterController.method_master(uri, data, 'delete', headers)
         .then(response => {
             $scope.services();
         }).catch(error => {
             toastr.error(error, "Ocurrio un Error");
         });
-
     }).catch(error => {
         toastr.error(error, "Ocurrio un Error");
     });
@@ -172,6 +169,34 @@ app.controller('ApplicationController',function( masterservice, $scope, $http ,$
   $scope.time_fechas = function( fecha ){
     return masterservice.time_fechas(fecha);
   }
+  $scope.users_notify = function( id ){
+
+  	var url = domain('notificaciones/edit');
+  	var fields = { id : id };
+
+  	MasterController.request_http(url,fields,'get',$http, false )
+      .then(function( response ){
+          //not remove function this is  verify the session
+            if(masterservice.session_status( response )){return;};
+
+            $scope.update.id 	  = response.data.result.id; 
+            $scope.update.portal  = response.data.result.portal;
+            $scope.update.titulo  = response.data.result.titulo;
+            $scope.update.mensaje = response.data.result.mensaje;
+            console.log($scope.update);
+		  	jQuery('#modal_notificaciones').modal({
+		      keyboard: false, backdrop: "static"
+		    });	
+
+      }).catch(function( error ){
+        loading(true);
+        console.error( error );
+        masterservice.session_status_error( error );
+      });
+
+
+  }
+
 
 });
 

@@ -473,14 +473,8 @@
      */
     public function asignar( Request $request ){
         try {
-         $response = SysProveedoresModel::with(['productos'])
-                                            ->where(['id' => $Request->id])
-                                            ->get();
-         #$response = $proveedores[0]->productos()->get();
-
-         // debuger($response);
-
-        return $this->_message_success( 200, $response[0] , self::$message_success );
+         $response = SysProveedoresModel::with(['productos'])->where(['id' => $request->id])->first();
+        return $this->_message_success( 200, $response , self::$message_success );
         } catch (\Exception $e) {
         $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
         return $this->show_error(6, $error, self::$message_error );
@@ -493,7 +487,7 @@
      * @param Request $request [Description]
      * @return void
      */
-    public function asignar_insert( Request $request ){            
+    public function asignar_insert( Request $request ){
            $error = null;
             DB::beginTransaction();
             try {

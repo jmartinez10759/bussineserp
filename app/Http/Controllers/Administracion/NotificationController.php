@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Administracion;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
-#use App\Model\Development\Modulo\OrmModel;
 
-class EstructuraController extends MasterController
+use App\Model\Administracion\Configuracion\SysNotificacionesModel;
+use App\Model\Administracion\Configuracion\SysRolesNotificacionesModel;
+
+class NotificationController extends MasterController
 {
     #se crea las propiedades
     private $_tabla_model;
@@ -58,8 +60,7 @@ class EstructuraController extends MasterController
     public function show( Request $request ){
 
         try {
-
-
+        	$response = SysNotificacionesModel::whereId( $request->id )->first();
           return $this->_message_success( 200, $response , self::$message_success );
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -149,22 +150,5 @@ class EstructuraController extends MasterController
           return $this->show_error(6, $error, self::$message_error );
 
       }
-    /**
-     * Metodo subir los catalogos e insertar la informacion
-     * @access public
-     * @param Request $request [Description]
-     * @return void
-     */
-     public function upload_catalos( Request $request ){
-
-         try {
-
-           return $this->_message_success( 201, $response , self::$message_success );
-         } catch (\Exception $e) {
-             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-             return $this->show_error(6, $error, self::$message_error );
-         }
-
-     }
 
 }

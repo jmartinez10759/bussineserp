@@ -25,6 +25,8 @@ use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
 use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
 
+#use App\Http\Controllers\Administracion\Configuracion\ContactosController;
+
 class ClientesController extends MasterController
 {
     #se crea las propiedades
@@ -62,7 +64,7 @@ class ClientesController extends MasterController
         $data = [
           'prospectos'            => $datos['response']
           ,'clientes'             => $datos['response_clientes']
-          ,'empresas'             => SysEmpresasModel::where(['estatus' => 1])->get()
+          ,'empresas'             => SysEmpresasModel::whereEstatus(1)->get()
           ,'paises'               => SysPaisModel::get()
           ,'servicio_comercial'   => SysServiciosComercialesModel::get()
           ,'uso_cfdi'             => SysUsoCfdiModel::get()
@@ -87,9 +89,9 @@ class ClientesController extends MasterController
         try {        
           $response = SysClientesModel::with(['contactos','actividades' => function( $query ){
              return $query->with(['usuarios','roles'])->orderby('id','desc')->get();
-          },'archivos'])->where(['id' => $request->id])->get();
+          },'archivos'])->whereId( $request->id )->first();
 
-          return $this->_message_success( 200, $response[0] , self::$message_success );
+          return $this->_message_success( 200, $response , self::$message_success );
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -107,43 +109,37 @@ class ClientesController extends MasterController
           $error = null;
           DB::beginTransaction();
           try {
-              $string_key_contactos = [ 'contacto','departamento','telefono', 'correo','id_study','extension', 'cargo' ];
-              $string_data_clientes = [];
-              $string_data_contactos = [];
-                foreach( $request->all() as $key => $value ){
-                    if( in_array( $key, $string_key_contactos) ){
-                        if( $key == 'contacto' ){
-                            $string_data_contactos['nombre_completo'] = strtoupper($value);
-                        }else if( $key == 'correo'){
-                            $string_data_contactos[$key] = strtolower( trim($value) );
-                        }else{
-                            $string_data_contactos[$key] = strtoupper($value);
-                        }
-                    };
-                    if( !in_array( $key, $string_key_contactos) ){
-                        if( !is_array($value)){
-                            if($key == "logo"){
-                              $string_data_clientes[$key] = (trim($value));
-                            }else{
-                              $string_data_clientes[$key] = strtoupper($value);
-                            }
-                        }
-                    };
-                }
-                #debuger($string_data_contactos,false);
-                #debuger($string_data_clientes);
 
-                $response = $this->_tabla_model::create( $string_data_clientes );
+            if ( isset($request->cliente['id']) ) {
+                $response =  SysClientesModel::whereId( $request->cliente['id'] )->update($request->cliente);
+                $cliente = SysClientesModel::whereId( $request->cliente['id'] )->first();
+            }else{
+
+              $string_data_contactos = [];
+               foreach ($request->contactos as $key => $value) {
+                    if ( $key == 'correo' ) {
+                      $string_data_contactos[$key] = strtolower( trim( $value ) );
+                    }else if( $key == 'contacto' ){
+                      $string_data_contactos['nombre_completo'] = strtoupper($value);
+                    }else{
+                      $string_data_contactos[$key] = strtoupper($value);
+                    }
+                }
+                #debuger($string_data_contactos);
+                $cliente = SysClientesModel::create( $request->cliente );
                 $response_contactos = SysContactosModel::create($string_data_contactos);
                 $data = [
                     'id_empresa'       => Session::get('id_empresa')
                     ,'id_sucursal'     => Session::get('id_sucursal')
-                    ,'id_cliente'      => $response->id
+                    ,'id_cliente'      => $cliente->id
                 ];
                 SysClientesEmpresasModel::create($data); 
                 $datos['id_contacto'] = $response_contactos->id;   
-                $datos['id_cliente']  = $response->id;   
+                $datos['id_cliente']  = $cliente->id;   
                 SysContactosSistemasModel::create($datos);
+              
+            }
+                
             DB::commit();
             $success = true;
           } catch (\Exception $e) {
@@ -153,7 +149,7 @@ class ClientesController extends MasterController
           }
 
           if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
+            return $this->_message_success( 201, $cliente , self::$message_success );
           }
           return $this->show_error(6, $error, self::$message_error );
 
@@ -277,7 +273,7 @@ class ClientesController extends MasterController
         $error = null;
           DB::beginTransaction();
           try {
-             $this->_tabla_model::where(['id' => $request->id] )->update( [ 'estatus' => $request->estatus ] );
+             $this->_tabla_model::whereId( $request->id )->update( [ 'estatus' => $request->estatus ] );
             DB::commit();
             $success = true;
           } catch (\Exception $e) {
@@ -305,13 +301,13 @@ class ClientesController extends MasterController
         try {
 
           $destroy_register = SysClientesModel::with(['contactos:id','actividades:id','archivos:id','empresas:id'])
-                                                ->where(['id' => $request->id])
+                                                ->whereId( $request->id )
                                                 ->get();
           $destroy_register[0]->archivos()->delete();
           $destroy_register[0]->actividades()->delete();
           $destroy_register[0]->contactos()->delete();
           #unlink( public_path().$destroy_register[0]->logo );
-          SysClientesModel::where( ['id' => $request->id ] )->delete();
+          SysClientesModel::whereId( $request->id )->delete();
           SysClientesEmpresasModel::where(['id_cliente' => $request->id])->delete();
           SysContactosSistemasModel::where(['id_cliente' => $request->id])->delete();
           SysUsersActivitiesModel::where(['id_cliente' => $request->id])->delete();
@@ -344,13 +340,13 @@ class ClientesController extends MasterController
         try {
           
           $destroy_register = SysClientesModel::with(['contactos:id','actividades:id','archivos:id','empresas:id'])
-                                                ->where(['id' => $request->id_cliente])
-                                                ->get();
-          $files_cliente = $destroy_register[0]->archivos()->where(['id' => $request->id])->get();
-          if( file_exists(public_path()."/".$files_cliente[0]->ruta_archivo ) ){
-            unlink( public_path()."/".$files_cliente[0]->ruta_archivo );
+                                                ->whereId( $request->id_cliente )
+                                                ->first();
+          $files_cliente = $destroy_register->archivos()->whereId( $request->id )->first();
+          if( file_exists(public_path()."/".$files_cliente->ruta_archivo ) ){
+            unlink( public_path()."/".$files_cliente->ruta_archivo );
           }
-          $destroy_register[0]->archivos()->where(['id' => $request->id])->delete();
+          $destroy_register[0]->archivos()->whereId(  $request->id )->delete();
           SysUsersFilesModel::where(['id_cliente' => $request->id_cliente, 'id_archivo' => $request->id])->delete();
 
           DB::commit();
