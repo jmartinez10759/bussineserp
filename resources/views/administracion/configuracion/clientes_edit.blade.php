@@ -764,7 +764,7 @@
 
                                 <label for="" class="col-sm-4 control-label">Fecha y/o Hora: <font size="3" color="red">* </font></label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" placeholder="" ng-model="activities.fecha_inicio" capitalize>
+                                    <input type="text" class="form-control" placeholder="" ng-model="activities.fecha" >
                                 </div>
                             </div>
 

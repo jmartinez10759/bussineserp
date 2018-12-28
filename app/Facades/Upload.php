@@ -95,7 +95,7 @@ class Upload extends Facade
     public function store_register(){
         
         $error = null;
-          DB::beginTransaction();
+        DB::beginTransaction();
           try {
             $data = [];
             foreach( $this->datos_excel['result'] as $key => $value ){
@@ -119,5 +119,6 @@ class Upload extends Facade
         
         
     }
+
 
 }

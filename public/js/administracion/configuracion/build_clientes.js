@@ -31,6 +31,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         $scope.archivos       = {};
         $scope.edit           = {};
         $scope.fields         = {};
+        $scope.activities     = {};
         $scope.readonly = true;
         $scope.active_detalles = "";
         $scope.active_contactos = "active";
