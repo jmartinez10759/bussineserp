@@ -36,7 +36,7 @@ class SysRolesModel extends Model
     }
     public function notificaciones()
     {
-        return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_rol','id_notificacion');
+        return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_rol','id_notificacion'); 
     }
 
 }
