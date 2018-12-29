@@ -45,9 +45,9 @@ app.service('masterservice', function( $http , $rootScope ) {
 
 	    },
 	    session_status: function( response = {} ){
-	    	loading(true);
+	    	//loading(true);
 	    	/*se carga el metodo para obtener los correos y/o las notificaciones*/
-        $rootScope.$emit("services", {});
+        	$rootScope.$emit("services", {});
 	    	
         if( typeof response.data != "object" ){
               toastr.error( session_expired );

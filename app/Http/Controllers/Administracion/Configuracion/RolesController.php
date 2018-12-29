@@ -23,10 +23,8 @@ class RolesController extends MasterController
      *@return void
      */
      public function index(){
-           if( Session::get('permisos')['GET'] ){
-              return view('errors.error');
-           }
-         $response = (Session::get('id_rol') == 1 )? $this->_tabla_model::get() : $this->_consulta( $this->_tabla_model,[],[],['id' => Session::get('id_empresa')],false );
+        if( Session::get('permisos')['GET'] ){ return view('errors.error');}
+        $response = (Session::get('id_rol') == 1 )? $this->_tabla_model::all() : $this->_consulta( $this->_tabla_model,[],[],['id' => Session::get('id_empresa')],false );
          #debuger($response);
          $registros = [];
          $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
