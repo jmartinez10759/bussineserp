@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysRolesModel;
+use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysUsersRolesModel;
 
 class RolesController extends MasterController
@@ -24,7 +25,8 @@ class RolesController extends MasterController
      */
      public function index(){
         if( Session::get('permisos')['GET'] ){ return view('errors.error');}
-        $response = (Session::get('id_rol') == 1 )? $this->_tabla_model::all() : $this->_consulta( $this->_tabla_model,[],[],['id' => Session::get('id_empresa')],false );
+
+        /*$response = (Session::get('id_rol') == 1 )? $this->_tabla_model::all() : $this->_consulta( $this->_tabla_model,[],[],['id' => Session::get('id_empresa')],false );
          #debuger($response);
          $registros = [];
          $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
@@ -48,20 +50,37 @@ class RolesController extends MasterController
              ,'id' 			      => "datatable"
              ,'class'             => "fixed_header"
            ];
-
+*/
            $data = [
-             'page_title' 	            => "Configuracion"
+             'page_title' 	          => "Configuracion"
              ,'title'  		            => "Roles"
              ,'subtitle' 	            => "Creacion de Roles"
-             ,'data_table'  	        =>  data_table($table)
-             ,'titulo_modal'            => "Registro de Roles"
-             ,'titulo_modal_edit'       => "Actualacion de Roles"
-             ,'campo_1' 		        => 'Nombre Rol'
-             ,'campo_2' 		        => 'Clave Corta'
-             ,'campo_3' 		        => 'Estatus'
+             
+             ,'titulo_modal'          => "Registro de Roles"
+             ,'titulo_modal_edit'     => "Actualacion de Roles"
+             ,'campo_1' 		          => 'Nombre Rol'
+             ,'campo_2' 		          => 'Clave Corta'
+             ,'campo_3' 		          => 'Estatus'
            ];
             #debuger($data);
          return self::_load_view( 'administracion.configuracion.roles', $data );
+
+     }
+    /**
+    *Metodo para realizar la consulta general para obtener los roles.
+    *@access public
+    *@param Request $request [Description]
+    *@return void
+    */
+     public function all( Request $request ){
+        
+        try {
+          $data = $this->_consulta_general();
+          return $this->_message_success( 200, $data , self::$message_success );
+        } catch (\Exception $e) {
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              return $this->show_error(6, $error, self::$message_error );
+        }
 
      }
      /**
@@ -177,5 +196,52 @@ class RolesController extends MasterController
         return $this->show_error(6, $error, self::$message_error);
 
      }
+
+     /**
+     * Metodo para realizar la parte de consulta de general
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+    private function _consulta_general (){
+
+
+        if( Session::get('id_rol') == 1 ){
+
+            $response = SysRolesModel::with(['empresas','sucursales'])
+                                      ->orderBy('id','desc')
+                                      ->groupby('id')
+                                      ->get();
+
+        }elseif( Session::get('id_rol') == 3 ){
+
+            $response = SysEmpresasModel::with(['roles'])
+                                    ->whereId( Session::get('id_empresa') )            
+                                    ->first()
+                                    ->roles()->with(['empresas','sucursales'])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+        }else{
+
+            $response = SysUsersModel::with(['empresas'])
+                                    ->whereId( Session::get('id') )->first()
+                                    ->empresas()->with(['roles'])
+                                    ->whereId( Session::get('id_empresa') )
+                                    ->first()
+                                    ->roles()->with(['empresas','sucursales'])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
+
+
+        }
+        
+        return $response;
+
+    }
+
+
 
 }

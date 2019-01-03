@@ -245,10 +245,16 @@ Route::group(['middleware' => ['admin.only']], function() {
       ,'as'       => 'permisos.actions'
     ]);
 
-##################### MODULO DE GENERAR ROLES.##############################
+########################### SECCION ROLES #####################################
+
     Route::get('/configuracion/roles', [
         'uses'      => 'Administracion\Configuracion\RolesController@index'
         ,'as'       => 'configuracion.roles'
+    ]);
+
+    Route::get('/roles/all', [
+        'uses'      => 'Administracion\Configuracion\RolesController@all'
+        ,'as'       => 'roles.all'
     ]);
 
     Route::get('/roles/edit', [
@@ -272,6 +278,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ########################### MODULO DE ACCIONES ##############################.
+    
     Route::get( "/configuracion/actions", [
       'uses'      => 'Administracion\Configuracion\ActionsController@index'
       ,'as'       => 'configuracion.actions'

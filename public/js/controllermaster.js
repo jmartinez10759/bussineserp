@@ -1,5 +1,22 @@
-var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe']);
-app.service('masterservice', function( $http , $rootScope ) {
+var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe','dataTable']);
+
+app.config([ '$routeProvider' ,function( $routeProvider ) {
+    $routeProvider
+    .when("/paises", {
+        templateUrl : "/template_ng/table_paises.html",
+        controller : "PaisesController"
+    })
+    .when("/london", {
+        template : "<h1> Bienvenidos 2</h1>",
+        //controller : "londonCtrl"
+    })
+    .when("/paris", {
+        templateUrl : "paris.htm",
+        controller : "parisCtrl"
+    });
+
+}]);
+app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope ) {
   
 	return {
 	    
@@ -24,7 +41,7 @@ app.service('masterservice', function( $http , $rootScope ) {
   		    return calendar;
   		
   		},
-		  select_anios : function(){
+		select_anios : function(){
 	        var fecha = new Date();
 	        var year = (fecha.getFullYear());
 	        var select = [];
@@ -105,18 +122,99 @@ app.service('masterservice', function( $http , $rootScope ) {
 	    
 	    }
 
-
   	}
 
-});
-app.directive('habilitar', function() {
-	 return {
-		 link: function(scope, element, attrs, controller) {
-		 	element[0].focus();
-		 }
-	 };
-	 });
-app.controller('ApplicationController',function( masterservice, $scope, $http ,$rootScope ) {
+}]);
+app.controller('ApplicationController', ['$scope','masterservice','$http','$rootScope' ,function( $scope, masterservice, $http, $rootScope ){
+
+	$rootScope.$on("services", function(){ 
+	    
+	    $scope.services(); 
+
+	});
+	$scope.constructor = function(){
+	  $scope.services();
+	  $scope.notificaciones = {};
+	  $scope.correos = {};
+	  $scope.update = {};
+	
+	}
+	$scope.services = function(){
+
+		var url = domain('services');
+		var fields = {};
+		MasterController.request_http(url,fields,'get',$http, false )
+		  .then(function( response ){
+		      loading(true);
+		      $scope.notificaciones = response.data.result.notification;
+		      $scope.correos = response.data.result.correos;
+
+		  }).catch(function( error ){
+		    loading(true);
+		    console.error( error );
+		  });
+
+	}
+	$scope.update_notify = function(){
+
+	    var url      = domain('api/sistema/token');
+	    var fields   = { email: "jorge.martinez@burolaboralmexico.com" };
+	    jQuery('#modal_notificaciones').modal('hide');
+
+	    MasterController.method_master(url, fields, 'post')
+	    .then( response => {
+	        var headers = {
+	           usuario: response.data.result[0].email, token: response.data.result[0].api_token
+	        };
+	        var uri = domain('api/sistema/notification');
+	        var data = {id:  $scope.update.id };
+	        MasterController.method_master(uri, data, 'delete', headers)
+	        .then(response => {
+	            $scope.services();
+	        }).catch(error => {
+	            toastr.error(error, "Ocurrio un Error");
+	        });
+	    }).catch(error => {
+	        toastr.error(error, "Ocurrio un Error");
+	    });
+
+	}
+	$scope.time_fechas = function( fecha ){
+
+		return masterservice.time_fechas(fecha);
+
+	}
+	$scope.users_notify = function( id ){
+
+	  	var url = domain('notificaciones/edit');
+	  	var fields = { id : id };
+		  	MasterController.request_http(url,fields,'get',$http, false )
+		      .then(function( response ){
+		          //not remove function this is  verify the session
+		            if(masterservice.session_status( response )){return;};
+
+		            $scope.update.id 	  = response.data.result.id; 
+		            $scope.update.portal  = response.data.result.portal;
+		            $scope.update.titulo  = response.data.result.titulo;
+		            $scope.update.mensaje = response.data.result.mensaje;
+		            console.log($scope.update);
+				  	jQuery('#modal_notificaciones').modal({
+				      keyboard: false, backdrop: "static"
+				    });	
+
+		      }).catch(function( error ){
+		        loading(true);
+		        console.error( error );
+		        masterservice.session_status_error( error );
+		      });
+
+	}
+
+}]);
+
+
+
+/*app.controller('ApplicationControllers',function( masterservice, $scope, $http ,$rootScope ) {
 
   $rootScope.$on("services", function(){ 
       $scope.services(); 
@@ -141,9 +239,8 @@ app.controller('ApplicationController',function( masterservice, $scope, $http ,$
         console.error( error );
       });
   }
-  $scope.update_notify = function(){
-    
-    
+$scope.update_notify = function(){
+
     var url      = domain('api/sistema/token');
     var fields   = { email: "jorge.martinez@burolaboralmexico.com" };
     jQuery('#modal_notificaciones').modal('hide');
@@ -165,44 +262,37 @@ app.controller('ApplicationController',function( masterservice, $scope, $http ,$
         toastr.error(error, "Ocurrio un Error");
     });
 
-  }
-  $scope.time_fechas = function( fecha ){
-    return masterservice.time_fechas(fecha);
-  }
-  $scope.users_notify = function( id ){
-
+}
+$scope.time_fechas = function( fecha ){
+	return masterservice.time_fechas(fecha);
+}
+$scope.users_notify = function( id ){
   	var url = domain('notificaciones/edit');
   	var fields = { id : id };
+	  	MasterController.request_http(url,fields,'get',$http, false )
+	      .then(function( response ){
+	          //not remove function this is  verify the session
+	            if(masterservice.session_status( response )){return;};
 
-  	MasterController.request_http(url,fields,'get',$http, false )
-      .then(function( response ){
-          //not remove function this is  verify the session
-            if(masterservice.session_status( response )){return;};
+	            $scope.update.id 	  = response.data.result.id; 
+	            $scope.update.portal  = response.data.result.portal;
+	            $scope.update.titulo  = response.data.result.titulo;
+	            $scope.update.mensaje = response.data.result.mensaje;
+	            console.log($scope.update);
+			  	jQuery('#modal_notificaciones').modal({
+			      keyboard: false, backdrop: "static"
+			    });	
 
-            $scope.update.id 	  = response.data.result.id; 
-            $scope.update.portal  = response.data.result.portal;
-            $scope.update.titulo  = response.data.result.titulo;
-            $scope.update.mensaje = response.data.result.mensaje;
-            console.log($scope.update);
-		  	jQuery('#modal_notificaciones').modal({
-		      keyboard: false, backdrop: "static"
-		    });	
+	      }).catch(function( error ){
+	        loading(true);
+	        console.error( error );
+	        masterservice.session_status_error( error );
+	      });
 
-      }).catch(function( error ){
-        loading(true);
-        console.error( error );
-        masterservice.session_status_error( error );
-      });
-
-
-  }
+}
 
 
-});
-
-
-
-
+});*/
 
 /*app.service('masterservice',function(){
 

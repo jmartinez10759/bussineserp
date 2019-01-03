@@ -4,7 +4,7 @@
     @include('layouts.template.includes-header')
 </head>
 <!-- <body class="hold-transition skin-blue sidebar-mini fixed"> -->
-<body class="hold-transition skin-blue sidebar-mini fixed" ng-app="application" ng-controller="ApplicationController as services" ng-init="constructor()" ng-cloak>
+<body class="hold-transition skin-blue sidebar-mini fixed" ng-app="application" ng-controller="ApplicationController" ng-init="constructor()" ng-cloak>
 
     <div class="wrapper">
 
