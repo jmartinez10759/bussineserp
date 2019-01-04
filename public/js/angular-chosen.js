@@ -220,12 +220,36 @@ angular.module('files', [])
     }
 });
 
+/*angular.module('dataTables', [])
+.directive("tableFull",function(){
+
+  var table = '<table style="width:100%">';
+            + '<tr>';
+              + '<th ng-repeat="item in data.headList">{{ item.name }}</th>';
+            + '</tr>';
+            +'<tr ng-repeat="item in data.rowList">';
+            +'<td> {{ item.name }} </td>';
+            +'<td> {{ item.surname }} </td>'; 
+            +'<td>{{ item.propertyName }}</td>';
+            +'</tr>';
+            +'</table>';
+  return {
+        restrict: 'EA', //E = element, A = attribute, C = class, M = comment         
+        scope: {
+            datos: '='         
+          },
+          template: table,
+        }
+
+});*/
+
+
 angular.module('dataTable',[] ).directive('dataTable', function(){
   
   return {
      restrict: 'EA', //E = element, A = attribute, C = class, M = comment         
       scope: {
-          data: '&'         
+          data: '='
       },
       template: '<div>HOla</div>', 
   }

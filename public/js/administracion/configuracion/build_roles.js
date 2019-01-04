@@ -9,6 +9,7 @@ const URL = {
 app.controller('RolesController', ['masterservice','$scope', '$http', '$location', function( masterservice , $scope, $http, $location ) {
     
     /*se declaran las propiedades dentro del controller*/
+    
     $scope.constructor = function(){
       $scope.datos  = [];
       $scope.insert = {};
@@ -26,13 +27,22 @@ app.controller('RolesController', ['masterservice','$scope', '$http', '$location
         .then(function(response){
           //not remove function this is  verify the session
             if(masterservice.session_status( response )){return;};
+
             $scope.datos = response.data.result;
+            /*$scope.datos = {
+               headList: [{ name: 'Company' }, { name: 'Address' }, { name: 'City' }],
+               rowList : response.data.result
+            }*/
+            console.log($scope.datos);
 
         }).catch(function(error){
             masterservice.session_status_error(error);
         });
     }
-    
+    /*$scope.mostarArcoiris = function(){
+      $scope.oculto = !$scope.oculto;
+    }*/
+
     $scope.insert_register = function( id ){
         var url = domain(  URL.url_insert );
         // var fields = {id: id };
@@ -122,6 +132,29 @@ app.controller('RolesController', ['masterservice','$scope', '$http', '$location
 
 }]);
 
+app.directive("tableFull",function(){
+  alert();
+  var table = '<table border="1px">';
+          + '<tr>';
+            + '<th ng-repeat="(head, value) in ds[0]"><span>{{head}}</span></th>';
+          + '</tr>';
+          + '<tr ng-repeat="row in ds">';
+            + '<td ng-repeat="(name, value) in row" ng-scope> {{row[name]}} '; 
+            + '</td>';    
+          + '</tr>';
+        + '</table>';
+
+  return {
+        restrict: 'EA', //E = element, A = attribute, C = class, M = comment
+      transclude : true,
+        scope: {
+            ds: '='         
+          },
+        template: table,
+        replace : true
+    };
+
+});
 
 /*var url_insert  = "roles/register";
 var url_update  = 'roles/update';

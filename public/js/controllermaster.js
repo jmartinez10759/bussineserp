@@ -1,4 +1,29 @@
-var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe','dataTable']);
+var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe']);
+
+//angular.module('dataTables', [])
+/*app.directive("tableFull",function(){
+
+  var table = '<table border="1px">';
+        	+ '<tr>';
+            + '<th ng-repeat="(head, value) in ds[0]"><span>{{head}}</span></th>';
+        	+ '</tr>';
+        	+ '<tr ng-repeat="row in ds">';
+            + '<td ng-repeat="(name, value) in row" ng-scope> {{row[name]}} '; 
+            + '</td>';    
+        	+ '</tr>';
+    		+ '</table>';
+
+  return {
+        restrict: 'EA', //E = element, A = attribute, C = class, M = comment
+    	transclude : true,
+        scope: {
+            ds: '='         
+          },
+        template: table,
+        replace : true
+    };
+
+});*/
 
 app.config([ '$routeProvider' ,function( $routeProvider ) {
     $routeProvider
@@ -211,8 +236,6 @@ app.controller('ApplicationController', ['$scope','masterservice','$http','$root
 	}
 
 }]);
-
-
 
 /*app.controller('ApplicationControllers',function( masterservice, $scope, $http ,$rootScope ) {
 
