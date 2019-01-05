@@ -162,6 +162,7 @@ app.controller('ApplicationController', ['$scope','masterservice','$http','$root
 	  $scope.notificaciones = {};
 	  $scope.correos = {};
 	  $scope.update = {};
+	  $scope.permisos = {};
 	
 	}
 	$scope.services = function(){
@@ -172,7 +173,8 @@ app.controller('ApplicationController', ['$scope','masterservice','$http','$root
 		  .then(function( response ){
 		      loading(true);
 		      $scope.notificaciones = response.data.result.notification;
-		      $scope.correos = response.data.result.correos;
+		      $scope.correos 	= response.data.result.correos;
+		      $scope.permisos 	= response.data.result.permisos;
 
 		  }).catch(function( error ){
 		    loading(true);

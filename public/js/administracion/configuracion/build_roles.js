@@ -9,13 +9,13 @@ const URL = {
 app.controller('RolesController', ['masterservice','$scope', '$http', '$location', function( masterservice , $scope, $http, $location ) {
     
     /*se declaran las propiedades dentro del controller*/
-    
     $scope.constructor = function(){
       $scope.datos  = [];
-      $scope.insert = {};
+      $scope.insert = { estatus: 1 };
       $scope.update = {};
       $scope.edit   = {};
       $scope.fields = {};
+      $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
       $scope.index();
     }
 
@@ -29,10 +29,6 @@ app.controller('RolesController', ['masterservice','$scope', '$http', '$location
             if(masterservice.session_status( response )){return;};
 
             $scope.datos = response.data.result;
-            /*$scope.datos = {
-               headList: [{ name: 'Company' }, { name: 'Address' }, { name: 'City' }],
-               rowList : response.data.result
-            }*/
             console.log($scope.datos);
 
         }).catch(function(error){
@@ -94,23 +90,12 @@ app.controller('RolesController', ['masterservice','$scope', '$http', '$location
           masterservice.session_status_error(error);
       });
     }
-    $scope.edit_register = function( id ){
-      var url = domain(  URL.url_edit );
-      var fields = {id : id };
-      MasterController.request_http(url,fields,'get',$http, false )
-        .then(function( response ){
+    $scope.edit_register = function( entry ){
+        var datos = ['id', 'perfil', 'clave_corta', 'estatus' ];
+        $scope.update = iterar_object(entry, datos, true);
+        console.log($scope.update);
+        jQuery('#modal_edit_register').modal({keyboard: false,backdrop: "static" });
 
-           $scope.edit = response.data.result;
-          
-          jQuery.fancybox.open({
-                'type'      : 'inline'
-                ,'src'      : "#modal_edit_register"
-                ,'modal': true
-            });     
-            loading(true);        
-        }).catch(function( error ){
-           masterservice.session_status_error(error);
-        });
     }
     $scope.destroy_register = function( id ){
 

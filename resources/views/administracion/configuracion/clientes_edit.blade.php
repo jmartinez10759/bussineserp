@@ -715,7 +715,6 @@
     </div>
 </div>
 
-
 <div id="upload_files" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">

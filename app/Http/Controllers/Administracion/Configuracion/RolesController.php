@@ -52,13 +52,10 @@ class RolesController extends MasterController
            ];
 */
            $data = [
-             'page_title' 	          => "Configuracion"
+             'page_title' 	          => "Configuración"
              ,'title'  		            => "Roles"
-             ,'subtitle' 	            => "Creacion de Roles"
-             
-             ,'titulo_modal'          => "Registro de Roles"
-             ,'titulo_modal_edit'     => "Actualacion de Roles"
-             ,'campo_1' 		          => 'Nombre Rol'
+             ,'titulo_modal'          => "Agregar Registro"
+             ,'campo_1' 		          => 'Perfil'
              ,'campo_2' 		          => 'Clave Corta'
              ,'campo_3' 		          => 'Estatus'
            ];
@@ -75,8 +72,10 @@ class RolesController extends MasterController
      public function all( Request $request ){
         
         try {
+
           $data = $this->_consulta_general();
           return $this->_message_success( 200, $data , self::$message_success );
+
         } catch (\Exception $e) {
               $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
               return $this->show_error(6, $error, self::$message_error );
@@ -126,9 +125,10 @@ class RolesController extends MasterController
       *@return void
       */
      public function show( Request $request ){
+
         try {
-            $response = SysRolesModel::with('empresas')->where(['estatus' => 1, 'id' => $request->id ])->get();
-          return $this->_message_success(201, $response[0], self::$message_success);
+          $response = SysRolesModel::with('empresas')->whereId( $request->id )->first();
+          return $this->_message_success(201, $response, self::$message_success);
         } catch (\Exception $e) {
           $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
           return $this->show_error(6, $error, self::$message_error);

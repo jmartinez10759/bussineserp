@@ -43,6 +43,7 @@ abstract class MasterController extends Controller
 	protected static $message_success;
 	protected static $message_error;
 	protected static $ssl_ruta = [];
+	protected $permisos_full = [];
 
 	public function __construct()
 	{
@@ -272,19 +273,17 @@ abstract class MasterController extends Controller
 			return $query->where($where)->orderBy('orden', 'asc');
 
 		},'roles','details','empresas','correos'])->whereId( Session::get('id') )->get();
-		$by_users = $response[0]->correos()
-								//->where(['estatus_recibidos' => 1, 'estatus_vistos' => 0])
-								->whereEstatus_recibidosAndEstatus_vistos(1,0)
-								->orderBy('id','desc')
-								->get();
+		// $by_users = $response[0]->correos()
+		// 						->whereEstatus_recibidosAndEstatus_vistos(1,0)
+		// 						->orderBy('id','desc')
+		// 						->get();
 		#debuger($by_users);
-
-		if( Session::get('id_rol') != 1){
-			$users = SysUsersModel::with(['notificaciones'])->whereId( Session::get('id') )->first();
-			$notificaciones = $users->notificaciones()->get();
-		}else{
-			$notificaciones = SysNotificacionesModel::all();
-		}
+		// if( Session::get('id_rol') != 1){
+		// 	$users = SysUsersModel::with(['notificaciones'])->whereId( Session::get('id') )->first();
+		// 	$notificaciones = $users->notificaciones()->get();
+		// }else{
+		// 	$notificaciones = SysNotificacionesModel::all();
+		// }
 
 		$parse['MENU_DESKTOP'] 		= self::menus($response);
 		self::$_titulo = (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial : "Empresa No Asignada";
@@ -300,21 +299,22 @@ abstract class MasterController extends Controller
 		$parse['welcome'] 			= "Bienvenid@";
 		$parse['photo_profile'] 	= isset($response[0]->details->foto)?$response[0]->details->foto : asset('img/profile/profile.png');
 		$parse['rol'] 				= isset($response[0]->roles[0])? $response[0]->roles[0]->perfil : "Perfil No Asignado";
-		$parse['empresa'] 			= (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
-		$parse['sucursal'] 			= (isset(SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal)) ? SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal : "Sucursal No Asignada";
+		$parse['empresa'] 			= (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
+		$parse['sucursal'] 			= (isset(SysSucursalesModel::whereId( Session::get('id_sucursal') )->first()->sucursal)) ? SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal : "Sucursal No Asignada";
 		$parse['url_previus'] 		= (Session::get('id_empresa') != 0 && Session::get('id_sucursal') != 0) ? route('list.empresas') : route("/");
 
 		$parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
-		$parse['title'] 			= isset($parse['title']) ? $parse['title'] : "";
-		$parse['subtitle'] 			= isset($parse['subtitle']) ? $parse['subtitle'] : "";
+		$parse['title'] 			= isset($parse['title']) 	  ? $parse['title'] : "";
+		$parse['subtitle'] 			= isset($parse['subtitle'])   ? $parse['subtitle'] : "";
 		
-		$parse['count_correo'] 			= count( $by_users );
-		$parse['efect_notify_correo'] 	= (count($by_users) > 0) ? "notify" : "";
-		$parse['efect_notify'] 			= (count($notificaciones) > 0) ? "notify" : "";
-		$parse['count_notify'] 			= count($notificaciones);
-		$parse['notifications'] 		= $notificaciones;
+		#$parse['count_correo'] 			= count( $by_users );
+		#$parse['efect_notify_correo'] 	= (count($by_users) > 0) ? "notify" : "";
+		#$parse['efect_notify'] 			= (count($notificaciones) > 0) ? "notify" : "";
+		#$parse['count_notify'] 			= count($notificaciones);
+		#$parse['notifications'] 		= $notificaciones;
+		#$parse['emails'] 				= $by_users;
+		Session::put(['permisos_full' =>  Session::get('permisos')]);
 		
-		$parse['emails'] 				= $by_users;
 		#$parse['permisos']        = Session::get('permisos');
 		$eliminar = (isset(Session::get('permisos')['DEL'])) ? Session::get('permisos')['DEL'] : true;
 		$insertar = (isset(Session::get('permisos')['INS'])) ? Session::get('permisos')['INS'] : true;
@@ -383,19 +383,7 @@ abstract class MasterController extends Controller
 			$consulta = $tabla_model::with(['menus' => function($query){
 					return $query->where(['sys_rol_menu.estatus' => 1])->groupby('id');
 			},'empresas','sucursales','roles'])->where($condicion)->get();
-			
-			#debuger(count($consulta[0]->sucursales));
-			/*$consulta = $tabla_model::with(['menus' => function ($query) {
-				return $query->where(['sys_rol_menu.estatus' => 1])->groupBy('sys_rol_menu.id_users', 'sys_rol_menu.id_menu', 'sys_rol_menu.estatus');
-
-			}, 'roles' => function ($query) {
-				return $query->where(['sys_roles.estatus' => 1])->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');
-			}, 'empresas' => function ($query) {
-				return $query->where(['sys_empresas.estatus' => 1])->groupBy('id_users', 'id', 'nombre_comercial');
-			}, 'sucursales' => function ($query) {
-				return $query->groupby('id');
-			}])->where($condicion)->get();*/
-        	#debuger($consulta[0]->menus);
+	
 			if (count($consulta) > 0) {
 				$usuarios = data_march($consulta);
 				$session = [];
@@ -413,7 +401,7 @@ abstract class MasterController extends Controller
 					Session::put($session);
 					self::_bitacora();
 					$session['ruta'] = 'list/empresas';
-					return $this->_message_success(200, $session, '¡Usuario inicio Sesion Correctamente!');
+					return $this->_message_success(200, $session, '¡Usuario Inicio Sesión Correctamente!');
 				}
 				$sessions['id_empresa'] = isset($consulta[0]->empresas[0]->id) ? $consulta[0]->empresas[0]->id : 0;
 				$sessions['id_sucursal'] = isset($consulta[0]->sucursales[0]->id) ? $consulta[0]->sucursales[0]->id : 0;
@@ -425,7 +413,7 @@ abstract class MasterController extends Controller
 				}
 				Session::put(array_merge($session, $sesiones));
 				self::_bitacora();
-				return $this->_message_success(200, array_merge($session, $sesiones), '¡Usuario inicio Sesion Correctamente!');
+				return $this->_message_success(200, array_merge($session, $sesiones), '¡Usuario Inicio Sesión Correctamente!');
 			}
 			$success = true;
 			return $this->show_error(6, $consulta, '¡Por favor verificar la información ingresada!');
@@ -491,16 +479,16 @@ abstract class MasterController extends Controller
 		$ruta_validate = substr(parse_domain()->urls, 1);
 		$recibidos = $papelera = $destacados = $enviados = $borradores = $etiquetas = [];
 		$categorias = SysCategoriasModel::where(['estatus' => 1, 'id_users' => Session::get('id')])->get();
-		$response_correo = SysUsersModel::with('correos','plantillas')->where(['id' => Session::get('id')])->get();
+		$response_correo = SysUsersModel::with(['correos','plantillas'])->whereId( Session::get('id') )->first();
 		/*se realiza la consulta de los correos recibidos*/
-		$recibidos = $response_correo[0]->correos()
+		$recibidos = $response_correo->correos()
 										->with(['categorias'])
 										->where(['estatus_recibidos' => 1])
 										->where(['estatus_papelera' => 0])
 										->orderby('created_at','desc')
 										->get();
 		/*se utiliza esta consulta para realizar el conteo de recibidos*/										
-		$recibidos_conteo = $response_correo[0]->correos()
+		$recibidos_conteo = $response_correo->correos()
 										->with(['categorias'])
 										->where(['estatus_recibidos' => 1])
 										->where(['estatus_vistos' => 0])
@@ -508,7 +496,7 @@ abstract class MasterController extends Controller
 										->get();
 		#debuger($recibidos);
 		/*se realiza la consulta para los correos enviados*/
-		$enviados  = $response_correo[0]->correos()
+		$enviados  = $response_correo->correos()
 										->with(['categorias'])
 										->where(['estatus_enviados' => 1])
 										->where(['estatus_papelera' => 0])
@@ -516,20 +504,20 @@ abstract class MasterController extends Controller
 										->get();
 
 		/*se realiza la consulta de los datos de los correos enviados a la papelera*/
-		$papelera  = $response_correo[0]->correos()
+		$papelera  = $response_correo->correos()
 										->with(['categorias'])
 										->where(['estatus_papelera' => 1])
 										->orderby('created_at','desc')
 										->get();
 		/*se realiza la consulta de los datos de los correos destacados*/
-		$destacados  = $response_correo[0]->correos()
+		$destacados  = $response_correo->correos()
 										  ->with(['categorias'])
 										  ->where(['estatus_destacados' => 1])
 										  ->where(['estatus_papelera' => 0])
 										  ->orderby('created_at','desc')
 										  ->get();
 		/*se realiza la consulta de los datos de los correos borradores*/
-		$borradores  = $response_correo[0]->correos()
+		$borradores  = $response_correo->correos()
 										  ->with(['categorias'])
 										  ->where(['estatus_borradores' => 1])
 										  ->where(['estatus_papelera' => 0])

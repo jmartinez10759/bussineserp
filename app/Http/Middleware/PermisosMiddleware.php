@@ -28,23 +28,21 @@ class PermisosMiddleware
       #debuger(Session::all());
       $where = [substr(parse_domain()->uri,1)];
       $permisos_menus = [];
-      $menu = SysMenuModel::select('id')->whereIn('link', $where)->get();
-      $empresas = SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get();
-      $iva = ( isset($empresas[0]->iva) )? $empresas[0]->iva : 16;
-      #debuger($iva);
+      $menu = SysMenuModel::select('id')->whereIn('link', $where)->first();
+      $empresas = SysEmpresasModel::whereId( Session::get('id_empresa') )->first();
+      $iva = ( isset($empresas->iva) )? $empresas->iva : 16;
       #se realiza la consulta para obtener el permiso.
       $where = [
           'id_users'      => Session::get('id')
           ,'id_rol'        => Session::get('id_rol')
           ,'id_empresa'    => Session::get('id_empresa')
           ,'id_sucursal'   => Session::get('id_sucursal')
-          ,'id_menu'       => isset($menu[0]->id)? $menu[0]->id : 0
+          ,'id_menu'       => isset($menu->id)? $menu->id : 0
           #,'estatus'       => 1
       ];
-      $id_permiso = SysRolMenuModel::select('id_permiso')->where( $where )->groupby('id_permiso')->get();
-      #ddebuger($id_permiso);
-      $where['id_permiso'] = isset($id_permiso[0]->id_permiso)? $id_permiso[0]->id_permiso : 5;
-      $where['estatus'] = 1;
+      $id_permiso = SysRolMenuModel::select('id_permiso')->where( $where )->groupby('id_permiso')->first();
+      $where['id_permiso']  = isset($id_permiso->id_permiso)? $id_permiso->id_permiso : 5;
+      $where['estatus']     = 1;
       $response = (SysUsersPermisosModel::select('id_accion')->where( $where )->groupby('id_accion')->get());
       $acciones_all = SysAccionesModel::where([ 'estatus' => 1 ])->get();
       $claves = [];
