@@ -13,6 +13,7 @@ class SysUsersModel extends Model
   		,'name'
   		,'first_surname'
   		,'second_surname'
+  		,'username'
   		,'email'
   		,'password'
   		,'remember_token'

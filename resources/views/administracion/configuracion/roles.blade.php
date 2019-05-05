@@ -34,15 +34,10 @@
 	        </tbody>
 	    </table>
 	</div>
-
-
-
 	@include('administracion.configuracion.roles_edit')
-	
 	<!-- <div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true"> -->
-
 </div>
 @stop
 @push('scripts')
-  <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_roles.js')}}" ></script>
+  <script type="text/javascript" src="{{ asset('js/administracion/configuracion/build_roles.js')}}" ></script>
 @endpush

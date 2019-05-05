@@ -57,30 +57,33 @@ abstract class MasterController extends Controller
 		$this->middleware('permisos.menus', ['except' => ['load_lista_sucursal', 'lista', 'lista_sucursal', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code'] ] );
 		$this->middleware('permisos.rutas', ['only' => ['index']]);
 	}
-	/**
-	 * Metodo general para consumir endpoint utilizando una clase de laravel
-	 * @access protected
-	 * @param  url [description]
-	 * @param  header [description]
-	 * @param  data [description]
-	 * @return json [description]
-	 */
+
+    /**
+     * Metodo general para consumir endpoint utilizando una clase de laravel
+     * @access protected
+     * @param bool $url
+     * @param array $headers
+     * @param array $data
+     * @param bool $method
+     * @return json [description]
+     */
 	protected static function endpoint($url = false, $headers = [], $data = [], $method = false)
 	{
 		$response = self::$_client->$method($url, ['headers' => $headers, 'body' => json_encode($data)]);
-		$zonerStatusCode = $response->getStatusCode();
 		return json_decode($response->getBody());
 	}
-	/**
-	 *Metodo donde muestra el mensaje de success
-	 *@access protected
-	 *@param integer $code [Envia la clave de codigo.]
-	 *@param array $data [envia la informacion correcta ]
-	 *@return json
-	 */
-	protected function _message_success($code = false, $data = [], $message = false)
+
+    /**
+     *Metodo donde muestra el mensaje de success
+     * @access protected
+     * @param bool $code [Envia la clave de codigo.]
+     * @param array $data [envia la informacion correcta ]
+     * @param bool $message
+     * @return json
+     */
+	protected function _message_success( $code = false, $data = [], $message = false)
 	{
-		$code = ($code) ? $code : 200;
+		$code = ( $code ) ? $code : 200;
 		$datos = [
 			"success" => true,
 			"message" => ($message) ? $message : "Transacción exitosa",
@@ -90,12 +93,12 @@ abstract class MasterController extends Controller
 		return response()->json($datos, $code);
 	}
 	/**
-	 *Metodo para establecer si se realizo con exito la peticion
-	 *@access private
-	 *@param $codigo [description]
-	 *@return string [description]
+	 * Metodo para establecer si se realizo con exito la peticion
+	 * @access private
+	 * @param bool $codigo [description]
+	 * @return string [description]
 	 */
-	private function get_status_message($codigo = false)
+	private function get_status_message( $codigo = false )
 	{
 		$estado = array(
 			200 => 'OK',
@@ -115,7 +118,7 @@ abstract class MasterController extends Controller
 			412 => 'Precondition Failed',
 			500 => 'Internal Server Error'
 		);
-		return ($estado[$codigo]) ? $estado[$codigo] : $estado[500];
+		return ($estado[ $codigo ]) ? $estado[$codigo] : $estado[500];
 	}
 	/**
 	 *Se crea un metodo para mostrar los errores dependinedo la accion a realizar
@@ -273,17 +276,6 @@ abstract class MasterController extends Controller
 			return $query->where($where)->orderBy('orden', 'asc');
 
 		},'roles','details','empresas','correos'])->whereId( Session::get('id') )->get();
-		// $by_users = $response[0]->correos()
-		// 						->whereEstatus_recibidosAndEstatus_vistos(1,0)
-		// 						->orderBy('id','desc')
-		// 						->get();
-		#debuger($by_users);
-		// if( Session::get('id_rol') != 1){
-		// 	$users = SysUsersModel::with(['notificaciones'])->whereId( Session::get('id') )->first();
-		// 	$notificaciones = $users->notificaciones()->get();
-		// }else{
-		// 	$notificaciones = SysNotificacionesModel::all();
-		// }
 
 		$parse['MENU_DESKTOP'] 		= self::menus($response);
 		self::$_titulo = (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial : "Empresa No Asignada";
@@ -306,131 +298,120 @@ abstract class MasterController extends Controller
 		$parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
 		$parse['title'] 			= isset($parse['title']) 	  ? $parse['title'] : "";
 		$parse['subtitle'] 			= isset($parse['subtitle'])   ? $parse['subtitle'] : "";
-		
-		#$parse['count_correo'] 			= count( $by_users );
-		#$parse['efect_notify_correo'] 	= (count($by_users) > 0) ? "notify" : "";
-		#$parse['efect_notify'] 			= (count($notificaciones) > 0) ? "notify" : "";
-		#$parse['count_notify'] 			= count($notificaciones);
-		#$parse['notifications'] 		= $notificaciones;
-		#$parse['emails'] 				= $by_users;
+
 		Session::put(['permisos_full' =>  Session::get('permisos')]);
 		
 		#$parse['permisos']        = Session::get('permisos');
-		$eliminar = (isset(Session::get('permisos')['DEL'])) ? Session::get('permisos')['DEL'] : true;
-		$insertar = (isset(Session::get('permisos')['INS'])) ? Session::get('permisos')['INS'] : true;
-		$update = (isset(Session::get('permisos')['UPD'])) ? Session::get('permisos')['UPD'] : true;
-		$select = (isset(Session::get('permisos')['GET'])) ? Session::get('permisos')['GET'] : true;
-		$upload_files = (isset(Session::get('permisos')['UPLF'])) ? Session::get('permisos')['UPLF'] : true;
-		$correos = (isset(Session::get('permisos')['EMAIL'])) ? Session::get('permisos')['EMAIL'] : true;
-		$reportes = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
-		$excel = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
-		$modal = (isset(Session::get('permisos')['AGR'])) ? Session::get('permisos')['AGR'] : true;
-		$notify = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
-		$permisos = (isset(Session::get('permisos')['PER'])) ? Session::get('permisos')['PER'] : true;
-		$email = (isset(Session::get('permisos')['SEND'])) ? Session::get('permisos')['SEND'] : true;
-		$upload = (isset(Session::get('permisos')['UPL'])) ? Session::get('permisos')['UPL'] : true;
-		$impresion = (isset(Session::get('permisos')['IMP'])) ? Session::get('permisos')['IMP'] : true;
-		#debuger(build_buttons($insertar,'v-insert_register','Registrar','btn btn-success', 'fa fa-save','id="destroy"'));
-		$parse['eliminar'] = (!$eliminar) ? "style=display:block;" : "style=display:none;";
-		$parse['insertar'] = (!$insertar) ? "style=display:block;" : "style=display:none;";
-		$parse['button_insertar'] = build_buttons($insertar, 'v-insert_register', 'Registrar', 'btn btn-primary', 'fa fa-save', 'id="insert"');
-		$parse['update'] = (!$update) ? "style=display:block;" : "style=display:none;";
-		$parse['button_update'] = build_buttons($update, 'v-update_register', 'Actualizar', 'btn btn-info', 'fa fa-save', 'id="insert"');
-		$parse['select'] = (!$select) ? "style=display:block;" : "style=display:none;";
-		$parse['correos'] = (!$correos) ? "style=display:block;" : "style=display:none;";
+		$eliminar       = (isset(Session::get('permisos')['DEL'])) ? Session::get('permisos')['DEL'] : true;
+		$insertar       = (isset(Session::get('permisos')['INS'])) ? Session::get('permisos')['INS'] : true;
+		$update         = (isset(Session::get('permisos')['UPD'])) ? Session::get('permisos')['UPD'] : true;
+		$select         = (isset(Session::get('permisos')['GET'])) ? Session::get('permisos')['GET'] : true;
+		$upload_files   = (isset(Session::get('permisos')['UPLF'])) ? Session::get('permisos')['UPLF'] : true;
+		$correos        = (isset(Session::get('permisos')['EMAIL'])) ? Session::get('permisos')['EMAIL'] : true;
+		$reportes       = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
+		$excel          = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
+		$modal          = (isset(Session::get('permisos')['AGR'])) ? Session::get('permisos')['AGR'] : true;
+		$notify         = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
+		$permisos       = (isset(Session::get('permisos')['PER'])) ? Session::get('permisos')['PER'] : true;
+		$email          = (isset(Session::get('permisos')['SEND'])) ? Session::get('permisos')['SEND'] : true;
+		$upload         = (isset(Session::get('permisos')['UPL'])) ? Session::get('permisos')['UPL'] : true;
+		$impresion      = (isset(Session::get('permisos')['IMP'])) ? Session::get('permisos')['IMP'] : true;
 
-		$parse['reportes'] = (!$reportes) ? "style=display:block;" : "style=display:none;";
+		$parse['eliminar']          = (!$eliminar) ? "style=display:block;" : "style=display:none;";
+		$parse['insertar']          = (!$insertar) ? "style=display:block;" : "style=display:none;";
+		$parse['button_insertar']   = build_buttons($insertar, 'v-insert_register', 'Registrar', 'btn btn-primary', 'fa fa-save', 'id="insert"');
+		$parse['update']            = (!$update) ? "style=display:block;" : "style=display:none;";
+		$parse['button_update']     = build_buttons($update, 'v-update_register', 'Actualizar', 'btn btn-info', 'fa fa-save', 'id="insert"');
+		$parse['select']            = (!$select) ? "style=display:block;" : "style=display:none;";
+		$parse['correos']           = (!$correos) ? "style=display:block;" : "style=display:none;";
+
+		$parse['reportes']      = (!$reportes) ? "style=display:block;" : "style=display:none;";
 		$parse['seccion_reportes'] = reportes($reportes, $excel);
-		$parse['excel'] = (!$excel) ? "style=display:block;" : "style=display:none;";
+		$parse['excel']         = (!$excel) ? "style=display:block;" : "style=display:none;";
 		
-		$parse['notify'] = (!$notify) ? "style=display:block;" : "style=display:none;";
-		$parse['permisos'] = (!$permisos) ? "style=display:block;" : "style=display:none;";
-		$parse['email'] = (!$email) ? "style=display:block;" : "style=display:none;";
-		$parse['upload'] = (!$upload) ? "style=display:block;" : "style=display:none;";
+		$parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
+		$parse['permisos']      = (!$permisos) ? "style=display:block;" : "style=display:none;";
+		$parse['email']         = (!$email) ? "style=display:block;" : "style=display:none;";
+		$parse['upload']        = (!$upload) ? "style=display:block;" : "style=display:none;";
 		
-		$parse['agregar'] = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
-		$parse['buscador'] = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
-		#$parse['upload_files'] = (!$upload_files) ? "style=display:block;" : "style=display:none;";
-		$parse['upload_files'] = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
+		$parse['agregar']       = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
+		$parse['buscador']      = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
 
-		$parse['modal'] = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
+		$parse['upload_files']  = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
+
+		$parse['modal']         = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
 		
 		return View($view, $parse);
 
 	}
-	/**
-	 * Metodo para realizar la consulta de la session.
-	 * @access public
-	 * @param $where array [description]
-	 * @return void
-	 */
-	public function inicio_session($where, $tabla_model)
-	{
 
+    /**
+     * This is method is for login session for system.
+     * @access public
+     * @param $where array [description]
+     * @param SysUsersModel $users
+     * @return void
+     */
+	public function startSession( $where, SysUsersModel $users )
+	{
 		$error = null;
 		try {
 			$condicion = [];
-			if (isset($where->email) && isset($where->password)) {
-				$condicion['email'] = $where->email;
-				$condicion['password'] = $where->password;
+			if ( isset( $where->email ) && isset( $where->password ) ) {
+				$condicion     = ( filter_var( $where->email, FILTER_VALIDATE_EMAIL ) )? ['email' => $where->email ]: ['username' => $where->email];
+				$condicion['password']  = $where->password;
 				$condicion['confirmed'] = true;
 			}
 			$datos = ['api_token' => str_random(50)];
-			$where = ['email' => $where->email];
-			$response = self::$_model::update_model($where, $datos, $tabla_model);
-			$condicion['api_token'] = ($response) ? $response[0]->api_token : null;
-
-			$consulta = $tabla_model::with(['menus' => function($query){
-					return $query->where(['sys_rol_menu.estatus' => 1])->groupby('id');
-			},'empresas','sucursales','roles'])->where($condicion)->get();
-	
-			if (count($consulta) > 0) {
-				$usuarios = data_march($consulta);
-				$session = [];
-				$keys = ['password', 'remember_token', 'confirmed_code'];
-				foreach ($usuarios[0] as $key => $value) {
-					if (!in_array($key, $keys)) {
-						$session[$key] = $value;
-					}
-				}
-				foreach ($consulta as $response) {
-					$empresas = $response->empresas;
-				}
-          #se realiza la consulta a la tabla ralacional.
-				if (count($empresas) > 1) {
-					Session::put($session);
+			$where = ( filter_var( $where->email, FILTER_VALIDATE_EMAIL  ) )? ['email' => $where->email ]: ['username' => $where->email ];
+			$updateUsers = $users::where( $where )->update( $datos );
+            $response = $users::where( $where )->first();
+            $condicion['api_token'] = ( $response ) ? $response->api_token : null;
+			$usuario = $users::with(['menus' => function( $query ){
+					return $query->where(['sys_rol_menu.estatus' => 1 ] )->groupby('id');
+			},'empresas','sucursales','roles'])->where( $condicion )->first();
+			if ( $usuario ) {
+                $session = [];
+                $keys = ['password', 'remember_token', 'confirmed_code'];
+                foreach ($usuario->fillable as $key => $value) {
+                    if (!in_array($value, $keys)) {
+                        $session[$value] = $usuario->$value;
+                    }
+                }
+                #se realiza la consulta a la tabla ralacional.
+				if ( count( $usuario->empresas ) > 1 ) {
+					Session::put( $session );
 					self::_bitacora();
 					$session['ruta'] = 'list/empresas';
 					return $this->_message_success(200, $session, '¡Usuario Inicio Sesión Correctamente!');
 				}
-				$sessions['id_empresa'] = isset($consulta[0]->empresas[0]->id) ? $consulta[0]->empresas[0]->id : 0;
-				$sessions['id_sucursal'] = isset($consulta[0]->sucursales[0]->id) ? $consulta[0]->sucursales[0]->id : 0;
-				$sessions['id_rol'] = isset($consulta[0]->roles[0]->id) ? $consulta[0]->roles[0]->id : "";
-				$ruta = self::data_session($consulta[0]->menus);
-				$sesiones = array_merge($sessions, $ruta);
-				if (count($consulta[0]->menus) < 1) {
+				$sessions['id_empresa']     = isset( $usuario->empresas[0]->id) ? $usuario->empresas[0]->id : 0;
+				$sessions['id_sucursal']    = isset( $usuario->sucursales[0]->id) ? $usuario->sucursales[0]->id : 0;
+				$sessions['id_rol']         = isset( $usuario->roles[0]->id) ? $usuario->roles[0]->id : "";
+				$ruta       = self::dataSession( $usuario->menus );
+				$sesiones   = array_merge($sessions, $ruta);
+				if ( count($usuario->menus) < 1 ) {
 					return $this->show_error(6, $sesiones, '¡No cuenta con permisos necesarios, favor de contactar al administrador!');
 				}
-				Session::put(array_merge($session, $sesiones));
+				Session::put( array_merge( $session, $sesiones ) );
 				self::_bitacora();
-				return $this->_message_success(200, array_merge($session, $sesiones), '¡Usuario Inicio Sesión Correctamente!');
+				return $this->_message_success(200, array_merge( $session, $sesiones ), '¡Usuario Inicio Sesión Correctamente!');
 			}
 			$success = true;
-			return $this->show_error(6, $consulta, '¡Por favor verificar la información ingresada!');
+			return $this->show_error(6, $usuario, '¡Por favor verificar la información ingresada!');
 		} catch (\Exception $e) {
 			$success = false;
 			$error = $e->getFile() . " " . $e->getMessage() . " " . $e->getLine();
 			return $this->show_error(6, $error);
-        #$error = $e->getFile()." ".$e->getMessage()." ".$e->getLine();
 		}
 
 	}
-	/**
-	 * Metodo Donde se realizan las consultas necesarias para cargar los datos del correo.
-	 * @access public
-	 * @param $where array [description]
-	 * @return void
-	 */
+
+    /**
+     * Metodo Donde se realizan las consultas necesarias para cargar los datos del correo.
+     * @access public
+     * @return array
+     */
 	public static function page_mail()
 	{
 		$ruta_validate = substr(parse_domain()->uri, 1);
@@ -576,7 +557,7 @@ abstract class MasterController extends Controller
 	 * @param array $data [Description]
 	 * @return array
 	 */
-	private static function _parse_array($data = [])
+	private static function _parse_array( $data = [] )
 	{
 		$datos = [];
 		foreach ($data as $key => $value) {
@@ -658,19 +639,19 @@ abstract class MasterController extends Controller
 		}
 
 	}
-	/**
-	 *Metodo para hacer la consulta para los menus
-	 *@access public
-	 *@param string $request [Description]
-	 *@return void
-	 */
-	public static function data_session($request)
+
+    /**
+     * Metodo para hacer la consulta para los menus
+     * @access public
+     * @param string $request [Description]
+     * @return array
+     */
+	public static function dataSession( $request )
 	{
-         #debuger($request);
 		$session = [];
-		if (count($request) > 0) {
-			foreach ($request as $rutas) {
-				if (isset($rutas->link) && $rutas->link != "") {
+		if (count($request) > 0 ) {
+			foreach ($request as $rutas ) {
+				if (isset( $rutas->link ) && $rutas->link != "") {
 					$session['ruta'] = $rutas->link;
 					break;
 				}
@@ -686,9 +667,8 @@ abstract class MasterController extends Controller
 	 *@access private
 	 *@return void
 	 */
-	protected static function _bitacora($logout = false)
+	protected static function _bitacora( $logout = false )
 	{
-  		 #se realiza una transaccion
 		$error = null;
 		DB::beginTransaction();
 		try {
@@ -735,9 +715,7 @@ abstract class MasterController extends Controller
 	 */
 	protected static function _validateXml($xml_path = false)
 	{
-
 		if (!empty($xml_path)) {
-
 			$data = self::_load_file_xml($xml_path);
 			$texto = $data['texto'];
 			$xml = $data['object'];
@@ -866,9 +844,7 @@ abstract class MasterController extends Controller
 	 */
 	protected static function _load_file_xml($xml_path = false)
 	{
-
 		if (!empty($xml_path)) {
-
 			$texto = file_get_contents($xml_path);
 			if (substr($texto, 0, 3) == pack("CCC", 0xef, 0xbb, 0xbf)) {
 				$texto = substr($texto, 3);
@@ -896,13 +872,14 @@ abstract class MasterController extends Controller
 		return false;
 
 	}
-	/**
-	 * Metodo para realizar los reportes de las facturas.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	public static function reporte_general($filtros = [])
+
+    /**
+     * Metodo para realizar los reportes de las facturas.
+     * @access public
+     * @param array $filtros
+     * @return array
+     */
+	public static function reporte_general( $filtros = [] )
 	{
 
 		$fecha_actual = date('Y-m-d');
@@ -996,12 +973,18 @@ abstract class MasterController extends Controller
 		return $response;
 
 	}
-	/**
-	 * Metodo para obtener los registros de los productos por empresa.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
+
+    /**
+     * Metodo para obtener los registros de los productos por empresa.
+     * @access public
+     * @param $table_model
+     * @param array $with
+     * @param array $where
+     * @param array $where_pivot
+     * @param bool $method
+     * @param array $with_pivot
+     * @return void
+     */
 	protected function _consulta($table_model, $with = [], $where = [], $where_pivot = [],$method = false, $with_pivot = [])
 	{
 		$response = $table_model::with(['empresas' => function ($query) use ($where_pivot, $with_pivot) {
@@ -1021,12 +1004,14 @@ abstract class MasterController extends Controller
 		return $request;
 	
 	}
-	/**
-	 * Metodo para obtener los registros de los productos por empresa.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
+
+    /**
+     * Metodo para obtener los registros de los productos por empresa.
+     * @access public
+     * @param $table_model
+     * @param array $with
+     * @return void
+     */
 	protected function _consulta_employes($table_model, $with = [])
 	{
         #SysUsersModel
@@ -1044,12 +1029,13 @@ abstract class MasterController extends Controller
 		return $request;
 
 	}
-	/**
-	 * Metodo para obtener los registros de los menus de esa empresa.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
+
+    /**
+     * Metodo para obtener los registros de los menus de esa empresa.
+     * @access public
+     * @param $table_model
+     * @return void
+     */
 	protected function _consulta_menus($table_model)
 	{
         #SysUsersModel
@@ -1065,12 +1051,18 @@ abstract class MasterController extends Controller
 		}
 		return $response;
 	}
-	/**
-	 * Metodo para obtener la validacion de la consulta
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
+
+    /**
+     * Metodo para obtener la validacion de la consulta
+     * @access public
+     * @param $table_model
+     * @param array $with
+     * @param array $where
+     * @param array $where_pivot
+     * @param array $where_admin
+     * @param bool $method
+     * @return void
+     */
 	protected function _validate_consulta( $table_model, $with = [],$where = [],$where_pivot = [],$where_admin = [],$method= false )
 	{
 		if( Session::get('id_rol') == 1 ){
@@ -1082,12 +1074,16 @@ abstract class MasterController extends Controller
         }
 
 	}
-	/**
-	 * Metodo para obtener los catalogos de cada empresas
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
+
+    /**
+     * Metodo para obtener los catalogos de cada empresas
+     * @access public
+     * @param $table_model
+     * @param array $with
+     * @param array $where
+     * @param array $where_pivot
+     * @return void
+     */
 	protected function _catalogos_bussines( $table_model, $with = [], $where = [], $where_pivot = [] )
 	{
 		if( Session::get('id_rol') == 1 ){
@@ -1097,13 +1093,16 @@ abstract class MasterController extends Controller
         }
 
 	}
-	/**
-	 * Metodo para cargar la platilla de forma general para la generacion de las cotizaciones/ pedidos
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	protected function _plantillas( $request, $correo = false ){
+
+    /**
+     * Metodo para cargar la platilla de forma general para la generacion de las cotizaciones/ pedidos
+     * @access public
+     * @param Request $request [Description]
+     * @param bool $correo
+     * @return void
+     */
+	protected function _plantillas( $request, $correo = false )
+    {
 		#debuger($request);
 		$pdf = PDF::loadView('plantillas.reportes', $request );
 		if (!$correo) {

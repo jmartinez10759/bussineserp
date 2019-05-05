@@ -59,7 +59,6 @@ class UsuariosController extends MasterController
                 }
             }
         }
-        #debuger(count($response));
         $eliminar = (Session::get('permisos')['DEL'] == false) ? 'style="display:block" ' : 'style="display:none" ';
         $asignar_permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
 

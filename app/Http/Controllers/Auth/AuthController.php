@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-#use App\Model\MasterModel;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
-use App\Model\Administracion\Configuracion\SysSesionesModel;
 
 class AuthController extends MasterController
 {
-    #se crea una propiedad
     private static $_data   = [];
     private static $_tabla_model;
     public static $title_page  = "Inicio Sesion";
@@ -29,7 +24,8 @@ class AuthController extends MasterController
      * @access public
      * @return void
      */
-    public static function showLogin(){
+    public static function showLogin()
+    {
       #debuger(Session::get('id'));
     	$data= [
     		'title_page'	=>  self::$title_page
@@ -58,17 +54,16 @@ class AuthController extends MasterController
      *@param Request $request [description]
      *@return void
      */
-    public function authLogin( Request $request ){
-        #debuger($request->all());
+    public function authLogin( Request $request )
+    {
       	$where = [];
-        $values_sesion = ['_token'];
+        $valuesSession = ['_token'];
     		foreach ($request->all() as $key => $value) {
-    			if ( !in_array($key,$values_sesion ) ) {
+    			if ( !in_array( $key,$valuesSession ) ) {
     				$where[$key] = $value;
     			}
     		}
-		    #se realiza la consulta para verificar si existen ese candidato en la base de datos
-        return self::inicio_session( array_to_object( $where ), self::$_tabla_model );
+        return self::startSession( array_to_object( $where ), self::$_tabla_model );
     }
     /**
      * Metodo para cerrar session

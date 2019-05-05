@@ -1,3 +1,113 @@
+const URL = {
+    url_insert            : "usuarios/register"
+    ,url_update           : 'usuarios/update'
+    ,url_edit             : 'usuarios/edit'
+    ,url_all              : 'usuarios/all'
+    ,url_destroy          : "usuarios/destroy"
+}
+
+app.controller('UsuarioController', ['masterservice','$scope', '$http', '$location', function( masterservice , $scope, $http, $location ) {
+    /*se declaran las propiedades dentro del controller*/
+    $scope.constructor = function(){
+        $scope.datos  = [];
+        $scope.insert = { estatus: 1 };
+        $scope.update = {};
+        $scope.edit   = {};
+        $scope.fields = {};
+        $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
+        $scope.index();
+    };
+    $scope.index = function(){
+        let url = domain( URL.url_all );
+        let fields = {};
+        MasterController.request_http(url,fields,'get',$http, false )
+            .then(function(response){
+                //They aren't remove function this is  verify the session
+                if(masterservice.session_status( response )){return;};
+                $scope.datos = response.data.result;
+                console.log($scope.datos);
+            }).catch(function(error){
+            masterservice.session_status_error(error);
+        });
+    };
+
+    $scope.insert_register = function( id ){
+        let url     = domain(  URL.url_insert );
+        let fields  = $scope.insert;
+        MasterController.request_http(url,fields,'post',$http, false )
+            .then(function( response ){
+                //not remove function this is  verify the session
+                if(masterservice.session_status( response )){return;};
+                //$scope.index();
+                toastr.success( response.data.message , title );
+                jQuery.fancybox.close({
+                    'type'      : 'inline'
+                    ,'src'      : "#modal_add_register"
+                    ,'modal'    : true
+                    ,'width'    : 900
+                    ,'height'   : 400
+                    ,'autoSize' : false
+                });
+                $scope.index();
+            }).catch(function( error ){
+            masterservice.session_status_error(error);
+        });
+    }
+
+
+    $scope.update_register = function(){
+        $scope.update = $scope.edit;
+        let url = domain(  URL.url_update );
+        let fields = $scope.update;
+        MasterController.request_http(url,fields,'put',$http, false )
+            .then(function( response ){
+                //We aren't remove function this is verify the session
+                if(masterservice.session_status( response )){return;};
+                toastr.info( response.data.message , title );
+                jQuery.fancybox.close({
+                    'type'      : 'inline'
+                    ,'src'      : "#modal_edit_register"
+                    ,'modal'    : true
+                    ,'width'    : 900
+                    ,'height'   : 400
+                    ,'autoSize' : false
+                });
+                $scope.index();
+            }).catch(function( error ){
+            masterservice.session_status_error(error);
+        });
+    };
+
+    $scope.edit_register = function( entry ){
+        var datos = ['id', 'perfil', 'clave_corta', 'estatus' ];
+        $scope.update = iterar_object(entry, datos, true);
+        console.log($scope.update);
+        jQuery('#modal_edit_register').modal({keyboard: false,backdrop: "static" });
+
+    }
+    $scope.destroy_register = function( id ){
+
+        var url = domain(  URL.url_destroy );
+        var fields = {id : id };
+        buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+            MasterController.request_http(url,fields,'delete',$http, false )
+                .then(function( response ){
+                    //not remove function this is  verify the session
+                    if(masterservice.session_status( response )){return;};
+                    toastr.success( response.data.message , title );
+                    $scope.index();
+                }).catch(function( error ){
+                masterservice.session_status_error(error);
+            });
+
+        },"warning",true,["SI","NO"]);
+    }
+
+}]);
+
+
+
+/*
 var url_insert  = "usuarios/register";
 var url_update  = 'usuarios/update';
 var url_edit    = 'usuarios/edit';
@@ -277,3 +387,4 @@ change_sucursales = function(){
   acciones.show_acciones( url,fields);
   
  }
+*/

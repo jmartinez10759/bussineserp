@@ -34,15 +34,11 @@ app.controller('RolesController', ['masterservice','$scope', '$http', '$location
         }).catch(function(error){
             masterservice.session_status_error(error);
         });
-    }
-    /*$scope.mostarArcoiris = function(){
-      $scope.oculto = !$scope.oculto;
-    }*/
+    };
 
     $scope.insert_register = function( id ){
-        var url = domain(  URL.url_insert );
-        // var fields = {id: id };
-        var fields = $scope.insert;
+        let url     = domain(  URL.url_insert );
+        let fields  = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
         .then(function( response ){
           //not remove function this is  verify the session
@@ -65,16 +61,13 @@ app.controller('RolesController', ['masterservice','$scope', '$http', '$location
 
     
     $scope.update_register = function(){
-
-      
       $scope.update = $scope.edit;
-      
-      var url = domain(  URL.url_update );
-      var fields = $scope.update;
+      let url = domain(  URL.url_update );
+      let fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
       .then(function( response ){
-        //not remove function this is  verify the session
-            if(masterservice.session_status( response )){return;};
+        //We aren't remove function this is verify the session
+          if(masterservice.session_status( response )){return;};
           toastr.info( response.data.message , title );
           jQuery.fancybox.close({
                 'type'      : 'inline'
@@ -85,11 +78,11 @@ app.controller('RolesController', ['masterservice','$scope', '$http', '$location
                 ,'autoSize' : false
             });
           $scope.index();
-          //redirect(domain(redireccion));
       }).catch(function( error ){
           masterservice.session_status_error(error);
       });
-    }
+    };
+
     $scope.edit_register = function( entry ){
         var datos = ['id', 'perfil', 'clave_corta', 'estatus' ];
         $scope.update = iterar_object(entry, datos, true);

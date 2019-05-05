@@ -37,6 +37,18 @@
 
                     <div class="form-group">
                         <div class="control-label">
+                            <label class="col-sm-3 control-label">UserName
+                                <font color="red" size="3">*</font>
+                            </label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control has-feedback-left" v-model="newKeep.username" placeholder="Ingresa correo">
+                            <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label">
                             <label class="col-sm-3 control-label">{{$campo_3}}
                                 <font color="red" size="3">*</font>
                             </label>
