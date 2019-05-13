@@ -37,7 +37,7 @@ class UsuariosController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public function index()
+    public function indexx()
     {
         #debuger(Session::all());
         $response = SysUsersModel::with(['menus' => function ($query) {
@@ -69,7 +69,17 @@ class UsuariosController extends MasterController
             $borrar = build_acciones_usuario($id, 'v-destroy_register', 'Borrar', 'btn btn-danger', 'fa fa-trash', 'title="borrar"' . $eliminar);
             $permisos = build_acciones_usuario($id, 'v-permisos', 'Permisos', 'btn btn-info', 'fa fa-gears', 'title="Asignar Permisos" ' . $asignar_permisos);
             $registros[] = [
-                $respuesta->id, $respuesta->name . " " . $respuesta->first_surname . " " . $respuesta->second_surname, $respuesta->email, self::_roles($respuesta->roles), (isset($respuesta->bitacora->conect) && $respuesta->bitacora->conect == 1) ? '<span class="label label-success">En Linea</span>' : '<span class="label label-danger">Desconectado</span>', (isset($respuesta->bitacora->time_conected) && $respuesta->bitacora->time_conected !== null) ? $respuesta->bitacora->time_conected : "", (isset($respuesta->bitacora->created_at) && $respuesta->bitacora->created_at !== null) ? $respuesta->bitacora->created_at : "", (isset($respuesta->bitacora->updated_at) && $respuesta->bitacora->updated_at !== null) ? time_fechas($respuesta->bitacora->updated_at, timestamp()) : "", ($respuesta->estatus == 1) ? "ACTIVO" : "BAJA", $editar, $permisos, $borrar
+                $respuesta->id,
+                $respuesta->name . " " . $respuesta->first_surname . " " . $respuesta->second_surname
+                , $respuesta->email, self::_roles($respuesta->roles)
+                , (isset($respuesta->bitacora->conect) && $respuesta->bitacora->conect == 1) ? '<span class="label label-success">En Linea</span>' : '<span class="label label-danger">Desconectado</span>'
+                , (isset($respuesta->bitacora->time_conected) && $respuesta->bitacora->time_conected !== null) ? $respuesta->bitacora->time_conected : ""
+                , (isset($respuesta->bitacora->created_at) && $respuesta->bitacora->created_at !== null) ? $respuesta->bitacora->created_at : ""
+                , (isset($respuesta->bitacora->updated_at) && $respuesta->bitacora->updated_at !== null) ? time_fechas($respuesta->bitacora->updated_at, timestamp()) : ""
+                , ($respuesta->estatus == 1) ? "ACTIVO" : "BAJA"
+                , $editar
+                , $permisos
+                , $borrar
             ];
         }
         $titulos = [
@@ -101,7 +111,7 @@ class UsuariosController extends MasterController
             , 'multiple'  => ''
         ]);
 
-        $empresas = dropdown([
+        /*$empresas = dropdown([
             'data' => (Session::get('id_rol') == 1) ? SysEmpresasModel::where(['estatus' => 1])->get() : $this->_consulta_employes(new SysUsersModel)
             , 'value'     => 'id'
             , 'text'      => 'nombre_comercial'
@@ -111,9 +121,9 @@ class UsuariosController extends MasterController
             , 'attr'      => 'data-live-search="true" '
             , 'event'     => 'v-change_empresas("cmb_sucursales","cmb_empresas","div_sucursales")'
             , 'multiple'  => ''
-        ]);
+        ]);*/
 
-        $empresas_edit = dropdown([
+        /*$empresas_edit = dropdown([
             'data' => (Session::get('id_rol') == 1) ? SysEmpresasModel::where(['estatus' => 1])->get() : $this->_consulta_employes(new SysUsersModel)
             , 'value' => 'id'
             , 'text' => 'nombre_comercial'
@@ -123,16 +133,16 @@ class UsuariosController extends MasterController
             , 'attr' => 'data-live-search="true" '
             , 'event' => 'v-change_empresas("cmb_sucursal_edit","cmb_empresas_edit","div_edit_sucursales")'
             , 'multiple' => ''
-        ]);
+        ]);*/
 
         $data = [
             'page_title' => "Configuracion"
             , 'title' => "Usuarios"
             , 'subtitle' => "Creacion Usuarios"
-            , 'data_table' => data_table($table)
+           /* , 'data_table' => data_table($table)
             , 'select_roles' => $roles, 'select_empresas' => $empresas
             , 'select_empresas_edit' => $empresas_edit
-            , 'select_roles_edit' => $roles_edit
+            , 'select_roles_edit' => $roles_edit*/
             , 'titulo_modal' => "Agregar Usuario"
             , 'titulo_modal_edit' => "Actualizar Usuario"
             , 'campo_1' => 'Nombre Completo'
@@ -145,6 +155,41 @@ class UsuariosController extends MasterController
         ];
         return self::_load_view('administracion.configuracion.usuarios', $data);
 
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|void
+     */
+    public function index()
+    {
+        if( Session::get('permisos')['GET'] ){ return view('errors.error');}
+
+        $data = [
+            'page_title'        => "Configuracion"
+            , 'title'           => "Usuarios"
+            , 'subtitle'        => "Creacion Usuarios"
+            , 'titulo_modal'    => "Agregar Usuario"
+            , 'titulo_modal_edit' => "Actualizar Usuario"
+            , 'campo_1' => 'Nombre Completo'
+            , 'campo_2' => 'Correo'
+            , 'campo_3' => 'Contraseña'
+            , 'campo_4' => 'Tipo de Rol'
+            , 'campo_5' => 'Estatus'
+            , 'campo_6' => 'Empresas'
+            , 'campo_7' => 'Sucursales'
+        ];
+
+        return $this->_load_view( 'administracion.configuracion.usuarios', $data );
+    }
+    public function all()
+    {
+        try {
+            $user = $this->_verifyRol();
+            return $this->_message_success(200, $user, self::$message_success);
+        } catch (\Exception $e ) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return $this->show_error(6, $error);
+        }
     }
     /**
      *Metodo para realizar la consulta por medio de su id
@@ -442,6 +487,47 @@ class UsuariosController extends MasterController
         $where = ['id_sucursal' => $id_sucursal, 'estatus' => 1];
         $empresa = SysEmpresasSucursalesModel::select('id_empresa')->where($where)->get();
         return isset($empresa[0]->id_empresa) ? $empresa[0]->id_empresa : 0;
+    }
+
+    /**
+     * This is method is for do query
+     * @return SysUsersModel[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    private function _verifyRol()
+    {
+        if( Session::get('id_rol') == 1 ){
+
+            $response = SysUsersModel::with(['bitacora','roles'])
+                ->orderBy('id','desc')
+                ->groupby('id')
+                ->get();
+
+        }elseif( Session::get('id_rol') == 3 ){
+
+            $response = SysEmpresasModel::with(['usuarios'])
+                ->whereId( Session::get('id_empresa') )
+                ->first()
+                ->usuarios()->with(['empresas','sucursales'])
+                ->orderBy('id','desc')
+                ->groupby('id')
+                ->get();
+
+        }else{
+
+            $response = SysUsersModel::with(['empresas'])
+                ->whereId( Session::get('id') )->first()
+                ->empresas()->with([''])
+                ->whereId( Session::get('id_empresa') )
+                ->first()
+                ->roles()->with(['empresas','sucursales'])
+                ->orderBy('id','desc')
+                ->groupby('id')
+                ->get();
+
+
+        }
+        return $response;
+
     }
 
 

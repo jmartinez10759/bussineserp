@@ -7,25 +7,26 @@ const URL = {
 }
 
 app.controller('UsuarioController', ['masterservice','$scope', '$http', '$location', function( masterservice , $scope, $http, $location ) {
-    /*se declaran las propiedades dentro del controller*/
+    /*it's function initialize for get the properties */
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = { estatus: 1 };
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
+        $scope.today  = new Date();
         $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
         $scope.index();
     };
     $scope.index = function(){
         let url = domain( URL.url_all );
         let fields = {};
-        MasterController.request_http(url,fields,'get',$http, false )
+        MasterController.request_http(url,fields,'GET',$http, false )
             .then(function(response){
-                //They aren't remove function this is  verify the session
-                if(masterservice.session_status( response )){return;};
+                /*Not remove function, it's for verify the session*/
+                if(masterservice.session_status( response )){return;}
                 $scope.datos = response.data.result;
-                console.log($scope.datos);
+                console.log( $scope.datos );
             }).catch(function(error){
             masterservice.session_status_error(error);
         });
@@ -101,6 +102,14 @@ app.controller('UsuarioController', ['masterservice','$scope', '$http', '$locati
             });
 
         },"warning",true,["SI","NO"]);
+    };
+
+    $scope.diffDaysToday = function ( startDay ) {
+        let changeDay = new Date( startDay );
+        const MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
+        let utc1 = Date.UTC(changeDay.getFullYear(), changeDay.getMonth(), changeDay.getDate());
+        let utc2 = Date.UTC($scope.today.getFullYear(), $scope.today.getMonth(), $scope.today.getDate());
+        return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
     }
 
 }]);

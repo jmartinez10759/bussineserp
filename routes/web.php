@@ -310,6 +310,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'usuarios'
     ]);
 
+    Route::get('/usuarios/all', [
+        'uses'      => 'Administracion\Configuracion\UsuariosController@all'
+        ,'as'       => 'usuarios.all'
+    ]);
+
     Route::get('usuarios/edit', [
         'uses'      => 'Administracion\Configuracion\UsuariosController@show'
         ,'as'       => 'usuarios.edit'
