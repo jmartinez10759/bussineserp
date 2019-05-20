@@ -43,16 +43,16 @@ class ProductosController extends MasterController
         return self::_load_view( "administracion.configuracion.productos",$data );
     }
     /**
-     *Metodo para obtener los datos de manera asicronica.
+     *Method for get all products.
      *@access public
      *@param Request $request [Description]
      *@return void
      */
-    public function all( Request $request ){
-
+    public function all( Request $request )
+    {
         try {
-           $response = $this->consulta_productos();
-           $data = [
+            $response = $this->_queryProducts();
+            $data = [
              'response'         => $response
              ,'empresas'        => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
              ,'unidad_medida'   => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
@@ -280,14 +280,15 @@ class ProductosController extends MasterController
 
 
     }
+
     /**
      * Metodo para realizar la parte de consulta de productos
      * @access public
-     * @param Request $request [Description]
      * @return void
      */
-    public function consulta_productos(){
-
+    private function _queryProducts()
+    {
+        var_export(Session::all());die();
         if( Session::get('id_rol') == 1 ){
 
             $response = SysProductosModel::with(['unidades','categorias','empresas'])

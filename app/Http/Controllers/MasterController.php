@@ -352,7 +352,7 @@ abstract class MasterController extends Controller
      * @param SysUsersModel $users
      * @return void
      */
-	public function startSession( $where, SysUsersModel $users )
+	public function startSession(  $where , SysUsersModel $users )
 	{
 		$error = null;
 		try {
@@ -378,7 +378,7 @@ abstract class MasterController extends Controller
                         $session[$value] = $usuario->$value;
                     }
                 }
-                #se realiza la consulta a la tabla ralacional.
+                #se realiza la consulta a la tabla relacional.
 				if ( count( $usuario->empresas ) > 1 ) {
 					Session::put( $session );
 					self::_bitacora();
@@ -393,8 +393,8 @@ abstract class MasterController extends Controller
 				if ( count($usuario->menus) < 1 ) {
 					return $this->show_error(6, $sesiones, '¡No cuenta con permisos necesarios, favor de contactar al administrador!');
 				}
-				Session::put( array_merge( $session, $sesiones ) );
-				self::_bitacora();
+                Session::put( array_merge( $session, $sesiones ) );
+                self::_bitacora();
 				return $this->_message_success(200, array_merge( $session, $sesiones ), '¡Usuario Inicio Sesión Correctamente!');
 			}
 			$success = true;

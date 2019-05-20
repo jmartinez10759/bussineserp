@@ -181,6 +181,10 @@ class UsuariosController extends MasterController
 
         return $this->_load_view( 'administracion.configuracion.usuarios', $data );
     }
+
+    /**
+     * @return \App\Http\Controllers\json|string
+     */
     public function all()
     {
         try {

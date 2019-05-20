@@ -49,7 +49,7 @@ class AuthController extends MasterController
 
     }
     /**
-     *Metodo para visuzalizar para iniciar session
+     *This Method is for login in the dashboard
      *@access public
      *@param Request $request [description]
      *@return void

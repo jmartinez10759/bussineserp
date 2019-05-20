@@ -40,4 +40,8 @@ Route::group(['middleware' => ['cors']], function() {
     Route::put('sistema/notification','Api\NotificationApiController@index');
     Route::delete('sistema/notification','Api\NotificationApiController@index');
 
+    Route::post('login/user','Auth\AuthController@authLogin');
+    Route::get('products','Administracion\Configuracion\ProductosController@all');
+
+
 });
