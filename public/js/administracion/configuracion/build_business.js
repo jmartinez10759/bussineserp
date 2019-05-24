@@ -1,65 +1,53 @@
-new Vue({
-  el: "#vue-business",
-  created: function () {
-    this.consulta_general();
-  },
-  data: {
-    datos: [],
-    newKeep: {
-      'id_empresa': ''
-    },
-    fillKeep: {
-    },
-    fields:{
-      'id_empresa':''
-    },
-    sucursal: {}
-  },
-  mixins : [mixins],
-  methods:{
-    consulta_general: function(){
-        var url = domain('empresas/listado');
-        this.all_register(url,{},'datos');
-    }
-    ,bussiness_sucursales( id_empresa ){
-          var url = domain('list/sucursales');
-          var fields = {'id_empresa': id_empresa};
-          axios.post(url, fields, csrf_token ).then(response => {
-              if (response.data.success == true) {
-                  this.sucursal = response.data.result.sucursales;
-                  console.log(this.sucursal);
-                  $.fancybox.open({
-                      src  : '#content_sucusales',
-                      type : 'inline'
-                    });
+const URL = {
+    urlListCompany        : "empresas/listado"
+    ,urlListGroup         : 'list/sucursales'
+    ,urlPortal            : 'portal'
+};
+app.controller('BussinesListController', ['masterservice','$scope', '$http', '$location', function( masterservice, $scope, $http, $location ) {
 
-              }else{
-                  toastr.error( response.data.message, title_error );
-              }
-          }).catch(error => {
-              toastr.error( error,expired );
-          });
-          //const list = new Bussiness;
-          //list.list_sucursales( url, id_empresa );
-
+    $scope.constructor = function(){
+        $scope.datos  = [];
+        $scope.group  = false;
+        $scope.company= true;
+        $scope.sucursales = [];
+        $scope.index();
+    };
+    $scope.index = function(){
+        let url = domain( URL.urlListCompany );
+        MasterController.request_http(url,{},'GET',$http, false )
+            .then(function(response){
+                if(masterservice.session_status( response )){return;};
+                $scope.datos = response.data.result;
+                console.log($scope.datos);
+            }).catch( function(error){
+                masterservice.session_status_error(error);
+            });
 
     }
-    ,portal( id_sucursal ){
-      var url = domain('portal');
-      var fields = { id_sucursal:id_sucursal };
-      axios.get( url, { params: fields }, csrf_token ).then( response => {
-          if (response.data.success == true) {
-              console.log(response.data.result.ruta);
-              redirect( domain( response.data.result.ruta ) );
-          }
-      }).catch(error => {
-          toastr.error( error, expired );
-      });
+    $scope.BussinesGroup = function(companyId){
+        var url = domain( URL.urlListGroup );
+        var fields = {'id_empresa': companyId};
+        MasterController.request_http(url,fields,'POST',$http, false )
+            .then(function( response ){
+                if(masterservice.session_status( response )){return;};
+                $scope.sucursales = response.data.data.sucursales;
+                jQuery('#modal-group').modal("show");
+            }).catch(function( error ){
+            masterservice.session_status_error(error);
+        });
 
+    };
+    $scope.beginPortal = function(groupId){
+        var url = domain(URL.urlPortal);
+        var fields = { "group_id" :groupId };
+        MasterController.request_http(url,fields,'GET',$http, false )
+            .then(function( response ){
+                if(masterservice.session_status( response )){return;};
+                console.log(domain( response.data.data.ruta ) );
+                redirect( domain( response.data.data.ruta ) );
+            }).catch(function( error ){
+            //masterservice.session_status_error(error);
+        });
+    };
 
-    }
-
-
-  }
-
-});
+}]);

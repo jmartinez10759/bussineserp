@@ -554,7 +554,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
     Route::post('/list/sucursales', [
-        'uses'      => 'Administracion\Configuracion\SucursalesController@lista_sucursal'
+        'uses'      => 'Administracion\Configuracion\SucursalesController@listGroup'
         ,'as'       => 'list.sucursales'
     ]);
 

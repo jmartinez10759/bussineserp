@@ -120,14 +120,16 @@ abstract class MasterController extends Controller
 		);
 		return ($estado[ $codigo ]) ? $estado[$codigo] : $estado[500];
 	}
-	/**
-	 *Se crea un metodo para mostrar los errores dependinedo la accion a realizar
-	 *@access protected
-	 *@param integer $id [ Coloca el indice para mandar el error que corresponde. ]
-	 *@param array $datos [ Envia la informacion para pintar el error. ]
-	 *@return string $errores
-	 */
-	protected function show_error($id = false, $datos = [], $message = false)
+
+    /**
+     *Se crea un metodo para mostrar los errores dependinedo la accion a realizar
+     * @access protected
+     * @param int $id [ Coloca el indice para mandar el error que corresponde. ]
+     * @param array $datos [ Envia la informacion para pintar el error. ]
+     * @param string $message
+     * @return string $errores
+     */
+	protected function show_error( int $id = null, $datos = [], string $message = null)
 	{
 
 		switch ($id) {
@@ -150,7 +152,6 @@ abstract class MasterController extends Controller
 				$codigo = 400;
 				break;
 			case 6:
-												#$codigo = 304;
 				$codigo = 400;
 				break;
 		}
@@ -231,39 +232,37 @@ abstract class MasterController extends Controller
 		header("status:" . $codigo);
 		return $this->get_status_message($codigo);
 	}
-	/**
-	 * Metodo para mandar a cargar el menu dependiendo el rol desempeÃ±ado por el usuario
-	 * @access public
-	 * @param array $data [ Description ]
-	 * @return void
-	 */
-	protected static function menus( $response, $estatus = false)
+
+    /**
+     * Metodo para mandar a cargar el menu dependiendo el rol del usuario
+     * @access public
+     * @param $response
+     * @param bool $estatus
+     * @return array
+     */
+	protected static function menus( $response = [], bool $estatus = false)
 	{
-		$menus_array = [];
-		$permisos = [];
-		for ($i = 0; $i < count($response); $i++) {
-			for ($j = 0; $j < count($response[$i]->menus); $j++) {
-				if ($response[$i]->menus[$j]->pivot->estatus == 1) {
-					$menus_array[] = ($response[$i]->menus[$j]);
-				}
-			}
-		}
-
+		$menusArray = [];
+        for ($j = 0; $j < count($response->menus); $j++) {
+            if ($response->menus[$j]->pivot->estatus == 1) {
+                $menusArray[] = ($response->menus[$j]);
+            }
+        }
 		if ($estatus) {
-			return $menus_array;
+			return $menusArray;
 		}
-		return Menu::build_menu_tle($menus_array);
+		return Menu::build_menu_tle($menusArray);
         #return Menu::build_menu( $menus_array );
-
 	}
-	/**
-	 * Metodo para cargar la vista general de la platilla que se va a utilizar
-	 * @access protected
-	 * @param string $view [Description]
-	 * @param array  $data [Description]
-	 * @return void
-	 */
-	protected function _load_view($view = false, $parse = [])
+
+    /**
+     * Metodo para cargar la vista general de la platilla que se va a utilizar
+     * @access protected
+     * @param string $view [Description]
+     * @param array $parse
+     * @return void
+     */
+	protected function _load_view(string $view = null, array $parse = [])
 	{
 		$emails = [];
 		$response = SysUsersModel::with(['menus' => function($query){
@@ -275,7 +274,7 @@ abstract class MasterController extends Controller
 			];
 			return $query->where($where)->orderBy('orden', 'asc');
 
-		},'roles','details','empresas','correos'])->whereId( Session::get('id') )->get();
+		},'roles','details','empresas','correos'])->whereId( Session::get('id') )->first();
 
 		$parse['MENU_DESKTOP'] 		= self::menus($response);
 		self::$_titulo = (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial : "Empresa No Asignada";
@@ -283,7 +282,7 @@ abstract class MasterController extends Controller
 		$parse['IMG_PATH'] 			= domain() . 'images/';
 		$parse['icon'] 				= "img/login/buro_laboral.ico";
 		$parse['anio'] 				= date('Y');
-		$parse['version'] 			= "2.0.1";
+		$parse['version'] 			= "2.0.2";
 		$parse['base_url'] 			= domain();
 		$parse['nombre_completo'] 	= Session::get('name') . " " . Session::get('first_surname');
 		$parse['desarrollo'] 		= utf8_decode(self::$_desarrollo);
@@ -300,8 +299,7 @@ abstract class MasterController extends Controller
 		$parse['subtitle'] 			= isset($parse['subtitle'])   ? $parse['subtitle'] : "";
 
 		Session::put(['permisos_full' =>  Session::get('permisos')]);
-		
-		#$parse['permisos']        = Session::get('permisos');
+
 		$eliminar       = (isset(Session::get('permisos')['DEL'])) ? Session::get('permisos')['DEL'] : true;
 		$insertar       = (isset(Session::get('permisos')['INS'])) ? Session::get('permisos')['INS'] : true;
 		$update         = (isset(Session::get('permisos')['UPD'])) ? Session::get('permisos')['UPD'] : true;
@@ -617,7 +615,7 @@ abstract class MasterController extends Controller
 	 * @param boolean nombre tabla a insertar  [Description]
 	 * @return void
 	 */
-	public static function upload_file_catalogos(Request $request, $directorio, $models = false)
+	public static function upload_file_catalogos(Request $request, $directorio, $models = null)
 	{
 		try {
 			$upload = new Upload;
@@ -649,25 +647,26 @@ abstract class MasterController extends Controller
 	public static function dataSession( $request )
 	{
 		$session = [];
-		if (count($request) > 0 ) {
+		if ($request) {
 			foreach ($request as $rutas ) {
 				if (isset( $rutas->link ) && $rutas->link != "") {
 					$session['ruta'] = $rutas->link;
 					break;
 				}
 			}
-
 		} else {
 			$session['ruta'] = 'failed/error';
 		}
 		return $session;
 	}
-	/**
-	 *Metodo para hacer la consulta de la vacante
-	 *@access private
-	 *@return void
-	 */
-	protected static function _bitacora( $logout = false )
+
+    /**
+     *Metodo para hacer la consulta de la vacante
+     * @access private
+     * @param bool $logout
+     * @return void
+     */
+	protected static function _bitacora( bool $logout = false )
 	{
 		$error = null;
 		DB::beginTransaction();

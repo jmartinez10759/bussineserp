@@ -407,7 +407,7 @@ $scope.users_notify = function( id ){
                   toastr.error( session_expired ); 
                   redirect(domain("/"));
                   return;
-              }
+              }result
               console.error( error );
               toastr.error( error.result , expired );
         }); 

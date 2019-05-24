@@ -18,20 +18,21 @@ use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
 
 class ProductosController extends MasterController
 {
-    #se crea las propiedades
     private $_tabla_model;
 
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
         $this->_tabla_model = new SysProductosModel;
     }
+
     /**
-    *Metodo para obtener la vista y cargar los datos
-    *@access public
-    *@param Request $request [Description]
-    *@return void
-    */
-    public function index(){
+     *Metodo para obtener la vista y cargar los datos
+     * @access public
+     * @return void
+     */
+    public function index()
+    {
         if( Session::get('permisos')['GET'] ){ return view('errors.error'); }
 
         $data = [
@@ -50,6 +51,7 @@ class ProductosController extends MasterController
      */
     public function all( Request $request )
     {
+        var_export($request);die();
         try {
             $response = $this->_queryProducts();
             $data = [
@@ -76,11 +78,11 @@ class ProductosController extends MasterController
     public function show( Request $request ){
         #debuger($request->all());
         try {
-            $response = $this->_tabla_model::with(['servicios:id,clave','categorias','unidades','tasas','impuestos','tipoFactor'])->where(['id' => $request->id])->get();
-        return $this->_message_success( 200, $response[0] , self::$message_success );
+            $response = $this->_tabla_model::with(['servicios:id,clave','categorias','unidades','tasas','impuestos','tipoFactor'])->where(['id' => $request->id])->first();
+        return $this->_message_success( 200, $response , self::$message_success );
         } catch (\Exception $e) {
-        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-        return $this->show_error(6, $error, self::$message_error );
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return $this->show_error(6, $error, self::$message_error );
         }
 
     }
@@ -282,7 +284,7 @@ class ProductosController extends MasterController
     }
 
     /**
-     * Metodo para realizar la parte de consulta de productos
+     * Method for use query Products
      * @access public
      * @return void
      */
@@ -299,9 +301,9 @@ class ProductosController extends MasterController
         }elseif( Session::get('id_rol') == 3 ){
             $data = SysEmpresasModel::with(['productos'])
                                     ->where(['id' => Session::get('id_empresa')])            
-                                    ->get();
+                                    ->first();
 
-            $response = $data[0]->productos()
+            $response = $data->productos()
                                 ->with(['unidades','categorias','empresas'])
                                 ->orderBy('id','desc')
                                 ->groupby('id')
@@ -311,12 +313,12 @@ class ProductosController extends MasterController
 
             $data = SysUsersModel::with(['empresas'])
                                   ->where(['id' => Session::get('id')])            
-                                  ->get();
-            $empresas = $data[0]->empresas()
+                                  ->first();
+            $company = $data->empresas()
                                 ->with(['productos'])
                                 ->where([ 'id' => Session::get('id_empresa') ])
-                                ->get();
-            $response = $empresas[0]->productos()
+                                ->first();
+            $response = $company->productos()
                                     ->with(['unidades','categorias','empresas'])
                                     ->orderBy('id','desc')
                                     ->groupby('id')

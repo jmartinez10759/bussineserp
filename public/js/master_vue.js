@@ -6,10 +6,7 @@ let update      = "Registro actualizado corretamente";
 let validate    = "Favor de Verificar los campos color Rojo";
 let expired     = "Ocurrio un Error, Favor de Verificar";
 let session_expired = "Expiro su sesión, favor de ingresar al portal";
-//let csrf_token  = { 'X-CSRF-TOKEN': document.getElementsByTagName("META")['3'].content }
-//var _method     = 'GET, POST, PATCH, PUT, DELETE, OPTIONS';
 var content_type = 'application/json';
-//var csrf_token  = { 'X-CSRF-TOKEN': meta('csrf-token'),'Access-Control-Request-Method':_method, 'Content-Type' : content_type };
 var csrf_token  = { 'X-CSRF-TOKEN': meta('csrf-token'), 'Content-Type' : content_type };
 var _token      = csrf_token[ Object.keys( csrf_token )[0] ];
 var params = {};
@@ -259,29 +256,3 @@ var mixins = {
     }
 };
 
-/*
-
-new Vue({
-  el: "#vue-general",
-  created: function () {
-    this.consulta_general();
-  },
-  data: {
-    datos: [],
-    newKeep: {
-
-    },
-    fillKeep: {
-
-    },
-
-  },
-  mixins : [mixins],
-  methods:{
-    consulta_general: function(){}
-  }
-
-
-});
-
-*/

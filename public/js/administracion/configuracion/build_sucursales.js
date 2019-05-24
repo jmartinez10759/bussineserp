@@ -34,7 +34,6 @@ app.controller('SucursalesController', function( masterservice, $scope, $http, $
         .then(function(response){
             //not remove function this is  verify the session
             if(masterservice.session_status( response )){return;};
-            // loading(true);
             $scope.datos = response.data.result;
             console.log($scope.datos);
         }).catch(function(error){

@@ -18,6 +18,7 @@ app.controller('UsuarioController', ['masterservice','$scope', '$http', '$locati
         $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
         $scope.index();
     };
+
     $scope.index = function(){
         let url = domain( URL.url_all );
         let fields = {};

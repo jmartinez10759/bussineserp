@@ -10,17 +10,15 @@
       <link rel="icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
       <link rel="shortcut icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
         <title>Listado de empresas</title>
-        <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <!--css -->
         <link type="text/css" rel="stylesheet" href="{{asset('css/bootstrap.css')}}" />
         <link type="text/css" rel="stylesheet" href="{{asset('css/sweetalert.css')}}" />
-        <link type="text/css" rel="stylesheet" href="{{asset('css/toastr.css')}}" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />
+        <link type="text/css" rel="stylesheet" href="{{ asset('css/toastr.css')}}" />
+        {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />--}}
         <link rel="stylesheet" href="{{asset('admintle/bower_components/font-awesome/css/font-awesome.min.css')}}">
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
         <!-- Styles -->
         <style>
           [v-cloak]{display: none}
@@ -53,7 +51,6 @@
             .title {
                 font-size: 84px;
             }
-
             .links > a {
                 color: #636b6f;
                 padding: 0 25px;
@@ -63,11 +60,9 @@
                 text-decoration: none;
                 text-transform: uppercase;
             }
-
             .m-b-md {
                 margin-bottom: 30px;
             }
-
             .drop-shadow {
                 position:relative;
                 float:left;
@@ -94,41 +89,33 @@
               -o-transform:scale(1.10);
               transform:scale(1.10);
             }
-
-
-
-            
-
         </style>
-
     </head>
-    <body>
-        <!-- <div class="flex-center position-ref full-height"> -->
+    <body ng-app="application" ng-controller="BussinesListController" ng-init="constructor()" ng-cloak>
         <div class="top-right col-sm-2">
             @if (Session::get('id'))
             <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-danger btn-lg" title="Cerrar Sesion">
               <i class="fa fa-sign-out pull-right"></i>
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} </form>
-            <!-- <a href="#" class="btn btn-default btn-flat">Sign out</a> -->
             @endif
         </div>
 
-          <div class="container " id="vue-business" v-cloak>
-               <div class="row" id="content_empresas">
+          <div class="container">
+               <div class="row" ng-show="company">
                      <br>
                      <center><h2> {{ $titulo }} </h2></center>
                      <br>
 
-                  <div class="drop-shadow col-md-12" v-for="(empresas,key) in datos" v-on:click.prevent="bussiness_sucursales( empresas.id )" title="Selecciona una Empresa" >
+                  <div class="drop-shadow col-md-12" ng-repeat="company in datos" ng-click="BussinesGroup( company.id )" title="Selecciona Una Empresa" >
                       <div class="col-md-3">
-                          <img :src="empresas.logo" width="100%" height="100%">
+                          <img :src="company.logo" width="100%" height="100%" ng-if="company.logo">
                       </div>
                       <div class="col-md-8">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-9">
-                          <h3>@{{ empresas.razon_social }}</h3>
-                          <strong>@{{ empresas.rfc_emisor }}</strong>
+                          <h3 ng-bind="company.razon_social"></h3>
+                          <strong ng-bind="company.rfc_emisor"></strong>
                         </div>
                         <div class="col-sm-1"></div>
                       </div>
@@ -137,36 +124,50 @@
                       </div>
                       
                   </div>
-
-                   <div class="col-sm-offset-0 col-sm-12 table-responsive" style="display: none;">
-
-                          <table class="table table-hover " id="table_empresas">
-                              <thead style="background-color: #337ab7; color: #ffffff;">
-                                <tr>
-                                    <th>#</th>
-                                    <th>EMPRESA</th>
-                                    <th>RFC</th>
-                                    <th>RAZÓN SOCIAL</th>
-                                    <th>GIRO COMERCIAL</th>
-                                    <th></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                  <tr v-for="(empresas,key) in datos" title="Selecciona una Empresa" style="cursor:pointer" >
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.id }}</td>
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.nombre_comercial }}</td>
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.rfc_emisor }}</td>
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.razon_social }}</td>
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.giro_comercial }}</td>
-                                    <td></td>
-                                  </tr>
-                              </tbody>
-                          </table>
-
-                   </div>
                </div>
 
-               <div class="row" id="content_sucusales" style="display:none;">
+              <!-- Modal -->
+              <div class="modal fade" id="modal-group" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+
+                              <table class="table table-hover">
+                                  <thead style="background-color: #337ab7; color: #ffffff;">
+                                  <tr>
+                                      <th>#</th>
+                                      <th>CODIGO</th>
+                                      <th>GRUPO</th>
+                                      <th>DIRECCION</th>
+                                      <th>ESTATUS</th>
+                                      <th></th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  <tr ng-repeat="groups in sucursales" title="Selecciona una Sucursal" style="cursor:pointer" >
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="groups.id"></td>
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="groups.codigo"></td>
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="groups.sucursal"></td>
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="groups.direccion"></td>
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="(groups.estatus == 1)? 'Activo' :'Baja' "></td>
+                                      <td></td>
+                                  </tr>
+                                  </tbody>
+                              </table>
+
+                          </div>
+                          <div class="modal-footer">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+               {{--<div class="row" ng-show="group" width="50%">
                    <br>
                    <center><h2>{{$titulo_sucusales}}</h2></center>
                    <br>
@@ -177,19 +178,19 @@
                             <tr>
                                 <th>#</th>
                                 <th>CODIGO</th>
-                                <th>SUCURSAL</th>
+                                <th>GRUPO</th>
                                 <th>DIRECCION</th>
                                 <th>ESTATUS</th>
                                 <th></th>
                             </tr>
                           </thead>
                           <tbody>
-                              <tr v-for="(sucursales,key) in sucursal" title="Selecciona una Sucursal" style="cursor:pointer" >
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ sucursales.id }}</td>
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ sucursales.codigo }}</td>
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ sucursales.sucursal }}</td>
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ sucursales.direccion }}</td>
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ (sucursales.estatus == 1)? "Activo" :"Baja" }}</td>
+                              <tr ng-repeat="group in sucursal" title="Selecciona una Sucursal" style="cursor:pointer" >
+                                <td ng-click="beginPortal(group.id)" ng-bind="group.id"></td>
+                                <td ng-click="beginPortal(group.id)" ng-bind="group.codigo"></td>
+                                <td ng-click="beginPortal(group.id)" ng-bind="group.sucursal"></td>
+                                <td ng-click="beginPortal(group.id)" ng-bind="group.direccion"></td>
+                                <td ng-click="beginPortal(group.id)" ng-bind="(group.estatus == 1)? 'Activo' :'Baja' "></td>
                                 <td></td>
                               </tr>
                           </tbody>
@@ -197,7 +198,7 @@
 
 
                    </div>
-               </div>
+               </div>--}}
 
            </div>
 
@@ -206,9 +207,7 @@
         <script type="text/javascript" src="{{asset('templates/vendors/jquery/dist/jquery.min.js')}}"></script>
         <!-- Bootstrap -->
         <script type="text/javascript" src="{{asset('templates/vendors/bootstrap/dist/js/bootstrap.min.js')}}"></script>
-        <script type="text/javascript" src="{{asset('js/axios.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/toastr.js')}}"></script>
-      	<script type="text/javascript" src="{{asset('js/vue.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/sweetalert.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
@@ -217,12 +216,13 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-animate.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-chosen-localytics/1.9.2/angular-chosen.min.js"></script>
 
-      	<!-- script master vue -->
         <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
         <!-- script desarrollador -->
-        <!--Se carga el script necesario de la lista de empresas-->
         <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_business.js')}}"></script>
     </body>
 </html>

@@ -502,33 +502,30 @@ class UsuariosController extends MasterController
         if( Session::get('id_rol') == 1 ){
 
             $response = SysUsersModel::with(['bitacora','roles'])
-                ->orderBy('id','desc')
-                ->groupby('id')
-                ->get();
+                                        ->orderBy('id','desc')
+                                        ->groupby('id')
+                                        ->get();
 
         }elseif( Session::get('id_rol') == 3 ){
 
             $response = SysEmpresasModel::with(['usuarios'])
-                ->whereId( Session::get('id_empresa') )
-                ->first()
-                ->usuarios()->with(['empresas','sucursales'])
-                ->orderBy('id','desc')
-                ->groupby('id')
-                ->get();
+                                    ->whereId( Session::get('id_empresa') )
+                                    ->first()
+                                    ->usuarios()->with(['empresas','sucursales'])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
 
         }else{
-
             $response = SysUsersModel::with(['empresas'])
-                ->whereId( Session::get('id') )->first()
-                ->empresas()->with([''])
-                ->whereId( Session::get('id_empresa') )
-                ->first()
-                ->roles()->with(['empresas','sucursales'])
-                ->orderBy('id','desc')
-                ->groupby('id')
-                ->get();
-
-
+                                    ->whereId( Session::get('id') )->first()
+                                    ->empresas()->with([''])
+                                    ->whereId( Session::get('id_empresa') )
+                                    ->first()
+                                    ->roles()->with(['empresas','sucursales'])
+                                    ->orderBy('id','desc')
+                                    ->groupby('id')
+                                    ->get();
         }
         return $response;
 

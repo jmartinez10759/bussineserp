@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysEstadosModel;
 
 class SucursalesController extends MasterController
 {
-    #se crea las propiedades
     private $_tabla_model;
 
     public function __construct(){
@@ -160,65 +160,75 @@ class SucursalesController extends MasterController
                 return $this->show_error(6, $error, self::$message_error );
 
             }
-     /**
-      *Metodo para listar las sucursales. por empresa.
-      *@access public
-      *@param $id [Description]
-      *@return void
-      */
-      public function lista_sucursal( Request $request ){
 
+    /**
+     *Metodo para listar las sucursales. por empresa.
+     * @access public
+     * @param Request $request
+     * @return JsonResponse
+     */
+      public function listGroup(Request $request)
+      {
         Session::put(['id_empresa' => $request->id_empresa ]);
-        $response = SysEmpresasModel::with(['sucursales' => function($query){
-                 return $query->groupby('id');
-              }])->where(['id' => $request->id_empresa])->get();
-         $sucursal = [];
-         foreach ($response as $sucursales) {
-            foreach ($sucursales->sucursales as $bussines) {
-                if( $bussines->pivot->estatus == 1){
-                  $sucursal[] = $bussines;
-                }
+        $response = SysEmpresasModel::with(['sucursales'])->where(['id' => $request->id_empresa])->first();
+        $sucursales = $response->sucursales()->groupBy('id')->get();
+        $sucursal = [];
+        foreach ($sucursales as $bussines) {
+            if( $bussines->pivot->estatus == 1){
+              $sucursal[] = $bussines;
             }
-         }
+        }
          $data['sucursales'] = $sucursal;
-         return message( true, $data , "¡Listado de sucursales de la empresa!" );
+         return new JsonResponse([
+             'success'  => true
+            ,'data'     => $data
+            ,'message'  => "¡Listado de sucursales de la empresa!"
+         ],Response::HTTP_OK);
 
       }
-      /**
-       *Metodo para Cargar la vista de las sucursales por empresa.
-       *@access public
-       *@param $id [Description]
-       *@return void
-       */
-      public function load_lista_sucursal(){
+    /**
+     *Metodo para Cargar la vista de las sucursales por empresa.
+     * @access public
+     * @return void
+     */
+      /*public function load_lista_sucursal(){
           return view('administracion.configuracion.lista_sucursales' );
-      }
-      /**
-       *Metodo meter en session la empresa y/o sucursal..
-       *@access public
-       *@param Request $request [Description]
-       *@return void
-       */
-      public function portal( Request $request ){
-          //$sessions['id_empresa']  = Session::get('id_empresa');
-          $sessions['id_sucursal']  = $request->id_sucursal;
-          Session::put($sessions);
-          $response = SysUsersModel::with(['menus' => function($query){
-             return $query->where(['sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa') ])->groupBy('sys_rol_menu.id_users','sys_rol_menu.id_menu','sys_rol_menu.estatus');
-           },'roles' => function( $query ){
-               return $query->where(['sys_roles.estatus' => 1 ])
-                             ->groupBy('sys_users_roles.id_users','sys_users_roles.id_rol');
-           }])->where( ['id' => Session::get('id')] )->get();
+      }*/
 
-           $sessions['id_rol'] = isset($response[0]->roles[0]->id)?$response[0]->roles[0]->id: "";
-           $ruta = self::data_session( $response[0]->menus );
+    /**
+     *Metodo meter en session la empresa y/o sucursal..
+     * @access public
+     * @param Request $request [Description]
+     * @return JsonResponse
+     */
+      public function portal( Request $request )
+      {
+          $sessions['id_sucursal']  = $request->group_id;
+          #Session::put( $sessions );
+          $response = SysUsersModel::with(['menus','roles'])->where(['id' => Session::get('id')])->first();
+          $menus    = $response->menus()->where([
+              'sys_rol_menu.estatus'     => true
+              ,'sys_rol_menu.id_empresa' => Session::get('id_empresa')
+          ])->groupBy('sys_rol_menu.id_users','sys_rol_menu.id_menu','sys_rol_menu.estatus')->get();
+          $roles = $response->roles()->where(['sys_roles.estatus' => 1])
+                                    ->groupBy('sys_users_roles.id_users','sys_users_roles.id_rol')
+                                    ->first();
+           $sessions['id_rol'] = isset($roles->id)? $roles->id: "";
+           $ruta = self::dataSession( $menus );
            $sesiones = array_merge($sessions,$ruta);
- 					if( count($response[0]->menus) < 1 ){
- 							return message(true,$sesiones,'¡No cuenta con permisos necesarios, favor de contactar al administrador!');
- 					}
+            if( count($menus) < 1 ){
+                return new JsonResponse([
+                    'success'   => true
+                    ,'data'     => $sessions
+                    ,"message"  => '¡No cuenta con permisos necesarios, favor de contactar al administrador!'
+                ],Response::HTTP_OK);
+            }
            Session::put( $sesiones );
-           #consulta para obtener las rutas.
-           return message( true, array_merge($sessions,$ruta) ,'¡Seleccion de la sucursal correctamente!');
+            return new JsonResponse([
+                'success'   => true
+                ,'message'  => "¡Grupo seleccionado correctamente!"
+                ,'data'     => array_merge($sessions,$ruta)
+            ], Response::HTTP_OK);
 
       }
 
