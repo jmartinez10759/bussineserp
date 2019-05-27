@@ -165,18 +165,19 @@ class UsuariosController extends MasterController
         if( Session::get('permisos')['GET'] ){ return view('errors.error');}
 
         $data = [
-            'page_title'        => "Configuracion"
-            , 'title'           => "Usuarios"
-            , 'subtitle'        => "Creacion Usuarios"
-            , 'titulo_modal'    => "Agregar Usuario"
-            , 'titulo_modal_edit' => "Actualizar Usuario"
-            , 'campo_1' => 'Nombre Completo'
-            , 'campo_2' => 'Correo'
-            , 'campo_3' => 'Contraseña'
-            , 'campo_4' => 'Tipo de Rol'
-            , 'campo_5' => 'Estatus'
-            , 'campo_6' => 'Empresas'
-            , 'campo_7' => 'Sucursales'
+            'page_title'            => "Configuracion"
+            , 'title'               => "Usuarios"
+            , 'subtitle'            => "Creacion Usuarios"
+            , 'titulo_modal'        => "Agregar Usuario"
+            , 'titulo_modal_edit'   => "Actualizar Usuario"
+            , 'campo_1'             => 'Nombre Completo'
+            , 'campo_2'             => 'Correo'
+            , 'campo_3'             => 'Contraseña'
+            , 'campo_4'             => 'Tipo de Rol'
+            , 'campo_5'             => 'Estatus'
+            , 'campo_6'             => 'Empresas'
+            , 'campo_7'             => 'Sucursales'
+            , 'campo_8'             => 'UserName'
         ];
 
         return $this->_load_view( 'administracion.configuracion.usuarios', $data );
@@ -188,8 +189,13 @@ class UsuariosController extends MasterController
     public function all()
     {
         try {
-            $user = $this->_verifyRol();
-            return $this->_message_success(200, $user, self::$message_success);
+            $data = [
+                'users'         => $this->_verifyRol()
+                ,'roles'        => SysRolesModel::whereEstatus(1)->get()
+                ,'companies'    => SysEmpresasModel::whereEstatus(1)->get()
+                ,'groups'       => SysSucursalesModel::whereEstatus(1)->get()
+            ];
+            return $this->_message_success(200, $data , self::$message_success);
         } catch (\Exception $e ) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
             return $this->show_error(6, $error);
@@ -215,7 +221,7 @@ class UsuariosController extends MasterController
                 return $query->where(['sys_sucursales.estatus' => 1])->groupby('id');
             }, 'details'])->where(['id' => $request->id])->get();
           #debuger($response[0]->empresas);
-            $response_menu = (Session::get('id_rol') == 1) ? SysMenuModel::where(['estatus' => 1])->get() : $this->_consulta_menus(new SysUsersModel);
+            $response_menu = (Session::get('id_rol') == 1) ? SysMenuModel::whereEstatus(1)->get() : $this->_consulta_menus(new SysUsersModel);
             #debuger($response_menu);
             $response_acciones = SysAccionesModel::where(['estatus' => 1])->orderBy('id', 'ASC')->get();
             $registros = [];
@@ -500,18 +506,24 @@ class UsuariosController extends MasterController
     private function _verifyRol()
     {
         if( Session::get('id_rol') == 1 ){
-
-            $response = SysUsersModel::with(['bitacora','roles'])
-                                        ->orderBy('id','desc')
-                                        ->groupby('id')
-                                        ->get();
+            $groupRoles =  function($query){
+                return $query->groupBy('sys_users_roles.id_users');
+            };
+            $groupGroups = function($query){
+                return $query->groupBy('id');
+            };
+            $response = SysUsersModel::with([
+                'roles'         => $groupRoles
+                ,'sucursales'   => $groupGroups
+                ,'empresas:id,razon_social,nombre_comercial,rfc_emisor'
+            ])->orderBy('id','desc')->groupby('id')->get();
 
         }elseif( Session::get('id_rol') == 3 ){
 
             $response = SysEmpresasModel::with(['usuarios'])
                                     ->whereId( Session::get('id_empresa') )
                                     ->first()
-                                    ->usuarios()->with(['empresas','sucursales'])
+                                    ->usuarios()->with(['roles','empresas','sucursales'])
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();
@@ -519,10 +531,10 @@ class UsuariosController extends MasterController
         }else{
             $response = SysUsersModel::with(['empresas'])
                                     ->whereId( Session::get('id') )->first()
-                                    ->empresas()->with([''])
+                                    ->empresas()
                                     ->whereId( Session::get('id_empresa') )
                                     ->first()
-                                    ->roles()->with(['empresas','sucursales'])
+                                    ->roles()->with(['empresas','sucursales','permisos'])
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();

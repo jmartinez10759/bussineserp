@@ -54,6 +54,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 	        }
 
 	    },
+
 	    calendar : function(){
 
   		    var calendar = [];
@@ -66,6 +67,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
   		    return calendar;
   		
   		},
+
 		select_anios : function(){
 	        var fecha = new Date();
 	        var year = (fecha.getFullYear());
@@ -78,7 +80,8 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 	        return { anio: select[1].id, cmb_anios: select };
 	    
 	    },
-	    calcular_suma : function( precio = false, cantidad = false ){
+
+		calcular_suma : function( precio = false, cantidad = false ){
 
 	        var precio = (precio != "") ? precio : 0;
 	        var cantidad = (cantidad != "") ? cantidad: 0;
@@ -86,18 +89,18 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 	        return total.toFixed(2);
 
 	    },
+
 	    session_status: function( response = {} ){
-	    	//loading(true);
 	    	/*se carga el metodo para obtener los correos y/o las notificaciones*/
         	$rootScope.$emit("services", {});
-	    	
-        if( typeof response.data != "object" ){
-              toastr.error( session_expired );
-              setTimeout(function(){ redirect(domain()); }, 2000); 
-              return true;
-            }
+			if( typeof response.data != "object" ){
+			  toastr.error( session_expired );
+			  setTimeout(function(){ redirect(domain()); }, 2000);
+			  return true;
+			}
 
 	    },
+
 	    session_status_error: function( error = {} ){
 	    	loading(true);
 	    	if( isset(error.status) && error.status == 419 ){
@@ -109,6 +112,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
             toastr.error( error.result , expired );
 	    
 	    },
+
 	    time_fechas: function( fecha ){
 
 	    	// asignar el valor de las unidades en milisegundos
@@ -145,17 +149,52 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
   			return  time_elapsed;
   			//Output: 164 días, 23 horas, 0 minutos, 0 segundos.
 	    
-	    }
+	    },
+
+		mapObject: function( data, array2, discrim = false ){
+			var response = {};
+			for(var i in data ){
+				if(!discrim ){
+					if ( !array2.includes(i) ) {
+						response[i] = data[i];
+					}
+				}
+				if(discrim){
+					if ( array2.includes(i) ) {
+						response[i] = data[i];
+					}
+				}
+			}
+			return response;
+		},
+
+		httpRequest: function ( url, fields, methods, $http ,headers  ) {
+				this.loading();
+				var config = [];
+				config['method']  = methods;
+				config['url']     = url;
+				config['headers'] = headers;
+				if(methods == "get" || methods == "delete" || methods == "GET" || methods == "DELETE"){
+					config['params'] = fields;
+				}else{ config['data'] = fields; }
+				return $http(config);
+		},
+
+		loading: function (hide = false) {
+			if (hide) {
+				jQuery('.loader').fadeOut('hide');
+				return;
+			}
+			jQuery('.loader').fadeIn('slow');
+		},
 
   	}
 
 }]);
 app.controller('ApplicationController', ['$scope','masterservice','$http','$rootScope' ,function( $scope, masterservice, $http, $rootScope ){
 
-	$rootScope.$on("services", function(){ 
-	    
-	    $scope.services(); 
-
+	$rootScope.$on("services", function(){
+	    $scope.services();
 	});
 	$scope.constructor = function(){
 	  $scope.services();
@@ -166,7 +205,6 @@ app.controller('ApplicationController', ['$scope','masterservice','$http','$root
 	
 	}
 	$scope.services = function(){
-
 		var url = domain('services');
 		var fields = {};
 		MasterController.request_http(url,fields,'get',$http, false )
@@ -238,186 +276,3 @@ app.controller('ApplicationController', ['$scope','masterservice','$http','$root
 	}
 
 }]);
-
-/*app.controller('ApplicationControllers',function( masterservice, $scope, $http ,$rootScope ) {
-
-  $rootScope.$on("services", function(){ 
-      $scope.services(); 
-  });
-  $scope.constructor = function(){
-      $scope.services();
-      $scope.notificaciones = {};
-      $scope.correos = {};
-      $scope.update = {};
-  }
-  $scope.services = function(){
-    var url = domain('services');
-    var fields = {};
-    MasterController.request_http(url,fields,'get',$http, false )
-      .then(function( response ){
-          loading(true);
-          $scope.notificaciones = response.data.result.notification;
-          $scope.correos = response.data.result.correos;
-
-      }).catch(function( error ){
-        loading(true);
-        console.error( error );
-      });
-  }
-$scope.update_notify = function(){
-
-    var url      = domain('api/sistema/token');
-    var fields   = { email: "jorge.martinez@burolaboralmexico.com" };
-    jQuery('#modal_notificaciones').modal('hide');
-
-    MasterController.method_master(url, fields, 'post')
-    .then( response => {
-        var headers = {
-           usuario: response.data.result[0].email, token: response.data.result[0].api_token
-        };
-        var uri = domain('api/sistema/notification');
-        var data = {id:  $scope.update.id };
-        MasterController.method_master(uri, data, 'delete', headers)
-        .then(response => {
-            $scope.services();
-        }).catch(error => {
-            toastr.error(error, "Ocurrio un Error");
-        });
-    }).catch(error => {
-        toastr.error(error, "Ocurrio un Error");
-    });
-
-}
-$scope.time_fechas = function( fecha ){
-	return masterservice.time_fechas(fecha);
-}
-$scope.users_notify = function( id ){
-  	var url = domain('notificaciones/edit');
-  	var fields = { id : id };
-	  	MasterController.request_http(url,fields,'get',$http, false )
-	      .then(function( response ){
-	          //not remove function this is  verify the session
-	            if(masterservice.session_status( response )){return;};
-
-	            $scope.update.id 	  = response.data.result.id; 
-	            $scope.update.portal  = response.data.result.portal;
-	            $scope.update.titulo  = response.data.result.titulo;
-	            $scope.update.mensaje = response.data.result.mensaje;
-	            console.log($scope.update);
-			  	jQuery('#modal_notificaciones').modal({
-			      keyboard: false, backdrop: "static"
-			    });	
-
-	      }).catch(function( error ){
-	        loading(true);
-	        console.error( error );
-	        masterservice.session_status_error( error );
-	      });
-
-}
-
-
-});*/
-
-/*app.service('masterservice',function(){
-
-	this.url_upload = "";
-
-    this.upload_file = function( update = false ){
-
-      var upload_url = domain( $scope.url_upload );
-      var identificador = {
-         div_content   : 'div_dropzone_file_empresas' ,div_dropzone  : 'dropzone_xlsx_file_empresas' ,file_name     : 'file'
-      };
-      var message = "Dar Clíc aquí o arrastrar archivo";
-      var fields = {'nombre': 'empresas_'+$scope.update.id };
-      $scope.update.logo = "";
-      upload_file(fields ,upload_url,message,1,identificador,'.png',function( request ){
-          if(update){
-            $scope.update.logo = domain(request.result);
-            var html = '';
-            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
-            jQuery('#imagen_edit').html("");        
-            jQuery('#imagen_edit').html(html);        
-          }else{
-            $scope.insert.logo = domain(request.result);
-            var html = '';
-            html = '<img class="img-responsive" src="'+$scope.insert.logo+'" height="268px" width="200px">'
-            jQuery('#imagen').html("");        
-            jQuery('#imagen').html(html);        
-            
-          }
-          jQuery.fancybox.close({
-              'type'      : 'inline'
-              ,'src'      : "#upload_file"
-              ,'modal'    : true
-          });
-      });
-
-      jQuery.fancybox.open({
-          'type'      : 'inline'
-          ,'src'      : "#upload_file"
-          ,'modal'    : true
-      });
-
-    }
-    this.format_date = function( fecha, format ){
-        var d = new Date(fecha);
-        if( format === "yyyy-mm-dd"){
-          return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +  ("0" +(d.getDate())).slice(-2);
-        }else{
-          return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
-        }
-    
-    }
-    this.send_reporte = function(data){
-
-        $scope.correo.email        = data.contactos.correo;
-        $scope.correo.name         = data.contactos.nombre_completo;
-        $scope.correo.mensaje      = "Se le hace el envio de su solicitud";
-        $scope.correo.asunto       = "Confirmar Solicitud";
-        $scope.correo.id_pedido    = data.id;
-        //$scope.correo.descripcion = "Es ";
-        jQuery.fancybox.open({
-            'type'      : 'inline'
-            ,'src'      : "#modal_correo_send"
-            ,'modal'    : true
-            ,'width'    : 900
-            ,'height'   : 500
-            ,'autoSize' : false
-        });
-
-    }
-    this.send_correo = function(url, fields ){
-        
-        MasterController.request_http(url,fields,'post',$http, false )
-        .then(function( response ){
-            toastr.success( "Se envio el correo correctamente" , title ); 
-            jQuery.fancybox.close({
-                'type'      : 'inline'
-                ,'src'      : "#modal_correo_send"
-                ,'modal'    : true
-                ,'width'    : 900
-                ,'height'   : 500
-                ,'autoSize' : false
-            });           
-            $scope.correo = {};
-        }).catch(function( error ){
-            if( isset(error.response) && error.response.status == 419 ){
-                  toastr.error( session_expired ); 
-                  redirect(domain("/"));
-                  return;
-              }result
-              console.error( error );
-              toastr.error( error.result , expired );
-        }); 
-
-    }
-    this.method_proof =function() {
-    	alert("llego a utilizar esta funcion desde cualquier controller");
-    }
-
-
-
-
-});*/

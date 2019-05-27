@@ -16,7 +16,7 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <input type="text" class="form-control has-feedback-left" ng-model="insert.name" style="text-transform: uppercase;" placeholder="Nombre Completo">
                         </div>
                     </div>
@@ -27,19 +27,18 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-6">
-                            <!-- <input type="text" class="form-control" id="email" ng-model="newKeep.email"> -->
+                        <div class="col-sm-8">
                             <input type="text" class="form-control has-feedback-left" ng-model="insert.email" placeholder="Ingresa correo">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="control-label">
-                            <label class="col-sm-3 control-label">UserName
+                            <label class="col-sm-3 control-label">{{$campo_8}}
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <input type="text" class="form-control has-feedback-left" ng-model="insert.username" placeholder="Ingresa correo">
                         </div>
                     </div>
@@ -50,7 +49,7 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <input type="password" class="form-control has-feedback-left" ng-model="insert.password" placeholder="Ingrese contraseña">
                         </div>
                     </div>
@@ -61,12 +60,12 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
                                     ng-model="insert.id_rol"
-                                    ng-options="value.id as value.descripcion for (key, value) in cmbRoles">
+                                    ng-options="value.id as value.perfil for (key, value) in cmbRoles">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
                         </div>
@@ -78,12 +77,14 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
+                                    multiple
+                                    data-live-search="true"
                                     ng-model="insert.id_empresa"
-                                    ng-options="value.id as value.descripcion for (key, value) in cmbCompany">
+                                    ng-options="value.id as value.razon_social for (key, value) in cmbCompanies">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
                         </div>
@@ -95,12 +96,12 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <div id="div_sucursales">
                                 <select class="form-control"
                                         chosen
                                         width="'100%'"
-                                        ng-model="insert.id_empresa"
+                                        ng-model="insert.id_sucursal"
                                         ng-options="value.id as value.descripcion for (key, value) in cmbGroup">
                                     <option value="">--Seleccione Opcion--</option>
                                 </select>
@@ -113,7 +114,7 @@
                         <div class="control-label">
                             <label class="col-sm-3 control-label">{{$campo_5}} </label>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
@@ -160,7 +161,7 @@
                         </div>
                         <div class="col-sm-6">
 
-                            <input type="text" class="form-control has-feedback-left" ng-model="fillKeep.name" style="text-transform: uppercase;" placeholder="Nombre Completo">
+                            <input type="text" class="form-control has-feedback-left" ng-model="update.name" style="text-transform: uppercase;" placeholder="Nombre Completo">
                             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>
@@ -173,7 +174,19 @@
                         </div>
                         <div class="col-sm-6">
 
-                            <input type="text" class="form-control has-feedback-left" ng-model="fillKeep.email" placeholder="Ingresa correo" disabled>
+                            <input type="text" class="form-control has-feedback-left" ng-model="update.email" placeholder="Ingresa correo" disabled>
+                            <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label">
+                            <label class="col-sm-3 control-label">{{$campo_8}}
+                                <font color="red" size="3">*</font>
+                            </label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control has-feedback-left" ng-model="update.username" placeholder="Ingrese username">
                             <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>
@@ -186,7 +199,7 @@
                         </div>
                         <div class="col-sm-6">
 
-                            <input type="password" class="form-control has-feedback-left" ng-model="fillKeep.password" placeholder="Ingrese contraseña">
+                            <input type="password" class="form-control has-feedback-left" ng-model="update.password" placeholder="Ingrese contraseña">
                             <span class="fa fa-inbox form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>
@@ -198,7 +211,13 @@
                             </label>
                         </div>
                         <div class="col-sm-6">
-
+                            <select class="form-control"
+                                    chosen
+                                    width="'100%'"
+                                    ng-model="update.id_rol"
+                                    ng-options="value.id as value.perfil for (key, value) in cmbRoles">
+                                <option value="">--Seleccione Opcion--</option>
+                            </select>
                         </div>
                     </div>
 
@@ -209,7 +228,14 @@
                             </label>
                         </div>
                         <div class="col-sm-6">
-
+                            <select class="form-control"
+                                    chosen
+                                    width="'100%'"
+                                    multiple
+                                    ng-model="update.id_empresa"
+                                    ng-options="value.id as value.razon_social for (key, value) in cmbCompanies">
+                                <option value="">--Seleccione Opcion--</option>
+                            </select>
                         </div>
                     </div>
 
@@ -221,8 +247,13 @@
                         </div>
                         <div class="col-sm-6">
                             <div id="div_edit_sucursales">
-                                <select class="form-control" name="" id="cmb_sucursal_edit" disabled="disabled">
-                                    <option value="0">Todas las Sucursales</option>
+                                <select class="form-control"
+                                        chosen
+                                        width="'100%'"
+                                        multiple
+                                        ng-model="update.id_sucursal"
+                                        ng-options="value.id as value.sucursal for (key, value) in cmbGroupsEdit">
+                                    <option value="">--Seleccione Opcion--</option>
                                 </select>
                             </div>
                         </div>
@@ -252,7 +283,7 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
                         <i class="fa fa-times-circle"></i> Cancelar
                     </button>
-                    <button type= "button" class="btn btn-primary" ng-click="update_register()" ng-if="permisos.UPD" >
+                    <button type= "button" class="btn btn-primary" ng-click="updateRegister()" ng-if="permisos.UPD" >
                         <i class="fa fa-save"></i> Actualizar
                     </button>
                 </div>

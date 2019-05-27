@@ -167,39 +167,6 @@
                   </div>
               </div>
 
-               {{--<div class="row" ng-show="group" width="50%">
-                   <br>
-                   <center><h2>{{$titulo_sucusales}}</h2></center>
-                   <br>
-                   <div class="col-sm-offset-0 col-sm-12 table-responsive">
-
-                      <table class="table table-hover " id="table_sucursales">
-                          <thead style="background-color: #337ab7; color: #ffffff;">
-                            <tr>
-                                <th>#</th>
-                                <th>CODIGO</th>
-                                <th>GRUPO</th>
-                                <th>DIRECCION</th>
-                                <th>ESTATUS</th>
-                                <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                              <tr ng-repeat="group in sucursal" title="Selecciona una Sucursal" style="cursor:pointer" >
-                                <td ng-click="beginPortal(group.id)" ng-bind="group.id"></td>
-                                <td ng-click="beginPortal(group.id)" ng-bind="group.codigo"></td>
-                                <td ng-click="beginPortal(group.id)" ng-bind="group.sucursal"></td>
-                                <td ng-click="beginPortal(group.id)" ng-bind="group.direccion"></td>
-                                <td ng-click="beginPortal(group.id)" ng-bind="(group.estatus == 1)? 'Activo' :'Baja' "></td>
-                                <td></td>
-                              </tr>
-                          </tbody>
-                      </table>
-
-
-                   </div>
-               </div>--}}
-
            </div>
 
         <!-- </div> -->

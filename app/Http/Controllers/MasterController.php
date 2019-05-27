@@ -28,6 +28,7 @@ use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 use App\Model\Administracion\Configuracion\SysNotificacionesModel;
 use App\Model\Administracion\Configuracion\SysProveedoresModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class MasterController extends Controller
 {
@@ -76,12 +77,12 @@ abstract class MasterController extends Controller
     /**
      *Metodo donde muestra el mensaje de success
      * @access protected
-     * @param bool $code [Envia la clave de codigo.]
+     * @param int $code [Envia la clave de codigo.]
      * @param array $data [envia la informacion correcta ]
      * @param bool $message
-     * @return json
+     * @return JsonResponse
      */
-	protected function _message_success( $code = false, $data = [], $message = false)
+	protected function _message_success( int $code = null, $data = [], $message = false)
 	{
 		$code = ( $code ) ? $code : 200;
 		$datos = [
@@ -90,7 +91,7 @@ abstract class MasterController extends Controller
 			"code" => "SYS-" . $code . "-" . $this->setCabecera($code),
 			"result" => $data
 		];
-		return response()->json($datos, $code);
+		return new JsonResponse($datos, $code);
 	}
 	/**
 	 * Metodo para establecer si se realizo con exito la peticion
@@ -131,7 +132,6 @@ abstract class MasterController extends Controller
      */
 	protected function show_error( int $id = null, $datos = [], string $message = null)
 	{
-
 		switch ($id) {
 			case 0:
 				$codigo = 401;
@@ -217,7 +217,7 @@ abstract class MasterController extends Controller
 			]
 
 		];
-		return response()->json($errors[$id], $codigo);
+		return new JsonResponse($errors[$id], $codigo);
 	}
 	/**
 	 * Se crea un metodo en el cual se establece el formato en el que se enviara la informacion del REST

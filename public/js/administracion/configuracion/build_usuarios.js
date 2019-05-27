@@ -7,7 +7,7 @@ const URL = {
 }
 
 app.controller('UsuarioController', ['masterservice','$scope', '$http', '$location', function( masterservice , $scope, $http, $location ) {
-    /*it's function initialize for get the properties */
+
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = { estatus: 1 };
@@ -16,48 +16,44 @@ app.controller('UsuarioController', ['masterservice','$scope', '$http', '$locati
         $scope.fields = {};
         $scope.today  = new Date();
         $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
+        $scope.cmbCompanies= [];
+        $scope.cmbGroups= [];
+        $scope.cmbRoles= [];
+
         $scope.index();
     };
 
     $scope.index = function(){
         let url = domain( URL.url_all );
         let fields = {};
-        MasterController.request_http(url,fields,'GET',$http, false )
+        masterservice.httpRequest( url,fields,'GET',$http, false )
             .then(function(response){
-                /*Not remove function, it's for verify the session*/
                 if(masterservice.session_status( response )){return;}
-                $scope.datos = response.data.result;
-                console.log( $scope.datos );
+                $scope.datos = response.data.result.users;
+                $scope.cmbCompanies= response.data.result.companies;
+                $scope.cmbRoles= response.data.result.roles;
+                $scope.cmbGroupsEdit= response.data.result.groups;
+                console.log( response.data.result);
             }).catch(function(error){
-            masterservice.session_status_error(error);
-        });
+                masterservice.session_status_error(error);
+            });
     };
 
-    $scope.insert_register = function( id ){
+    $scope.insertRegister = function(){
         let url     = domain(  URL.url_insert );
         let fields  = $scope.insert;
         MasterController.request_http(url,fields,'post',$http, false )
             .then(function( response ){
-                //not remove function this is  verify the session
-                if(masterservice.session_status( response )){return;};
-                //$scope.index();
+
+                if(masterservice.session_status( response )){return;}
                 toastr.success( response.data.message , title );
-                jQuery.fancybox.close({
-                    'type'      : 'inline'
-                    ,'src'      : "#modal_add_register"
-                    ,'modal'    : true
-                    ,'width'    : 900
-                    ,'height'   : 400
-                    ,'autoSize' : false
-                });
                 $scope.index();
             }).catch(function( error ){
             masterservice.session_status_error(error);
         });
-    }
+    };
 
-
-    $scope.update_register = function(){
+    $scope.updateRegister = function(){
         $scope.update = $scope.edit;
         let url = domain(  URL.url_update );
         let fields = $scope.update;
@@ -80,13 +76,27 @@ app.controller('UsuarioController', ['masterservice','$scope', '$http', '$locati
         });
     };
 
-    $scope.edit_register = function( entry ){
-        var datos = ['id', 'perfil', 'clave_corta', 'estatus' ];
-        $scope.update = iterar_object(entry, datos, true);
+    $scope.editRegister = function( entry ){
+        let discrim = ['$$hashKey','password'];
+        $scope.update = masterservice.mapObject(entry, discrim, false);
+        var i = 0;
+        var j = 0;
+        $scope.update.id_empresa = [];
+        $scope.update.id_sucursal = [];
+        angular.forEach( $scope.update.empresas, function (value, key) {
+            $scope.update.id_empresa[i] = value.id;
+            i++;
+        });
+        angular.forEach( $scope.update.sucursales, function (value, key) {
+            $scope.update.id_sucursal[j] = value.id;
+            j++;
+        });
+        $scope.update.id_rol = $scope.update.roles[0].id;
         console.log($scope.update);
-        jQuery('#modal_edit_register').modal({keyboard: false,backdrop: "static" });
 
-    }
+        $('#modal_edit_register').modal({keyboard: false,backdrop: "static" });
+    };
+
     $scope.destroy_register = function( id ){
 
         var url = domain(  URL.url_destroy );
