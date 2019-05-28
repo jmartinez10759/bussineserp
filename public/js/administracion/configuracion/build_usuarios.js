@@ -6,7 +6,7 @@ const URL = {
     ,url_destroy          : "usuarios/destroy"
 }
 
-app.controller('UsuarioController', ['masterservice','$scope', '$http', '$location', function( masterservice , $scope, $http, $location ) {
+app.controller('UsuarioController', ['MasterServices','masterservice','$scope', '$http', '$location', function( ms ,masterservice ,$scope, $http, $location ) {
 
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -26,67 +26,59 @@ app.controller('UsuarioController', ['masterservice','$scope', '$http', '$locati
     $scope.index = function(){
         let url = domain( URL.url_all );
         let fields = {};
-        masterservice.httpRequest( url,fields,'GET',$http, false )
-            .then(function(response){
-                if(masterservice.session_status( response )){return;}
-                $scope.datos = response.data.result.users;
-                $scope.cmbCompanies= response.data.result.companies;
-                $scope.cmbRoles= response.data.result.roles;
-                $scope.cmbGroupsEdit= response.data.result.groups;
+        ms.requestHttp( url,fields,'GET', false ).then(function(response){
+            if(ms.validateSessionStatus(response)){
                 console.log( response.data.result);
-            }).catch(function(error){
-                masterservice.session_status_error(error);
-            });
+                $scope.datos        = response.data.result.users;
+                $scope.cmbCompanies = response.data.result.companies;
+                $scope.cmbRoles     = response.data.result.roles;
+                $scope.cmbGroupsEdit= response.data.result.groups;
+            }
+        }).catch(function(error){
+            ms.validateStatusError(error);
+        });
     };
 
     $scope.insertRegister = function(){
         let url     = domain(  URL.url_insert );
         let fields  = $scope.insert;
-        MasterController.request_http(url,fields,'post',$http, false )
-            .then(function( response ){
-
-                if(masterservice.session_status( response )){return;}
+        ms.requestHttp(url,fields,'POST', false ).then(function( response ){
+            if(ms.validateSessionStatus(response)){
                 toastr.success( response.data.message , title );
                 $scope.index();
-            }).catch(function( error ){
-            masterservice.session_status_error(error);
+            }
+        }).catch(function(error){
+            ms.validateStatusError(error);
         });
     };
 
     $scope.updateRegister = function(){
-        $scope.update = $scope.edit;
+        let discrim = ['empresas','sucursales','roles','created_at','id_bitacora'];
         let url = domain(  URL.url_update );
-        let fields = $scope.update;
-        MasterController.request_http(url,fields,'put',$http, false )
-            .then(function( response ){
-                //We aren't remove function this is verify the session
-                if(masterservice.session_status( response )){return;};
+        let fields = ms.mapObject($scope.update, discrim, false);
+        ms.requestHttp(url,fields,'PUT', false ).then(function( response ){
+            if(ms.validateSessionStatus(response)){
                 toastr.info( response.data.message , title );
-                jQuery.fancybox.close({
-                    'type'      : 'inline'
-                    ,'src'      : "#modal_edit_register"
-                    ,'modal'    : true
-                    ,'width'    : 900
-                    ,'height'   : 400
-                    ,'autoSize' : false
-                });
+                $('#modal_edit_register').modal('hide');
                 $scope.index();
-            }).catch(function( error ){
-            masterservice.session_status_error(error);
+            }
+        }).catch(function(error){
+            ms.validateStatusError(error);
         });
+
     };
 
     $scope.editRegister = function( entry ){
         let discrim = ['$$hashKey','password'];
-        $scope.update = masterservice.mapObject(entry, discrim, false);
+        $scope.update = ms.mapObject(entry, discrim, false);
         var i = 0;
-        var j = 0;
         $scope.update.id_empresa = [];
         $scope.update.id_sucursal = [];
         angular.forEach( $scope.update.empresas, function (value, key) {
             $scope.update.id_empresa[i] = value.id;
             i++;
         });
+        var j = 0;
         angular.forEach( $scope.update.sucursales, function (value, key) {
             $scope.update.id_sucursal[j] = value.id;
             j++;
@@ -105,11 +97,11 @@ app.controller('UsuarioController', ['masterservice','$scope', '$http', '$locati
             MasterController.request_http(url,fields,'delete',$http, false )
                 .then(function( response ){
                     //not remove function this is  verify the session
-                    if(masterservice.session_status( response )){return;};
+                    if(ms.session_status( response )){return;};
                     toastr.success( response.data.message , title );
                     $scope.index();
                 }).catch(function( error ){
-                masterservice.session_status_error(error);
+                ms.session_status_error(error);
             });
 
         },"warning",true,["SI","NO"]);

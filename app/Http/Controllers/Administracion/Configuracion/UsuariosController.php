@@ -338,15 +338,17 @@ class UsuariosController extends MasterController
         return $this->show_error(6, $error, self::$message_error);
 
     }
+
     /**
      *Metodo para la actualizacion de los registros
      *@access public
      *@param Request $request [Description]
      *@return void
      */
-    public function update(Request $request)
+    public function update( Request $request )
     {
-      #debuger($request->all());
+        var_export($request->all());die();
+
         $request_users = [];
         $claves_users = ['name', 'email'];
         foreach ($request->all() as $key => $value) {

@@ -1,31 +1,5 @@
 var app = angular.module('application',["ngRoute",'localytics.directives','components',"stringToNumber",'html-unsafe']);
-
-//angular.module('dataTables', [])
-/*app.directive("tableFull",function(){
-
-  var table = '<table border="1px">';
-        	+ '<tr>';
-            + '<th ng-repeat="(head, value) in ds[0]"><span>{{head}}</span></th>';
-        	+ '</tr>';
-        	+ '<tr ng-repeat="row in ds">';
-            + '<td ng-repeat="(name, value) in row" ng-scope> {{row[name]}} '; 
-            + '</td>';    
-        	+ '</tr>';
-    		+ '</table>';
-
-  return {
-        restrict: 'EA', //E = element, A = attribute, C = class, M = comment
-    	transclude : true,
-        scope: {
-            ds: '='         
-          },
-        template: table,
-        replace : true
-    };
-
-});*/
-
-app.config([ '$routeProvider' ,function( $routeProvider ) {
+/*app.config([ '$routeProvider' ,function( $routeProvider ) {
     $routeProvider
     .when("/paises", {
         templateUrl : "/template_ng/table_paises.html",
@@ -40,7 +14,93 @@ app.config([ '$routeProvider' ,function( $routeProvider ) {
         controller : "parisCtrl"
     });
 
+}]);*/
+
+app.service('MasterServices',["$http","$rootScope", function ( http, rtScope ) {
+	
+	function MasterServices() {
+		this.loading();
+	};
+
+	MasterServices.prototype.requestHttp = function ( url, fields, methods,headers ) {
+		return http({
+			method: methods,
+			url: url,
+			headers: headers,
+			data: fields
+		}).then(function successCallback(resp) {
+			this.loading(true);
+			return resp
+		}).catch(function errorCallback(error) {
+			this.loading(true);
+			console.error(error);
+			return error;
+		});
+	};
+
+	MasterServices.prototype.validateSessionStatus = function(response){
+		if( typeof response.data != "object" ){
+			toastr.error( session_expired );
+			setTimeout(function(){ redirect(domain()); }, 2000);
+			return false;
+		}
+		return true;
+	};
+
+	MasterServices.prototype.validateStatusError = function(error){
+
+		if( angular.isDefined(error.status) && error.status == 419 ){
+			toastr.error( session_expired );
+			setTimeout(function(){ redirect(domain()); }, 1000);
+			return;
+		}
+		console.error( error );
+		toastr.error( error.result , expired );
+	};
+
+	MasterServices.prototype.serviceNotification = function(scope){
+		var url = domain('services');
+		this.requestHttp(url,{},"GET", false).then(function (response) {
+			scope.notificaciones = response.data.result.notification;
+			scope.correos 		 = response.data.result.correos;
+			scope.permisos 		 = response.data.result.permisos;
+		}).catch(function (error) {
+			console.error( error );
+		});
+
+	};
+
+	MasterServices.prototype.loading = function (hide = false) {
+		if (hide) {
+			jQuery('.loader').fadeOut('hide');
+			return;
+		}
+		jQuery('.loader').fadeIn('slow');
+
+	};
+
+	MasterServices.prototype.mapObject = function( data, array2, discrim = false ){
+		var response = {};
+		for(var i in data ){
+			if(!discrim ){
+				if ( !array2.includes(i) ) {
+					response[i] = data[i];
+				}
+			}
+			if(discrim){
+				if ( array2.includes(i) ) {
+					response[i] = data[i];
+				}
+			}
+		}
+		return response;
+	};
+
+	return new MasterServices();
+
 }]);
+
+
 app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope ) {
   
 	return {
@@ -168,7 +228,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 			return response;
 		},
 
-		httpRequest: function ( url, fields, methods, $http ,headers  ) {
+		/*httpRequest: function ( url, fields, methods, $http ,headers  ) {
 				this.loading();
 				var config = [];
 				config['method']  = methods;
@@ -178,20 +238,15 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 					config['params'] = fields;
 				}else{ config['data'] = fields; }
 				return $http(config);
-		},
+		},*/
 
-		loading: function (hide = false) {
-			if (hide) {
-				jQuery('.loader').fadeOut('hide');
-				return;
-			}
-			jQuery('.loader').fadeIn('slow');
-		},
+
 
   	}
 
 }]);
-app.controller('ApplicationController', ['$scope','masterservice','$http','$rootScope' ,function( $scope, masterservice, $http, $rootScope ){
+
+app.controller('ApplicationController', ['$scope','masterservice','MasterServices','$http','$rootScope' ,function( $scope,masterservice, ms , $http, $rootScope ){
 
 	$rootScope.$on("services", function(){
 	    $scope.services();
@@ -202,24 +257,13 @@ app.controller('ApplicationController', ['$scope','masterservice','$http','$root
 	  $scope.correos = {};
 	  $scope.update = {};
 	  $scope.permisos = {};
+	  $scope.loader = true;
 	
 	}
 	$scope.services = function(){
-		var url = domain('services');
-		var fields = {};
-		MasterController.request_http(url,fields,'get',$http, false )
-		  .then(function( response ){
-		      loading(true);
-		      $scope.notificaciones = response.data.result.notification;
-		      $scope.correos 	= response.data.result.correos;
-		      $scope.permisos 	= response.data.result.permisos;
+		ms.serviceNotification( $scope );
+	};
 
-		  }).catch(function( error ){
-		    loading(true);
-		    console.error( error );
-		  });
-
-	}
 	$scope.update_notify = function(){
 
 	    var url      = domain('api/sistema/token');

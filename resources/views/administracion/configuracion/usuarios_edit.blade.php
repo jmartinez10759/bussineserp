@@ -160,9 +160,7 @@
                             </label>
                         </div>
                         <div class="col-sm-6">
-
                             <input type="text" class="form-control has-feedback-left" ng-model="update.name" style="text-transform: uppercase;" placeholder="Nombre Completo">
-                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>
 
@@ -175,7 +173,6 @@
                         <div class="col-sm-6">
 
                             <input type="text" class="form-control has-feedback-left" ng-model="update.email" placeholder="Ingresa correo" disabled>
-                            <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>
 
@@ -187,7 +184,6 @@
                         </div>
                         <div class="col-sm-6">
                             <input type="text" class="form-control has-feedback-left" ng-model="update.username" placeholder="Ingrese username">
-                            <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>
 
@@ -198,9 +194,7 @@
                             </label>
                         </div>
                         <div class="col-sm-6">
-
                             <input type="password" class="form-control has-feedback-left" ng-model="update.password" placeholder="Ingrese contraseña">
-                            <span class="fa fa-inbox form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>
 

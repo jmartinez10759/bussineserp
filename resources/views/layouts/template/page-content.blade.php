@@ -36,7 +36,7 @@
 
         <div class="panel-body">
             <!-- seccion de cargador  -->
-            <img class="loader" />
+            <img class="loader"/>
             
             @yield('content')
 
