@@ -446,6 +446,7 @@ class UsuariosController extends MasterController
      */
     public function destroy(Request $request)
     {
+        var_export($request->all());die();
         #se realiza una transaccion
         $error = null;
         DB::beginTransaction();
