@@ -60,6 +60,7 @@ app.controller('UsuarioController', ['MasterServices','masterservice','$scope', 
             if(ms.validateSessionStatus(response)){
                 toastr.info( response.data.message , title );
                 $('#modal_edit_register').modal('hide');
+                jQuery('#tr_'+$scope.update.id ).effect("highlight",{},5000);
                 $scope.index();
             }
         }).catch(function(error){
@@ -71,6 +72,7 @@ app.controller('UsuarioController', ['MasterServices','masterservice','$scope', 
     $scope.editRegister = function( entry ){
         let discrim = ['$$hashKey','password'];
         $scope.update = ms.mapObject(entry, discrim, false);
+        $scope.update.name = entry.name+" "+entry.first_surname+" "+entry.second_surname;
         var i = 0;
         $scope.update.id_empresa = [];
         $scope.update.id_sucursal = [];
@@ -83,7 +85,7 @@ app.controller('UsuarioController', ['MasterServices','masterservice','$scope', 
             $scope.update.id_sucursal[j] = value.id;
             j++;
         });
-        $scope.update.id_rol = $scope.update.roles[0].id;
+        $scope.update.id_rol = angular.isDefined($scope.update.roles[0])? $scope.update.roles[0].id : 0;
         console.log($scope.update);
 
         $('#modal_edit_register').modal({keyboard: false,backdrop: "static" });

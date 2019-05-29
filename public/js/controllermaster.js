@@ -39,12 +39,20 @@ app.service('MasterServices',["$http","$rootScope", function ( http, rtScope ) {
 	};
 
 	MasterServices.prototype.validateSessionStatus = function(response){
-		if( typeof response.data != "object" ){
-			toastr.error( session_expired );
-			setTimeout(function(){ redirect(domain()); }, 2000);
-			return false;
+		if ( angular.isDefined(response.status) ){
+			if( typeof response.data != "object" ){
+				toastr.error( session_expired );
+				setTimeout(function(){ redirect(domain()); }, 2000);
+				return false;
+			}
+			if (response.status != 200 && response.status != 201 ){
+				toastr.error(error_mgs);
+				return false;
+			}
+			return true;
 		}
-		return true;
+		toastr.error(error_mgs);
+		return false;
 	};
 
 	MasterServices.prototype.validateStatusError = function(error){

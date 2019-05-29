@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
@@ -21,7 +22,7 @@ use App\Model\Administracion\Facturacion\SysFacturacionModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Facturacion\SysParcialidadesFechasModel;
 use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class UsuariosController extends MasterController
@@ -310,13 +311,13 @@ class UsuariosController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-            $insert_users = SysUsersModel::create($request_users);
-            #se realiza la inserccion de un id_users
+            $usersRegister = SysUsersModel::create($request_users);
+
             for ($i = 0; $i < count($request->id_sucursal); $i++) {
                 #$id_users = $insert_users->id;
                 $data = [
-                    'id_users'     => $insert_users->id
-                    ,'id_empresa'  => self::_empresas($request->id_sucursal[$i])
+                    'id_users'     => $usersRegister->id
+                    ,'id_empresa'  => $this->_empresas($request->id_sucursal[$i])
                     ,'id_sucursal' => $request->id_sucursal[$i]
                 ];
                 for ($j = 0; $j < count($request->id_rol); $j++) {
@@ -340,51 +341,50 @@ class UsuariosController extends MasterController
     }
 
     /**
-     *Metodo para la actualizacion de los registros
+     *This method is need for update register of users
      *@access public
      *@param Request $request [Description]
      *@return void
      */
     public function update( Request $request )
     {
-        var_export($request->all());die();
-
-        $request_users = [];
-        $claves_users = ['name', 'email'];
+        $requestUsers = [];
+        $keysUsers = ['name', 'email'];
         foreach ($request->all() as $key => $value) {
-            if (in_array($key, $claves_users)) {
+            if (in_array($key, $keysUsers )) {
                 if ($key == "email") {
-                    $request_users[$key] = strtolower($value);
+                    $requestUsers[$key] = strtolower($value);
                 } else {
-                    $request_users[$key] = strtoupper($value);
+                    $requestUsers[$key] = strtoupper($value);
                 }
             }
             if ($key == "password" && $value != false) {
-                $request_users[$key] = sha1($value);
+                $requestUsers[$key] = sha1($value);
             }
         }
-        $name_complete = parse_name($request->name);
-        if (!$name_complete) {
-            return $this->show_error(3, $name_complete);
+        $nameComplete = parse_name($request->name);
+        if (!$nameComplete) {
+            return new JsonResponse([
+                'success'   => false
+                ,'data'     => $nameComplete
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
         }
-        $request_users['name'] = $name_complete['name'];
-        $request_users['first_surname'] = $name_complete['first_surname'];
-        $request_users['second_surname'] = $name_complete['second_surname'];
-        $request_users['remember_token'] = str_random(50);
-        $request_users['api_token'] = str_random(50);
-        $request_users['estatus'] = $request->estatus;
-        $request_users['confirmed'] = true;
-        $request_users['confirmed_code'] = null;
-        $where = ['id' => $request->id];
-          #se realiza una transaccion
+        $requestUsers['name']               = $nameComplete['name'];
+        $requestUsers['first_surname']      = $nameComplete['first_surname'];
+        $requestUsers['second_surname']     = $nameComplete['second_surname'];
+        $requestUsers['username']           = $request->username;
+        $requestUsers['remember_token']     = str_random(50);
+        $requestUsers['api_token']          = str_random(50);
+        $requestUsers['estatus']            = $request->estatus;
+        $requestUsers['confirmed']          = true;
+        $requestUsers['confirmed_code']     = null;
+
         $error = null;
         DB::beginTransaction();
         try {
-            #se realiza la actualizacion.
-            SysUsersModel::where($where)->update($request_users);
-            #se debe borrar sus roles y empresas para crear unos nuevos.
+            SysUsersModel::whereId($request->id)->update($requestUsers);
             SysUsersRolesModel::where(['id_users' => $request->id])->delete();
-            #se borran los permisos para las empresas que se quitan.
             $sql = "DELETE FROM sys_rol_menu WHERE id_users = ".$request->id;
             $where = "";
             for ($i=0; $i < count($request->id_empresa); $i++) {
@@ -392,14 +392,16 @@ class UsuariosController extends MasterController
             }
             $sql .= $where;
             DB::select($sql);
+            $response = [];
             for ($i = 0; $i < count($request->id_sucursal); $i++) {
                 $data = [
                     'id_users'      => $request->id
-                    ,'id_empresa'   => self::_empresas($request->id_sucursal[$i])
+                    ,'id_empresa'   => $this->_empresas($request->id_sucursal[$i])
                     ,'id_sucursal'  => $request->id_sucursal[$i]
                 ];
-                for ($j = 0; $j < count($request->id_rol); $j++) {
-                    $data['id_rol'] = $request->id_rol[$j];
+                $roles = [$request->id_rol];
+                for ($j = 0; $j < count($roles); $j++) {
+                    $data['id_rol'] = $roles[$j];
                     $response[] = SysUsersRolesModel::create($data);
                 }
             }
@@ -411,10 +413,17 @@ class UsuariosController extends MasterController
             DB::rollback();
         }
         if ($success) {
-            return $this->_message_success(201, $response, self::$message_success);
+            return new JsonResponse([
+                'success'   => true
+                ,'data'     => $response
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
         }
-        return $this->show_error(3, $error, self::$message_error);
-
+        return new JsonResponse([
+            'success'   => false
+            ,'data'     => $error
+            ,'message'  => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
     }
     /**
      *Metodo para borrar el registro
@@ -488,17 +497,18 @@ class UsuariosController extends MasterController
         }
         return $html;
     }
+
     /**
      *Metodo para obtener las empresas del usuario
-     *@access public
-     *@param $request [Description]
-     *@return void
+     * @access public
+     * @param int|null $id_sucursal
+     * @return void
      */
-    private static function _empresas($id_sucursal)
+    private function _empresas(int $id_sucursal = null )
     {
         $where = ['id_sucursal' => $id_sucursal, 'estatus' => 1];
-        $empresa = SysEmpresasSucursalesModel::select('id_empresa')->where($where)->get();
-        return isset($empresa[0]->id_empresa) ? $empresa[0]->id_empresa : 0;
+        $requestCompany= SysEmpresasSucursalesModel::select('id_empresa')->where($where)->first();
+        return isset($requestCompany->id_empresa) ? $requestCompany->id_empresa : 0;
     }
 
     /**
@@ -507,13 +517,13 @@ class UsuariosController extends MasterController
      */
     private function _verifyRol()
     {
+        $groupRoles =  function($query){
+            return $query->groupBy('sys_users_roles.id_users');
+        };
+        $groupGroups = function($query){
+            return $query->groupBy('sys_users_roles.id_users','sys_users_roles.id_sucursal');
+        };
         if( Session::get('id_rol') == 1 ){
-            $groupRoles =  function($query){
-                return $query->groupBy('sys_users_roles.id_users');
-            };
-            $groupGroups = function($query){
-                return $query->groupBy('id');
-            };
             $response = SysUsersModel::with([
                 'roles'         => $groupRoles
                 ,'sucursales'   => $groupGroups
@@ -525,7 +535,11 @@ class UsuariosController extends MasterController
             $response = SysEmpresasModel::with(['usuarios'])
                                     ->whereId( Session::get('id_empresa') )
                                     ->first()
-                                    ->usuarios()->with(['roles','empresas','sucursales'])
+                                    ->usuarios()->with([
+                                        'roles'         => $groupRoles
+                                        ,'sucursales'   => $groupGroups
+                                        ,'empresas:id,razon_social,nombre_comercial,rfc_emisor'
+                                    ])
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();
