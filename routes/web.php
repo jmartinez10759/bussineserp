@@ -51,7 +51,7 @@ date_default_timezone_set('America/Mexico_City');
 		,'as'       => 'password.request'
 	]);
 
-	Route::get('/portal', [
+	Route::get('/portal/{groupId}', [
 			'uses'      => 'Administracion\Configuracion\SucursalesController@portal'
 			,'as'       => 'portal'
 	]);
@@ -372,9 +372,9 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'empresas.insert_relacion'
     ]);
 
-    Route::get('/empresas/show_sucursal', [
-    'uses'      => 'Administracion\Configuracion\EmpresasController@show_rel_sucursal'
-    ,'as'       => 'empresas.show_sucursal'
+    Route::post('/empresas/findGroups', [
+    'uses'      => 'Administracion\Configuracion\EmpresasController@findRelGroups'
+    ,'as'       => 'empresas.findRelGroups'
     ]);
 
     Route::get('/list/empresas', [

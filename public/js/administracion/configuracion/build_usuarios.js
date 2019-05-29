@@ -6,115 +6,146 @@ const URL = {
     ,url_destroy          : "usuarios/destroy"
 }
 
-app.controller('UsuarioController', ['MasterServices','masterservice','$scope', '$http', '$location', function( ms ,masterservice ,$scope, $http, $location ) {
+app.controller('UsuarioController', ['ServiceController','FactoryController','NotificationsFactory','masterservice','$scope', '$http', '$location', function( ms,fm,nf,masterservice ,$scope, $http, $location ) {
 
-    $scope.constructor = function(){
-        $scope.datos  = [];
-        $scope.insert = { estatus: 1 };
+    $scope.constructor = function () {
+        $scope.datos = [];
+        $scope.insert = {estatus: 1};
         $scope.update = {};
-        $scope.edit   = {};
+        $scope.edit = {};
         $scope.fields = {};
-        $scope.today  = new Date();
-        $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
-        $scope.cmbCompanies= [];
-        $scope.cmbGroups= [];
-        $scope.cmbRoles= [];
+        $scope.today = new Date();
+        $scope.cmb_estatus = [{id: 0, descripcion: "Inactivo"}, {id: 1, descripcion: "Activo"}];
+        $scope.cmbCompanies = [];
+        $scope.cmbGroups = [];
+        $scope.cmbRoles = [];
 
         $scope.index();
     };
 
-    $scope.index = function(){
-        let url = domain( URL.url_all );
+    $scope.index = function () {
+        let url = domain(URL.url_all);
         let fields = {};
-        ms.requestHttp( url,fields,'GET', false ).then(function(response){
-            if(ms.validateSessionStatus(response)){
-                console.log( response.data.result);
-                $scope.datos        = response.data.result.users;
+        ms.requestHttp(url, fields, 'GET', false).then(function (response) {
+            if (ms.validateSessionStatus(response)) {
+                console.log(response.data.result);
+                $scope.datos = response.data.result.users;
                 $scope.cmbCompanies = response.data.result.companies;
-                $scope.cmbRoles     = response.data.result.roles;
-                $scope.cmbGroupsEdit= response.data.result.groups;
+                $scope.cmbRoles = response.data.result.roles;
+                $scope.cmbGroupsEdit = response.data.result.groups;
             }
-        }).catch(function(error){
+        }).catch(function (error) {
             ms.validateStatusError(error);
         });
     };
 
-    $scope.insertRegister = function(){
-        let url     = domain(  URL.url_insert );
-        let fields  = $scope.insert;
-        ms.requestHttp(url,fields,'POST', false ).then(function( response ){
-            if(ms.validateSessionStatus(response)){
-                toastr.success( response.data.message , title );
+    $scope.insertRegister = function () {
+        var url = domain(URL.url_insert);
+        var fields = $scope.insert;
+        ms.requestHttp(url, fields, 'POST', false).then(function (response) {
+            if (ms.validateSessionStatus(response)) {
+                nf.toastSuccess(response.data.message, title);
+                jQuery.fancybox.close({
+                    'type'      : 'inline'
+                    ,'src'      : "#modal_add_register"
+                });
                 $scope.index();
             }
-        }).catch(function(error){
+        }).catch(function (error) {
             ms.validateStatusError(error);
         });
     };
 
-    $scope.updateRegister = function(){
-        let discrim = ['empresas','sucursales','roles','created_at','id_bitacora'];
-        let url = domain(  URL.url_update );
+    $scope.updateRegister = function () {
+        let discrim = ['empresas', 'sucursales', 'roles', 'created_at', 'id_bitacora'];
+        let url = domain(URL.url_update);
         let fields = ms.mapObject($scope.update, discrim, false);
-        ms.requestHttp(url,fields,'PUT', false ).then(function( response ){
-            if(ms.validateSessionStatus(response)){
-                toastr.info( response.data.message , title );
+        ms.requestHttp(url, fields, 'PUT', false).then(function (response) {
+            if (ms.validateSessionStatus(response)) {
+                nf.toastInfo(response.data.message, title);
                 $('#modal_edit_register').modal('hide');
-                jQuery('#tr_'+$scope.update.id ).effect("highlight",{},5000);
+                jQuery('#tr_' + $scope.update.id).effect("highlight", {}, 8000);
                 $scope.index();
             }
-        }).catch(function(error){
+        }).catch(function (error) {
             ms.validateStatusError(error);
         });
 
     };
 
-    $scope.editRegister = function( entry ){
-        let discrim = ['$$hashKey','password'];
+    $scope.editRegister = function (entry) {
+        let discrim = ['$$hashKey', 'password'];
         $scope.update = ms.mapObject(entry, discrim, false);
-        $scope.update.name = entry.name+" "+entry.first_surname+" "+entry.second_surname;
+        $scope.update.name = entry.name + " " + entry.first_surname + " " + entry.second_surname;
         var i = 0;
         $scope.update.id_empresa = [];
         $scope.update.id_sucursal = [];
-        angular.forEach( $scope.update.empresas, function (value, key) {
+        angular.forEach($scope.update.empresas, function (value, key) {
             $scope.update.id_empresa[i] = value.id;
             i++;
         });
         var j = 0;
-        angular.forEach( $scope.update.sucursales, function (value, key) {
+        angular.forEach($scope.update.sucursales, function (value, key) {
             $scope.update.id_sucursal[j] = value.id;
             j++;
         });
-        $scope.update.id_rol = angular.isDefined($scope.update.roles[0])? $scope.update.roles[0].id : 0;
+        $scope.update.id_rol = angular.isDefined($scope.update.roles[0]) ? $scope.update.roles[0].id : 0;
+        $scope.findGroupOfCompany($scope.update.id_empresa);
         console.log($scope.update);
 
-        $('#modal_edit_register').modal({keyboard: false,backdrop: "static" });
+        $('#modal_edit_register').modal({keyboard: false, backdrop: "static"});
     };
 
-    $scope.destroy_register = function( id ){
+    $scope.destroyRegister = function (id) {
+        var url = domain(URL.url_destroy);
+        var fields = {id: id};
+        nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
+            ms.requestHttp(url, fields, "DELETE", false).then(function (response) {
+                if (ms.validateSessionStatus(response)) {
+                    nf.toastSuccess(response.data.message, title);
+                    $scope.index();
+                }
+            }).catch(function (error) {
+                ms.validateStatusError(error);
+            });
+        }, null, "SI", "NO");
 
-        var url = domain(  URL.url_destroy );
-        var fields = {id : id };
-        buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
+        /*buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
             MasterController.request_http(url,fields,'delete',$http, false )
                 .then(function( response ){
                     //not remove function this is  verify the session
                     if(ms.session_status( response )){return;};
+
                     toastr.success( response.data.message , title );
                     $scope.index();
                 }).catch(function( error ){
                 ms.session_status_error(error);
             });
 
-        },"warning",true,["SI","NO"]);
+        },"warning",true,["SI","NO"]);*/
     };
 
-    $scope.diffDaysToday = function ( startDay ) {
+    /*$scope.diffDaysToday = function ( startDay ) {
         let changeDay = new Date( startDay );
         const MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
         let utc1 = Date.UTC(changeDay.getFullYear(), changeDay.getMonth(), changeDay.getDate());
         let utc2 = Date.UTC($scope.today.getFullYear(), $scope.today.getMonth(), $scope.today.getDate());
         return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
+    }*/
+
+    $scope.findGroupOfCompany = function (idCompany) {
+        var url = domain('empresas/findGroups');
+        var fields = {'id_empresa': idCompany };
+
+        ms.requestHttp(url,fields,"POST",false).then(function (response) {
+            if (ms.validateSessionStatus(response)){
+                $scope.cmbGroups = response.data.data;
+                console.log( $scope.cmbGroups );
+            }
+        }).catch(function (error) {
+            ms.validateStatusError(error);
+        });
+
     }
 
 }]);

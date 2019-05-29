@@ -3,7 +3,7 @@ const URL = {
     ,urlListGroup         : 'list/sucursales'
     ,urlPortal            : 'portal'
 };
-app.controller('BussinesListController', ['masterservice','$scope', '$http', '$location', function( masterservice, $scope, $http, $location ) {
+app.controller('BussinesListController', ['ServiceController','FactoryController','NotificationsFactory','masterservice','$scope', '$http', '$location', function( sc,fc,nf,masterservice, $scope, $http, $location ) {
 
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -14,39 +14,37 @@ app.controller('BussinesListController', ['masterservice','$scope', '$http', '$l
     };
     $scope.index = function(){
         let url = domain( URL.urlListCompany );
-        MasterController.request_http(url,{},'GET',$http, false )
-            .then(function(response){
-                if(masterservice.session_status( response )){return;};
+        sc.requestHttp(url,null,"GET",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
                 $scope.datos = response.data.result;
-                console.log($scope.datos);
-            }).catch( function(error){
-                masterservice.session_status_error(error);
-            });
+            }
+        }).catch(function (error) {
+            sc.validateStatusError(error);
+        });
+    };
 
-    }
     $scope.BussinesGroup = function(companyId){
         var url = domain( URL.urlListGroup );
         var fields = {'id_empresa': companyId};
-        MasterController.request_http(url,fields,'POST',$http, false )
-            .then(function( response ){
-                if(masterservice.session_status( response )){return;};
+        sc.requestHttp(url,fields,"POST",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
                 $scope.sucursales = response.data.data.sucursales;
                 jQuery('#modal-group').modal("show");
-            }).catch(function( error ){
-            masterservice.session_status_error(error);
+            }
+        }).catch(function (error) {
+            sc.validateStatusError(error);
         });
 
     };
     $scope.beginPortal = function(groupId){
-        var url = domain(URL.urlPortal);
-        var fields = { "group_id" :groupId };
-        MasterController.request_http(url,fields,'GET',$http, false )
-            .then(function( response ){
-                if(masterservice.session_status( response )){return;};
+        var url = domain(URL.urlPortal+"/"+groupId);
+        sc.requestHttp(url,null,"GET",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
                 console.log(domain( response.data.data.ruta ) );
                 redirect( domain( response.data.data.ruta ) );
-            }).catch(function( error ){
-            //masterservice.session_status_error(error);
+            }
+        }).catch(function (error) {
+            sc.validateStatusError(error);
         });
     };
 

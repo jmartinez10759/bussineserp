@@ -267,61 +267,66 @@ class UsuariosController extends MasterController
 
     }
     /**
-     *Metodo para
+     *It's method is for register the users
      *@access public
      *@param Request $request [Description]
      *@return void
      */
-    public function store(Request $request)
+    public function store( Request $request )
     {
-        $request_users = [];
-          #se realiza la validacion si existe el email
-        $where['email'] = $request->email;
-        $consulta = SysUsersModel::where($where)->get();
-        if (count($consulta) > 0) {
-            return $this->show_error(3, $consulta, "Registro del usuario existente");
+        $requestUsers = [];
+        $responseUsers = SysUsersModel::whereEmail($request->email)->first();
+        if ($responseUsers) {
+            return new JsonResponse([
+                'success'   => false
+                ,'data'     => $responseUsers
+                ,'menssage' => "¡Registro del usuario existente!"
+            ],Response::HTTP_BAD_REQUEST);
         }
-        $claves_users = ['name', 'email'];
+        $keysUsers = ['name', 'email'];
         foreach ($request->all() as $key => $value) {
-            if (in_array($key, $claves_users)) {
+            if (in_array($key, $keysUsers)) {
                 if ($key == "email") {
-                    $request_users[$key] = strtolower($value);
+                    $requestUsers[$key] = strtolower($value);
                 } else {
-                    $request_users[$key] = strtoupper($value);
+                    $requestUsers[$key] = strtoupper($value);
                 }
             }
             if ($key == "password" && $value != false) {
-                $request_users[$key] = sha1($value);
+                $requestUsers[$key] = sha1($value);
             }
+        }
+        $nameComplete = parse_name($request->name);
+        if (!$nameComplete) {
+            return new JsonResponse([
+                'success'   => false
+                ,'data'     => $nameComplete
+                ,'menssage' => "¡Favor de Ingresar al menos un apellido!"
+            ],Response::HTTP_BAD_REQUEST);
+        }
+        $requestUsers['name']               = $nameComplete['name'];
+        $requestUsers['first_surname']      = $nameComplete['first_surname'];
+        $requestUsers['second_surname']     = $nameComplete['second_surname'];
+        $requestUsers['username']           = $request->username;
+        $requestUsers['remember_token']     = str_random(50);
+        $requestUsers['api_token']          = str_random(50);
+        $requestUsers['estatus']            = true;
+        $requestUsers['confirmed']          = true;
+        $requestUsers['confirmed_code']     = null;
 
-        }
-        $name_complete = parse_name($request->name);
-        if (!$name_complete) {
-            return $this->show_error(4, $name_complete, "Favor de Ingresar al menos un apellido");
-        }
-        $request_users['name'] = $name_complete['name'];
-        $request_users['first_surname'] = $name_complete['first_surname'];
-        $request_users['second_surname'] = $name_complete['second_surname'];
-        $request_users['remember_token'] = str_random(50);
-        $request_users['api_token'] = str_random(50);
-        $request_users['estatus'] = 1;
-        $request_users['confirmed'] = true;
-        $request_users['confirmed_code'] = null;
-          #se realiza una transaccion
         $error = null;
         DB::beginTransaction();
         try {
-            $usersRegister = SysUsersModel::create($request_users);
-
+            $usersRegister = SysUsersModel::create($requestUsers);
             for ($i = 0; $i < count($request->id_sucursal); $i++) {
-                #$id_users = $insert_users->id;
                 $data = [
                     'id_users'     => $usersRegister->id
                     ,'id_empresa'  => $this->_empresas($request->id_sucursal[$i])
                     ,'id_sucursal' => $request->id_sucursal[$i]
                 ];
-                for ($j = 0; $j < count($request->id_rol); $j++) {
-                    $data['id_rol'] = $request->id_rol[$j];
+                $roles = [$request->id_rol];
+                for ($j = 0; $j < count($roles); $j++) {
+                    $data['id_rol'] = $roles[$j];
                     SysUsersRolesModel::create($data);
                 }
             }
@@ -334,9 +339,17 @@ class UsuariosController extends MasterController
         }
 
         if ($success) {
-            return $this->_message_success(201, $success, self::$message_success);
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => $usersRegister
+                ,'menssage' => self::$message_success
+            ],Response::HTTP_CREATED);
         }
-        return $this->show_error(6, $error, self::$message_error);
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'menssage' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
 
     }
 
@@ -480,13 +493,8 @@ class UsuariosController extends MasterController
         }
         return $this->show_error(6, $error, self::$message_error);
     }
-    /**
-     *Metodo para obtener los roles del usuario
-     *@access public
-     *@param $request [Description]
-     *@return void
-     */
-    private static function _roles($request)
+
+    /*private static function _roles($request)
     {
         $roles = (isset($request)) ? $request : [];
         $html = "";
@@ -496,7 +504,7 @@ class UsuariosController extends MasterController
             }
         }
         return $html;
-    }
+    }*/
 
     /**
      *Metodo para obtener las empresas del usuario
@@ -527,6 +535,7 @@ class UsuariosController extends MasterController
             $response = SysUsersModel::with([
                 'roles'         => $groupRoles
                 ,'sucursales'   => $groupGroups
+                ,'bitacora'
                 ,'empresas:id,razon_social,nombre_comercial,rfc_emisor'
             ])->orderBy('id','desc')->groupby('id')->get();
 
@@ -538,6 +547,7 @@ class UsuariosController extends MasterController
                                     ->usuarios()->with([
                                         'roles'         => $groupRoles
                                         ,'sucursales'   => $groupGroups
+                                        ,'bitacora'
                                         ,'empresas:id,razon_social,nombre_comercial,rfc_emisor'
                                     ])
                                     ->orderBy('id','desc')

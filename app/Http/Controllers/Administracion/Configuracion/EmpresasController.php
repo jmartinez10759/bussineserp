@@ -19,6 +19,8 @@ use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmpresasController extends MasterController
 {
@@ -307,24 +309,31 @@ class EmpresasController extends MasterController
   *@param Request $request [Description]
   *@return void
   */
-  public static function show_rel_sucursal( Request $request ){
-        $empresa = [];
-        if( !isset($request->id_empresa) || in_array( 0,$request->id_empresa) ){
-            $empresa['sucursales'] = ['id' => 0];              
-            return message(true,$empresa,"¡Se cargo correctamente las sucursales!");
+  public static function findRelGroups( Request $request ){
+      $response = [];
+        if(is_null($request->get('id_empresa'))){
+            return new JsonResponse([
+                "success"   => false
+                ,"data"     => $response
+                ,"message"  => "¡No se encontró ningún Grupo en esta Empresa!"
+            ],Response::HTTP_BAD_REQUEST);
         }
-        $response = [];
-        foreach ($request->id_empresa as $key => $value) {
-            $response[] = SysEmpresasModel::with(['sucursales' => function($query){
-               return $query->groupby('id');
-            }])->where(['id' => $value])->groupby('id')->get();
-        }
-        for ($i=0; $i < count($response); $i++) {
-          foreach ($response[$i] as $key => $value) {
-              $empresas[] = $value;
+      $companies = SysEmpresasModel::with(['sucursales'])->whereIn('id',$request->get("id_empresa"))->get();
+        $i = 0;
+      foreach ($companies as $company ){
+          foreach ($company->sucursales as $groups){
+              $response[$i]['groups']  = [
+                  'id'            => $groups->id
+                  ,'descripcion'  => $company->razon_social." - ".$groups->sucursal
+              ];
+              $i++;
           }
-        }
-        return message(true,$empresas,"¡Se cargo correctamente las sucursales!");
+      }
+      return new JsonResponse([
+          "success"   => true
+          ,"data"     => $response
+          ,"message"  => "¡Se cargo correctamente las sucursales!"
+      ],Response::HTTP_OK);
 
   }
   /**

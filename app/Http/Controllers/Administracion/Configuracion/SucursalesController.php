@@ -198,12 +198,12 @@ class SucursalesController extends MasterController
     /**
      *Metodo meter en session la empresa y/o sucursal..
      * @access public
-     * @param Request $request [Description]
+     * @param $groupId
      * @return JsonResponse
      */
-      public function portal( Request $request )
+      public function portal( $groupId )
       {
-          $sessions['id_sucursal']  = $request->group_id;
+          $sessions['id_sucursal']  = $groupId;
           #Session::put( $sessions );
           $response = SysUsersModel::with(['menus','roles'])->where(['id' => Session::get('id')])->first();
           $menus    = $response->menus()->where([

@@ -16,7 +16,7 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-6">
                             <input type="text" class="form-control has-feedback-left" ng-model="insert.name" style="text-transform: uppercase;" placeholder="Nombre Completo">
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-6">
                             <input type="text" class="form-control has-feedback-left" ng-model="insert.email" placeholder="Ingresa correo">
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-6">
                             <input type="text" class="form-control has-feedback-left" ng-model="insert.username" placeholder="Ingresa correo">
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-6">
                             <input type="password" class="form-control has-feedback-left" ng-model="insert.password" placeholder="Ingrese contraseña">
                         </div>
                     </div>
@@ -60,7 +60,7 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-6">
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
@@ -77,13 +77,13 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-6">
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
                                     multiple
-                                    data-live-search="true"
                                     ng-model="insert.id_empresa"
+                                    ng-change="findGroupOfCompany(insert.id_empresa)"
                                     ng-options="value.id as value.razon_social for (key, value) in cmbCompanies">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
@@ -96,17 +96,15 @@
                                 <font color="red" size="3">*</font>
                             </label>
                         </div>
-                        <div class="col-sm-8">
-                            <div id="div_sucursales">
-                                <select class="form-control"
-                                        chosen
-                                        width="'100%'"
-                                        ng-model="insert.id_sucursal"
-                                        ng-options="value.id as value.descripcion for (key, value) in cmbGroup">
-                                    <option value="">--Seleccione Opcion--</option>
-                                </select>
-                            </div>
-
+                        <div class="col-sm-6">
+                            <select class="form-control"
+                                    chosen
+                                    width="'100%'"
+                                    multiple
+                                    ng-model="insert.id_sucursal"
+                                    ng-options="value.groups.id as value.groups.descripcion for (key, value) in cmbGroups">
+                                <option value="">--Seleccione Opción--</option>
+                            </select>
                         </div>
                     </div>
 
@@ -114,7 +112,7 @@
                         <div class="control-label">
                             <label class="col-sm-3 control-label">{{$campo_5}} </label>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-6">
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
@@ -227,6 +225,7 @@
                                     width="'100%'"
                                     multiple
                                     ng-model="update.id_empresa"
+                                    ng-change="findGroupOfCompany(update.id_empresa)"
                                     ng-options="value.id as value.razon_social for (key, value) in cmbCompanies">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
@@ -246,7 +245,7 @@
                                         width="'100%'"
                                         multiple
                                         ng-model="update.id_sucursal"
-                                        ng-options="value.id as value.sucursal for (key, value) in cmbGroupsEdit">
+                                        ng-options="value.groups.id as value.groups.descripcion for (key, value) in cmbGroups">
                                     <option value="">--Seleccione Opcion--</option>
                                 </select>
                             </div>

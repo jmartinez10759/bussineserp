@@ -46,11 +46,11 @@
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
   
-  <link data-require="chosen@*" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-chosen@1.4.2/bootstrap-chosen.css">
+  {{--<link data-require="chosen@*" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-chosen@1.4.2/bootstrap-chosen.css">--}}
+
   <!-- Styles -->
-  <link type="text/css" rel="stylesheet" href="{{ asset('css/sweetalert.css')}}" />
-  <link type="text/css" rel="stylesheet" href="{{ asset('css/toastr.css')}}" />
-  <link type="text/css" rel="stylesheet" href="{{ asset('css/dropzone.css')}}" />
+  <link type="text/css" rel="stylesheet" href="{{ asset('css/app-master.css')}}" />
+  {{--<link type="text/css" rel="stylesheet" href="{{ asset('css/dropzone.css')}}" />--}}
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>

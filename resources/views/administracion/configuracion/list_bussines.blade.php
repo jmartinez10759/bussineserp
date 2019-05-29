@@ -13,12 +13,11 @@
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <!--css -->
         <link type="text/css" rel="stylesheet" href="{{asset('css/bootstrap.css')}}" />
-        <link type="text/css" rel="stylesheet" href="{{asset('css/sweetalert.css')}}" />
-        <link type="text/css" rel="stylesheet" href="{{ asset('css/toastr.css')}}" />
+        <link type="text/css" rel="stylesheet" href="{{ asset('css/app-master.css')}}" />
+
         {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />--}}
-        <link rel="stylesheet" href="{{asset('admintle/bower_components/font-awesome/css/font-awesome.min.css')}}">
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="{{asset("admintle/bower_components/font-awesome/css/font-awesome.min.css")}}">
         <!-- Styles -->
         <style>
           [v-cloak]{display: none}
@@ -174,20 +173,30 @@
         <script type="text/javascript" src="{{asset('templates/vendors/jquery/dist/jquery.min.js')}}"></script>
         <!-- Bootstrap -->
         <script type="text/javascript" src="{{asset('templates/vendors/bootstrap/dist/js/bootstrap.min.js')}}"></script>
-      	<script type="text/javascript" src="{{asset('js/toastr.js')}}"></script>
-      	<script type="text/javascript" src="{{asset('js/sweetalert.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
         <!-- angular -->
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular/angular.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-animate/angular-animate.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-chosen-localytics/dist/angular-chosen.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/sweetalert2/dist/sweetalert2.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/ngSweetAlert2/SweetAlert.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/swangular/swangular.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-toastr/dist/angular-toastr.tpls.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-animate.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-chosen-localytics/1.9.2/angular-chosen.min.js"></script>
 
+        <!-- script indispensables -->
         <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/ModuleController.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/FactoryController.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/NotificationsFactory.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/ServiceController.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
+        <!--/ script indispensables /-->
         <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
         <!-- script desarrollador -->
         <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_business.js')}}"></script>
