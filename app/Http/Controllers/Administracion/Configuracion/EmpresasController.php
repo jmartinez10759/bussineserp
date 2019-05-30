@@ -309,7 +309,8 @@ class EmpresasController extends MasterController
   *@param Request $request [Description]
   *@return void
   */
-  public static function findRelGroups( Request $request ){
+  public static function findRelGroups( Request $request )
+  {
       $response = [];
         if(is_null($request->get('id_empresa'))){
             return new JsonResponse([
@@ -335,6 +336,29 @@ class EmpresasController extends MasterController
           ,"message"  => "¡Se cargo correctamente las sucursales!"
       ],Response::HTTP_OK);
 
+  }
+
+  public function findByUserGroups(Request $request)
+  {
+
+      try {
+          $users      = SysUsersModel::with('empresas')->whereId($request->userId)->first();
+          $companies  = $users->empresas()->with('sucursales')->whereId($request->companyId)->first();
+          $groups     = $companies->sucursales()->where(['sys_sucursales.estatus' => true])->get();
+          return new JsonResponse([
+              "success" => true ,
+              "data"    => $groups ,
+              "message" => self::$message_success
+          ],Response::HTTP_OK);
+
+      } catch ( \Exception $error ) {
+          $errors = $error->getMessage()." ".$error->getFile()." ".$error->getLine();
+          return new JsonResponse([
+              "success" => false ,
+              "data"    => $errors ,
+              "message" => self::$message_error
+          ],Response::HTTP_BAD_REQUEST);
+      }
   }
   /**
    * Metodo para insertar los datos de la realcion de empresa sucursal

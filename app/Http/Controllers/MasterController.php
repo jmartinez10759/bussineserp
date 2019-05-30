@@ -1037,7 +1037,6 @@ abstract class MasterController extends Controller
      */
 	protected function _consulta_menus($table_model)
 	{
-        #SysUsersModel
 		$usuarios = $table_model::with(['menus' => function ($query) {
 			$where = [
 				'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
@@ -1050,6 +1049,22 @@ abstract class MasterController extends Controller
 		}
 		return $response;
 	}
+
+    /**
+     * @param SysUsersModel $users
+     * @return mixed
+     */
+    protected function _menusByCompanies(SysUsersModel $users )
+    {
+        $users = $users->with('menus')->whereId(Session::get('id'))->first();
+        return $users->menus()->where([
+             "sys_rol_menu.estatus"     => true
+            ,"sys_rol_menu.id_empresa"  => Session::get('id_empresa')
+            ,"sys_rol_menu.id_sucursal" => Session::get('id_sucursal')
+            ,"sys_rol_menu.id_rol"      => Session::get('id_rol')
+        ])->groupby('id')->orderby('order','asc')->get();
+
+    }
 
     /**
      * Metodo para obtener la validacion de la consulta

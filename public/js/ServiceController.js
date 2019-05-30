@@ -22,7 +22,7 @@ app.service('ServiceController',["$http","NotificationsFactory", function (http,
 
     MasterServices.prototype.validateSessionStatus = function(response){
         if ( angular.isDefined(response.status) ){
-            if( typeof response.data != "object" ){
+            if( typeof response.data != "object" && response.status == 419 ){
                 nf.toastError(session_expired);
                 setTimeout(function(){ redirect(domain()); }, 2000);
                 return false;

@@ -315,12 +315,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'usuarios.all'
     ]);
 
-    Route::get('usuarios/edit', [
+    Route::get('usuarios/edit/{userId}', [
         'uses'      => 'Administracion\Configuracion\UsuariosController@show'
         ,'as'       => 'usuarios.edit'
     ]);
 
-    Route::delete('usuarios/destroy', [
+    Route::delete('usuarios/destroy/{userId}/user', [
         'uses'      => 'Administracion\Configuracion\UsuariosController@destroy'
         ,'as'       => 'usuarios.destroy'
     ]);
@@ -375,6 +375,11 @@ Route::group(['middleware' => ['admin.only']], function() {
     Route::post('/empresas/findGroups', [
     'uses'      => 'Administracion\Configuracion\EmpresasController@findRelGroups'
     ,'as'       => 'empresas.findRelGroups'
+    ]);
+
+    Route::post('/empresas/findByUserGroups', [
+        'uses'      => 'Administracion\Configuracion\EmpresasController@findByUserGroups'
+        ,'as'       => 'empresas.findByUserGroups'
     ]);
 
     Route::get('/list/empresas', [

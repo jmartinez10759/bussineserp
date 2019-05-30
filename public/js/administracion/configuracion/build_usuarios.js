@@ -19,7 +19,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         $scope.cmbCompanies = [];
         $scope.cmbGroups = [];
         $scope.cmbRoles = [];
-
+        $scope.permission = {};
         $scope.index();
     };
 
@@ -97,10 +97,9 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     };
 
     $scope.destroyRegister = function (id) {
-        var url = domain(URL.url_destroy);
-        var fields = {id: id};
+        var url = domain(URL.url_destroy+"/"+id+"/user");
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
-            ms.requestHttp(url, fields, "DELETE", false).then(function (response) {
+            ms.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (ms.validateSessionStatus(response)) {
                     nf.toastSuccess(response.data.message, title);
                     $scope.index();
@@ -110,19 +109,26 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
             });
         }, null, "SI", "NO");
 
-        /*buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
-            MasterController.request_http(url,fields,'delete',$http, false )
-                .then(function( response ){
-                    //not remove function this is  verify the session
-                    if(ms.session_status( response )){return;};
+    };
 
-                    toastr.success( response.data.message , title );
-                    $scope.index();
-                }).catch(function( error ){
-                ms.session_status_error(error);
-            });
+    $scope.permissionMenuUsers = function( id ){
+        var url = domain(URL.url_edit+"/"+id);
+        ms.requestHttp(url,null,"GET", false).then(function (response) {
+            if (ms.validateSessionStatus(response)){
+                $scope.permission.id     = id;
+                $scope.permission.companyId = null;
+                $scope.permission.groupsId  = null;
+                $scope.permission.cmbGroups     = [];
+                $scope.permission.TblMenus      = response.data.data.menus;
+                $scope.permission.TblAction     = response.data.data.action;
+                $scope.permission.cmbCompanies  = response.data.data.companyByUser;
+                $scope.permission.cmbRoles      = response.data.data.rolesByUser;
+                $scope.permission.rolesId       = angular.isDefined(response.data.data.rolesByUser[0])? response.data.data.rolesByUser[0].id : 0 ;
 
-        },"warning",true,["SI","NO"]);*/
+                console.log($scope.permission);
+                $('#modal_permission_user').modal({keyboard: false, backdrop: "static"});
+            }
+        });
     };
 
     /*$scope.diffDaysToday = function ( startDay ) {
@@ -133,19 +139,37 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
     }*/
 
-    $scope.findGroupOfCompany = function (idCompany) {
+    $scope.findGroupOfCompany = function (companyId) {
         var url = domain('empresas/findGroups');
-        var fields = {'id_empresa': idCompany };
+        var fields = {'id_empresa': companyId };
 
         ms.requestHttp(url,fields,"POST",false).then(function (response) {
             if (ms.validateSessionStatus(response)){
                 $scope.cmbGroups = response.data.data;
+                $scope.permission.cmbGroups = response.data.data;
                 console.log( $scope.cmbGroups );
             }
         }).catch(function (error) {
             ms.validateStatusError(error);
         });
 
+    }
+
+    $scope.findByUserGroupOfCompany = function (companyId) {
+        var url = domain('empresas/findByUserGroups');
+        var fields = {
+            'companyId' : companyId ,
+            'rolId'     : $scope.permission.rolesId ,
+            'userId'    : $scope.permission.id
+        };
+        ms.requestHttp(url,fields,"POST",false).then(function (response) {
+            if (ms.validateSessionStatus(response)){
+                $scope.permission.cmbGroups = response.data.data;
+                console.log( $scope.permission.cmbGroups );
+            }
+        }).catch(function (error) {
+            ms.validateStatusError(error);
+        });
     }
 
 }]);

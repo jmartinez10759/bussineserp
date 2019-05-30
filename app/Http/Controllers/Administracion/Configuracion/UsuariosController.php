@@ -202,29 +202,53 @@ class UsuariosController extends MasterController
             return $this->show_error(6, $error);
         }
     }
-    /**
-     *Metodo para realizar la consulta por medio de su id
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public function show(Request $request)
-    {
 
+    /**
+     *This method is for get the data of user
+     * @access public
+     * @param int|null $userId
+     * @return void
+     */
+    public function show( int $userId = null )
+    {
         try {
-            $response = SysUsersModel::with(['menus' => function ($query) {
-                return $query->where(['sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa')])->get();
-            }, 'roles' => function ($query) {
-                return $query->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');
-            }, 'empresas' => function ($query) {
-                return $query->where(['sys_empresas.estatus' => 1])->groupby('id');
-            }, 'sucursales' => function ($query) {
-                return $query->where(['sys_sucursales.estatus' => 1])->groupby('id');
-            }, 'details'])->where(['id' => $request->id])->get();
-          #debuger($response[0]->empresas);
-            $response_menu = (Session::get('id_rol') == 1) ? SysMenuModel::whereEstatus(1)->get() : $this->_consulta_menus(new SysUsersModel);
-            #debuger($response_menu);
-            $response_acciones = SysAccionesModel::where(['estatus' => 1])->orderBy('id', 'ASC')->get();
+            $users      = SysUsersModel::with(['menus','roles','empresas','sucursales','details'])->whereId($userId)->first();
+            $action     = ( Session::get('id_rol') == 1 ) ? SysAccionesModel::whereEstatus(1)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysEmpresasModel);
+            $menus      = ( Session::get('id_rol') == 1 ) ? SysMenuModel::whereEstatus(1)->orderBy('orden', 'asc')->get() : $this->_menusByCompanies(new SysUsersModel);
+            $menuPadre = [];
+            foreach ($menus as $menu ){
+                if ($menu->tipo == "PADRE"){
+                    $menuPadre[] = [
+                        'id'        => $menu->id
+                        ,'texto'    => $menu->texto
+                        ,'submenus' => $this->_submenus($menus, $menu->id)
+                    ];
+                }
+            }
+            #$companies  = ( Session::get('id_rol') == 1 ) ? SysEmpresasModel::whereEstatus(1)->get() : $this->_userBelongsCompany(new SysUsersModel);
+            #$groups     = ( Session::get('id_rol') == 1 ) ? SysSucursalesModel::whereEstatus(1)->get() : $this->_groupsByCompanies(new SysEmpresasModel);
+            #$roles      = ( Session::get('id_rol') == 1 ) ? SysRolesModel::whereEstatus(1)->get() : $this->_rolesByCompanies(new SysEmpresasModel);
+
+            $menusByUser       = $users->menus()->where(['sys_rol_menu.estatus'=> true])->groupby('sys_rol_menu.id_menu')->get();
+            $companyByUser     = $users->empresas()->where(['sys_empresas.estatus'=> true])->groupby('id')->get();
+            $rolesByUser       = $users->roles()->where(['sys_roles.estatus'=> true])->groupby('id')->get();
+            $groupsByUser      = $users->sucursales()->where(['sys_sucursales.estatus'=> true])->groupby('id')->get();
+            $data = [
+                "menus"           => $menuPadre ,
+                "action"          => $action ,
+                "menusByUser"     => $menusByUser ,
+                "companyByUser"   => $companyByUser ,
+                "rolesByUser"     => $rolesByUser ,
+                "groupsByUser"    => $groupsByUser ,
+            ];
+
+            return new JsonResponse([
+                "success" => true,
+                "data"    => $data,
+                "message" => self::_message_success()
+            ],Response::HTTP_OK);
+
+/*
             $registros = [];
             $registros_acciones = [];
 
@@ -256,15 +280,37 @@ class UsuariosController extends MasterController
                 ];
             }
             $data['menus_permisos'] = data_table($table);
-            $data['permisos_acciones'] = data_table($table_acciones);
+            $data['permisos_acciones'] = data_table($table_acciones);*/
           #debuger($data);
           #return message( true,$data,self::$message_success );
-            return $this->_message_success(201, $data, self::$message_success);
+
         } catch (\Exception $e) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-            return $this->show_error(6, $error);
+            return new JsonResponse([
+                "success" => false ,
+                "data"    => $error ,
+                "message" => self::_message_success()
+            ],Response::HTTP_BAD_REQUEST);
         }
 
+    }
+
+    /**
+     * @param SysMenuModel $menus
+     * @param int|null $menuId
+     * @return array
+     */
+    private function _submenus( $menus, int $menuId = null ){
+        $submenus = [];
+        foreach ($menus as $menu){
+            if ($menu->id_padre == $menuId){
+                $submenus[] = [
+                    'id'    => $menu->id
+                    ,'texto' => $menu->texto
+                ];
+            }
+        }
+        return $submenus;
     }
     /**
      *It's method is for register the users
@@ -438,48 +484,41 @@ class UsuariosController extends MasterController
             ,'message'  => self::$message_error
         ],Response::HTTP_BAD_REQUEST);
     }
+
     /**
      *Metodo para borrar el registro
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * @access public
+     * @param int|null $userId
+     * @return JsonResponse
      */
-    public function destroy(Request $request)
+    public function destroy(int $userId = null)
     {
-        var_export($request->all());die();
-        #se realiza una transaccion
         $error = null;
         DB::beginTransaction();
         try {
-          #se borran los registro
-            $users_correos = SysCategoriasCorreosModel::where(['id_users' => $request->id])->get();
-            $users_facturas = SysUsersFacturacionModel::where(['id_users' => $request->id])->get();
-          #debuger($users_facturas);
-            $id_correos = [];
-            $id_factura = [];
-            if (count($users_correos) > 0) {
-                foreach ($users_correos as $correos) {
-                    $id_correos[] = $correos->id_correo;
+            $mailId = [];
+            $invoiceId= [];
+            $usersMails = SysCategoriasCorreosModel::whereIdUsers($userId)->get();
+            $usersInvoice = SysUsersFacturacionModel::whereIdUsers($userId)->get();
+            if (count($usersMails) > 0) {
+                foreach ($usersMails as $mails) {
+                    $mailId[] = $mails->id_correo;
                 }
-                for ($i = 0; $i < count($id_correos); $i++) {
-                    SysCorreosModel::where(['id' => $id_correos[$i]])->delete();
-                }
+                SysCorreosModel::whereIn('id',$mailId)->delete();
             }
-            if (count($users_facturas) > 0) {
-                foreach ($users_facturas as $facturas) {
-                    $id_factura[] = $facturas->id_factura;
+            if (count($usersInvoice) > 0) {
+                foreach ($usersInvoice as $invoice) {
+                    $invoiceId[] = $invoice->id_factura;
                 }
-                for ($i = 0; $i < count($id_factura); $i++) {
-                    SysFacturacionModel::where(['id' => $id_factura[$i]])->delete();
-                    SysParcialidadesFechasModel::where(['id_factura' => $id_factura[$i]])->delete();
-                }
+                SysFacturacionModel::whereIn('id',$invoiceId)->delete();
+                SysParcialidadesFechasModel::whereIn('id_factura', $invoiceId)->delete();
             }
-            SysUsersPermisosModel::where(['id_users' => $request->id])->delete();
-            SysRolMenuModel::where(['id_users' => $request->id])->delete();
-            SysUsersFacturacionModel::where(['id_users' => $request->id])->delete();
-            SysCategoriasCorreosModel::where(['id_users' => $request->id])->delete();
-            SysUsersRolesModel::where(['id_users' => $request->id])->delete();
-            SysUsersModel::where(['id' => $request->id])->delete();
+            SysUsersPermisosModel::whereIdUsers($userId)->delete();
+            SysRolMenuModel::whereIdUsers($userId)->delete();
+            SysUsersFacturacionModel::whereIdUsers($userId)->delete();
+            SysCategoriasCorreosModel::whereIdUsers($userId)->delete();
+            SysUsersRolesModel::whereIdUsers($userId)->delete();
+            SysUsersModel::whereId($userId)->delete();
 
             DB::commit();
             $success = true;
@@ -490,9 +529,18 @@ class UsuariosController extends MasterController
         }
 
         if ($success) {
-            return $this->_message_success(201, $success, self::$message_success);
+            return new JsonResponse([
+                'success' => $success
+                ,'data'   => $userId
+                ,'message' => self::$message_success
+            ],Response::HTTP_CREATED);
+
         }
-        return $this->show_error(6, $error, self::$message_error);
+        return new JsonResponse([
+            'success' => $success
+            ,'data'   => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
     }
 
     /*private static function _roles($request)
@@ -561,7 +609,7 @@ class UsuariosController extends MasterController
                                     ->empresas()
                                     ->whereId( Session::get('id_empresa') )
                                     ->first()
-                                    ->roles()->with(['empresas','sucursales','permisos'])
+                                    ->roles()->with(['empresas','sucursales','bitacora'])
                                     ->orderBy('id','desc')
                                     ->groupby('id')
                                     ->get();

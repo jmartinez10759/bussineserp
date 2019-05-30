@@ -39,7 +39,7 @@
           <span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>
         </td>
           <td class="text-right">
-              <button type="button" class="btn btn-info btn-sm" ng-click="permitsUsers(data.id)" title="Permisos de Usuario" ng-if="data.roles[0].id > 0 || permisos.PER">
+              <button type="button" class="btn btn-info btn-sm" ng-click="permissionMenuUsers(data.id)" title="Asignar Menus" ng-if="data.roles[0].id > 0 || permisos.PER">
                   <i class="glyphicon glyphicon-wrench"></i>
               </button>
           </td>
