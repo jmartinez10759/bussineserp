@@ -20,6 +20,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         $scope.cmbGroups = [];
         $scope.cmbRoles = [];
         $scope.permission = {};
+        $scope.actions = false;
         $scope.index();
     };
 
@@ -129,6 +130,12 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                 $('#modal_permission_user').modal({keyboard: false, backdrop: "static"});
             }
         });
+    };
+
+    $scope.actionsMenuUsers = function( id ){
+        console.log(id);
+        $scope.submenu = id;
+        $scope.actions = true;
     };
 
     /*$scope.diffDaysToday = function ( startDay ) {

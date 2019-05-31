@@ -294,9 +294,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
                 </button>
                 <h3>Asignar Permisos</h3>
-            </div>
 
-            <div class="modal-body panel-body">
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="col-sm-3">
@@ -334,27 +332,54 @@
                     </div>
                 </div>
 
+            </div>
+
+            <div class="modal-body panel-body" style="overflow-y:scroll; height:450px;">
+
                 <div class="row">
-                    <div class="col-sm-offset-1 col-sm-10">
-
+                    <div class="col-sm-offset-2 col-sm-8">
                         <div class="panel-group" id="accordion">
-
                             <div class="panel panel-default" ng-repeat="menus in permission.TblMenus">
                                 <div class="panel-heading">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#@{{ menus.id }}">
-                                        @{{menus.texto}}</a>
-                                    <h4 class="panel-title">
-                                    </h4>
-                                </div>
-                                <div id="@{{ menus.id }}" class="panel-collapse collapse">
-                                    <div class="panel-body" ng-repeat="submenus in menus.submenus">
-                                        @{{ submenus.texto }}
+                                    <div>
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#@{{ menus.id }}" ng-bind="menus.texto"></a>
+                                        <div class="material-switch pull-right">
+                                            <input id="menusFather_@{{ menus.id }}" type="checkbox" ng-model="menus.id"/>
+                                            <label for="menusFather_@{{ menus.id }}" class="label-primary"></label>
+                                            @{{  menus.id }}
+                                        </div>
+
                                     </div>
+
+                                </div>
+
+                                <div id="@{{ menus.id }}" class="panel-collapse collapse">
+                                    <div style="overflow-y:scroll; height:200px;">
+
+                                        <div class="panel-body" ng-repeat="submenus in menus.submenus">
+                                            <div class="col-sm-8" ng-bind="submenus.texto"></div>
+                                            <div class="col-sm-2 pull-right">
+                                                <button type="button" class="btn btn-primary btn-sm" ng-click="actionsMenuUsers(submenus.id)" title="Asignar Acciones">
+                                                    <i class="glyphicon glyphicon-wrench"></i>
+                                                </button>
+                                            </div>
+                                            <div class="material-switch pull-right col-sm-2">
+                                                <input id="submenu_@{{ submenus.id }}" type="checkbox"/>
+                                                <label for="submenu_@{{ submenus.id }}" class="label-primary"></label>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
                                 </div>
                             </div>
 
                         </div>
 
+                    </div>
+                    <div class="col-sm-5" ng-show="actions">
+                        @{{ submenu }}
                     </div>
 
                 </div>

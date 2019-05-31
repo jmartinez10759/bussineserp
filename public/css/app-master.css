@@ -4,7 +4,7 @@
 @import url("../bower_components/angular-chosen-localytics/chosen-spinner.css");
 @import url("../bower_components/sweetalert2/dist/sweetalert2.css");
 /*@import url("../bower_components/bootstrap/dist/css/bootstrap.min.css");*/
-/*@import url("../bower_components/bootstrap/dist/css/bootstrap-theme.min.css");*/
+@import url("../bower_components/bootstrap/dist/css/bootstrap-theme.min.css");
 @import url("../bower_components/angular-toastr/dist/angular-toastr.css");
 @import url("../bower_components/dropzone/downloads/css/basic.css");
 @import url("../bower_components/dropzone/downloads/css/dropzone.css");
@@ -14,6 +14,6 @@
 @import url("../css/checkbox/switch.css");
 @import url("../css/checkbox/checkbox.css");
 @import url("../css/checkbox/checkbox_template.css");
-@import url("../css/login/login.css");
-@import url("../css/login/animate-custom.css");
+/*@import url("../css/login/login.css");
+@import url("../css/login/animate-custom.css");*/
 

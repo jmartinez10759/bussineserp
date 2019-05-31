@@ -16,7 +16,8 @@
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> -->
+  <!-- Styles -->
+  <link type="text/css" rel="stylesheet" href="{{ asset('css/app-master.css')}}" />
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
@@ -34,23 +35,14 @@
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/jvectormap/jquery-jvectormap.css">
   <!-- Date Picker -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-  
   <!-- Daterange picker -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/bootstrap-daterangepicker/daterangepicker.css">
-  
   <!-- datetimepicker -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.4/css/bootstrap-datetimepicker.min.css">
-
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="{{$base_url}}admintle/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
-  
-  {{--<link data-require="chosen@*" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-chosen@1.4.2/bootstrap-chosen.css">--}}
-
-  <!-- Styles -->
-  <link type="text/css" rel="stylesheet" href="{{ asset('css/app-master.css')}}" />
-  {{--<link type="text/css" rel="stylesheet" href="{{ asset('css/dropzone.css')}}" />--}}
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -59,7 +51,7 @@
   <![endif]-->
   <base href="{{ $_SERVER['PHP_SELF'] }}" />
   <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  {{--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">--}}
  <style type="text/css">
     .scroll {width: 100%;display:block;}
     .scroll thead { display: inline-block; width: 100%;}
