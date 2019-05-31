@@ -210,6 +210,16 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'configuracion.permisos'
     ]);
 
+    Route::post('/setting/users/permission', [
+        'uses'      => 'Administracion\Configuracion\PermisosController@findMenuByUsers'
+        ,'as'       => 'setting.users.permission'
+    ]);
+
+    Route::post('/setting/menus/action', [
+        'uses'      => 'Administracion\Configuracion\PermisosController@findActionsByMenu'
+        ,'as'       => 'setting.menus.action'
+    ]);
+
 		Route::get('/permisos/roles', [
         'uses'      => 'Administracion\Configuracion\PermisosController@show_roles'
         ,'as'       => 'permisos.roles'
@@ -235,9 +245,9 @@ Route::group(['middleware' => ['admin.only']], function() {
       ,'as'       => 'permisos.register'
     ]);
 
-    Route::post('/permisos/actions', [
-      'uses'      => 'Administracion\Configuracion\PermisosController@store_actions'
-      ,'as'       => 'permisos.actions'
+    Route::post('/setting/actions/register', [
+      'uses'      => 'Administracion\Configuracion\PermisosController@createAction'
+      ,'as'       => 'setting.actions.register'
     ]);
 
     Route::get('/actions', [

@@ -8,12 +8,13 @@ use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysRolesModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysAccionesModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class PermisosController extends MasterController
 {
@@ -101,13 +102,89 @@ class PermisosController extends MasterController
         return self::_load_view( 'administracion.configuracion.permisos', $data );
 
        }
-   /**
-    *Metodo donde manda a llamar los permisos que tiene el usuario con respectoa todos sus filtros
-    *@access public
-    *@param Request $request
-    *@return void
-    */
-    public static function permisos( Request $request ){
+
+
+    /**
+     * @param Request $request
+     * @param SysUsersModel $users
+     * @return JsonResponse
+     */
+    public function findMenuByUsers( Request $request, SysUsersModel $users )
+    {
+        try {
+            if ( !$request->groupId || $request->groupId == 0 || $request->groupId == null){
+                return new JsonResponse([
+                    "success"   => false,
+                    "data"      => "Groupid no tiene Informacion",
+                    "message"   => self::$message_error
+                ],Response::HTTP_BAD_REQUEST);
+            }
+            $user = $users->with('menus')->whereId($request->userId)->first();
+            $permission = $user->menus()->where([
+                'sys_rol_menu.estatus'      => true ,
+                'sys_rol_menu.id_empresa'   => $request->companyId ,
+                'sys_rol_menu.id_rol'       => $request->rolesId ,
+                'sys_rol_menu.id_sucursal'  => $request->groupId
+            ])->groupby('sys_rol_menu.id_menu')->get();
+
+            return new JsonResponse([
+                "success"   => true,
+                "data"      => ["menusByUser" => $permission],
+                "message"   => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch ( \Exception $error ) {
+            $errors = $error->getMessage()." ".$error->getFile()." ".$error->getLine();
+            return new JsonResponse([
+                "success"   => false,
+                "data"      => $errors,
+                "message"   => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+        }
+
+    }
+
+    /**
+     * @param Request $request
+     * @param SysUsersModel $users
+     * @return JsonResponse
+     */
+    public function findActionsByMenu(Request $request, SysUsersModel $users )
+    {
+        try {
+            $user = $users->with('acciones')->whereId($request->userId)->first();
+            $actions = $user->acciones()->where([
+                'sys_users_permisos.estatus'      => true ,
+                'sys_users_permisos.id_empresa'   => $request->companyId ,
+                'sys_users_permisos.id_rol'       => $request->rolesId ,
+                'sys_users_permisos.id_sucursal'  => $request->groupId ,
+                'sys_users_permisos.id_menu'      => $request->menuId
+            ])->groupby('sys_users_permisos.id_accion')->orderby('id','DESC')->get();
+
+            return new JsonResponse([
+                "success"   => true ,
+                "data"      => ["actionsByUser" => $actions] ,
+                "message"   => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch ( \Exception $error ) {
+            $errors = $error->getMessage()." ".$error->getFile()." ".$error->getLine();
+            return new JsonResponse([
+                "success"   => false,
+                "data"      => $errors,
+                "message"   => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     *Metodo donde manda a llamar los permisos que tiene el usuario con respectoa todos sus filtros
+     *@access public
+     *@param Request $request
+     *@return void
+     */
+
+    /*public static function permisos( Request $request ){
 
         $where = [
           'id_users'        => $request->id_users
@@ -120,16 +197,14 @@ class PermisosController extends MasterController
           return message(true,$permisos,"¡Permisos del usuario!");
         }
           return message(false,$permisos,"¡No cuenta con permisos!");
-
-
-    }
+    }*/
     /**
      *Metodo donde se crea manda a llamar los permisos que tiene el usuario con respecto al rol
      *@access public
      *@param Request $request
      *@return void
      */
-     public static function permisos_actions( Request $request){
+     /*public static function permisos_actions( Request $request){
 
          $where = [
             'id_users'     => $request->id_users
@@ -142,7 +217,7 @@ class PermisosController extends MasterController
          $acciones = SysUsersPermisosModel::where( $where )->get();
          return message(true,$acciones,"¡Acciones del usuario.!");
 
-     }
+     }*/
   /**
    *Metodo donde se crea manda  a llamar los permisos que tiene el usuario con respecto al rol
    *@access public
@@ -217,14 +292,18 @@ class PermisosController extends MasterController
           }
           return $this->show_error(6,$error, self::$message_error );
    }
-   /**
-    *Metodo donde se crea manda  a llamar los permisos que tiene el usuario con respecto al rol
-    *@access public
-    *@param Request $request
-    *@return void
-    */
-    public static function store_actions( Request $request ){
+
+    /**
+     * This method is for the creations of permission of actions
+     * @access public
+     * @param Request $request
+     * @param SysUsersPermisosModel $userPermission
+     * @return void
+     */
+    public static function createAction( Request $request, SysUsersPermisosModel $userPermission ){
          #debuger($request->all());
+            var_export($request->all());die();
+
           $matrix       = $request->matrix;
           $id_rol       = $request->id_rol;
           $id_users     = $request->id_users;

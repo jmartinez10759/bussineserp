@@ -43,6 +43,11 @@ class SysEmpresasModel extends Model
     return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_empresa','id_permiso');
   }
 
+  public function acciones()
+  {
+      return $this->belongsToMany(SysAccionesModel::class,'sys_users_permisos','id_empresa','id_accion')->withPivot('estatus');
+  }
+
   public function usuarios()
   {
     return $this->belongsToMany(SysUsersModel::class,'sys_users_roles','id_empresa','id_users');
@@ -66,7 +71,7 @@ class SysEmpresasModel extends Model
   }
   public function planes()
   {
-    return $this->belongsToMany('App\Model\Administracion\Configuracion\SysPlanesModel', 'sys_planes_productos', 'id_empresa', 'id_plan');
+    return $this->belongsToMany(SysPlanesModel::class, 'sys_planes_productos', 'id_empresa', 'id_plan');
   }
   public function clientes()
   {

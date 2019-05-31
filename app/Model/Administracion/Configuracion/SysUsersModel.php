@@ -47,6 +47,10 @@ class SysUsersModel extends Model
     {
       return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_users','id_permiso');
     }
+    public function acciones()
+    {
+        return $this->belongsToMany(SysAccionesModel::class,'sys_users_permisos','id_users','id_accion')->withPivot('estatus');
+    }
     public function roles()
     {
       return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','id_users','id_rol')->withPivot('id_rol','estatus');

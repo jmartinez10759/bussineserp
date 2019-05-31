@@ -7,7 +7,7 @@
       $.widget.bridge('uibutton', $.ui.button);
     </script>
     <!-- Bootstrap 3.3.7 -->
-    <script src="{{$base_url}}admintle/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="{{$base_url}}admintle/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- Bootstrap 4.0.1 -->
     <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> -->
     <!-- DataTables -->
@@ -44,13 +44,10 @@
     <!-- AdminLTE for demo purposes -->
     <script src="{{$base_url}}admintle/dist/js/demo.js"></script>
     <script type="text/javascript" src="{{asset('js/axios.js')}}"></script>
-    {{--<script type="text/javascript" src="{{asset('js/toastr.js')}}"></script>--}}
     <script type="text/javascript" src="{{asset('js/vue.js')}}"></script>
-
-    {{--<script type="text/javascript" src="{{asset('js/sweetalert.js')}}"></script>--}}
     <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
-    {{--<script type="text/javascript" src="{{asset('js/dropzone.js')}}"></script>--}}
+    <script type="text/javascript" src="{{asset('bower_components/chosen/chosen.jquery.js')}}"></script>
      <!-- angular -->
      <script type="text/javascript" src="{{asset('bower_components/angular/angular.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/angular-animate/angular-animate.js')}}"></script>
@@ -75,7 +72,6 @@
     <script type="text/javascript" src="{{asset('js/ServiceController.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
  <!--/ script indispensables /-->
-
  <!-- InputMask -->
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.js')}}"></script>
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.date.extensions.js')}}"></script>
@@ -85,20 +81,16 @@
     <!-- bootstrap time picker -->
     <script src="{{asset('admintle/plugins/timepicker/bootstrap-timepicker.min.js')}}"></script>
     <!-- Add fancyBox -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />
+    {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+ <!-- / Add fancyBox -->
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
-    <script data-require="chosen@*" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.4/jspdf.plugin.autotable.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
-
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.8.3/jquery.csv.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jexcel/1.5.0/js/jquery.jexcel.min.js"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jexcel/1.5.0/css/jquery.jexcel.min.css" type="text/css" />
 
     <script type="text/javascript">

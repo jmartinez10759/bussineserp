@@ -37,7 +37,8 @@
     "angular-croppie": "^1.0.2",
     "Croppie": "croppie#^2.6.2",
     "angular-chosen-localytics": "^1.9.3",
-    "angular-dropzone": "^0.1.2"
+    "angular-dropzone": "^0.1.2",
+    "angular-fancybox-plus": "^1.0.3"
   },
   "resolutions": {
     "angular": "1.7.5",

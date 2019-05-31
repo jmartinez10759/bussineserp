@@ -229,14 +229,12 @@ class UsuariosController extends MasterController
             #$groups     = ( Session::get('id_rol') == 1 ) ? SysSucursalesModel::whereEstatus(1)->get() : $this->_groupsByCompanies(new SysEmpresasModel);
             #$roles      = ( Session::get('id_rol') == 1 ) ? SysRolesModel::whereEstatus(1)->get() : $this->_rolesByCompanies(new SysEmpresasModel);
 
-            $menusByUser       = $users->menus()->where(['sys_rol_menu.estatus'=> true])->groupby('sys_rol_menu.id_menu')->get();
             $companyByUser     = $users->empresas()->where(['sys_empresas.estatus'=> true])->groupby('id')->get();
             $rolesByUser       = $users->roles()->where(['sys_roles.estatus'=> true])->groupby('id')->get();
             $groupsByUser      = $users->sucursales()->where(['sys_sucursales.estatus'=> true])->groupby('id')->get();
             $data = [
                 "menus"           => $menuPadre ,
                 "action"          => $action ,
-                "menusByUser"     => $menusByUser ,
                 "companyByUser"   => $companyByUser ,
                 "rolesByUser"     => $rolesByUser ,
                 "groupsByUser"    => $groupsByUser ,
@@ -245,51 +243,15 @@ class UsuariosController extends MasterController
             return new JsonResponse([
                 "success" => true,
                 "data"    => $data,
-                "message" => self::_message_success()
+                "message" => self::$message_success
             ],Response::HTTP_OK);
-
-/*
-            $registros = [];
-            $registros_acciones = [];
-
-            foreach ($response_menu as $respuesta) {
-                $id['id'] = $respuesta->id;
-                $checkbox = build_actions_icons($id, 'id_permisos= "' . $respuesta->id . '" ');
-                $checkbox_actions = build_acciones_usuario($id, 'get_acciones', '', 'fancybox btn btn-primary ' . $respuesta->id, 'fa fa-users', 'title="Asignar Permisos" ');
-                $registros[] = [
-                    $respuesta->id, $respuesta->texto, $respuesta->id_padre, $respuesta->tipo, $checkbox, $checkbox_actions
-                ];
-            }
-            foreach ($response_acciones as $respuesta) {
-                $id['id'] = 'actions_' . $respuesta->id;
-                $checkbox_actions_permisos = build_actions_icons($id, 'id_actions="' . $respuesta->id . '" ');
-                $registros_acciones[] = [
-                    $respuesta->clave_corta, $respuesta->descripcion, $checkbox_actions_permisos
-                ];
-
-            }
-            $titulos = ['id', 'Nombre Modulo', 'Id Padre', 'Tipo', 'Permisos', 'Acciones'];
-            $titulos_acciones = ['Tipo Acción', 'Descripción', 'Permiso'];
-            $table = ['titulos' => $titulos, 'registros' => $registros, 'id' => "datatable_permisos", 'class' => 'fixed_header'];
-            $table_acciones = ['titulos' => $titulos_acciones, 'registros' => $registros_acciones, 'id' => "datatable_acciones", 'class' => 'fixed_header'];
-
-            $data = [];
-            foreach ($response as $usuarios) {
-                $data = [
-                    'id_rol' => ($usuarios->roles), 'id_empresa' => ($usuarios->empresas), 'id_sucursal' => $usuarios->sucursales, 'name' => $usuarios->name, 'first_surname' => $usuarios->first_surname, 'second_surname' => $usuarios->second_surname, 'email' => $usuarios->email, 'estatus' => $usuarios->estatus
-                ];
-            }
-            $data['menus_permisos'] = data_table($table);
-            $data['permisos_acciones'] = data_table($table_acciones);*/
-          #debuger($data);
-          #return message( true,$data,self::$message_success );
 
         } catch (\Exception $e) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
             return new JsonResponse([
                 "success" => false ,
                 "data"    => $error ,
-                "message" => self::_message_success()
+                "message" => self::$message_error
             ],Response::HTTP_BAD_REQUEST);
         }
 

@@ -40,12 +40,11 @@ app.service('ServiceController',["$http","NotificationsFactory", function (http,
     MasterServices.prototype.validateStatusError = function(error){
 
         if( angular.isDefined(error.status) && error.status == 419 ){
-            toastr.error( session_expired );
+            nf.toastError(session_expired );
             setTimeout(function(){ redirect(domain()); }, 1000);
             return;
         }
         nf.toastError(error.data.message, error_mgs);
-        console.error( error );
         return;
     };
 

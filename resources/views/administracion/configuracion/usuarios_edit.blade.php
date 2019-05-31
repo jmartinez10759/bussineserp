@@ -293,7 +293,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
                 </button>
-                <h3>Asignar Permisos</h3>
+                <h3>Asignar Permisos del Usuario </h3>
 
                 <div class="row">
                     <div class="col-sm-12">
@@ -325,6 +325,7 @@
                                     chosen
                                     width="'100%'"
                                     ng-model="permission.groupsId"
+                                    ng-change="findPermissionMenuByUser(permission.groupsId)"
                                     ng-options="value.id as value.sucursal for (key, value) in permission.cmbGroups">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
@@ -344,9 +345,8 @@
                                     <div>
                                         <a data-toggle="collapse" data-parent="#accordion" href="#@{{ menus.id }}" ng-bind="menus.texto"></a>
                                         <div class="material-switch pull-right">
-                                            <input id="menusFather_@{{ menus.id }}" type="checkbox" ng-model="menus.id"/>
+                                            <input id="menusFather_@{{ menus.id }}" type="checkbox" ng-model="permission.dataChecked[menus.id]" ng-disabled="permission.disabledCheck"/>
                                             <label for="menusFather_@{{ menus.id }}" class="label-primary"></label>
-                                            @{{  menus.id }}
                                         </div>
 
                                     </div>
@@ -359,12 +359,12 @@
                                         <div class="panel-body" ng-repeat="submenus in menus.submenus">
                                             <div class="col-sm-8" ng-bind="submenus.texto"></div>
                                             <div class="col-sm-2 pull-right">
-                                                <button type="button" class="btn btn-primary btn-sm" ng-click="actionsMenuUsers(submenus.id)" title="Asignar Acciones">
+                                                <button type="button" class="btn btn-primary btn-sm" ng-click="actionsMenuByUsers(submenus.id)" title="Asignar Acciones">
                                                     <i class="glyphicon glyphicon-wrench"></i>
                                                 </button>
                                             </div>
                                             <div class="material-switch pull-right col-sm-2">
-                                                <input id="submenu_@{{ submenus.id }}" type="checkbox"/>
+                                                <input id="submenu_@{{ submenus.id }}" type="checkbox" ng-model="permission.dataChecked[submenus.id]" ng-disabled="permission.disabledCheck"/>
                                                 <label for="submenu_@{{ submenus.id }}" class="label-primary"></label>
                                             </div>
 
@@ -378,9 +378,6 @@
                         </div>
 
                     </div>
-                    <div class="col-sm-5" ng-show="actions">
-                        @{{ submenu }}
-                    </div>
 
                 </div>
 
@@ -391,8 +388,8 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
                         <i class="fa fa-times-circle"></i> Cancelar
                     </button>
-                    <button type= "button" class="btn btn-primary" ng-click="permissionUserRegister()" ng-if="permisos.PER" >
-                        <i class="fa fa-save"></i> Asignar
+                    <button type= "button" class="btn btn-success" ng-click="permissionUserRegister()" >
+                        <i class="fa fa-save"></i> Asignar Permisos
                     </button>
                 </div>
             </div>
@@ -401,72 +398,32 @@
 </div>
 
 
-
-<div id="modal_permisos" style="display:none;">
-
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="col-sm-3">
-                <label> Usuario: </label>
-                <div id="content_users_permisos"></div>
-            </div>
-            <div class="col-sm-3">
-                <label> Roles: </label>
-                <div id="content_roles_permisos"></div>
-            </div>
-            <div class="col-sm-3">
-                <label> Empresas: </label>
-                <div id="content_empresas_permisos"></div>
-            </div>
-            <div class="col-sm-3">
-                <label> Surcursales: </label>
-                <div id="content_sucursales_permisos"></div>
-            </div>
-        </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="pull-right">
-            <form class="form-inline">
-                <input class="form-control" type="text" placeholder="Buscar..." aria-label="Search" onkeyup="buscador_general(this,'#datatable_permisos')" />
-            </form>
-        </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="container">
-            <div id="content_menus_permisos"></div>
-        </div>
-    </div>
-    <br>
-    <div class="modal-footer">
-        <div class="btn-toolbar pull-right">
-            <!-- <button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
-                <i class="fa fa-times-circle"></i> Cancelar
-            </button> -->
-            <!-- {{$insertar}} -->
-            <button type="button" class="btn btn-primary" v-on:click.prevent="register_permisos()">
-                <i class="fa fa-save"></i> Guardar
-            </button>
-        </div>
-    </div>
-
-</div>
-
-<div class="" id="modal_asignar_acciones" style="display:none;">
+<div class="" id="modal_toAssign_action" style="display:none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Asignar Acciones</h3>
+                <h3>Asignar Acciones del Menu </h3>
             </div>
-            <div class="modal-body">
-                <div id="content_acciones"></div>
-                <input type="hidden" id="inp_menus_permisos">
+            <div class="modal-body" style="overflow-y:scroll; height:400px;">
+
+                <div class="panel-body" ng-repeat="action in permission.TblAction">
+                    <div class="col-sm-8" ng-bind="action.descripcion"></div>
+                    <div class="material-switch pull-right col-sm-2">
+                        <input id="action_@{{ action.id }}" type="checkbox" ng-model="actions.dataChecked[action.id]" />
+                        <label for="action_@{{ action.id }}" class="label-info"></label>
+                    </div>
+
+                </div>
+
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" v-on:click.prevent="register_acciones()" {{$insertar}}><i class="fa fa-save"></i> Guardar </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
+                        <i class="fa fa-times-circle"></i> Cancelar
+                    </button>
+                    <button type= "button" class="btn btn-success" ng-click="actionsUserRegister()" >
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
                 </div>
             </div>
 
