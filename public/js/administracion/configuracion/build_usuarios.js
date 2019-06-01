@@ -181,15 +181,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                         $scope.actions.dataChecked[value.id] = true;
                     });
                     console.log($scope.actions.dataChecked);
-                    jQuery.fancybox.open({
-                        'type'      : 'inline'
-                        ,'src'      : "#modal_toAssign_action"
-                        ,'modal'    : true
-                        ,'width'    : 500
-                        ,'height'   : 500
-                        ,'autoSize' : false
-                    });
-
+                    $('#modal_toAssign_action').modal({keyboard: false, backdrop: "static"});
                 }
 
             }).catch(function (error) {
@@ -244,17 +236,20 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
           "menuId"      : $scope.permission.menuId ,
           "actions"     : $scope.actions.dataChecked
         };
+        if ($scope.actions.dataChecked.length > 0){
 
-        ms.requestHttp(url,fields,"POST",false).then(function (response) {
-            if (ms.validateSessionStatus(response)){
-                nf.toastSuccess(response.data.message,success_mgs);
-
-            }
-        }).catch(function (error) {
-            ms.validateStatusError(error);
-        })
-
-
+            ms.requestHttp(url,fields,"POST",false).then(function (response) {
+                if (ms.validateSessionStatus(response)){
+                    nf.toastSuccess(response.data.message,success_mgs);
+                    $('#modal_toAssign_action').modal("hide");
+                    $scope.index();
+                }
+            }).catch(function (error) {
+                ms.validateStatusError(error);
+            });
+            return;
+        }
+        nf.toastError("¡Favor de Seleccionar almenos una acción!",error_mgs);
 
     };
 

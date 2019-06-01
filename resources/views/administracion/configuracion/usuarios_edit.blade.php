@@ -398,21 +398,22 @@
 </div>
 
 
-<div class="" id="modal_toAssign_action" style="display:none;">
+<div class="modal fade" id="modal_toAssign_action" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Asignar Acciones del Menu </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                </button>
+                    <h3>Asignar Acciones del Menu </h3>
             </div>
-            <div class="modal-body" style="overflow-y:scroll; height:400px;">
+            <div class="modal-body" style="overflow-y:scroll; height:500px;">
 
                 <div class="panel-body" ng-repeat="action in permission.TblAction">
-                    <div class="col-sm-8" ng-bind="action.descripcion"></div>
-                    <div class="material-switch pull-right col-sm-2">
+                    <div class="col-sm-3" ng-bind="action.descripcion"></div>
+                    <div class="material-switch pull-right col-sm-3">
                         <input id="action_@{{ action.id }}" type="checkbox" ng-model="actions.dataChecked[action.id]" />
                         <label for="action_@{{ action.id }}" class="label-info"></label>
                     </div>
-
                 </div>
 
             </div>

@@ -17,25 +17,4 @@ class SysUsersPermisosModel extends Model
 	      ,'id_sucursal'
 	      ,'estatus'
 	  ];
-
-	// public function roles(){
-    //     return $this->hasMany('App\Model\Administracion\Configuracion\SysRolesModel','id','id_rol');
-    // }
-    // public function menus(){
-    //     return $this->hasMany('App\Model\Administracion\Configuracion\SysMenuModel','id','id_menu');
-    // }
-    // public function usuarios(){
-    //     return $this->hasMany('App\Model\Administracion\Configuracion\SysUsersModel','id','id_users');
-    // }
-    // public function acciones(){
-    //     return $this->hasMany('App\Model\Administracion\Configuracion\SysAccionesModel','id','id_accion');
-    // }
-    // public function empresas(){
-    //     return $this->hasMany('App\Model\Administracion\Configuracion\SysEmpresasModel','id','id_empresa');
-    // }
-    // public function sucursales(){
-    //     return $this->hasMany('App\Model\Administracion\Configuracion\SysSucursalesModel','id','id_sucursal');
-    // }
-
-
 }

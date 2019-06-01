@@ -13,6 +13,7 @@ use App\Model\Administracion\Configuracion\SysAccionesModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasSecursalesModel;
+use Psy\Util\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -151,6 +152,7 @@ class PermisosController extends MasterController
      */
     public function findActionsByMenu(Request $request, SysUsersModel $users )
     {
+
         try {
             $user = $users->with('acciones')->whereId($request->userId)->first();
             $actions = $user->acciones()->where([
@@ -177,47 +179,6 @@ class PermisosController extends MasterController
         }
     }
 
-    /**
-     *Metodo donde manda a llamar los permisos que tiene el usuario con respectoa todos sus filtros
-     *@access public
-     *@param Request $request
-     *@return void
-     */
-
-    /*public static function permisos( Request $request ){
-
-        $where = [
-          'id_users'        => $request->id_users
-          ,'id_rol'         => $request->id_rol
-          ,'id_empresa'     => $request->id_empresa
-          ,'id_sucursal'    => $request->id_sucursal
-        ];
-        $permisos = SysRolMenuModel::where( $where )->get();
-        if( count($permisos) > 0){
-          return message(true,$permisos,"¡Permisos del usuario!");
-        }
-          return message(false,$permisos,"¡No cuenta con permisos!");
-    }*/
-    /**
-     *Metodo donde se crea manda a llamar los permisos que tiene el usuario con respecto al rol
-     *@access public
-     *@param Request $request
-     *@return void
-     */
-     /*public static function permisos_actions( Request $request){
-
-         $where = [
-            'id_users'     => $request->id_users
-            ,'id_rol'      => $request->id_rol
-            ,'id_empresa'  => $request->id_empresa
-            ,'id_sucursal' => $request->id_sucursal
-            ,'id_menu'     => $request->id_menu
-         ];
-         #debuger($where);
-         $acciones = SysUsersPermisosModel::where( $where )->get();
-         return message(true,$acciones,"¡Acciones del usuario.!");
-
-     }*/
   /**
    *Metodo donde se crea manda  a llamar los permisos que tiene el usuario con respecto al rol
    *@access public
@@ -298,75 +259,63 @@ class PermisosController extends MasterController
      * @access public
      * @param Request $request
      * @param SysUsersPermisosModel $userPermission
-     * @return void
+     * @return JsonResponse
      */
-    public static function createAction( Request $request, SysUsersPermisosModel $userPermission ){
-         #debuger($request->all());
-            var_export($request->all());die();
-
-          $matrix       = $request->matrix;
-          $id_rol       = $request->id_rol;
-          $id_users     = $request->id_users;
-          $conteo       = $request->conteo;
-          $id_menu      = $request->id_menu;
-          $id_empresa   = ($request->id_empresa != "")?$request->id_empresa:0;
-          $id_sucursal  = ($request->id_sucursal != "" )?$request->id_sucursal:0;
-          #SE REALIZA LA CONSULTA PARA OBTENER EL id_permiso
-          $count_acciones = count( SysAccionesModel::where(['estatus' => 1])->get() );
-          if( $count_acciones == $conteo ){ $id_permiso = 7; }else{ $id_permiso = 5; }
-          #se realiza una transaccion
+    public function createAction( Request $request, SysUsersPermisosModel $userPermission )
+    {
           $error = null;
           DB::beginTransaction();
           try {
+              $dataActions = [];
+              foreach ($request->get('actions') as $key => $value){
+                  if($key != 0 && $value != false && $value != NULL){
+                      $dataActions[] = $key;
+                  }
+              }
+            $userPermission->where([
+                "id_empresa"    => $request->get('companyId') ,
+                "id_rol"        => $request->get('rolesId'),
+                "id_users"      => $request->get('userId'),
+                "id_sucursal"   => $request->get('groupId'),
+                "id_menu"       => $request->get('menuId')
+            ])->delete();
 
-            for ($i=0; $i < count( $matrix ) ; $i++) {
+            for ($i=0; $i < count($dataActions) ; $i++) {
 
-                $matrices = explode( '|',$matrix[$i] );
-                $where['id_accion']   = $matrices[0];
-                $where['id_rol']      = $id_rol;
-                $where['id_users']    = $id_users;
-                $where['id_menu']     = $id_menu;
-                $where['id_empresa']  = $id_empresa;
-                $where['id_sucursal'] = $id_sucursal;
-                $select = self::$_model::show_model([],$where, new SysUsersPermisosModel );
-                #debuger($select);
-                $data['estatus']      = ($matrices[1] === "true")? 1 : 0;
-                $data['id_rol']       = $id_rol;
-                $data['id_users']     = $id_users;
-                $data['id_empresa']   = $id_empresa;
-                $data['id_sucursal']  = $id_sucursal;
-                $data['id_accion']    = $matrices[0];
-                $data['id_menu']      = $id_menu;
-                $data['id_permiso']   = $id_permiso;
-                if( $select ){
-                  $where = [
-                    'id_rol'        => $id_rol
-                    ,'id_users'     => $id_users
-                    ,'id_menu'      => $id_menu
-                    ,'id_empresa'   => $id_empresa
-                    ,'id_sucursal'  => $id_sucursal
-                    ,'id_accion'    => $matrices[0]
-                  ];
-                   $response[] = self::$_model::update_model( $where, $data, new SysUsersPermisosModel );
-                }else{
-                   $response[] = self::$_model::create_model( [$data], new SysUsersPermisosModel );
-                }
-
+                $dataRegister = [
+                    "id_empresa"    => $request->get('companyId') ,
+                    "id_rol"        => $request->get('rolesId') ,
+                    "id_users"      => $request->get('userId') ,
+                    "id_sucursal"   => $request->get('groupId'),
+                    "id_menu"       => $request->get('menuId') ,
+                    "id_accion"     => $dataActions[$i] ,
+                    "id_permiso"    => 5 ,
+                    "estatus"       => true
+                ];
+                $userPermission->create($dataRegister);
             }
 
             DB::commit();
             $success = true;
           } catch (\Exception $e) {
               $success = false;
-              $error = $e->getMessage();
+              $error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
               DB::rollback();
           }
 
           if ($success) {
-              #return redirect()->route('configuracion.permisos');
-              return message(true,$response,"¡Se cambiaron las acciones con exito!");
+              return $this->findActionsByMenu( new Request($request->all()), new SysUsersModel );
+              /*return new JsonResponse([
+                  "success" => $success ,
+                  "data" => $createActions,
+                  "message" => self::$message_success
+              ], Response::HTTP_OK);*/
           }
-          return message( false, $error ,'¡Ocurrio un error, favor de verificar!');
+        return new JsonResponse([
+            "success"   => $success ,
+            "data"      => $error,
+            "message"   => self::$message_error
+        ], Response::HTTP_BAD_REQUEST);
 
     }
 
