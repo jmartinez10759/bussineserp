@@ -84,6 +84,32 @@ app.factory('FactoryController',['$http', function (http) {
         return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
     };
 
+    FactoryController.prototype.domain = function (url) {
+        var pathGeneral = document.getElementsByTagName("META");
+        var content = "";
+        for (var i = 0; i < pathGeneral.length; i++) {
+            if (pathGeneral[i].name == 'ruta-general') {
+                content = pathGeneral[i].content;
+            }
+        }
+        var meta = content.split('/');
+        var ruta = window.location.href.split("/");
+        var http = window.location.protocol;
+        var host = window.location.host;
+        var public = ( !angular.isUndefined(ruta[4]) && ruta[4] == "public") ? ruta[4] + "/" : "";
+        var project = (!angular.isUndefined(ruta[3])) ? ruta[3] + "/" : "";
+
+        if ( !angular.isUndefined(meta[1]) && meta[1] == "index.php" || meta[1] == "server.php") {
+            return http + "//" + host + "/" + url;
+        }
+        if (public && project) {
+            return http + "//" + host + "/" + project + public + url;
+        }
+        if (public == "" && project) {
+            return http + "//" + host + "/" + project + url;
+        }
+    };
+
     return new FactoryController();
 
 }]);

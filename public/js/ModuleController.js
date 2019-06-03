@@ -8,4 +8,5 @@ var app = angular.module('application',[
     "components" ,
     "stringToNumber" ,
     "html-unsafe" ,
+    "fixed.table.header"
 ]);

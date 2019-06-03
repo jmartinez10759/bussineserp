@@ -6,7 +6,7 @@ const URL = {
     ,url_destroy          : "usuarios/destroy"
 }
 
-app.controller('UsuarioController', ['ServiceController','FactoryController','NotificationsFactory','masterservice','$scope', '$http', '$location', function( ms,fm,nf,masterservice ,$scope, $http, $location ) {
+app.controller('UsuarioController', ['ServiceController','FactoryController','NotificationsFactory','$scope','$location', function( sc,fm,nf,$scope, $location ) {
 
     $scope.constructor = function () {
         $scope.datos = [];
@@ -25,10 +25,10 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     };
 
     $scope.index = function () {
-        let url = domain(URL.url_all);
+        let url = fm.domain(URL.url_all);
         let fields = {};
-        ms.requestHttp(url, fields, 'GET', false).then(function (response) {
-            if (ms.validateSessionStatus(response)) {
+        sc.requestHttp(url, fields, 'GET', false).then(function (response) {
+            if (sc.validateSessionStatus(response)) {
                 console.log(response.data.data);
                 $scope.datos = response.data.data.users;
                 $scope.cmbCompanies = response.data.data.companies;
@@ -41,40 +41,36 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     $scope.insertRegister = function () {
         var url = domain(URL.url_insert);
         var fields = $scope.insert;
-        ms.requestHttp(url, fields, 'POST', false).then(function (response) {
-            if (ms.validateSessionStatus(response)) {
-                nf.toastSuccess(response.data.message, title);
+        sc.requestHttp(url, fields, 'POST', false).then(function (response) {
+            if (sc.validateSessionStatus(response)) {
+                nf.toastSuccess(response.data.message, nf.titleMgsSuccess);
                 jQuery.fancybox.close({
                     'type'      : 'inline'
                     ,'src'      : "#modal_add_register"
                 });
                 $scope.index();
             }
-        }).catch(function (error) {
-            ms.validateStatusError(error);
         });
     };
 
     $scope.updateRegister = function () {
         let discrim = ['empresas', 'sucursales', 'roles', 'created_at', 'id_bitacora'];
-        let url = domain(URL.url_update);
-        let fields = ms.mapObject($scope.update, discrim, false);
-        ms.requestHttp(url, fields, 'PUT', false).then(function (response) {
-            if (ms.validateSessionStatus(response)) {
-                nf.toastInfo(response.data.message, title);
-                $('#modal_edit_register').modal('hide');
-                jQuery('#tr_' + $scope.update.id).effect("highlight", {}, 8000);
+        let url = fm.domain(URL.url_update);
+        let fields = sc.mapObject($scope.update, discrim, false);
+        sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
+            if (sc.validateSessionStatus(response)) {
+                nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                nf.modal("#modal_edit_register",true);
+                nf.trEffect($scope.update.id);
                 $scope.index();
             }
-        }).catch(function (error) {
-            ms.validateStatusError(error);
         });
 
     };
 
     $scope.editRegister = function (entry) {
         let discrim = ['$$hashKey', 'password'];
-        $scope.update = ms.mapObject(entry, discrim, false);
+        $scope.update = sc.mapObject(entry, discrim, false);
         $scope.update.name = entry.name + " " + entry.first_surname + " " + entry.second_surname;
         var i = 0;
         $scope.update.id_empresa = [];
@@ -91,29 +87,26 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         $scope.update.id_rol = angular.isDefined($scope.update.roles[0]) ? $scope.update.roles[0].id : 0;
         $scope.findGroupOfCompany($scope.update.id_empresa);
         console.log($scope.update);
-
-        $('#modal_edit_register').modal({keyboard: false, backdrop: "static"});
+        nf.modal("#modal_edit_register");
     };
 
     $scope.destroyRegister = function (id) {
-        var url = domain(URL.url_destroy+"/"+id+"/user");
+        var url = fm.domain(URL.url_destroy+"/"+id+"/user");
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
-            ms.requestHttp(url, null, "DELETE", false).then(function (response) {
-                if (ms.validateSessionStatus(response)) {
-                    nf.toastSuccess(response.data.message, title);
+            sc.requestHttp(url, null, "DELETE", false).then(function (response) {
+                if (sc.validateSessionStatus(response)) {
+                    nf.toastSuccess(response.data.message, nf.titleMgsSuccess);
                     $scope.index();
                 }
-            }).catch(function (error) {
-                ms.validateStatusError(error);
             });
         }, null, "SI", "NO");
 
     };
 
     $scope.permissionMenuUsers = function( id ){
-        var url = domain(URL.url_edit+"/"+id);
-        ms.requestHttp(url,null,"GET", false).then(function (response) {
-            if (ms.validateSessionStatus(response)){
+        var url = fm.domain(URL.url_edit+"/"+id);
+        sc.requestHttp(url,null,"GET", false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
 
                 $scope.permission.id            = id;
                 $scope.permission.companyId     = null;
@@ -129,17 +122,14 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                 $scope.permission.rolesId       = angular.isDefined(response.data.data.rolesByUser[0])? response.data.data.rolesByUser[0].id : 0 ;
 
                 console.log($scope.permission);
-                $('#modal_permission_user').modal({keyboard: false, backdrop: "static"});
+                nf.modal("#modal_permission_user");
             }
-        }).catch(function (error) {
-            console.log(error);
-            ms.validateStatusError(error);
         });
     };
 
     $scope.findPermissionMenuByUser = function(groupsId){
 
-        var url = domain("setting/users/permission");
+        var url = fm.domain("setting/users/permission");
         var fields = {
             "companyId" : $scope.permission.companyId ,
             "rolesId"   : $scope.permission.rolesId ,
@@ -147,8 +137,8 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
             "userId"    : $scope.permission.id
         };
         $scope.permission.dataChecked = [];
-        ms.requestHttp(url,fields,"POST",false).then(function (response) {
-            if (ms.validateSessionStatus(response)){
+        sc.requestHttp(url,fields,"POST",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
                 console.log(response.data.data);
                 $scope.permission.disabledCheck = false;
                 angular.forEach( response.data.data.menusByUser, function (value, key ) {
@@ -157,8 +147,6 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                 return;
             }
             $scope.permission.disabledCheck = true;
-        }).catch(function (error) {
-            ms.validateStatusError(error);
         });
 
     };
@@ -167,7 +155,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         $scope.permission.menuId = menuId;
         if ($scope.permission.dataChecked[menuId]){
 
-            var url = domain("setting/menus/action");
+            var url = fm.domain("setting/menus/action");
             var fields = {
                 "menuId"    : menuId ,
                 "companyId" : $scope.permission.companyId ,
@@ -176,17 +164,15 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                 "userId"    : $scope.permission.id
             };
             $scope.actions.dataChecked = [];
-            ms.requestHttp(url,fields,"POST",false).then(function (response) {
-                if (ms.validateSessionStatus(response)){
+            sc.requestHttp(url,fields,"POST",false).then(function (response) {
+                if (sc.validateSessionStatus(response)){
                     angular.forEach( response.data.data.actionsByUser, function (value, key ) {
                         $scope.actions.dataChecked[value.id] = true;
                     });
                     console.log($scope.actions.dataChecked);
-                    $('#modal_toAssign_action').modal({keyboard: false, backdrop: "static"});
+                    nf.modal("#modal_toAssign_action");
                 }
 
-            }).catch(function (error) {
-                ms.validateStatusError(error);
             });
 
         }else {
@@ -197,40 +183,36 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     };
 
     $scope.findGroupOfCompany = function (companyId) {
-        var url = domain('empresas/findGroups');
+        var url = fm.domain('empresas/findGroups');
         var fields = {'id_empresa': companyId };
 
-        ms.requestHttp(url,fields,"POST",false).then(function (response) {
-            if (ms.validateSessionStatus(response)){
+        sc.requestHttp(url,fields,"POST",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
                 $scope.cmbGroups = response.data.data;
                 $scope.permission.cmbGroups = response.data.data;
                 console.log( $scope.cmbGroups );
             }
-        }).catch(function (error) {
-            ms.validateStatusError(error);
         });
 
     };
 
     $scope.findByUserGroupOfCompany = function (companyId) {
-        var url = domain('empresas/findByUserGroups');
+        var url = fm.domain('empresas/findByUserGroups');
         var fields = {
             'companyId' : companyId ,
             'rolId'     : $scope.permission.rolesId ,
             'userId'    : $scope.permission.id
         };
-        ms.requestHttp(url,fields,"POST",false).then(function (response) {
-            if (ms.validateSessionStatus(response)){
+        sc.requestHttp(url,fields,"POST",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
                 $scope.permission.cmbGroups = response.data.data;
                 console.log( $scope.permission.cmbGroups );
             }
-        }).catch(function (error) {
-            ms.validateStatusError(error);
         });
     };
     
     $scope.actionsUserRegister = function () {
-        var url = domain("setting/actions/register");
+        var url = fm.domain("setting/actions/register");
         var fields = {
           "userId"      : $scope.permission.id ,
           "rolesId"     : $scope.permission.rolesId ,
@@ -241,23 +223,21 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         };
         if ($scope.actions.dataChecked.length > 0){
 
-            ms.requestHttp(url,fields,"POST",false).then(function (response) {
-                if (ms.validateSessionStatus(response)){
-                    nf.toastSuccess(response.data.message,success_mgs);
-                    $('#modal_toAssign_action').modal("hide");
+            sc.requestHttp(url,fields,"POST",false).then(function (response) {
+                if (sc.validateSessionStatus(response)){
+                    nf.toastSuccess(response.data.message,nf.titleMgsSuccess);
+                    nf.modal('#modal_toAssign_action',true);
                     $scope.index();
                 }
-            }).catch(function (error) {
-                ms.validateStatusError(error);
             });
             return;
         }
-        nf.toastError("¡Favor de Seleccionar almenos una acción!",error_mgs);
+        nf.toastError("¡Favor de Seleccionar almenos una acción!",nf.titleMgsError);
 
     };
 
     $scope.permissionUserRegister = function () {
-        var url = domain("setting/permission/register");
+        var url = fm.domain("setting/permission/register");
         var fields = {
             "userId"      : $scope.permission.id ,
             "rolesId"     : $scope.permission.rolesId ,
@@ -267,17 +247,16 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         };
         if ($scope.permission.dataChecked.length > 0){
 
-            ms.requestHttp(url,fields,"POST",false).then(function (response) {
-                if (ms.validateSessionStatus(response)){
-                    nf.toastSuccess(response.data.message,success_mgs);
-                    $('#modal_permission_user').modal("hide");
+            sc.requestHttp(url,fields,"POST",false).then(function (response) {
+                if (sc.validateSessionStatus(response)){
+                    nf.toastSuccess(response.data.message,nf.titleMgsSuccess);
+                    nf.modal("#modal_permission_user",true);
                     $scope.index();
                 }
             });
             return;
         }
-        nf.toastWarning("¡Favor de seleccionar un menu!",error_mgs);
-
+        nf.toastWarning("¡Favor de seleccionar un menu!",nf.titleMgsError);
 
     }
 
