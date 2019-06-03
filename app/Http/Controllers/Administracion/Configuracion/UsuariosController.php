@@ -33,132 +33,6 @@ class UsuariosController extends MasterController
         parent::__construct();
     }
     /**
-     *Metodo para obtener la vista y cargar los datos
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public function indexx()
-    {
-        #debuger(Session::all());
-        $response = SysUsersModel::with(['menus' => function ($query) {
-            return $query->where(['sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa')])->get();
-        }, 'roles' => function ($query) {
-            return $query->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');
-        }, 'details', 'bitacora']);
-
-        if (Session::get('id_rol') == 1) {
-            $response = $response->orderBy('id', 'DESC')->get();
-        } else {
-            $data = $response->with(['empresas' => function ($query) {
-                return $query->where(['id' => Session::get('id_empresa')]);
-            }])->where('id', '!=', Session::get('id'))->where('id', '!=', 1)->orderBy('id', 'DESC')->get();
-            $response = [];
-            foreach ($data as $respuesta) {
-                if (count($respuesta->empresas) > 0) {
-                    $response[] = $respuesta;
-                }
-            }
-        }
-        $eliminar = (Session::get('permisos')['DEL'] == false) ? 'style="display:block" ' : 'style="display:none" ';
-        $asignar_permisos = (Session::get('id_rol') == 1 || Session::get('permisos')['PER'] == false) ? 'style="display:block" ' : 'style="display:none" ';
-
-        $registros = [];
-        foreach ($response as $respuesta) {
-            $id['id'] = $respuesta->id;
-            $editar = build_acciones_usuario($id, 'v-editar_register', 'Editar', 'btn btn-primary', 'fa fa-edit', 'title="editar"');
-            $borrar = build_acciones_usuario($id, 'v-destroy_register', 'Borrar', 'btn btn-danger', 'fa fa-trash', 'title="borrar"' . $eliminar);
-            $permisos = build_acciones_usuario($id, 'v-permisos', 'Permisos', 'btn btn-info', 'fa fa-gears', 'title="Asignar Permisos" ' . $asignar_permisos);
-            $registros[] = [
-                $respuesta->id,
-                $respuesta->name . " " . $respuesta->first_surname . " " . $respuesta->second_surname
-                , $respuesta->email, self::_roles($respuesta->roles)
-                , (isset($respuesta->bitacora->conect) && $respuesta->bitacora->conect == 1) ? '<span class="label label-success">En Linea</span>' : '<span class="label label-danger">Desconectado</span>'
-                , (isset($respuesta->bitacora->time_conected) && $respuesta->bitacora->time_conected !== null) ? $respuesta->bitacora->time_conected : ""
-                , (isset($respuesta->bitacora->created_at) && $respuesta->bitacora->created_at !== null) ? $respuesta->bitacora->created_at : ""
-                , (isset($respuesta->bitacora->updated_at) && $respuesta->bitacora->updated_at !== null) ? time_fechas($respuesta->bitacora->updated_at, timestamp()) : ""
-                , ($respuesta->estatus == 1) ? "ACTIVO" : "BAJA"
-                , $editar
-                , $permisos
-                , $borrar
-            ];
-        }
-        $titulos = [
-            'id', 'Nombre Completo', 'Correo', 'Roles', 'Estatus Conexión', 'Tiempo Conexión', 'Fecha Conexión', 'Hace Cuanto', 'Estatus', '', '', ''
-        ];
-        $table = [
-            'titulos' => $titulos, 'registros' => $registros, 'id' => "datatable", 'class' => "fixed_header"
-        ];
-      #se crea el dropdown
-        $roles = dropdown([
-            'data'=> (Session::get('id_rol') == 1) ? SysRolesModel::where(['estatus' => 1])->get() : $this->_consulta( new SysRolesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')],false )
-            , 'value'     => 'id'
-            , 'text'      => 'perfil'
-            , 'name'      => 'cmb_roles'
-            , 'class'     => 'form-control'
-            , 'leyenda'   => 'Seleccione Opcion'
-            , 'attr'      => 'data-live-search="true" '
-            , 'multiple'  => ''
-        ]);
-
-        $roles_edit = dropdown([
-            'data'=> (Session::get('id_rol') == 1) ? SysRolesModel::where(['estatus' => 1])->get() : $this->_consulta( new SysRolesModel,[],['estatus' => 1],['id' => Session::get('id_empresa')],false )
-            , 'value'     => 'id'
-            , 'text'      => 'perfil'
-            , 'name'      => 'cmb_roles_edit'
-            , 'class'     => 'form-control'
-            , 'leyenda'   => 'Seleccione Opcion'
-            , 'attr'      => 'data-live-search="true" '
-            , 'multiple'  => ''
-        ]);
-
-        /*$empresas = dropdown([
-            'data' => (Session::get('id_rol') == 1) ? SysEmpresasModel::where(['estatus' => 1])->get() : $this->_consulta_employes(new SysUsersModel)
-            , 'value'     => 'id'
-            , 'text'      => 'nombre_comercial'
-            , 'name'      => 'cmb_empresas'
-            , 'class'     => 'form-control'
-            , 'leyenda'   => 'Todas las Empresas'
-            , 'attr'      => 'data-live-search="true" '
-            , 'event'     => 'v-change_empresas("cmb_sucursales","cmb_empresas","div_sucursales")'
-            , 'multiple'  => ''
-        ]);*/
-
-        /*$empresas_edit = dropdown([
-            'data' => (Session::get('id_rol') == 1) ? SysEmpresasModel::where(['estatus' => 1])->get() : $this->_consulta_employes(new SysUsersModel)
-            , 'value' => 'id'
-            , 'text' => 'nombre_comercial'
-            , 'name' => 'cmb_empresas_edit'
-            , 'class' => 'form-control'
-            , 'leyenda' => 'Todas las Empresas'
-            , 'attr' => 'data-live-search="true" '
-            , 'event' => 'v-change_empresas("cmb_sucursal_edit","cmb_empresas_edit","div_edit_sucursales")'
-            , 'multiple' => ''
-        ]);*/
-
-        $data = [
-            'page_title' => "Configuracion"
-            , 'title' => "Usuarios"
-            , 'subtitle' => "Creacion Usuarios"
-           /* , 'data_table' => data_table($table)
-            , 'select_roles' => $roles, 'select_empresas' => $empresas
-            , 'select_empresas_edit' => $empresas_edit
-            , 'select_roles_edit' => $roles_edit*/
-            , 'titulo_modal' => "Agregar Usuario"
-            , 'titulo_modal_edit' => "Actualizar Usuario"
-            , 'campo_1' => 'Nombre Completo'
-            , 'campo_2' => 'Correo'
-            , 'campo_3' => 'Contraseña'
-            , 'campo_4' => 'Tipo de Rol'
-            , 'campo_5' => 'Estatus'
-            , 'campo_6' => 'Empresas'
-            , 'campo_7' => 'Sucursales'
-        ];
-        return self::_load_view('administracion.configuracion.usuarios', $data);
-
-    }
-
-    /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|void
      */
     public function index()
@@ -185,7 +59,8 @@ class UsuariosController extends MasterController
     }
 
     /**
-     * @return \App\Http\Controllers\json|string
+     * This method is for get information of the users
+     * @return JsonResponse
      */
     public function all()
     {
@@ -196,24 +71,34 @@ class UsuariosController extends MasterController
                 ,'companies'    => SysEmpresasModel::whereEstatus(1)->get()
                 ,'groups'       => SysSucursalesModel::whereEstatus(1)->get()
             ];
-            return $this->_message_success(200, $data , self::$message_success);
+
+            return new JsonResponse([
+                "success" => TRUE ,
+                "data"    => $data ,
+                "message" => self::$message_success
+            ],Response::HTTP_OK);
+
         } catch (\Exception $e ) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-            return $this->show_error(6, $error);
+            return new JsonResponse([
+                "success" => FALSE ,
+                "data"    => $error ,
+                "message" => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
         }
     }
 
     /**
-     *This method is for get the data of user
+     * This method is for get the data of user
      * @access public
      * @param int|null $userId
-     * @return void
+     * @return JsonResponse
      */
     public function show( int $userId = null )
     {
         try {
             $users      = SysUsersModel::with(['menus','roles','empresas','sucursales','details'])->whereId($userId)->first();
-            $action     = ( Session::get('id_rol') == 1 ) ? SysAccionesModel::whereEstatus(1)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysEmpresasModel);
+            $action     = ( Session::get('id_rol') == 1 ) ? SysAccionesModel::whereEstatus(1)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysUsersModel);
             $menus      = ( Session::get('id_rol') == 1 ) ? SysMenuModel::whereEstatus(1)->orderBy('orden', 'asc')->get() : $this->_menusByCompanies(new SysUsersModel);
             $menuPadre = [];
             foreach ($menus as $menu ){
@@ -241,7 +126,7 @@ class UsuariosController extends MasterController
             ];
 
             return new JsonResponse([
-                "success" => true,
+                "success" => TRUE,
                 "data"    => $data,
                 "message" => self::$message_success
             ],Response::HTTP_OK);

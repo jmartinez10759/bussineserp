@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
+use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\MasterController;
@@ -113,23 +114,23 @@ class PermisosController extends MasterController
     public function findMenuByUsers( Request $request, SysUsersModel $users )
     {
         try {
-            if ( !$request->groupId || $request->groupId == 0 || $request->groupId == null){
+            if ( !$request->get("groupId")|| $request->get("groupId") == 0 || $request->get("groupId") == NULL){
                 return new JsonResponse([
-                    "success"   => false,
-                    "data"      => "Groupid no tiene Informacion",
+                    "success"   => FALSE ,
+                    "data"      => "Groupid no tiene Informacion" ,
                     "message"   => self::$message_error
                 ],Response::HTTP_BAD_REQUEST);
             }
-            $user = $users->with('menus')->whereId($request->userId)->first();
+            $user = $users->with('menus')->whereId($request->get("userId"))->first();
             $permission = $user->menus()->where([
                 'sys_rol_menu.estatus'      => true ,
-                'sys_rol_menu.id_empresa'   => $request->companyId ,
-                'sys_rol_menu.id_rol'       => $request->rolesId ,
-                'sys_rol_menu.id_sucursal'  => $request->groupId
+                'sys_rol_menu.id_empresa'   => $request->get("companyId"),
+                'sys_rol_menu.id_rol'       => $request->get("rolesId"),
+                'sys_rol_menu.id_sucursal'  => $request->get("groupId")
             ])->groupby('sys_rol_menu.id_menu')->get();
 
             return new JsonResponse([
-                "success"   => true,
+                "success"   => TRUE ,
                 "data"      => ["menusByUser" => $permission],
                 "message"   => self::$message_success
             ],Response::HTTP_OK);
@@ -137,7 +138,7 @@ class PermisosController extends MasterController
         } catch ( \Exception $error ) {
             $errors = $error->getMessage()." ".$error->getFile()." ".$error->getLine();
             return new JsonResponse([
-                "success"   => false,
+                "success"   => FALSE,
                 "data"      => $errors,
                 "message"   => self::$message_error
             ],Response::HTTP_BAD_REQUEST);
@@ -179,79 +180,62 @@ class PermisosController extends MasterController
         }
     }
 
-  /**
-   *Metodo donde se crea manda  a llamar los permisos que tiene el usuario con respecto al rol
-   *@access public
-   *@param Request $request
-   *@return void
-   */
-   public function store( Request $request ){
-
-      $matrix       = $request->matrix;
-      $id_rol       = $request->id_rol;
-      $id_users     = $request->id_users;
-      $id_empresa   = ($request->id_empresa)? $request->id_empresa :0;
-      $id_sucursal  = ($request->id_sucursal)? $request->id_sucursal:0;
-      #se realiza una transaccion
+    /**
+     * This method is for create the permission of menu by User
+     * @access public
+     * @param Request $request
+     * @param SysRolMenuModel $rolesMenus
+     * @return void
+     */
+   public function createPermission( Request $request, SysRolMenuModel $rolesMenus )
+   {
       $error = null;
       DB::beginTransaction();
-      try { 
-        $where_delete = [
-            'id_users'      => $id_users
-            ,'id_rol'       => $id_rol
-            ,'id_empresa'   => $id_empresa
-            ,'id_sucursal'  => $id_sucursal
-        ];
-          SysRolMenuModel::where($where_delete)->delete();
-        for ($i=0; $i < count( $matrix ) ; $i++) {
+      try {
+          $dataMenus = [];
+          foreach ($request->get('menus') as $key => $value){
+              if($key != 0 && $value != false && $value != NULL){
+                  $dataMenus [] = $key;
+              }
+          }
+          $rolesMenus->where([
+              "id_empresa"    => $request->get('companyId') ,
+              "id_rol"        => $request->get('rolesId'),
+              "id_users"      => $request->get('userId'),
+              "id_sucursal"   => $request->get('groupId'),
+          ])->delete();
 
-            $matrices = explode( '|',$matrix[$i] );
-            $where['id_users']      = $id_users;
-            $where['id_rol']        = $id_rol;
-            $where['id_empresa']    = $id_empresa;
-            $where['id_sucursal']   = $id_sucursal;
-            $where['id_menu']       = $matrices[0];
-            $select = self::$_model::show_model([],$where, new SysRolMenuModel );
-            $data['estatus']      = ($matrices[1] === "true")? 1 : 0;
-            $data['id_rol']       = $id_rol;
-            $data['id_users']     = $id_users;
-            $data['id_menu']      = $matrices[0];
-            $data['id_empresa']   = $id_empresa;
-            $data['id_sucursal']  = $id_sucursal;
-            $condicion = [
-              'id_users'     => $id_users
-              ,'id_rol'       => $id_rol
-              ,'id_empresa'   => $id_empresa
-              ,'id_sucursal'  => $id_sucursal
-              ,'id_menu'      => $matrices[0]];
-            $data['id_permiso']   = (data_march(SysUsersPermisosModel::where($condicion)->get()) )? data_march(SysUsersPermisosModel::where($condicion)->get())[0]->id_permiso: 5;
-            if( $select ){
-              $where = [
-                'id_users'      => $id_users
-                ,'id_rol'       => $id_rol
-                ,'id_empresa'   => $id_empresa
-                ,'id_sucursal'  => $id_sucursal
-                ,'id_menu'      => $matrices[0]
-              ];
-               $response[] = self::$_model::update_model( $where, $data, new SysRolMenuModel );
-            }else{
-               $response[] = SysRolMenuModel::create($data);
-            }
+        for ($i=0; $i < count($dataMenus) ; $i++) {
 
+            $dataRegister = [
+                "id_empresa"    => $request->get('companyId') ,
+                "id_rol"        => $request->get('rolesId') ,
+                "id_users"      => $request->get('userId') ,
+                "id_sucursal"   => $request->get('groupId') ,
+                "id_menu"       => $dataMenus[$i] ,
+                "id_permiso"    => 7 ,
+                "estatus"       => TRUE
+            ];
+            $rolesMenus->create($dataRegister);
         }
 
         DB::commit();
         $success = true;
       } catch (\Exception $e) {
           $success = false;
-          $error = $e->getMessage();
+          $error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
           DB::rollback();
       }
        
        if ($success) {
-            return $this->_message_success(201,$success, "¡Se cambiaron los Permisos con exito!" );
-          }
-          return $this->show_error(6,$error, self::$message_error );
+           return $this->findMenuByUsers( new Request($request->all()), new SysUsersModel );
+       }
+        return new JsonResponse([
+            "success"   =>  $success,
+            "data"      =>  $error,
+            "message"   =>  self::$message_error,
+        ],Response::HTTP_BAD_REQUEST);
+       return $this->show_error(6,$error, self::$message_error );
    }
 
     /**
@@ -289,7 +273,7 @@ class PermisosController extends MasterController
                     "id_sucursal"   => $request->get('groupId'),
                     "id_menu"       => $request->get('menuId') ,
                     "id_accion"     => $dataActions[$i] ,
-                    "id_permiso"    => 5 ,
+                    "id_permiso"    => 7 ,
                     "estatus"       => true
                 ];
                 $userPermission->create($dataRegister);
@@ -305,11 +289,6 @@ class PermisosController extends MasterController
 
           if ($success) {
               return $this->findActionsByMenu( new Request($request->all()), new SysUsersModel );
-              /*return new JsonResponse([
-                  "success" => $success ,
-                  "data" => $createActions,
-                  "message" => self::$message_success
-              ], Response::HTTP_OK);*/
           }
         return new JsonResponse([
             "success"   => $success ,

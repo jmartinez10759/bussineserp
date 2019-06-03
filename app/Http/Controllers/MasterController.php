@@ -1062,10 +1062,21 @@ abstract class MasterController extends Controller
             ,"sys_rol_menu.id_empresa"  => Session::get('id_empresa')
             ,"sys_rol_menu.id_sucursal" => Session::get('id_sucursal')
             ,"sys_rol_menu.id_rol"      => Session::get('id_rol')
-        ])->groupby('id')->orderby('order','asc')->get();
+        ])->groupby('id')->orderby('orden','ASC')->get();
 
     }
 
+    protected function _actionByCompanies(SysUsersModel $users )
+    {
+        $users = $users->with('acciones')->whereId(Session::get('id'))->first();
+        return $users->acciones()->where([
+            "sys_users_permisos.estatus"      => TRUE
+            ,"sys_users_permisos.id_empresa"  => Session::get('id_empresa')
+            ,"sys_users_permisos.id_sucursal" => Session::get('id_sucursal')
+            ,"sys_users_permisos.id_rol"      => Session::get('id_rol')
+        ])->groupby('id')->orderby('id','ASC')->get();
+
+    }
     /**
      * Metodo para obtener la validacion de la consulta
      * @access public

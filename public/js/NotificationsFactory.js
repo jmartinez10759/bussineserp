@@ -56,6 +56,10 @@ app.factory("NotificationsFactory",["sweetAlert","toastr","swangular", function 
         toastr.info(msg,title);
     };
 
+    NotificationsFactory.prototype.toastWarning = function(msg, title) {
+        toastr.warning(msg,title);
+    };
+
 
     return new NotificationsFactory();
 }]);

@@ -389,7 +389,7 @@
                         <i class="fa fa-times-circle"></i> Cancelar
                     </button>
                     <button type= "button" class="btn btn-success" ng-click="permissionUserRegister()" >
-                        <i class="fa fa-save"></i> Asignar Permisos
+                        <i class="fa fa-save"></i> Asignar
                     </button>
                 </div>
             </div>

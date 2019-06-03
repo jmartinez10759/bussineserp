@@ -204,11 +204,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'menus.update'
     ]);
 
-############################ MODULO DE GENERAR PERMISOS #####################
-    Route::get('/configuracion/permisos', [
-        'uses'      => 'Administracion\Configuracion\PermisosController@index'
-        ,'as'       => 'configuracion.permisos'
-    ]);
+############################ MODULO DE GENERAR PERMISOS ################################################################
 
     Route::post('/setting/users/permission', [
         'uses'      => 'Administracion\Configuracion\PermisosController@findMenuByUsers'
@@ -220,39 +216,14 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'setting.menus.action'
     ]);
 
-		Route::get('/permisos/roles', [
-        'uses'      => 'Administracion\Configuracion\PermisosController@show_roles'
-        ,'as'       => 'permisos.roles'
-    ]);
-
-		Route::get('/permisos/empresas', [
-        'uses'      => 'Administracion\Configuracion\PermisosController@show_empresas'
-        ,'as'       => 'permisos.empresas'
-    ]);
-
-		Route::get('/permisos/sucursales', [
-        'uses'      => 'Administracion\Configuracion\PermisosController@show_sucursales'
-        ,'as'       => 'permisos.sucursales'
-    ]);
-
-    Route::get('/permisos', [
-      'uses'      => 'Administracion\Configuracion\PermisosController@permisos'
-      ,'as'       => 'permisos'
-    ]);
-
-    Route::post('/permisos/register', [
-      'uses'      => 'Administracion\Configuracion\PermisosController@store'
-      ,'as'       => 'permisos.register'
+    Route::post('/setting/permission/register', [
+        'uses'      => 'Administracion\Configuracion\PermisosController@createPermission'
+        ,'as'       => 'setting.permission.register'
     ]);
 
     Route::post('/setting/actions/register', [
-      'uses'      => 'Administracion\Configuracion\PermisosController@createAction'
-      ,'as'       => 'setting.actions.register'
-    ]);
-
-    Route::get('/actions', [
-      'uses'      => 'Administracion\Configuracion\PermisosController@permisos_actions'
-      ,'as'       => 'permisos.actions'
+        'uses'      => 'Administracion\Configuracion\PermisosController@createAction'
+        ,'as'       => 'setting.actions.register'
     ]);
 
 ########################### SECCION ROLES #####################################

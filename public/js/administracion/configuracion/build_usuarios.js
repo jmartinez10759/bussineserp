@@ -29,11 +29,11 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         let fields = {};
         ms.requestHttp(url, fields, 'GET', false).then(function (response) {
             if (ms.validateSessionStatus(response)) {
-                console.log(response.data.result);
-                $scope.datos = response.data.result.users;
-                $scope.cmbCompanies = response.data.result.companies;
-                $scope.cmbRoles = response.data.result.roles;
-                $scope.cmbGroupsEdit = response.data.result.groups;
+                console.log(response.data.data);
+                $scope.datos = response.data.data.users;
+                $scope.cmbCompanies = response.data.data.companies;
+                $scope.cmbRoles = response.data.data.roles;
+                $scope.cmbGroupsEdit = response.data.data.groups;
             }
         });
     };
@@ -132,6 +132,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                 $('#modal_permission_user').modal({keyboard: false, backdrop: "static"});
             }
         }).catch(function (error) {
+            console.log(error);
             ms.validateStatusError(error);
         });
     };
@@ -205,6 +206,8 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                 $scope.permission.cmbGroups = response.data.data;
                 console.log( $scope.cmbGroups );
             }
+        }).catch(function (error) {
+            ms.validateStatusError(error);
         });
 
     };
@@ -252,5 +255,30 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         nf.toastError("¡Favor de Seleccionar almenos una acción!",error_mgs);
 
     };
+
+    $scope.permissionUserRegister = function () {
+        var url = domain("setting/permission/register");
+        var fields = {
+            "userId"      : $scope.permission.id ,
+            "rolesId"     : $scope.permission.rolesId ,
+            "companyId"   : $scope.permission.companyId ,
+            "groupId"     : $scope.permission.groupsId ,
+            "menus"       : $scope.permission.dataChecked
+        };
+        if ($scope.permission.dataChecked.length > 0){
+
+            ms.requestHttp(url,fields,"POST",false).then(function (response) {
+                if (ms.validateSessionStatus(response)){
+                    nf.toastSuccess(response.data.message,success_mgs);
+                    $('#modal_permission_user').modal("hide");
+                    $scope.index();
+                }
+            });
+            return;
+        }
+        nf.toastWarning("¡Favor de seleccionar un menu!",error_mgs);
+
+
+    }
 
 }]);
