@@ -280,11 +280,11 @@ class EmpresasController extends MasterController
   * @access public
   * @return void
   */
-  public static function lista(){
-        $data['titulo'] = "LISTADO DE EMPRESAS";
-        $data['titulo_sucusales'] = "LISTADO DE SUCURSALES";
-        return view('administracion.configuracion.list_bussines',$data);
-  
+  public static function listCompanies()
+  {
+      $data['titulo'] = "LISTADO DE EMPRESAS";
+      $data['titulo_sucusales'] = "LISTADO DE SUCURSALES";
+      return view('administracion.configuracion.list_bussines',$data);
   }
 
   public static function load_empresa(){
@@ -303,13 +303,14 @@ class EmpresasController extends MasterController
         }
   
   }
- /**
-  *Metodo obtener los datos de las sucursales de cada empresa..
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public static function findRelGroups( Request $request )
+
+    /**
+     *Metodo obtener los datos de las sucursales de cada empresa..
+     * @access public
+     * @param Request $request [Description]
+     * @return JsonResponse
+     */
+    public static function findRelGroups( Request $request )
   {
       $response = [];
         if(is_null($request->get('id_empresa'))){
@@ -338,9 +339,12 @@ class EmpresasController extends MasterController
 
   }
 
-  public function findByUserGroups(Request $request)
-  {
-
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function findByUserGroups(Request $request)
+    {
       try {
           $users      = SysUsersModel::with('empresas')->whereId($request->userId)->first();
           $companies  = $users->empresas()->with('sucursales')->whereId($request->companyId)->first();

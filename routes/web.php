@@ -363,8 +363,8 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'empresas.findByUserGroups'
     ]);
 
-    Route::get('/list/empresas', [
-    'uses'      => 'Administracion\Configuracion\EmpresasController@lista'
+    Route::get('/list/companies', [
+    'uses'      => 'Administracion\Configuracion\EmpresasController@listCompanies'
     ,'as'       => 'list.empresas'
     ]);
 
@@ -373,7 +373,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     ,'as'       => 'empresas.listo'
     ]);
     
-    ######################### MODULO DE proveedores #############################
+    ######################### MODULO DE PROVEEDORES #############################
     
      Route::get('/configuracion/proveedores', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@index'

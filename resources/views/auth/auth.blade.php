@@ -10,19 +10,16 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <!-- obtengo la ruta de mi proyecto -->
         <meta name="ruta-general" content="{{ $_SERVER['PHP_SELF'] }}">
-        <link rel="icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
-        <link rel="shortcut icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
+        <link rel="icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
         <!--css -->
-        <link type="text/css" rel="stylesheet" href="{{asset('css/bootstrap.css')}}" />
-        <link type="text/css" rel="stylesheet" href="{{asset('css/sweetalert.css')}}" />
-        <link type="text/css" rel="stylesheet" href="{{asset('css/toastr.css')}}" />
+        <link type="text/css" rel="stylesheet" href="{{asset('css/app.master.css')}}" />
+        <link type="text/css" rel="stylesheet" href="{{asset('css/login/login.css')}}" />
+        <link type="text/css" rel="stylesheet" href="{{asset('css/login/animate-custom.css')}}" />
 
-        <link href="{{asset('css/login/login.css')}}" rel="stylesheet">
-        <link href="{{asset('css/login/animate-custom.css')}}" rel="stylesheet">
 
 </head>
-<body>
-
+<body ng-app="application" ng-controller="LoginController" ng-cloak>
 
 <div class="container" id="login-block">
 
@@ -33,24 +30,27 @@
             <div class="login-box clearfix animated flipInY">
 
                 <div class="page-icon animated bounceInDown imagen">
-                    <img src="{{asset('img/header_buro_laboral.jpeg')}}" class="img-responsive" alt="icon">
+                    <img src="{{asset('img/company.png')}}" class="img-responsive" alt="icon">
                 </div>
                 <div class="login-logo animated bounceInDown">
-                    <a href="#"><img width="65%" src="{{asset('img/login/buro_laboral_title.png')}}" alt="Company Logo" /></a>
+                    {{--<a href="#"><img width="35%" src="{{asset('img/company.png')}}" alt="Company Logo"/></a>--}}
                 </div>
                 <hr/>
                 <div class="login-form">
 
-                <form class="login-form right" v-on:submit.prevent="inicio_sesion()" id="form-login" method="post" autocomplete="true">
-                    <input type="text" id="correo" name="correo" placeholder="correo" v-model="newKeep.email"  required>
-                    <input type="password" id="password" name="password" v-model="newKeep.password" placeholder="Contraseña"  required>
+                <form class="login-form right" ng-submit="startSession()" id="form-login" method="post" autocomplete="true">
+                    <input type="text" id="correo" name="correo" placeholder="username / correo" ng-model="datos.email"  required>
+                    <input type="password" id="password" name="password" ng-model="datos.password" placeholder="Contraseña" required>
                             {{$error}}
-                        <button type="submit" class="btn btn-blue">Entrar</button>
+                        <button type="submit" class="btn btn-blue" ng-disabled="enable">
+                            <span ng-show="serching"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+                            Entrar
+                        </button>
                     </form>
-                        <div class="login-links">
-                            <a href="forgot-password.html"></a>
-                            <a href="sign-up.html"></a>
-                        </div>
+                    <div class="login-links">
+                        <a href="forgot-password.html">¿Recordar Contraseña?</a>
+                        <a href="sign-up.html"></a>
+                    </div>
 
                 </div>
 
@@ -66,7 +66,9 @@
                     </div>
 
         </div>
+
     </div>
+
  </div>
 
  <!-- End Login box -->
@@ -79,15 +81,31 @@
 <!-- scripts -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{{asset('js/axios.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/toastr.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/vue.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/sweetalert.js')}}"></script>
+<!-- angular -->
+<script type="text/javascript" src="{{asset('bower_components/angular/angular.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/angular-animate/angular-animate.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/angular-chosen-localytics/dist/angular-chosen.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/sweetalert2/dist/sweetalert2.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/ngSweetAlert2/SweetAlert.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/swangular/swangular.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/angular-toastr/dist/angular-toastr.tpls.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+<script src="{{asset('js/angular-bootstrap-select.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
+<!-- / angular -->
 <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
-  <!-- script master vue -->
-<script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/login/build_login.js')}}"></script>
+
+<script type="text/javascript" src="{{asset('js/ModuleController.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/FactoryController.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/NotificationsFactory.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/ServiceController.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
+<!-- script developer-->
+<script type="text/javascript" src="{{asset('js/login/buildLoginController.js')}}"></script>
+
 </body>
 </html>

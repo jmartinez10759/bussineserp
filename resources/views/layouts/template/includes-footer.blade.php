@@ -43,8 +43,8 @@
     <!-- <script src="{{$base_url}}admintle/dist/js/pages/dashboard.js"></script> -->
     <!-- AdminLTE for demo purposes -->
     <script src="{{$base_url}}admintle/dist/js/demo.js"></script>
-    <script type="text/javascript" src="{{asset('js/axios.js')}}"></script>
-    <script type="text/javascript" src="{{asset('js/vue.js')}}"></script>
+    {{--<script type="text/javascript" src="{{asset('js/axios.js')}}"></script>--}}
+    {{--<script type="text/javascript" src="{{asset('js/vue.js')}}"></script>--}}
     <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
     <script type="text/javascript" src="{{asset('bower_components/chosen/chosen.jquery.js')}}"></script>
@@ -58,14 +58,16 @@
      <script type="text/javascript" src="{{asset('bower_components/angular-toastr/dist/angular-toastr.tpls.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
+     <script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>
 
-     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
 
- <script src="{{asset('js/angular-bootstrap-select.min.js')}}"></script>
+    <script src="{{asset('js/angular-bootstrap-select.min.js')}}"></script>
 
  <!-- script indispensables -->
     <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
+
     <script type="text/javascript" src="{{asset('js/ModuleController.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/FactoryController.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/NotificationsFactory.js')}}"></script>
@@ -81,7 +83,6 @@
     <!-- bootstrap time picker -->
     <script src="{{asset('admintle/plugins/timepicker/bootstrap-timepicker.min.js')}}"></script>
     <!-- Add fancyBox -->
-    {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
  <!-- / Add fancyBox -->
     <!-- Latest compiled and minified JavaScript -->
@@ -102,12 +103,10 @@
         if( estatus_toogle == false ){
           jQuery('body').removeClass();
           jQuery('body').addClass('skin-blue sidebar-mini sidebar-collapse fixed');
-          //jQuery('body').addClass('skin-blue sidebar-mini sidebar-collapse');
         }
         if( estatus_toogle == true ){
           jQuery('body').removeClass();
           jQuery('body').addClass('skin-blue sidebar-mini fixed');
-          //jQuery('body').addClass('skin-blue sidebar-mini');
         }
         jQuery('.sidebar-menu').find('li a').each(function(){
           var enlace = jQuery(this).attr('href');

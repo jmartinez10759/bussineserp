@@ -29,6 +29,7 @@ use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 use App\Model\Administracion\Configuracion\SysNotificacionesModel;
 use App\Model\Administracion\Configuracion\SysProveedoresModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class MasterController extends Controller
 {
@@ -256,6 +257,26 @@ abstract class MasterController extends Controller
 	}
 
     /**
+     * This method is for load all menus of users
+     * @param array $response
+     * @param bool $status
+     * @return array
+     */
+    protected function _loadMenus($response = [], bool $status = false)
+    {
+        $menusArray = [];
+        for ($j = 0; $j < count($response); $j++) {
+            if ($response[$j]->pivot->estatus == 1) {
+                $menusArray[] = ($response[$j]);
+            }
+        }
+        if ($status) {
+            return $menusArray;
+        }
+        return Menu::build_menu_tle($menusArray);
+    }
+
+    /**
      * Metodo para cargar la vista general de la platilla que se va a utilizar
      * @access protected
      * @param string $view [Description]
@@ -344,63 +365,138 @@ abstract class MasterController extends Controller
 	}
 
     /**
+     * @param string|null $view
+     * @param array $parse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    protected function _loadView(string $view = null, array $parse = [] )
+    {
+        if( Session::get('permisos')['GET'] ){
+            return view('errors.error');
+        }
+        $users = SysUsersModel::with(['menus','roles','details','empresas','correos'])->whereId( Session::get('id') )->first();
+        $menus = $users->menus()->where([
+            'sys_rol_menu.estatus' 		=> TRUE
+            ,'sys_rol_menu.id_empresa' 	=> Session::get('id_empresa')
+            ,'sys_rol_menu.id_sucursal' => Session::get('id_sucursal')
+            ,'sys_rol_menu.id_rol' 		=> Session::get('id_rol')
+        ])->orderBy('orden','ASC')->get();
+        $company = $users->empresas()->whereId(Session::get('id_empresa'))->first();
+        $groups  = $users->sucursales()->whereId(Session::get('id_sucursal'))->first();
+
+        $parse['MENU_DESKTOP'] 		= $this->_loadMenus($menus);
+        self::$_titulo              = (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
+        $parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower(self::$_titulo)));
+        $parse['IMG_PATH'] 			= domain() . 'images/';
+        $parse['icon'] 				= "img/login/buro_laboral.ico";
+        $parse['anio'] 				= date('Y');
+        $parse['version'] 			= "2.0.2";
+        $parse['base_url'] 			= domain();
+        $parse['nombre_completo'] 	= Session::get('name') . " " . Session::get('first_surname');
+        $parse['desarrollo'] 		= utf8_decode(self::$_desarrollo);
+        $parse['link_desarrollo'] 	= utf8_decode(self::$_link_desarrollo);
+        $parse['welcome'] 			= "Bienvenid@";
+        $parse['photo_profile'] 	= isset($users->details)?$users->details->foto : asset('img/profile/profile.png');
+        $parse['rol'] 				= isset($users->roles[0])? $users->roles[0]->perfil : "Perfil No Asignado";
+        $parse['empresa'] 			= (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
+        $parse['sucursal'] 			= (isset($groups->sucursal))?$groups->sucursal : "Sucursal no asignada";
+        $parse['url_previus'] 		= (Session::get('id_empresa') != 0 && Session::get('id_sucursal') != 0) ? route('list.empresas') : route("/");
+
+        $parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
+        $parse['title'] 			= isset($parse['title']) 	  ? $parse['title'] : "";
+        $parse['subtitle'] 			= isset($parse['subtitle'])   ? $parse['subtitle'] : "";
+
+        $upload_files   = (isset(Session::get('permisos')['UPLF'])) ? Session::get('permisos')['UPLF'] : true;
+        $notify         = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
+        $reportes       = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
+        $excel          = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
+        $modal          = (isset(Session::get('permisos')['AGR'])) ? Session::get('permisos')['AGR'] : true;
+
+        $parse['seccion_reportes'] = reportes($reportes, $excel);
+        $parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
+        $parse['upload_files']  = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
+        $parse['buscador']      = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
+        $parse['agregar']       = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
+        $parse['modal']         = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
+
+        return View($view, $parse);
+    }
+
+    /**
      * This is method is for login session for system.
      * @access public
      * @param $where array [description]
      * @param SysUsersModel $users
-     * @return void
+     * @return JsonResponse
      */
 	public function startSession(  $where , SysUsersModel $users )
 	{
 		$error = null;
 		try {
-			$condicion = [];
+			$conditions = [];
 			if ( isset( $where->email ) && isset( $where->password ) ) {
-				$condicion     = ( filter_var( $where->email, FILTER_VALIDATE_EMAIL ) )? ['email' => $where->email ]: ['username' => $where->email];
-				$condicion['password']  = $where->password;
-				$condicion['confirmed'] = true;
+				$conditions     = ( filter_var( $where->email, FILTER_VALIDATE_EMAIL ) )? ['email' => $where->email ]: ['username' => $where->email];
+				$conditions['password']  = $where->password;
+				$conditions['confirmed'] = TRUE;
 			}
-			$datos = ['api_token' => str_random(50)];
+			$information = ['api_token' => str_random(50)];
 			$where = ( filter_var( $where->email, FILTER_VALIDATE_EMAIL  ) )? ['email' => $where->email ]: ['username' => $where->email ];
-			$updateUsers = $users::where( $where )->update( $datos );
+			$users::where( $where )->update($information);
             $response = $users::where( $where )->first();
-            $condicion['api_token'] = ( $response ) ? $response->api_token : null;
-			$usuario = $users::with(['menus' => function( $query ){
-					return $query->where(['sys_rol_menu.estatus' => 1 ] )->groupby('id');
-			},'empresas','sucursales','roles'])->where( $condicion )->first();
-			if ( $usuario ) {
+            $conditions['api_token'] = ( $response ) ? $response->api_token : NULL;
+			$user = $users::with(['menus' => function( $query ){
+					return $query->where(['sys_rol_menu.estatus' => TRUE ] )->groupby('id');
+			},'empresas','sucursales','roles'])->where( $conditions )->first();
+			if ( $user ) {
                 $session = [];
                 $keys = ['password', 'remember_token', 'confirmed_code'];
-                foreach ($usuario->fillable as $key => $value) {
+                foreach ($user->fillable as $key => $value) {
                     if (!in_array($value, $keys)) {
-                        $session[$value] = $usuario->$value;
+                        $session[$value] = $user->$value;
                     }
                 }
-                #se realiza la consulta a la tabla relacional.
-				if ( count( $usuario->empresas ) > 1 ) {
+				if ( count( $user->empresas ) > 1 ) {
 					Session::put( $session );
 					self::_bitacora();
-					$session['ruta'] = 'list/empresas';
-					return $this->_message_success(200, $session, '¡Usuario Inicio Sesión Correctamente!');
+					$session['ruta'] = 'list/companies';
+					return new JsonResponse([
+					    "success"   => TRUE ,
+					    "data"      => $session ,
+                        "message"   => "¡Usuario Inicio Sesión Correctamente!"
+                    ],Response::HTTP_OK);
 				}
-				$sessions['id_empresa']     = isset( $usuario->empresas[0]->id) ? $usuario->empresas[0]->id : 0;
-				$sessions['id_sucursal']    = isset( $usuario->sucursales[0]->id) ? $usuario->sucursales[0]->id : 0;
-				$sessions['id_rol']         = isset( $usuario->roles[0]->id) ? $usuario->roles[0]->id : "";
-				$ruta       = self::dataSession( $usuario->menus );
+				$sessions['id_empresa']     = isset( $user->empresas[0]->id) ? $user->empresas[0]->id : 0;
+				$sessions['id_sucursal']    = isset( $user->sucursales[0]->id) ? $user->sucursales[0]->id : 0;
+				$sessions['id_rol']         = isset( $user->roles[0]->id) ? $user->roles[0]->id : "";
+				$ruta       = self::dataSession( $user->menus );
 				$sesiones   = array_merge($sessions, $ruta);
-				if ( count($usuario->menus) < 1 ) {
-					return $this->show_error(6, $sesiones, '¡No cuenta con permisos necesarios, favor de contactar al administrador!');
+				if ( count($user->menus) < 1 ) {
+                    return new JsonResponse([
+                        "success"   => FALSE ,
+                        "data"      => $sesiones ,
+                        "message"   => "¡No cuenta con permisos necesarios, favor de contactar al administrador!"
+                    ],Response::HTTP_BAD_REQUEST);
 				}
                 Session::put( array_merge( $session, $sesiones ) );
                 self::_bitacora();
-				return $this->_message_success(200, array_merge( $session, $sesiones ), '¡Usuario Inicio Sesión Correctamente!');
+                return new JsonResponse([
+                    "success"   => TRUE ,
+                    "data"      => array_merge( $session, $sesiones ) ,
+                    "message"   => "¡Usuario Inicio Sesión Correctamente!"
+                ],Response::HTTP_OK);
 			}
-			$success = true;
-			return $this->show_error(6, $usuario, '¡Por favor verificar la información ingresada!');
-		} catch (\Exception $e) {
-			$success = false;
+            return new JsonResponse([
+                "success"   => FALSE ,
+                "data"      => $user ,
+                "message"   => "¡Por favor verificar la información ingresada!"
+            ],Response::HTTP_BAD_REQUEST);
+		} catch ( \Exception $e) {
 			$error = $e->getFile() . " " . $e->getMessage() . " " . $e->getLine();
-			return $this->show_error(6, $error);
+            return new JsonResponse([
+                "success"   => FALSE ,
+                "data"      => $error ,
+                "message"   => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
 		}
 
 	}
@@ -1066,6 +1162,10 @@ abstract class MasterController extends Controller
 
     }
 
+    /**
+     * @param SysUsersModel $users
+     * @return mixed
+     */
     protected function _actionByCompanies(SysUsersModel $users )
     {
         $users = $users->with('acciones')->whereId(Session::get('id'))->first();
@@ -1076,6 +1176,51 @@ abstract class MasterController extends Controller
             ,"sys_users_permisos.id_rol"      => Session::get('id_rol')
         ])->groupby('id')->orderby('id','ASC')->get();
 
+    }
+
+    /**
+     * @param SysUsersModel $user
+     * @return mixed
+     */
+    protected function _rolesByCompanies(SysUsersModel $user )
+    {
+        $users = $user->with('roles')->whereId(Session::get('id'))->first();
+        return $users->roles()->where([
+            "sys_users_roles.estatus"      => TRUE
+            ,"sys_users_roles.id_empresa"  => Session::get('id_empresa')
+            ,"sys_users_roles.id_sucursal" => Session::get('id_sucursal')
+            ,"sys_users_roles.id_rol"      => Session::get('id_rol')
+        ])->groupby('id')->orderby('id','ASC')->get();
+    }
+
+    /**
+     * @param SysUsersModel $user
+     * @return mixed
+     */
+    protected function _groupsByCompanies(SysUsersModel $user )
+    {
+        $users = $user->with('sucursales')->whereId(Session::get('id'))->first();
+        return $users->sucursales()->where([
+            "sys_users_roles.estatus"      => TRUE
+            ,"sys_users_roles.id_empresa"  => Session::get('id_empresa')
+            ,"sys_users_roles.id_sucursal" => Session::get('id_sucursal')
+            ,"sys_users_roles.id_rol"      => Session::get('id_rol')
+        ])->groupby('id')->orderby('id','ASC')->get();
+    }
+
+    /**
+     * @param SysUsersModel $user
+     * @return mixed
+     */
+    protected function _userBelongsCompany(SysUsersModel $user )
+    {
+        $users = $user->with('empresas')->whereId(Session::get('id'))->first();
+        return $users->empresas()->where([
+            "sys_users_roles.estatus"      => TRUE
+            ,"sys_users_roles.id_empresa"  => Session::get('id_empresa')
+            ,"sys_users_roles.id_sucursal" => Session::get('id_sucursal')
+            ,"sys_users_roles.id_rol"      => Session::get('id_rol')
+        ])->groupby('id')->orderby('id','ASC')->get();
     }
     /**
      * Metodo para obtener la validacion de la consulta

@@ -3,9 +3,8 @@
 @push('styles')
 @endpush
 <div ng-controller="UsuarioController" ng-init="constructor()" ng-cloak >
-  {{--{!! $data_table !!}--}}
-  <div class="table-responsive">
-    <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable">
+  <div class="table-responsive table-container" >
+    <table class="table table-striped table-responsive highlight table-hover" id="datatable">
       <thead>
       <tr style="background-color: #337ab7; color: #ffffff;">
         <th>Nombre Completo</th>
@@ -61,6 +60,5 @@
 
 @stop
 @push('scripts')
-  <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_usuarios.js')}}" ></script>
-  {{--<script type="text/javascript" src="{{asset('js/administracion/configuracion/build_asigna_permisos.js')}}" ></script>--}}
+  <script type="text/javascript" src="{{asset('js/administracion/configuracion/buildUsersController.js')}}" ></script>
 @endpush

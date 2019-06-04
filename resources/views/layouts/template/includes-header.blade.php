@@ -7,7 +7,6 @@
   <meta http-equiv="Pragma" content="no-cache">
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <!-- obtengo la ruta de mi proyecto -->
   <meta name="ruta-general" content="{{ $_SERVER['PHP_SELF'] }}">
   <link rel="icon" href="{{asset( $icon )}}" type="image/x-icon" />
   <link rel="shortcut icon" href="{{asset( $icon )}}" type="image/x-icon" />
@@ -17,7 +16,7 @@
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/bootstrap/dist/css/bootstrap.min.css">
   <!-- Styles -->
-  <link type="text/css" rel="stylesheet" href="{{ asset('css/app-master.css')}}" />
+  <link type="text/css" rel="stylesheet" href="{{ asset('css/app.master.css')}}" />
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
