@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="es" class="no-js">
+<html lang="es" class="no-js" ng-app="application" ng-controller="LoginController" ng-init="constructor()" ng-cloak>
 <head>
-    <title>{{$title_page}} </title>
+    <title>Inicio de Sesión </title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -13,22 +13,17 @@
         <link rel="icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
         <link rel="shortcut icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
         <!--css -->
+        <link type="text/css" rel="stylesheet" href="{{asset("bower_components/bootstrap/dist/css/bootstrap.min.css")}}" />
         <link type="text/css" rel="stylesheet" href="{{asset('css/app.master.css')}}" />
         <link type="text/css" rel="stylesheet" href="{{asset('css/login/login.css')}}" />
         <link type="text/css" rel="stylesheet" href="{{asset('css/login/animate-custom.css')}}" />
-
-
 </head>
-<body ng-app="application" ng-controller="LoginController" ng-cloak>
+<body>
 
-<div class="container" id="login-block">
-
+<div class="container" id="login-block" background-random>
     <div class="row">
-
         <div class="col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
-
             <div class="login-box clearfix animated flipInY">
-
                 <div class="page-icon animated bounceInDown imagen">
                     <img src="{{asset('img/company.png')}}" class="img-responsive" alt="icon">
                 </div>
@@ -36,13 +31,14 @@
                     {{--<a href="#"><img width="35%" src="{{asset('img/company.png')}}" alt="Company Logo"/></a>--}}
                 </div>
                 <hr/>
+
                 <div class="login-form">
 
-                <form class="login-form right" ng-submit="startSession()" id="form-login" method="post" autocomplete="true">
+                    <form class="login-form right" ng-submit="startSession()" id="form-login" method="POST" autocomplete="true">
                     <input type="text" id="correo" name="correo" placeholder="username / correo" ng-model="datos.email"  required>
                     <input type="password" id="password" name="password" ng-model="datos.password" placeholder="Contraseña" required>
                             {{$error}}
-                        <button type="submit" class="btn btn-blue" ng-disabled="enable">
+                        <button type="submit" class="btn btn-blue" ng-disabled="enabled">
                             <span ng-show="serching"><i class="glyphicon glyphicon-refresh spinning"></i></span>
                             Entrar
                         </button>
@@ -106,6 +102,9 @@
 <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
 <!-- script developer-->
 <script type="text/javascript" src="{{asset('js/login/buildLoginController.js')}}"></script>
+<!--load directives-->
+<script type="text/javascript" src="{{asset('js/login/directives/background-random.js')}}"></script>
+
 
 </body>
 </html>

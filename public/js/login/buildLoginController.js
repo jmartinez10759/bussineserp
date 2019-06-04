@@ -1,30 +1,36 @@
 const URL = {
     url_edit    : 'login'
-}
+};
 
-app.controller('LoginController', ['ServiceController','FactoryController','NotificationsFactory','$scope','$location', function( sc,fm,nf,$scope, $location ) {
+app.controller('LoginController', ['ServiceController','FactoryController','NotificationsFactory','$scope',"$timeout", function( sc,fm,nf,$scope,time ) {
 
     $scope.constructor = function () {
-        $scope.datos = [];
-        $scope.insert = {estatus: 1};
+        $scope.datos    = [];
         $scope.serching = false;
-        $scope.enabled = false;
+        $scope.enabled  = false;
+        $scope.randomImages()
     };
 
     $scope.startSession = function () {
-        let url = fm.domain(URL.url_all);
+        let url = fm.domain(URL.url_edit);
         let fields = {
-            "email"     : $scope.datos.email ,
-            "password"  : $scope.datos.password
+            "email"     : $scope.datos.email.trim().toLowerCase() ,
+            "password"  : sha1($scope.datos.password)
         };
-        $scope.enabled = true;
+        $scope.enabled  = true;
         $scope.serching = true;
-        console.log(fields);return;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                console.log(response.data.data);
+                $scope.enabled  = false;
+                $scope.serching = false;
+                redirect(response.data.data.ruta);
             }
         });
+    };
+
+    $scope.randomImages = function () {
+
+
     };
 
 }]);

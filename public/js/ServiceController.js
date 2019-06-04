@@ -1,4 +1,4 @@
-app.service('ServiceController',["$http","NotificationsFactory", function (http,nf) {
+app.service('ServiceController',["$http","NotificationsFactory", "FactoryController","$timeout","$location",function (http,nf,fc,time,l) {
 
     function ServiceController() {
         this.loading();
@@ -24,17 +24,17 @@ app.service('ServiceController',["$http","NotificationsFactory", function (http,
         if ( angular.isDefined(response.status) ){
 
             if( response.status == 419 ){
-                nf.toastError(session_expired);
-                setTimeout(function(){ redirect(domain()); }, 2000);
+                nf.toastError(nf.sessionExpired);
+                time(function(){ redirect(fc.domain()); }, 2000);
                 return false;
             }
             if (response.status != 200 && response.status != 201 ){
-                nf.toastError(error_mgs);
+                nf.toastError(nf.titleMgsError);
                 return false;
             }
             return true;
         }
-        nf.toastError(error_mgs);
+        nf.toastError(nf.titleMgsError);
         return false;
     };
 
@@ -43,11 +43,11 @@ app.service('ServiceController',["$http","NotificationsFactory", function (http,
         if (angular.isDefined(error)){
             console.log(error);
             if( angular.isDefined(error.status) && error.status == 419 ){
-                nf.toastError(session_expired );
-                setTimeout(function(){ redirect(domain()); }, 1000);
+                nf.toastError(nf.sessionExpired );
+                time(function(){ redirect( fc.domain() ); }, 1000);
                 return;
             }
-            nf.toastError(error.data.message, error_mgs);
+            nf.toastError(error.data.message, nf.titleMgsError);
             return;
         }
     };

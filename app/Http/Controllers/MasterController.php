@@ -425,24 +425,24 @@ abstract class MasterController extends Controller
     /**
      * This is method is for login session for system.
      * @access public
-     * @param $where array [description]
+     * @param Request $request
      * @param SysUsersModel $users
      * @return JsonResponse
      */
-	public function startSession(  $where , SysUsersModel $users )
+	public function startSession(  Request $request , SysUsersModel $users )
 	{
 		$error = null;
 		try {
 			$conditions = [];
-			if ( isset( $where->email ) && isset( $where->password ) ) {
-				$conditions     = ( filter_var( $where->email, FILTER_VALIDATE_EMAIL ) )? ['email' => $where->email ]: ['username' => $where->email];
-				$conditions['password']  = $where->password;
+			if ( isset( $request->email ) && isset( $request->password ) ) {
+				$conditions     = ( filter_var( $request->email, FILTER_VALIDATE_EMAIL ) )? ['email' => $request->email ]: ['username' => $request->email];
+				$conditions['password']  = $request->password;
 				$conditions['confirmed'] = TRUE;
 			}
 			$information = ['api_token' => str_random(50)];
-			$where = ( filter_var( $where->email, FILTER_VALIDATE_EMAIL  ) )? ['email' => $where->email ]: ['username' => $where->email ];
+			$where = ( filter_var( $request->email, FILTER_VALIDATE_EMAIL  ) )? ['email' => $request->email ]: ['username' => $request->email ];
 			$users::where( $where )->update($information);
-            $response = $users::where( $where )->first();
+            $response = $users->where($where)->first();
             $conditions['api_token'] = ( $response ) ? $response->api_token : NULL;
 			$user = $users::with(['menus' => function( $query ){
 					return $query->where(['sys_rol_menu.estatus' => TRUE ] )->groupby('id');
@@ -457,7 +457,7 @@ abstract class MasterController extends Controller
                 }
 				if ( count( $user->empresas ) > 1 ) {
 					Session::put( $session );
-					self::_bitacora();
+					$this->_binnacleCreate($users);
 					$session['ruta'] = 'list/companies';
 					return new JsonResponse([
 					    "success"   => TRUE ,
@@ -478,7 +478,7 @@ abstract class MasterController extends Controller
                     ],Response::HTTP_BAD_REQUEST);
 				}
                 Session::put( array_merge( $session, $sesiones ) );
-                self::_bitacora();
+                $this->_binnacleCreate($users);
                 return new JsonResponse([
                     "success"   => TRUE ,
                     "data"      => array_merge( $session, $sesiones ) ,
@@ -757,42 +757,48 @@ abstract class MasterController extends Controller
 	}
 
     /**
-     *Metodo para hacer la consulta de la vacante
+     *This method is for created one bitacora
      * @access private
      * @param bool $logout
+     * @param SysUsersModel $users
      * @return void
      */
-	protected static function _bitacora( bool $logout = false )
+	protected function _binnacleCreate( SysUsersModel $users, bool $logout = false )
 	{
 		$error = null;
 		DB::beginTransaction();
 		try {
-			$users = SysUsersModel::where(['id' => Session::get('id')])->get();
-			$where = ['id' => $users[0]->id_bitacora, 'id_users' => Session::get('id')];
-			$sesiones = SysSesionesModel::where($where)->get();
-			$fecha_inicio = isset($sesiones[0]->created_at) ? $sesiones[0]->created_at : timestamp();
-			$fecha_final = isset($sesiones[0]->updated_at) ? $sesiones[0]->updated_at : timestamp();
+			$user = $users->whereId(Session::get('id'))->first();
+			$sessions = SysSesionesModel::whereId($user->id_bitacora)->whereIdUsers(Session::get('id'))->fisrt();
+			$beginDate  = isset($sessions->created_at) ? $sessions->created_at : timestamp();
+			$endDate    = isset($sessions->updated_at) ? $sessions->updated_at : timestamp();
 
 			if ($logout) {
-				$data_logout = [
-					'conect' => 0, 'disconect' => 1, 'updated_at' => timestamp(), 'time_conected' => time_fechas($fecha_inicio, timestamp())
+				$dataLogout = [
+					'conect'        => FALSE ,
+                    'disconect'     => TRUE ,
+                    'updated_at'    => timestamp() ,
+                    'time_conected' => time_fechas($beginDate, timestamp())
 				];
-				SysSesionesModel::where($where)->update($data_logout);
+				SysSesionesModel::whereId($user->id_bitacora)->whereIdUsers(Session::get('id'))->update($dataLogout);
 
 			} else {
 				$data = [
-					'id_users' => Session::get('id'), 'ip_address' => get_client_ip(), 'user_agent' => detect()['user_agent'], 'conect' => 1, 'disconect' => 0
+					'id_users'      => Session::get('id') ,
+                    'ip_address'    => get_client_ip() ,
+                    'user_agent'    => detect()['user_agent'] ,
+                    'conect'        => TRUE ,
+                    'disconect'     => FALSE
 				];
-				$bitacora = SysSesionesModel::create($data);
-  				 #debuger($bitacora);
-				SysUsersModel::where(['id' => Session::get('id')])->update(['id_bitacora' => $bitacora->id]);
+				$binnacle = SysSesionesModel::create($data);
+				$users->whereId( Session::get('id') )->update(['id_bitacora' => $binnacle->id ]);
 			}
 
 			DB::commit();
 			$success = true;
 		} catch (\Exception $e) {
 			$success = false;
-			$error = $e->getMessage();
+			$error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
 			DB::rollback();
 		}
 

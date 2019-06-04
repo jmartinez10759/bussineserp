@@ -26,7 +26,6 @@ class AuthController extends MasterController
      */
     public static function showLogin()
     {
-      #debuger(Session::get('id'));
     	$data= [
     		'title_page'	=>  self::$title_page
             ,'desarrollo'   =>  self::$desarrollo
@@ -48,30 +47,25 @@ class AuthController extends MasterController
     	return View('auth.auth',$data);
 
     }
+
     /**
      *This Method is for login in the dashboard
-     *@access public
-     *@param Request $request [description]
-     *@return void
+     * @access public
+     * @param Request $request [description]
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function authLogin( Request $request )
     {
-      	$where = [];
-        $valuesSession = ['_token'];
-    		foreach ($request->all() as $key => $value) {
-    			if ( !in_array( $key,$valuesSession ) ) {
-    				$where[$key] = $value;
-    			}
-    		}
-        return self::startSession( array_to_object( $where ), self::$_tabla_model );
+        return $this->startSession( $request, new SysUsersModel );
     }
     /**
-     * Metodo para cerrar session
+     * This method is for finish session
      * @access public
      * @return void
      */
-    public static function logout(){
-        self::_bitacora(true);
+    public function logout()
+    {
+        $this->_binnacleCreate(new SysUsersModel);
     	Session::flush();
     	return redirect()->route('/');
     }

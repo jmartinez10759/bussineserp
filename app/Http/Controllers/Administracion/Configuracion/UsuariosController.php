@@ -182,10 +182,10 @@ class UsuariosController extends MasterController
                 }
             }
             if ($key == "password" && $value != false) {
-                $requestUsers[$key] = sha1($value);
+                $requestUsers[$key] = bcrypt($value);
             }
         }
-        $nameComplete = parse_name($request->name);
+        $nameComplete = parse_name($request->get("name"));
         if (!$nameComplete) {
             return new JsonResponse([
                 'success'   => false
@@ -199,21 +199,21 @@ class UsuariosController extends MasterController
         $requestUsers['username']           = $request->get("username");
         $requestUsers['remember_token']     = str_random(50);
         $requestUsers['api_token']          = str_random(50);
-        $requestUsers['estatus']            = true;
-        $requestUsers['confirmed']          = true;
-        $requestUsers['confirmed_code']     = null;
+        $requestUsers['estatus']            = TRUE;
+        $requestUsers['confirmed']          = TRUE;
+        $requestUsers['confirmed_code']     = NULL;
 
         $error = null;
         DB::beginTransaction();
         try {
             $usersRegister = SysUsersModel::create($requestUsers);
-            for ($i = 0; $i < count($request->id_sucursal); $i++) {
+            for ($i = 0; $i < count($request->get("id_sucursal")); $i++) {
                 $data = [
-                    'id_users'     => $usersRegister->id
-                    ,'id_empresa'  => $this->_companies($request->id_sucursal[$i])
-                    ,'id_sucursal' => $request->id_sucursal[$i]
+                    'id_users'     => $usersRegister->get('id')
+                    ,'id_empresa'  => $this->_companies($request->get("id_sucursal")[$i])
+                    ,'id_sucursal' => $request->get("id_sucursal")[$i]
                 ];
-                $roles = [$request->id_rol];
+                $roles = [$request->get("id_rol")];
                 for ($j = 0; $j < count($roles); $j++) {
                     $data['id_rol'] = $roles[$j];
                     SysUsersRolesModel::create($data);
@@ -262,7 +262,7 @@ class UsuariosController extends MasterController
                 }
             }
             if ($key == "password" && $value != false) {
-                $requestUsers[$key] = sha1($value);
+                $requestUsers[$key] = bcrypt($value);
             }
         }
         $nameComplete = parse_name($request->get("name"));

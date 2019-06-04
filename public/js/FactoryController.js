@@ -110,6 +110,10 @@ app.factory('FactoryController',['$http', function (http) {
         }
     };
 
+    FactoryController.prototype.sha1 = function (entry) {
+
+    };
+
     return new FactoryController();
 
 }]);
