@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" class="no-js" ng-app="application" ng-controller="LoginController" ng-init="constructor()" ng-cloak>
 <head>
-    <title>Inicio de Sesión </title>
+    <title>Inicio de Sesión | Sistema </title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -35,8 +35,8 @@
                 <div class="login-form">
 
                     <form class="login-form right" ng-submit="startSession()" id="form-login" method="POST" autocomplete="true">
-                    <input type="text" id="correo" name="correo" placeholder="username / correo" ng-model="datos.email"  required>
-                    <input type="password" id="password" name="password" ng-model="datos.password" placeholder="Contraseña" required>
+                        <input type="text" placeholder="username / correo" ng-model="datos.email"  required>
+                        <input type="password" ng-model="datos.password" placeholder="Contraseña" required>
                             {{$error}}
                         <button type="submit" class="btn btn-blue" ng-disabled="enabled">
                             <span ng-show="serching"><i class="glyphicon glyphicon-refresh spinning"></i></span>
@@ -52,14 +52,14 @@
 
             </div>
 
-                    <div class="social-login row">
-                             <div class="fb-login col-lg-6 col-md-12 animated flipInY">
-                                <a href="#" class="btn btn-facebook btn-block">Ir a nuestro <strong>Facebook</strong></a>
-                            </div>
-                            <div class="twit-login col-lg-6 col-md-12 animated flipInY">
-                                <a href="#" class="btn btn-twitter btn-block">Visita nuestro <strong>Twitter</strong></a>
-                            </div>
+            <div class="social-login row">
+                     <div class="fb-login col-lg-6 col-md-12 animated flipInY">
+                        <a href="#" class="btn btn-facebook btn-block">Ir a nuestro <strong>Facebook</strong></a>
                     </div>
+                    <div class="twit-login col-lg-6 col-md-12 animated flipInY">
+                        <a href="#" class="btn btn-twitter btn-block">Visita nuestro <strong>Twitter</strong></a>
+                    </div>
+            </div>
 
         </div>
 
@@ -89,7 +89,6 @@
 <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
-<script src="{{asset('js/angular-bootstrap-select.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
 <!-- / angular -->
 <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
