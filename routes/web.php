@@ -238,12 +238,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'roles.all'
     ]);
 
-    Route::get('/roles/edit', [
+    Route::get('/roles/edit/{id}/company', [
         'uses'      => 'Administracion\Configuracion\RolesController@show'
         ,'as'       => 'roles.edit'
     ]);
 
-    Route::delete('/roles/destroy', [
+    Route::delete('/roles/destroy/{id}/company', [
         'uses'      => 'Administracion\Configuracion\RolesController@destroy'
         ,'as'       => 'roles.destroy'
     ]);
@@ -253,7 +253,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'roles.register'
     ]);
 
-    Route::post('/roles/update', [
+    Route::put('/roles/update', [
         'uses'      => 'Administracion\Configuracion\RolesController@update'
         ,'as'       => 'roles.update'
     ]);

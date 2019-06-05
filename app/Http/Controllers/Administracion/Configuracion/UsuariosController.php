@@ -64,9 +64,9 @@ class UsuariosController extends MasterController
         try {
             $data = [
                 'users'         => $this->_usersBelongsCompany( new SysEmpresasModel )
-                ,'roles'        => ( Session::get('id_rol') == 1 ) ? SysRolesModel::whereEstatus(1)->get() : $this->_rolesByCompanies(new SysUsersModel)
+                ,'roles'        => ( Session::get('id_rol') == 1 ) ? SysRolesModel::whereEstatus(1)->get() : $this->_rolesByCompanies(new SysEmpresasModel)
                 ,'companies'    => ( Session::get('id_rol') == 1 ) ? SysEmpresasModel::whereEstatus(1)->get() : $this->_userBelongsCompany(new SysUsersModel)
-                ,'groups'       => ( Session::get('id_rol') == 1 ) ? SysSucursalesModel::whereEstatus(1)->get() : $this->_groupsByCompanies(new SysUsersModel)
+                ,'groups'       => ( Session::get('id_rol') == 1 ) ? SysSucursalesModel::whereEstatus(1)->get() : $this->_groupsByCompanies(new SysEmpresasModel)
             ];
 
             return new JsonResponse([
@@ -107,11 +107,9 @@ class UsuariosController extends MasterController
                     ];
                 }
             }
-            #$companies  = ( Session::get('id_rol') == 1 ) ? SysEmpresasModel::whereEstatus(1)->get() : $this->_userBelongsCompany(new SysUsersModel);
-
-            $companyByUser     = $users->empresas()->where(['sys_empresas.estatus'=> true])->groupby('id')->get();
-            $rolesByUser       = $users->roles()->where(['sys_roles.estatus'=> true])->groupby('id')->get();
-            $groupsByUser      = $users->sucursales()->where(['sys_sucursales.estatus'=> true])->groupby('id')->get();
+            $companyByUser     = $users->empresas()->where(['sys_empresas.estatus'=> TRUE])->groupby('id')->get();
+            $rolesByUser       = $users->roles()->where(['sys_roles.estatus'=> TRUE])->groupby('id')->get();
+            $groupsByUser      = $users->sucursales()->where(['sys_sucursales.estatus'=> TRUE])->groupby('id')->get();
             $data = [
                 "menus"           => $menuPadre ,
                 "action"          => $action ,
@@ -155,11 +153,12 @@ class UsuariosController extends MasterController
         }
         return $submenus;
     }
+
     /**
      *It's method is for register the users
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * @access public
+     * @param Request $request [Description]
+     * @return JsonResponse
      */
     public function store( Request $request )
     {
@@ -231,13 +230,13 @@ class UsuariosController extends MasterController
             return new JsonResponse([
                 'success'   => $success
                 ,'data'     => $usersRegister
-                ,'menssage' => self::$message_success
+                ,'message' => self::$message_success
             ],Response::HTTP_CREATED);
         }
         return new JsonResponse([
             'success'   => $success
             ,'data'     => $error
-            ,'menssage' => self::$message_error
+            ,'message' => self::$message_error
         ],Response::HTTP_BAD_REQUEST);
 
     }

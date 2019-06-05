@@ -29,7 +29,7 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
                 return false;
             }
             if (response.status != 200 && response.status != 201 ){
-                nf.toastError(nf.titleMgsError);
+                nf.toastError(response.data.message,nf.titleMgsError);
                 return false;
             }
             return true;
@@ -41,7 +41,6 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
     ServiceController.prototype.validateStatusError = function(error){
 
         if (angular.isDefined(error)){
-            console.log(error);
             if( angular.isDefined(error.status) && error.status == 419 ){
                 nf.toastError(nf.sessionExpired );
                 time(function(){ redirect( fc.domain() ); }, 1000);
@@ -58,8 +57,6 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
             scope.notificaciones = response.data.result.notification;
             scope.correos 		 = response.data.result.correos;
             scope.permisos 		 = response.data.result.permisos;
-        }).catch(function (error) {
-            console.error( error );
         });
 
     };

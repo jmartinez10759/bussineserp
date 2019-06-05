@@ -5,17 +5,14 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <!-- CSRF Token -->
       <meta name="csrf-token" content="{{ csrf_token() }}">
-      <!-- obtengo la ruta de mi proyecto -->
       <meta name="ruta-general" content="{{ $_SERVER['PHP_SELF'] }}">
-      <link rel="icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
-      <link rel="shortcut icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
+        <link rel="icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
         <title>Listado de empresas</title>
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <!--css -->
         <link type="text/css" rel="stylesheet" href="{{asset('css/bootstrap.css')}}" />
-        <link type="text/css" rel="stylesheet" href="{{ asset('css/app-master.css')}}" />
-
-        {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />--}}
+        <link type="text/css" rel="stylesheet" href="{{ asset('css/app.master.css')}}" />
         <!-- Font Awesome -->
         <link rel="stylesheet" href="{{asset("admintle/bower_components/font-awesome/css/font-awesome.min.css")}}">
         <!-- Styles -->

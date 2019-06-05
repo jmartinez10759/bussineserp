@@ -7,6 +7,5 @@ var app = angular.module('application',[
     "ngDropzone" ,
     "components" ,
     "stringToNumber" ,
-    "html-unsafe" ,
-    "fixed.table.header"
+    "html-unsafe"
 ]);

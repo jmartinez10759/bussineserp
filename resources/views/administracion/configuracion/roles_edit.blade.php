@@ -48,7 +48,7 @@
 					<button type= "button" class="btn btn-danger" data-fancybox-close >
 						<i class="fa fa-times-circle"></i> Cancelar
 					</button>
-					<button type= "button" class="btn btn-success" ng-click="insert_register()" ng-if="permisos.INS">
+					<button type= "button" class="btn btn-success" ng-click="insertRegister()" ng-if="permisos.INS">
 						<i class="fa fa-save"></i> Registrar
 					</button>
 				</div>
@@ -110,7 +110,7 @@
 					<button type="button" class="btn btn-danger" data-dismiss="modal">
 						<i class="fa fa-times-circle"></i> Cerrar
 					</button>
-					<button type= "button" class="btn btn-primary" ng-click="update_register()" ng-if="permisos.UPD" >
+					<button type= "button" class="btn btn-primary" ng-click="updateRegister()" ng-if="permisos.UPD" >
 						<i class="fa fa-save"></i> Actualizar
 					</button>
 				</div>

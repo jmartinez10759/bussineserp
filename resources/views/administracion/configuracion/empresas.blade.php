@@ -12,7 +12,6 @@
 	                <th>Razon Social</th>
 	                <th>RFC</th>
 	                <th>Servicio Comercial</th>
-	                <th>Direccion</th>
 	                <th>Contacto</th>
 	                <th>Telefono</th>
 	                <th>Estatus</th>
@@ -26,8 +25,6 @@
 	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.razon_social }}</td>
 	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.rfc_emisor }}</td>
 	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{(data.comerciales  !== null )? data.comerciales.nombre: "" }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.uso_cfdi.clave }} @{{data.uso_cfdi.descripcion }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.calle}} @{{data.colonia}} @{{data.municipio}}</td>
 	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
 	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
 	                <td>

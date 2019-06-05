@@ -8,7 +8,6 @@
       <thead>
       <tr style="background-color: #337ab7; color: #ffffff;">
         <th>Nombre Completo</th>
-        <th>Correo</th>
         <th>UserName</th>
         <th>Rol</th>
         <th>Conexion</th>
@@ -16,14 +15,12 @@
         <th>Fecha Conexion</th>
         <th>Estatus</th>
         <th class="text-right"></th>
-        <th class="text-right"></th>
       </tr>
       </thead>
       <tbody>
       <tr ng-repeat="data in datos" id="tr_@{{data.id}}">
-        <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.name+' '+ data.first_surname+' '+data.second_surname" ></td>
-        <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.email" ></td>
-        <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.username" ></td>
+        <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.name+' '+ data.first_surname+' '+data.second_surname"></td>
+        <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.username" title="@{{ data.email }}"></td>
         <td style="cursor: pointer;" ng-click="editRegister(data)">
             <span class="label label-info" ng-bind="data.roles[0].perfil"></span>
         </td>
@@ -41,12 +38,11 @@
               <button type="button" class="btn btn-info btn-sm" ng-click="permissionMenuUsers(data.id)" title="Asignar Menus" ng-if="data.roles[0].id > 0 || permisos.PER">
                   <i class="glyphicon glyphicon-wrench"></i>
               </button>
+              <button type="button" class="btn btn-danger btn-sm" ng-click="destroyRegister(data.id)" title="Eliminar Registro" ng-if="permisos.DEL">
+                <i class="glyphicon glyphicon-trash"></i>
+              </button>
+
           </td>
-        <td class="text-right">
-          <button type="button" class="btn btn-danger btn-sm" ng-click="destroyRegister(data.id)" title="Eliminar Registro" ng-if="permisos.DEL">
-            <i class="glyphicon glyphicon-trash"></i>
-          </button>
-        </td>
       </tr>
 
       </tbody>

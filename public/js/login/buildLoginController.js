@@ -21,10 +21,10 @@ app.controller('LoginController', ['ServiceController','FactoryController','Noti
         $scope.serching = true;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                $scope.enabled  = false;
-                $scope.serching = false;
                 redirect(response.data.data.ruta);
             }
+            $scope.enabled  = false;
+            $scope.serching = false;
         });
     };
 

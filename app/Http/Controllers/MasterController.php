@@ -301,7 +301,7 @@ abstract class MasterController extends Controller
 		self::$_titulo = (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial : "Empresa No Asignada";
 		$parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower(self::$_titulo)));
 		$parse['IMG_PATH'] 			= domain() . 'images/';
-		$parse['icon'] 				= "img/login/buro_laboral.ico";
+		$parse['icon'] 				= "img/company.png";
 		$parse['anio'] 				= date('Y');
 		$parse['version'] 			= "2.0.2";
 		$parse['base_url'] 			= domain();
@@ -371,7 +371,7 @@ abstract class MasterController extends Controller
      */
     protected function _loadView(string $view = null, array $parse = [] )
     {
-        if( Session::get('permisos')['GET'] ){
+        if( Session::get('id_rol') != 1 && Session::get('permisos')['GET'] ){
             return view('errors.error');
         }
         $users = SysUsersModel::with(['menus','roles','details','empresas','correos'])->whereId( Session::get('id') )->first();
@@ -388,7 +388,7 @@ abstract class MasterController extends Controller
         self::$_titulo              = (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
         $parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower(self::$_titulo)));
         $parse['IMG_PATH'] 			= domain() . 'images/';
-        $parse['icon'] 				= "img/login/buro_laboral.ico";
+        $parse['icon'] 				= "img/company.png";
         $parse['anio'] 				= date('Y');
         $parse['version'] 			= "2.0.2";
         $parse['base_url'] 			= domain();
@@ -1185,32 +1185,27 @@ abstract class MasterController extends Controller
     }
 
     /**
-     * @param SysUsersModel $user
+     * @param SysEmpresasModel $companies
      * @return mixed
      */
-    protected function _rolesByCompanies(SysUsersModel $user )
+    protected function _rolesByCompanies(SysEmpresasModel $companies )
     {
-        $users = $user->with('roles')->whereId(Session::get('id'))->first();
-        return $users->roles()->where([
-            "sys_users_roles.estatus"      => TRUE
-            ,"sys_users_roles.id_empresa"  => Session::get('id_empresa')
-            ,"sys_users_roles.id_sucursal" => Session::get('id_sucursal')
-            ,"sys_users_roles.id_rol"      => Session::get('id_rol')
+        $company = $companies->with('roles')->whereId(Session::get('id_empresa'))->first();
+        return $company->roles()->where([
+            "sys_empresas_roles.id_empresa"  => Session::get('id_empresa')
         ])->groupby('id')->orderby('id','ASC')->get();
     }
 
     /**
-     * @param SysUsersModel $user
+     * @param SysEmpresasModel $companies
      * @return mixed
      */
-    protected function _groupsByCompanies(SysUsersModel $user )
+    protected function _groupsByCompanies(SysEmpresasModel $companies )
     {
-        $users = $user->with('sucursales')->whereId(Session::get('id'))->first();
-        return $users->sucursales()->where([
-            "sys_users_roles.estatus"      => TRUE
-            ,"sys_users_roles.id_empresa"  => Session::get('id_empresa')
-            ,"sys_users_roles.id_sucursal" => Session::get('id_sucursal')
-            ,"sys_users_roles.id_rol"      => Session::get('id_rol')
+        $company = $companies->with('sucursales')->whereId(Session::get('id_empresa'))->first();
+        return $company->sucursales()->where([
+            "sys_empresas_sucursales.estatus"      => TRUE
+            ,"sys_empresas_sucursales.id_empresa"  => Session::get('id_empresa')
         ])->groupby('id')->orderby('id','ASC')->get();
     }
 
@@ -1224,8 +1219,6 @@ abstract class MasterController extends Controller
         return $users->empresas()->where([
             "sys_users_roles.estatus"      => TRUE
             ,"sys_users_roles.id_empresa"  => Session::get('id_empresa')
-            ,"sys_users_roles.id_sucursal" => Session::get('id_sucursal')
-            ,"sys_users_roles.id_rol"      => Session::get('id_rol')
         ])->groupby('id')->orderby('id','ASC')->get();
     }
     /**

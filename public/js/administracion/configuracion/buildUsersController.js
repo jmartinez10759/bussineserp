@@ -39,7 +39,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     };
 
     $scope.insertRegister = function () {
-        var url = domain(URL.url_insert);
+        var url = fm.domain(URL.url_insert);
         var fields = $scope.insert;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
@@ -109,8 +109,8 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
             if (sc.validateSessionStatus(response)){
 
                 $scope.permission.id            = id;
-                $scope.permission.companyId     = null;
-                $scope.permission.groupsId      = null;
+                $scope.permission.companyId     = 0;
+                $scope.permission.groupsId      = 0;
                 $scope.permission.cmbGroups     = [];
                 $scope.permission.dataChecked   = [];
                 $scope.permission.disabledCheck = true;
@@ -120,7 +120,9 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                 $scope.permission.cmbCompanies  = response.data.data.companyByUser;
                 $scope.permission.cmbRoles      = response.data.data.rolesByUser;
                 $scope.permission.rolesId       = angular.isDefined(response.data.data.rolesByUser[0])? response.data.data.rolesByUser[0].id : 0 ;
-
+                if ($scope.permission.rolesId == 1){
+                    $scope.findPermissionMenuByUser($scope.permission.groupsId);
+                }
                 console.log($scope.permission);
                 nf.modal("#modal_permission_user");
             }

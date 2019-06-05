@@ -26,12 +26,14 @@ class PermisosController extends MasterController
     public function findMenuByUsers( Request $request, SysUsersModel $users )
     {
         try {
-            if ( !$request->get("groupId")|| $request->get("groupId") == 0 || $request->get("groupId") == NULL){
-                return new JsonResponse([
-                    "success"   => FALSE ,
-                    "data"      => "Groupid no tiene Informacion" ,
-                    "message"   => self::$message_error
-                ],Response::HTTP_BAD_REQUEST);
+            if ($request->get("rolesId") != 1 ){
+                if ( !$request->get("groupId")|| $request->get("groupId") == 0 || $request->get("groupId") == NULL){
+                    return new JsonResponse([
+                        "success"   => FALSE ,
+                        "data"      => "Groupid no tiene Informacion" ,
+                        "message"   => self::$message_error
+                    ],Response::HTTP_BAD_REQUEST);
+                }
             }
             $user = $users->with('menus')->whereId($request->get("userId"))->first();
             $permission = $user->menus()->where([
