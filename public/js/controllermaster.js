@@ -125,58 +125,31 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 	    
 	    },
 
-		/*mapObject: function( data, array2, discrim = false ){
-			var response = {};
-			for(var i in data ){
-				if(!discrim ){
-					if ( !array2.includes(i) ) {
-						response[i] = data[i];
-					}
-				}
-				if(discrim){
-					if ( array2.includes(i) ) {
-						response[i] = data[i];
-					}
-				}
-			}
-			return response;
-		},*/
-
-		/*httpRequest: function ( url, fields, methods, $http ,headers  ) {
-				this.loading();
-				var config = [];
-				config['method']  = methods;
-				config['url']     = url;
-				config['headers'] = headers;
-				if(methods == "get" || methods == "delete" || methods == "GET" || methods == "DELETE"){
-					config['params'] = fields;
-				}else{ config['data'] = fields; }
-				return $http(config);
-		},*/
-
-
 
   	}
 
 }]);
 
 
-app.controller('ApplicationController', ['$scope','masterservice','ServiceController','$http','$rootScope','FactoryController' ,function( $scope,masterservice,ms,$http,$rootScope,fm ){
+app.controller('ApplicationController', ['$scope','masterservice','ServiceController','$http','$rootScope','FactoryController','$window' ,function( $scope,masterservice,sc,$http,rs,fc,w ){
 
-	$rootScope.$on("services", function(){
+	rs.$on("services", function(){
 	    $scope.services();
 	});
 	$scope.constructor = function(){
 	  $scope.services();
 	  $scope.notificaciones = {};
 	  $scope.correos = {};
-	  $scope.update = {};
+	  $scope.cmbEstatusRoot = [];
 	  $scope.permisos = {};
-	  $scope.loader = true;
-	
-	}
+	  $scope.rootCmbCompanies = {};
+	  $scope.loading = true;
+	  $scope.userLogged;
+	};
+
 	$scope.services = function(){
-		ms.serviceNotification( $scope );
+		sc.serviceNotification( $scope );
+		$scope.userLogged = w.localStorage['rolesId'];
 	};
 
 	$scope.update_notify = function(){

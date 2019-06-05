@@ -35,7 +35,7 @@
         </div>
 
         <div class="panel-body">
-            <!-- seccion de cargador  -->
+            <!-- section of load -->
             <img class="loader"/>
             
             @yield('content')
@@ -53,7 +53,6 @@
                             <div class="btn-toolbar pull-right">
                                 <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
                             </div>
-                            <!-- <button type="button" class="btn btn-primary"><i class="fa fa-save"></i> Aceptar </button> -->
                         </div>
 
                     </div>

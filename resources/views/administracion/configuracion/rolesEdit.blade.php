@@ -25,6 +25,22 @@
 						</div>
 					</div>
 
+					<div class="form-group" ng-if="userLogged == 1">
+						<div class="control-label">
+							<label class="col-sm-3 control-label">Empresas</label>
+						</div>
+						<div class="col-sm-6">
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									multiple
+									ng-model="insert.companyId"
+									ng-options="value.id as value.razon_social for (key, value) in rootCmbCompanies">
+								<option value="">--Seleccione Opcion--</option>
+							</select>
+						</div>
+					</div>
+
 					<div class="form-group">
 						<div class="control-label">
 							<label class="col-sm-3 control-label">{!!$campo_3!!}</label>
@@ -34,7 +50,7 @@
 								chosen
 								width="'100%'" 
 								ng-model="insert.estatus" 
-								ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+								ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
 								<option value="">--Seleccione Opcion--</option> 
 							</select>
 						</div>
@@ -86,6 +102,22 @@
 						</div>
 					</div>
 
+					<div class="form-group" ng-if="userLogged == 1">
+						<div class="control-label">
+							<label class="col-sm-3 control-label">Empresas</label>
+						</div>
+						<div class="col-sm-6">
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									multiple
+									ng-model="update.companyId"
+									ng-options="value.id as value.razon_social for (key, value) in rootCmbCompanies">
+								<option value="">--Seleccione Opcion--</option>
+							</select>
+						</div>
+					</div>
+
 					<div class="form-group">
 						<div class="control-label">
 							<label class="col-sm-3 control-label">{!!$campo_3!!}</label>
@@ -95,7 +127,7 @@
 								chosen
 								width="'100%'" 
 								ng-model="update.estatus" 
-								ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+								ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
 								<option value="">--Seleccione Opcion--</option> 
 							</select>
 						</div>

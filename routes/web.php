@@ -179,6 +179,11 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'configuracion.menus'
     ]);
 
+    Route::get('/menus/all', [
+        'uses'      => 'Administracion\Configuracion\MenuController@all'
+        ,'as'       => 'menus.all'
+    ]);
+
     Route::get('/menus/tipo', [
         'uses'      => 'Administracion\Configuracion\MenuController@tipo'
         ,'as'       => 'menus.tipo'

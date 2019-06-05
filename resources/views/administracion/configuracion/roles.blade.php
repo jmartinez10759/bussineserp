@@ -13,7 +13,6 @@
 	                <th>Nombre Corto</th>
 	                <th>Estatus</th>
 	                <th class="text-right"></th>
-	                <th class="text-right"></th>
 	            </tr>
 	        </thead>
 	        <tbody>
@@ -25,18 +24,17 @@
 		                <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
 	                	<span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>
 					</td>
-	                <td class="text-right">
+	                <td class="text-center">
 	                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroyRegister(data.id)" title="Eliminar Registro" ng-if="permisos.DEL">
                         <i class="glyphicon glyphicon-trash"></i>
                       </button>
 	                </td>
-					<td class="text-right"></td>
 	            </tr>
 
 	        </tbody>
 	    </table>
 	</div>
-	@include('administracion.configuracion.roles_edit')
+	@include('administracion.configuracion.rolesEdit')
 	<!-- <div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true"> -->
 </div>
 @stop

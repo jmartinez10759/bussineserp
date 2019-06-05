@@ -52,11 +52,13 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
     };
 
     ServiceController.prototype.serviceNotification = function(scope){
-        var url = domain('services');
+        var url = fc.domain('services');
         this.requestHttp(url,{},"GET", false).then(function (response) {
-            scope.notificaciones = response.data.result.notification;
-            scope.correos 		 = response.data.result.correos;
-            scope.permisos 		 = response.data.result.permisos;
+            scope.notificaciones    = response.data.data.notification;
+            scope.correos 		    = response.data.data.correos;
+            scope.permisos 		    = response.data.data.permisos;
+            scope.rootCmbCompanies  = response.data.data.companies;
+            scope.cmbEstatusRoot    = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
         });
 
     };

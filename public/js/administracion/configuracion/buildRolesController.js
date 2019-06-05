@@ -14,7 +14,6 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
       $scope.update = {};
       $scope.edit   = {};
       $scope.fields = {};
-      $scope.cmb_estatus = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
       $scope.index();
     };
 
@@ -23,7 +22,7 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response);
-                $scope.datos = response.data.data;
+                $scope.datos = response.data.data.roles;
             }
         });
     };
@@ -46,7 +45,8 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
 
     $scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
-        sc.requestHttp(url, $scope.update, 'PUT', false).then(function (response) {
+        var fields = sc.mapObject($scope.update, ['empresas'], false);
+        sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastInfo(response.data.message, nf.titleMgsSuccess);
                 nf.modal("#modal_edit_register",true);
@@ -57,8 +57,12 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
     };
 
     $scope.editRegister = function( entry ){
-        var datos = ['id', 'perfil', 'clave_corta', 'estatus' ];
+        var datos = ['id', 'perfil', 'clave_corta', 'estatus',"empresas" ];
         $scope.update = sc.mapObject(entry, datos, true);
+        $scope.update.companyId = [];
+        angular.forEach($scope.update.empresas,function (value, key) {
+            $scope.update.companyId[key] = value.id;
+        });
         console.log($scope.update);
         nf.modal("#modal_edit_register");
     };

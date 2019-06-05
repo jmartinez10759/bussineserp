@@ -6,7 +6,6 @@
 				<h3>{{$titulo_modal}}</h3>
 			</div>
 			<div class="modal-body panel-body row-border">
-				<!--Se crea el contenido de los datos que se solicitan-->
 				<form class="form-horizontal">
 
 					<div class="form-group">
@@ -14,8 +13,7 @@
 							<label class="col-sm-3 control-label">{{$campo_1}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" id="texto" style="text-transform: capitalize;" v-model="newKeep.texto">
-							<input type="hidden" class="form-control" id="id_principal">
+							<input type="text" class="form-control" ng-model="insert.texto">
 						</div>
 					</div>
 
@@ -24,22 +22,27 @@
 							<label class="col-sm-3 control-label">{{$campo_2}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-							<select class="form-control" id="tipo" v-on:change="tipo_menu()" v-model="newKeep.tipo">
-								<option value="SIMPLE">SIMPLE</option>
-								<option value="PADRE">PADRE</option>
-								<option value="HIJO">HIJO</option>
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									ng-model="insert.tipo"
+									ng-options="value.id as value.descripcion for (key, value) in cmbTypeMenu">
+								<option value="">--Seleccione Opcion--</option>
 							</select>
 						</div>
 					</div>
 
-					<div class="form-group" id="select_padre" v-if="newKeep.tipo == 'HIJO'">
+					<div class="form-group" ng-if="insert.tipo == 'HIJO'">
 						<div class="control-label">
 							<label class="col-sm-3 control-label">{{$campo_3}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-              <!-- aqui va el id_padre -->
-              <select class="form-control" v-model="newKeep.id_padre">
-								<option v-for="(menu_padre, key ) in datos.tipo_menu" :value="menu_padre.id">@{{menu_padre.texto}}</option>
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									ng-model="insert.id_padre"
+									ng-options="value.id as value.descripcion for (key, value) in cmbTypeMenus">
+								<option value="">--Seleccione Opcion--</option>
 							</select>
 						</div>
 					</div>
@@ -49,7 +52,7 @@
 							<label class="col-sm-3 control-label">{{$campo_4}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" id="link" v-model="newKeep.link">
+							<input type="text" class="form-control" ng-model="insert.link">
 						</div>
 					</div>
 
@@ -58,7 +61,7 @@
 							<label class="col-sm-3 control-label">{{$campo_5}} </label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" id="icon" v-model="newKeep.icon">
+							<input type="text" class="form-control" ng-model="insert.icon">
 						</div>
 					</div>
 
@@ -67,7 +70,7 @@
 							<label class="col-sm-3 control-label">{{$campo_7}} </label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" id="orden" v-model="newKeep.orden">
+							<input type="text" class="form-control" ng-model="insert.orden">
 						</div>
 					</div>
 
@@ -76,9 +79,12 @@
 							<label class="col-sm-3 control-label">{{$campo_6}} </label>
 						</div>
 						<div class="col-sm-6">
-							<select class="form-control" name="" id="estatus" v-model="newKeep.estatus">
-								<option value="1">ACTIVO</option>
-								<option value="0">BAJA</option>
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									ng-model="insert.estatus"
+									ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
+								<option value="">--Seleccione Opcion--</option>
 							</select>
 						</div>
 					</div>
@@ -90,7 +96,9 @@
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
 					<button type= "button" class="btn btn-danger" data-fancybox-close ><i class="fa fa-times-circle"></i> Cancelar</button>
-					<button type= "button" class="btn btn-primary" v-on:click.prevent="insert()" {{$insertar}}><i class="fa fa-save"></i> Registrar</button>
+					<button type= "button" class="btn btn-success" ng-click="insertRegister()" ng-if="permisos.INS">
+						<i class="fa fa-save"></i> Registrar
+					</button>
 				</div>
 			</div>
 
@@ -108,7 +116,6 @@
 			</div>
 
 			<div class="modal-body panel-body">
-				<!--Se crea el contenido de los datos que se solicitan-->
 				<form action="" class="form-horizontal row-border panel panel-body">
 
 					<div class="form-group">
@@ -116,7 +123,7 @@
 							<label class="col-sm-3 control-label">{{$campo_1}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" style="text-transform: capitalize;" v-model="fillKeep.texto">
+							<input type="text" class="form-control" ng-model="update.texto">
 						</div>
 					</div>
 
@@ -125,23 +132,29 @@
 							<label class="col-sm-3 control-label">{{$campo_2}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-							<select class="form-control" v-on:change="tipo_menu()" v-model="fillKeep.tipo">
-								<option value="SIMPLE">SIMPLE</option>
-								<option value="PADRE">PADRE</option>
-								<option value="HIJO">HIJO</option>
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									ng-model="update.tipo"
+									ng-options="value.id as value.descripcion for (key, value) in cmbTypeMenu">
+								<option value="">--Seleccione Opcion--</option>
 							</select>
 						</div>
 					</div>
 
-					<div class="form-group" v-if="fillKeep.tipo == 'HIJO'">
+					<div class="form-group" ng-if="update.tipo == 'HIJO'">
 						<div class="control-label">
 							<label class="col-sm-3 control-label">{{$campo_3}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-              <!-- aqui va el id_padre -->
-              <select class="form-control" v-model="fillKeep.id_padre">
-								<option v-for="(menu_padre, key ) in datos.tipo_menu" :value="menu_padre.id">@{{menu_padre.texto}}</option>
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									ng-model="update.id_padre"
+									ng-options="value.id as value.descripcion for (key, value) in cmbTypeMenus">
+								<option value="">--Seleccione Opcion--</option>
 							</select>
+
 						</div>
 					</div>
 
@@ -150,7 +163,7 @@
 							<label class="col-sm-3 control-label">{{$campo_4}} <font color="red" size="3">*</font></label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" v-model="fillKeep.link">
+							<input type="text" class="form-control" ng-model="update.link">
 						</div>
 					</div>
 
@@ -159,7 +172,7 @@
 							<label class="col-sm-3 control-label">{{$campo_5}} </label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" v-model="fillKeep.icon">
+							<input type="text" class="form-control" ng-model="update.icon">
 						</div>
 					</div>
 
@@ -168,7 +181,7 @@
 							<label class="col-sm-3 control-label">{{$campo_7}} </label>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" class="form-control" v-model="fillKeep.orden">
+							<input type="text" class="form-control" ng-model="update.orden">
 						</div>
 					</div>
 
@@ -177,9 +190,12 @@
 							<label class="col-sm-3 control-label">{{$campo_6}} </label>
 						</div>
 						<div class="col-sm-6">
-							<select class="form-control" v-model="fillKeep.estatus">
-								<option value="1">ACTIVO</option>
-								<option value="0">BAJA</option>
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									ng-model="update.estatus"
+									ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
+								<option value="">--Seleccione Opcion--</option>
 							</select>
 						</div>
 					</div>
@@ -189,8 +205,12 @@
 			</div>
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
-					<button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times-circle"></i> Cancelar</button>
-					<button type= "button" class="btn btn-info" v-on:click.prevent="update()" {{$update}}><i class="fa fa-save"></i> Actualizar</button>
+					<button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
+						<i class="fa fa-times-circle"></i> Cancelar
+					</button>
+					<button type="button" class="btn btn-primary" ng-click="updateRegister()" ng-if="permisos.UPD">
+						<i class="fa fa-save"></i> Actualizar
+					</button>
 				</div>
 			</div>
 		</div>

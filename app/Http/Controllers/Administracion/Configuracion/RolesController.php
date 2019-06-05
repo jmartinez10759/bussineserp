@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
+use App\Model\Administracion\Configuracion\SysUsersModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -48,7 +49,10 @@ class RolesController extends MasterController
      public function all()
      {
         try {
-          $data = $this->_rolesBelongsCompany();
+
+          $data = [
+              "roles"     => $this->_rolesBelongsCompany() ,
+          ];
             return new JsonResponse([
                 "success" => TRUE ,
                 "data"    => $data ,
@@ -79,15 +83,25 @@ class RolesController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-            $response = $roles->create($request->all());
+            $data = array_filter($request->all(), function ($key) use ($request){
+                if($key != "companyId"){
+                    return $request->get($key);
+                }
+            },ARRAY_FILTER_USE_KEY);
+            $response = $roles->create($data);
             if( Session::get('id_rol') != 1 ){
                 $data = [
                   'id_rol'       => $response->id ,
                   'id_empresa'   => Session::get('id_empresa') ,
                   'id_sucursal'  => Session::get('id_sucursal') ,
                 ];
-                $companyRoles->create($data);
+            }else{
+                $data = [
+                    'id_rol'       => $response->id ,
+                    'id_empresa'   => $request->get("companyId") ,
+                ];
             }
+            $companyRoles->create($data);
 
           DB::commit();
           $success = true;
@@ -111,20 +125,32 @@ class RolesController extends MasterController
          ],Response::HTTP_BAD_REQUEST);
 
      }
-     /**
-      *Metodo para realizar la consulta por medio de su id
-      *@access public
-      *@param Request $request [Description]
-      *@return void
-      */
-     public function show( Request $request ){
 
+    /**
+     * This method is for get information the roles by companies
+     * @access public
+     * @param Request $request [Description]
+     * @param SysRolesModel $roles
+     * @return JsonResponse
+     */
+     public function show( Request $request, SysRolesModel $roles )
+     {
         try {
-          $response = SysRolesModel::with('empresas')->whereId( $request->id )->first();
-          return $this->_message_success(201, $response, self::$message_success);
+          $response = $roles->with('empresas')->whereId( $request->get("id") )->first();
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $response
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
+
         } catch (\Exception $e) {
           $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-          return $this->show_error(6, $error, self::$message_error);
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+
         }
 
      }
@@ -134,22 +160,33 @@ class RolesController extends MasterController
      * @access public
      * @param Request $request [Description]
      * @param SysRolesModel $roles
-     * @return void
+     * @param SysCompaniesRoles $companyRoles
+     * @return JsonResponse
      */
-     public function update( Request $request, SysRolesModel $roles )
+     public function update( Request $request, SysRolesModel $roles, SysCompaniesRoles $companyRoles )
      {
         $error = null;
         DB::beginTransaction();
         try {
-            $data = [];
-            foreach ( $request->all() as $key => $value ) {
-                if ( !in_array($key,['empresas'])) {
-                    $data[$key] = $value;
+            $data = array_filter($request->all(), function ($key) use ($request){
+                if($key != "companyId"){
+                    return $request->get($key);
+                }
+            },ARRAY_FILTER_USE_KEY);
+            $roles->whereId($request->get('id'))->update($data);
+            if( Session::get('id_rol') == 1 ){
+                $companyRoles->whereIdRol($request->get("id"))->delete();
+                if ( isset($request->companyId ) ){
+                    for ($i = 0; $i < count($request->get("companyId")); $i++){
+                        $data = [
+                            'id_rol'       => $request->get("id") ,
+                            'id_empresa'   => $request->get("companyId")[$i] ,
+                        ];
+                        $companyRoles->create($data);
+                    }
                 }
             }
-            $roles->whereEstatus(1)->whereId($request->get('id'))->update($data);
-            $response = $roles->whereId($request->get('id') )->first();
-          DB::commit();
+            DB::commit();
           $success = true;
         } catch (\Exception $e) {
           $success = false;
@@ -158,9 +195,13 @@ class RolesController extends MasterController
         }
 
         if ($success) {
-          return $this->_message_success(201, $response, self::$message_success);
+           return $this->show( new Request($request->all()), new SysRolesModel );
         }
-        return $this->show_error(6, $error, self::$message_error);
+         return new JsonResponse([
+             'success'   => FALSE
+             ,'data'     => $error
+             ,'message'  => self::$message_error
+         ],Response::HTTP_BAD_REQUEST);
 
      }
 
@@ -176,8 +217,9 @@ class RolesController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-            $response = $roles->whereId($id)->delete();
+            $roles->whereId($id)->delete();
             SysUsersRolesModel::whereIdRol($id)->delete();
+            SysCompaniesRoles::whereIdRol($id)->delete();
           DB::commit();
           $success = true;
         } catch (\Exception $e) {
@@ -189,7 +231,7 @@ class RolesController extends MasterController
         if ($success) {
             return new JsonResponse([
                 'success'   => $success
-                ,'data'     => $response
+                ,'data'     => []
                 ,'message' => self::$message_success
             ],Response::HTTP_OK);
         }
@@ -210,7 +252,7 @@ class RolesController extends MasterController
 
         if( Session::get('id_rol') == 1 ){
             $response = SysRolesModel::with(['empresas','sucursales'])
-                                      ->orderBy('id','desc')
+                                      ->orderBy('id','DESC')
                                       ->groupby('id')
                                       ->get();
 

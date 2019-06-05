@@ -85,6 +85,8 @@ app.factory('FactoryController',['$http', function (http) {
     };
 
     FactoryController.prototype.domain = function (url) {
+
+        var url = (url)? url : "";
         var pathGeneral = document.getElementsByTagName("META");
         var content = "";
         for (var i = 0; i < pathGeneral.length; i++) {
@@ -108,10 +110,6 @@ app.factory('FactoryController',['$http', function (http) {
         if (public == "" && project) {
             return http + "//" + host + "/" + project + url;
         }
-    };
-
-    FactoryController.prototype.sha1 = function (entry) {
-
     };
 
     return new FactoryController();
