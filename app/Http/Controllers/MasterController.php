@@ -47,6 +47,8 @@ abstract class MasterController extends Controller
 	protected static $ssl_ruta = [];
 	protected $permisos_full = [];
 
+	protected $_today;
+
 	public function __construct()
 	{
       #self::$ssl_ruta = ["verify" => $_SERVER['DOCUMENT_ROOT']. "/cacert.pem"];
@@ -56,6 +58,7 @@ abstract class MasterController extends Controller
 		self::$_model = new MasterModel();
 		self::$message_success = "¡Transacción Exitosa!";
 		self::$message_error = "¡Ocurrio un error, favor de verificar!";
+		$this->_today = new \DateTime('now');
 		$this->middleware('permisos.menus', ['except' => ['load_lista_sucursal', 'lista', 'lista_sucursal', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code'] ] );
 		$this->middleware('permisos.rutas', ['only' => ['index']]);
 	}

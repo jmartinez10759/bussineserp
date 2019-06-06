@@ -31,18 +31,26 @@ class SysUsersModel extends Model
     {
       return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_users_correos','id_users','id_correo');
     }
+
+
     public function menus()
     {
-      return $this->belongsToMany(SysMenuModel::class,'sys_rol_menu','id_users','id_menu')->withPivot('estatus');
+      return $this->belongsToMany(SysMenuModel::class,'sys_users_menus','user_id','menu_id');
     }
-    public function empresas()
+    public function companies()
     {
-      return $this->belongsToMany(SysEmpresasModel::class,'sys_users_roles','id_users','id_empresa')->withPivot('estatus');
+      return $this->belongsToMany(SysEmpresasModel::class,'sys_users_companies','user_id','company_id');
     }
-    public function sucursales()
+    public function groups()
     {
-      return $this->belongsToMany(SysSucursalesModel::class,'sys_users_roles','id_users','id_sucursal')->withPivot('estatus');
+      return $this->belongsToMany(SysSucursalesModel::class,'sys_users_groups','user_id','group_id');
     }
+    public function roles()
+    {
+        return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','user_id','roles_id');
+    }
+
+
     public function permisos()
     {
       return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_users','id_permiso');
@@ -51,10 +59,7 @@ class SysUsersModel extends Model
     {
         return $this->belongsToMany(SysAccionesModel::class,'sys_users_permisos','id_users','id_accion')->withPivot('estatus');
     }
-    public function roles()
-    {
-      return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','id_users','id_rol')->withPivot('id_rol','estatus');
-    }
+
     public function skills()
     {
       return $this->hasMany(SysSkillsModel::class,'id_users','id');

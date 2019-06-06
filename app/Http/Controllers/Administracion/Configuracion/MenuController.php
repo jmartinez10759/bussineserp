@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use App\SysCompaniesMenus;
+use App\SysUsersMenus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MenuController extends MasterController
@@ -18,7 +18,7 @@ class MenuController extends MasterController
 
     public function __construct()
     {
-      parent::__construct();
+       parent::__construct();
     }
 
     /**
@@ -131,16 +131,17 @@ class MenuController extends MasterController
         if( Session::get('id_rol') != 1){
             $data = [
                 "company_id" => Session::get("id_empresa") ,
-                "menu_id"    => $response->id
+                #"menu_id"    => $response->id
             ];
-            $companiesMenus->create($data);
+            $response->companies()->create($data);
+            #$companiesMenus->create($data);
         }else{
             for ($i = 0; $i < count($request->get("companyId")); $i++){
                 $data = [
                     "company_id" => $request->get("companyId")[$i] ,
-                    "menu_id"    => $response->id
+                    #"menu_id"    => $response->id
                 ];
-                $companiesMenus->create($data);
+                $response->companies()->create($data);
             }
 
         }
@@ -169,31 +170,41 @@ class MenuController extends MasterController
    }
 
     /**
-     *Metodo para pintar la vista y cargar la informacion principal del menu
+     * This method is use for delete register
      * @access public
      * @param int $id [Description]
      * @param SysMenuModel $menus
-     * @return void
+     * @return JsonResponse
      */
     public function destroy( int $id = null, SysMenuModel $menus )
     {
       $error = null;
       DB::beginTransaction();
       try {
-          $menus->whereId($id)->delete();
-          SysRolMenuModel::whereIdMenu($id)->delete();
+          $menus->find($id)->companies()->newPivotStatement()->whereMenuId($id)->delete();
+          $menus->find($id)->users()->newPivotStatement()->whereMenuId($id)->delete();
+          $menus->find($id)->delete();
+
         DB::commit();
         $success = true;
+
       } catch (\Exception $e) {
         $success = false;
         $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
         DB::rollback();
       }
-
       if ($success) {
-        return $this->_message_success(201, $response, self::$message_success);
+          return new JsonResponse([
+              "success" => $success ,
+              "data"    =>  $id ,
+              "message" => self::$message_success
+          ],Response::HTTP_OK);
       }
-      return $this->show_error(6, $error, self::$message_error);
+        return new JsonResponse([
+            "success" => $success ,
+            "data"    => $error ,
+            "message" => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
 
     }
 
@@ -226,8 +237,8 @@ class MenuController extends MasterController
               if ( isset($request->companyId ) ){
                   for ($i = 0; $i < count($request->get("companyId")); $i++){
                       $data = [
-                          'menu_id'       => $request->get("id") ,
                           'company_id'    => $request->get("companyId")[$i] ,
+                          'menu_id'       => $request->get("id") ,
                       ];
                       $companiesMenus->create($data);
                   }

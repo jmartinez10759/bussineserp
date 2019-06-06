@@ -18,31 +18,25 @@ class SysMenuModel extends Model
         ,'icon'
     ];
 
-    public function usuarios()
+    public function users()
     {
-      return $this->belongsToMany(SysUsersModel::class,'sys_rol_menu','id_menu','id_users')->withPivot(['estatus']);
+      return $this->belongsToMany(SysUsersModel::class,'sys_users_menus','menu_id','user_id');
     }
-    public function empresas()
-    {
-        return $this->belongsToMany(SysEmpresasModel::class,'sys_rol_menu','id_menu','id_empresa')->withPivot(['estatus']);
-    }
+
     public function companies()
     {
         return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_menus','menu_id','company_id');
     }
-
-    public function sucursales()
+    public function permission()
     {
-        return $this->belongsToMany(SysSucursalesModel::class,'sys_rol_menu','id_menu','id_sucursal')->withPivot(['estatus']);
+        return $this->belongsToMany('App\SysPermission','sys_permission_menus','menu_id','permission_id');
     }
-    public function permisos()
+
+    /*public function permisos()
     {
         return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_menu','id_permiso')->withPivot(['estatus']);
-    }
-    public function roles()
-    {
-        return $this->belongsToMany(SysRolesModel::class,'sys_rol_menu','id_menu','id_rol')->withPivot(['estatus']);
-    }
+    }*/
+
 
 
 

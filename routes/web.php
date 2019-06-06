@@ -189,7 +189,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'menus.register'
     ]);
 
-    Route::delete('/menus/destroy', [
+    Route::delete('/menus/destroy/{id}/company', [
         'uses'      => 'Administracion\Configuracion\MenuController@destroy'
         ,'as'       => 'menus.destroy'
     ]);
