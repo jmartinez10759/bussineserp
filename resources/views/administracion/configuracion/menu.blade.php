@@ -9,24 +9,22 @@
         <table class="table table-striped table-responsive highlight table-hover" id="datatable">
             <thead>
             <tr style="background-color: #337ab7; color: #ffffff;">
-                <th>ID</th>
-                <th>Menu Principal</th>
-                <th>Menu</th>
-                <th>Url</th>
-                <th>Tipo Menu</th>
-                <th>Icono</th>
-                <th>Estatus</th>
+                <th class="text-center">ID</th>
+                <th class="text-center">Menu</th>
+                <th class="text-center">Url</th>
+                <th class="text-center">Tipo Menu</th>
+                <th class="text-center">Icono</th>
+                <th class="text-center">Estatus</th>
                 <th class="text-center"></th>
             </tr>
             </thead>
             <tbody>
             <tr ng-repeat="data in datos" id="tr_@{{data.id}}">
                 <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.id" ></td>
-                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.menuFather" ></td>
                 <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.texto" ></td>
                 <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.link" ></td>
-                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.tipo" ></td>
-                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.icono" ></td>
+                <td style="cursor: pointer;" class="text-center" ng-click="editRegister(data)" ng-bind="data.tipo" ></td>
+                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.icon" ></td>
                 <td>
                     <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
                     <span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>

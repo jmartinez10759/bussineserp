@@ -48,7 +48,7 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
 
     scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
-        var fields = sc.mapObject(scope.update, ['empresas'], false);
+        var fields = sc.mapObject(scope.update, ['companies'], false);
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastInfo(response.data.message, nf.titleMgsSuccess);
@@ -60,10 +60,10 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
     };
 
     scope.editRegister = function( entry ){
-        var datos = ['id', 'perfil', 'clave_corta', 'estatus',"empresas" ];
-        scope.update = sc.mapObject(entry, datos, true);
+        var datos = ["created_at","updated_at"];
+        scope.update = sc.mapObject(entry, datos, false);
         scope.update.companyId = [];
-        angular.forEach(scope.update.empresas,function (value, key) {
+        angular.forEach(scope.update.companies,function (value, key) {
             scope.update.companyId[key] = value.id;
         });
         console.log(scope.update);

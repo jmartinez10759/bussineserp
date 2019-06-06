@@ -285,7 +285,7 @@ class UsuariosController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-            $userUpdate = $users->whereId($request->get("id"))->update($requestUsers);
+            $users->whereId($request->get("id"))->update($requestUsers);
             if (Session::get('id_rol') != 1) {
                 SysUsersRolesModel::whereIdUsers($request->get('id'))->delete();
                 $sql = "DELETE FROM sys_rol_menu WHERE id_users = " . $request->get("id");

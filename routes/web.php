@@ -184,11 +184,6 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'menus.all'
     ]);
 
-    Route::get('/menus/tipo', [
-        'uses'      => 'Administracion\Configuracion\MenuController@tipo'
-        ,'as'       => 'menus.tipo'
-    ]);
-
     Route::post('/menus/register', [
         'uses'      => 'Administracion\Configuracion\MenuController@store'
         ,'as'       => 'menus.register'

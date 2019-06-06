@@ -29,6 +29,10 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany(SysMenuModel::class,'sys_rol_menu','id_empresa','id_menu')->withPivot('estatus');
   }
+    public function menu()
+    {
+        return $this->belongsToMany(SysMenuModel::class,'sys_companies_menus','company_id','menu_id');
+    }
   public function sucursales()
   {
     return $this->belongsToMany(SysSucursalesModel::class,'sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');

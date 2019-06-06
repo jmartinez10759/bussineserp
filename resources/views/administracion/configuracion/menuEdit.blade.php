@@ -41,13 +41,13 @@
 									chosen
 									width="'100%'"
 									ng-model="insert.id_padre"
-									ng-options="value.id as value.descripcion for (key, value) in cmbTypeMenus">
+									ng-options="value.id as value.texto for (key, value) in cmbTypeMenus">
 								<option value="">--Seleccione Opcion--</option>
 							</select>
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group" ng-hide="insert.tipo == 'PADRE'">
 						<div class="control-label">
 							<label class="col-sm-3 control-label">{{$campo_4}} <font color="red" size="3">*</font></label>
 						</div>
@@ -56,7 +56,7 @@
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group" ng-hide="insert.tipo == 'HIJO'">
 						<div class="control-label">
 							<label class="col-sm-3 control-label">{{$campo_5}} </label>
 						</div>
@@ -71,6 +71,22 @@
 						</div>
 						<div class="col-sm-6">
 							<input type="text" class="form-control" ng-model="insert.orden">
+						</div>
+					</div>
+
+					<div class="form-group" ng-if="userLogged == 1">
+						<div class="control-label">
+							<label class="col-sm-3 control-label">Empresas</label>
+						</div>
+						<div class="col-sm-6">
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									multiple
+									ng-model="insert.companyId"
+									ng-options="value.id as value.razon_social for (key, value) in rootCmbCompanies">
+								<option value="">--Seleccione Opcion--</option>
+							</select>
 						</div>
 					</div>
 
@@ -151,14 +167,14 @@
 									chosen
 									width="'100%'"
 									ng-model="update.id_padre"
-									ng-options="value.id as value.descripcion for (key, value) in cmbTypeMenus">
+									ng-options="value.id as value.texto for (key, value) in cmbTypeMenus">
 								<option value="">--Seleccione Opcion--</option>
 							</select>
 
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group" ng-hide="update.tipo == 'PADRE'">
 						<div class="control-label">
 							<label class="col-sm-3 control-label">{{$campo_4}} <font color="red" size="3">*</font></label>
 						</div>
@@ -167,7 +183,7 @@
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group" ng-hide="update.tipo == 'HIJO'">
 						<div class="control-label">
 							<label class="col-sm-3 control-label">{{$campo_5}} </label>
 						</div>
@@ -182,6 +198,22 @@
 						</div>
 						<div class="col-sm-6">
 							<input type="text" class="form-control" ng-model="update.orden">
+						</div>
+					</div>
+
+					<div class="form-group" ng-if="userLogged == 1">
+						<div class="control-label">
+							<label class="col-sm-3 control-label">Empresas</label>
+						</div>
+						<div class="col-sm-6">
+							<select class="form-control"
+									chosen
+									width="'100%'"
+									multiple
+									ng-model="update.companyId"
+									ng-options="value.id as value.razon_social for (key, value) in rootCmbCompanies">
+								<option value="">--Seleccione Opcion--</option>
+							</select>
 						</div>
 					</div>
 

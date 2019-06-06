@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
+use App\SysCompaniesMenus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
-use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MenuController extends MasterController
 {
+
     public function __construct()
     {
       parent::__construct();
@@ -25,8 +26,8 @@ class MenuController extends MasterController
      * @access public
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-   public function index()
-   {
+    public function index()
+    {
      $data = [
             'page_title' 	      => "Configuración"
             ,'title'  		      => "Menus"
@@ -44,7 +45,36 @@ class MenuController extends MasterController
 
      return $this->_loadView( 'administracion.configuracion.menu', $data );
 
-   }
+    }
+
+    /**
+     * This method is for get information of the menu belong to company
+     * @access public
+     * @param Request $request [Description]
+     * @param SysMenuModel $menus
+     * @return JsonResponse
+     */
+    public function show( Request $request, SysMenuModel $menus )
+    {
+        try {
+            $response = $menus->with('companies')->whereId( $request->get("id") )->first();
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $response
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+
+        }
+
+    }
 
     /**
      * This method is for get all data menus by company
@@ -52,9 +82,8 @@ class MenuController extends MasterController
      * @return JsonResponse
      */
     public function all()
-   {
+    {
        try {
-
            $data = [
                "menus"        => $this->_menusBelongsCompany() ,
                "cmbMenus"     => SysMenuModel::whereTipo("PADRE")->get() ,
@@ -73,57 +102,48 @@ class MenuController extends MasterController
                "message" => self::$message_error
            ],Response::HTTP_BAD_REQUEST);
        }
-   }
-
- /**
-  *Metodo para pintar la vista y cargar la informacion principal del menu
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public static function tipo( Request $request ){
-      $response = self::$_tabla_model::where( $request->all() )->get();
-      $data = ['tipo_menu' => $response];
-      return message(true, $data ,self::$message_success);
-  }
+    }
 
     /**
-     *Metodo para pintar la vista y cargar la informacion principal del menu
+     * This method is for insert information of menus by companies
      * @access public
      * @param Request $request [Description]
      * @param SysMenuModel $menus
-     * @return void
+     * @param SysCompaniesMenus $companiesMenus
+     * @return JsonResponse
      */
-   public function store( Request $request, SysMenuModel $menus )
+   public function store( Request $request, SysMenuModel $menus, SysCompaniesMenus $companiesMenus )
    {
-     
       $error = null;
       DB::beginTransaction();
       try {
-        $response = SysMenuModel::create( $request->all() );
+          $data = array_filter($request->all(), function ($key) use ($request){
+              if($key != "companyId"){
+                  $data[$key] = $request->$key;
+                  if ($request->$key == 0){
+                      $data[$key] = "0";
+                  }
+                  return $data;
+              }
+          },ARRAY_FILTER_USE_KEY);
+
+        $response = $menus->create( $data );
         if( Session::get('id_rol') != 1){
             $data = [
-                'id_rol'  => Session::get('id_rol')
-                ,'id_users'  => Session::get('id')
-                  ,'id_empresa'  => Session::get('id_empresa')
-                  ,'id_sucursal'   => Session::get('id_sucursal')
-                    ,'id_menu'        => $response->id
-                    ,'id_permiso'       => 5
-                      ,'estatus'            => 1
+                "company_id" => Session::get("id_empresa") ,
+                "menu_id"    => $response->id
             ];
-            
-            SysRolMenuModel::create($data);
+            $companiesMenus->create($data);
+        }else{
+            for ($i = 0; $i < count($request->get("companyId")); $i++){
+                $data = [
+                    "company_id" => $request->get("companyId")[$i] ,
+                    "menu_id"    => $response->id
+                ];
+                $companiesMenus->create($data);
+            }
+
         }
-        $data_admin = [
-            'id_rol'  => 1
-            ,'id_users'  => 1
-              ,'id_empresa'  => 0
-              ,'id_sucursal'   => 0
-                ,'id_menu'        => $response->id
-                ,'id_permiso'       => 5
-                  ,'estatus'           => 1
-        ];
-        SysRolMenuModel::create($data_admin);
 
         DB::commit();
         $success = true;
@@ -133,10 +153,18 @@ class MenuController extends MasterController
         DB::rollback();
       }
 
-      if ($success) {
-        return $this->_message_success(201, $response, self::$message_success);
-      }
-      return $this->show_error(6, $error, self::$message_error);
+       if ($success) {
+           return new JsonResponse([
+               "success" => TRUE ,
+               "data"    => $response ,
+               "message" => self::$message_success
+           ],Response::HTTP_CREATED);
+       }
+       return new JsonResponse([
+           "success" => FALSE ,
+           "data"    => $error ,
+           "message" => self::$message_error
+       ],Response::HTTP_BAD_REQUEST);
 
    }
 
@@ -168,35 +196,44 @@ class MenuController extends MasterController
       return $this->show_error(6, $error, self::$message_error);
 
     }
-    /**
-     *Metodo para realizar la consulta por medio de su id
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public function show( Request $request ){
-      
-      try {
-        $response = SysMenuModel::where(['id' => $request->id])->get();        
-        return $this->_message_success(201, $response[0], self::$message_success);
-      } catch (\Exception $e) {
-        $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-        return $this->show_error(6, $error, self::$message_error);
-      }
 
-    }
     /**
-     *Metodo para la actualizacion de los registros
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * This method is for assign menus to companies and update register
+     * @access public
+     * @param Request $request [Description]
+     * @param SysMenuModel $menus
+     * @param SysCompaniesMenus $companiesMenus
+     * @return JsonResponse
      */
-    public function update( Request $request){
+    public function update( Request $request, SysMenuModel $menus, SysCompaniesMenus $companiesMenus )
+    {
       $error = null;
       DB::beginTransaction();
       try {
-        SysMenuModel::where(['id' => $request->id])->update($request->all());
-          $response = SysMenuModel::where(['id' => $request->id])->get();
+          $data = array_filter($request->all(), function ($key) use ($request){
+              if($key != "companyId"){
+                  $data[$key] = $request->$key;
+                  if ($request->$key == 0){
+                      $data[$key] = "0";
+                  }
+                  return $data;
+              }
+          },ARRAY_FILTER_USE_KEY);
+
+          $menus->whereId($request->id)->update($data);
+          if( Session::get('id_rol') == 1 ){
+              $companiesMenus->whereMenuId($request->get("id"))->delete();
+              if ( isset($request->companyId ) ){
+                  for ($i = 0; $i < count($request->get("companyId")); $i++){
+                      $data = [
+                          'menu_id'       => $request->get("id") ,
+                          'company_id'    => $request->get("companyId")[$i] ,
+                      ];
+                      $companiesMenus->create($data);
+                  }
+              }
+          }
+
         DB::commit();
         $success = true;
       } catch (\Exception $e) {
@@ -206,23 +243,38 @@ class MenuController extends MasterController
       }
 
       if ($success) {
-        return $this->_message_success(201, $response, self::$message_success);
+          return $this->show( new Request($request->all()), new SysMenuModel);
       }
-      return $this->show_error(6, $error, self::$message_error);
+        return new JsonResponse([
+            "success" => FALSE ,
+            "data"    => $error ,
+            "message" => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
 
     }
+
     /**
-     *Metodo para la actualizacion de los registros
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * @return SysMenuModel[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
-    public static function menu_padre( $request ){
-        $response = SysMenuModel::where(['id' => $request->id_padre])->get();
-        if( count($response) ){
-          return $response[0]->texto;
+    private function _menusBelongsCompany()
+    {
+        if (Session::get("id_rol") == 1){
+            $response = SysMenuModel::with('companies')
+                        ->orderBy('orden','ASC')
+                        ->groupby('id')
+                        ->get();
+        }else{
+            $response = SysEmpresasModel::with('menu')
+                ->whereId( Session::get('id_empresa') )
+                ->first()
+                ->menu()->with('companies')
+                ->orderBy('orden','ASC')
+                ->groupby('id')
+                ->get();
         }
-        return "";
+
+        return $response;
     }
+
 
 }

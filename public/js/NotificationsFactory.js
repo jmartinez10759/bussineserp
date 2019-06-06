@@ -84,7 +84,7 @@ app.factory("NotificationsFactory",["sweetAlert","toastr","swangular", function 
     };
 
     NotificationsFactory.prototype.trEffect = function(id,time){
-        var time = (time)? time: 8000;
+        var time = (time)? time: 10000;
         jQuery('#tr_' + id).effect("highlight", {}, time);
     };
 

@@ -49,7 +49,7 @@
     </table>
   </div>
 
-  @include('administracion.configuracion.usuarios_edit')
+  @include('administracion.configuracion.usersEdit')
 
   {!! $seccion_reportes !!}
 </div>

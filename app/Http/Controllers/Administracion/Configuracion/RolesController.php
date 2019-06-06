@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
-use App\Model\Administracion\Configuracion\SysUsersModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +11,7 @@ use App\Model\Administracion\Configuracion\SysRolesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysUsersRolesModel;
 use App\SysCompaniesRoles;
+use function Matrix\diagonal;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RolesController extends MasterController
@@ -85,9 +85,14 @@ class RolesController extends MasterController
         try {
             $data = array_filter($request->all(), function ($key) use ($request){
                 if($key != "companyId"){
-                    return $request->get($key);
+                    $data[$key] = $request->$key;
+                    if ($request->$key == 0){
+                        $data[$key] = "0";
+                    }
+                    return $data;
                 }
             },ARRAY_FILTER_USE_KEY);
+
             $response = $roles->create($data);
             if( Session::get('id_rol') != 1 ){
                 $data = [
@@ -95,14 +100,16 @@ class RolesController extends MasterController
                   'id_empresa'   => Session::get('id_empresa') ,
                   'id_sucursal'  => Session::get('id_sucursal') ,
                 ];
+                $companyRoles->create($data);
             }else{
-                $data = [
-                    'id_rol'       => $response->id ,
-                    'id_empresa'   => $request->get("companyId") ,
-                ];
+                for ($i = 0; $i < count($request->get("companyId")); $i++){
+                    $data = [
+                        'id_rol'       => $response->id ,
+                        'id_empresa'   => $request->get("companyId")[$i] ,
+                    ];
+                    $companyRoles->create($data);
+                }
             }
-            $companyRoles->create($data);
-
           DB::commit();
           $success = true;
         } catch (\Exception $e) {
@@ -170,9 +177,14 @@ class RolesController extends MasterController
         try {
             $data = array_filter($request->all(), function ($key) use ($request){
                 if($key != "companyId"){
-                    return $request->get($key);
+                    $data[$key] = $request->$key;
+                    if ($request->$key == 0){
+                        $data[$key] = "0";
+                    }
+                    return $data;
                 }
             },ARRAY_FILTER_USE_KEY);
+
             $roles->whereId($request->get('id'))->update($data);
             if( Session::get('id_rol') == 1 ){
                 $companyRoles->whereIdRol($request->get("id"))->delete();
