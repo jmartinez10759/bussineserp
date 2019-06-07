@@ -22,7 +22,6 @@ class SysMenuModel extends Model
     {
       return $this->belongsToMany(SysUsersModel::class,'sys_users_menus','menu_id','user_id');
     }
-
     public function companies()
     {
         return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_menus','menu_id','company_id');
@@ -31,13 +30,5 @@ class SysMenuModel extends Model
     {
         return $this->belongsToMany('App\SysPermission','sys_permission_menus','menu_id','permission_id');
     }
-
-    /*public function permisos()
-    {
-        return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_menu','id_permiso')->withPivot(['estatus']);
-    }*/
-
-
-
 
 }

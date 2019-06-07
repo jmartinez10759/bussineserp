@@ -23,16 +23,6 @@ class SysUsersModel extends Model
   		,'confirmed_code'
     ];
 
-    public function categorias()
-    {
-      return $this->hasMany('App\Model\Administracion\Correos\SysCategoriasModel','id_users','id');
-    }
-    public function correos()
-    {
-      return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_users_correos','id_users','id_correo');
-    }
-
-
     public function menus()
     {
       return $this->belongsToMany(SysMenuModel::class,'sys_users_menus','user_id','menu_id');
@@ -49,12 +39,21 @@ class SysUsersModel extends Model
     {
         return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','user_id','roles_id');
     }
-
-
-    public function permisos()
+    public function permission()
     {
-      return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_users','id_permiso');
+        return $this->belongsToMany(App\SysPermission::class,'sys_users_permission','user_id','permission_id');
     }
+
+
+    public function categorias()
+    {
+        return $this->hasMany('App\Model\Administracion\Correos\SysCategoriasModel','id_users','id');
+    }
+    public function correos()
+    {
+        return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_users_correos','id_users','id_correo');
+    }
+
     public function acciones()
     {
         return $this->belongsToMany(SysAccionesModel::class,'sys_users_permisos','id_users','id_accion')->withPivot('estatus');

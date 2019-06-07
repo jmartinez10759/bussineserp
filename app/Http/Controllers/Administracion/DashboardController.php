@@ -12,21 +12,21 @@ class DashboardController extends MasterController
     public function __construct(){
         parent::__construct();
     }
+
     /**
-     *Metodo para obtener la vista y cargar los datos
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * This method is for load vie of dashboard
+     * @access public
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(){
-      #debuger(Session::all() );
+    public function index()
+    {
     	$data = [
     	   'page_title' => "Dashboard"
     	   ,'title' 	=> "Dashboard"
     	   ,'subtitle'  => "Dashboard"
     	];
 
-        return self::_load_view('administracion.dashboard',$data);
+        return $this->_loadView('administracion.dashboard',$data);
     }
     /**
      *Metodo para realizar la consulta por medio de su id

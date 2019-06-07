@@ -27,36 +27,29 @@ class SysEmpresasModel extends Model
 
   public function menus()
   {
-    return $this->belongsToMany(SysMenuModel::class,'sys_rol_menu','id_empresa','id_menu')->withPivot('estatus');
+    return $this->belongsToMany(SysMenuModel::class,'sys_companies_menus','company_id','menu_id');
   }
-    public function menu()
-    {
-        return $this->belongsToMany(SysMenuModel::class,'sys_companies_menus','company_id','menu_id');
-    }
-  public function sucursales()
+  public function groups()
   {
-    return $this->belongsToMany(SysSucursalesModel::class,'sys_empresas_sucursales','id_empresa','id_sucursal')->withPivot('estatus');
+    return $this->belongsToMany(SysSucursalesModel::class,'sys_companies_groups','company_id','group_id');
   }
   public function roles()
   {
-    return $this->belongsToMany(SysRolesModel::class,'sys_empresas_roles','id_empresa','id_rol');
+    return $this->belongsToMany(SysRolesModel::class,'sys_companies_roles','company_id','roles_id');
+  }
+  public function permissions()
+  {
+    return $this->belongsToMany(App\SysPermission::class,'sys_companies_permission','company_id','permission_id');
+  }
+  public function users()
+  {
+    return $this->belongsToMany(SysUsersModel::class,'sys_users_companies','company_id','user_id');
   }
 
-  public function permisos()
-  {
-    return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_empresa','id_permiso');
-  }
 
-  public function acciones()
-  {
-      return $this->belongsToMany(SysAccionesModel::class,'sys_users_permisos','id_empresa','id_accion')->withPivot('estatus');
-  }
 
-  public function usuarios()
-  {
-    return $this->belongsToMany(SysUsersModel::class,'sys_users_roles','id_empresa','id_users');
-  }
-  
+
+
   public function proveedores()
   {
     return $this->belongsToMany(SysProveedoresModel::class,'sys_proveedores_empresas','id_empresa','id_proveedor');
@@ -121,9 +114,9 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany('App\Model\Administracion\Correos\SysCorreosModel','sys_users_correos','id_empresa','id_correo'); 
   }
-  public function almacenes()
+  public function storehouse()
   {
-    return $this->belongsToMany('App\Model\Almacenes\SysAlmacenesModel', 'sys_almacenes_empresas', 'id_empresa', 'id_almacen');
+    return $this->belongsToMany('App\Model\Almacenes\SysAlmacenesModel', 'sys_companies_storehouse', 'id_empresa', 'id_almacen');
   }
 
 }

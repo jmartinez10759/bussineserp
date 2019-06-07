@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
+use App\SysPermission;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -94,9 +95,9 @@ class UsuariosController extends MasterController
     public function show( int $userId = null )
     {
         try {
-            $users      = SysUsersModel::with(['menus','roles','empresas','sucursales','details'])->whereId($userId)->first();
-            $action     = ( Session::get('id_rol') == 1 ) ? SysAccionesModel::whereEstatus(1)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysUsersModel);
-            $menus      = ( Session::get('id_rol') == 1 ) ? SysMenuModel::whereEstatus(1)->orderBy('orden', 'asc')->get() : $this->_menusByCompanies(new SysUsersModel);
+            $users      = SysUsersModel::with(['menus','roles','companies','groups','details'])->whereId($userId)->first();
+            $action     = ( Session::get('roles_id') == 1 ) ? SysPermission::whereStatus(1)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysUsersModel);
+            $menus      = ( Session::get('roles_id') == 1 ) ? SysMenuModel::whereEstatus(1)->orderBy('orden', 'asc')->get() : $this->_menusByCompanies(new SysUsersModel);
             $menuPadre = [];
             foreach ($menus as $menu ){
                 if ($menu->tipo == "PADRE"){
@@ -107,9 +108,9 @@ class UsuariosController extends MasterController
                     ];
                 }
             }
-            $companyByUser     = $users->empresas()->where(['sys_empresas.estatus'=> TRUE])->groupby('id')->get();
+            $companyByUser     = $users->companies()->where(['sys_empresas.estatus'=> TRUE])->groupby('id')->get();
             $rolesByUser       = $users->roles()->where(['sys_roles.estatus'=> TRUE])->groupby('id')->get();
-            $groupsByUser      = $users->sucursales()->where(['sys_sucursales.estatus'=> TRUE])->groupby('id')->get();
+            $groupsByUser      = $users->groups()->where(['sys_sucursales.estatus'=> TRUE])->groupby('id')->get();
             $data = [
                 "menus"           => $menuPadre ,
                 "action"          => $action ,

@@ -4,11 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysCompaniesRoles extends Model
+class SysGroupsRoles extends Model
 {
-    public $table = "sys_companies_roles";
+    public $table = "sys_groups_roles";
     public $fillable = [
-        'company_id' ,
+        'group_id' ,
         'roles_id'
     ];
 }

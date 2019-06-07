@@ -374,18 +374,13 @@ abstract class MasterController extends Controller
      */
     protected function _loadView(string $view = null, array $parse = [] )
     {
-        if( Session::get('id_rol') != 1 && Session::get('permisos')['GET'] ){
+        if( Session::get('roles_id') != 1 && Session::get('permisos')['GET'] ){
             return view('errors.error');
         }
-        $users = SysUsersModel::with(['menus','roles','details','empresas','correos'])->whereId( Session::get('id') )->first();
-        $menus = $users->menus()->where([
-            'sys_rol_menu.estatus' 		=> TRUE
-            ,'sys_rol_menu.id_empresa' 	=> Session::get('id_empresa')
-            ,'sys_rol_menu.id_sucursal' => Session::get('id_sucursal')
-            ,'sys_rol_menu.id_rol' 		=> Session::get('id_rol')
-        ])->orderBy('orden','ASC')->get();
-        $company = $users->empresas()->whereId(Session::get('id_empresa'))->first();
-        $groups  = $users->sucursales()->whereId(Session::get('id_sucursal'))->first();
+        $users = SysUsersModel::with(['menus','roles','details','companies','correos'])->whereId( Session::get('id') )->first();
+        $menus = $users->menus()->whereEstatus(TRUE)->orderBy('orden','ASC')->get();
+        $company = $users->companies()->whereId(Session::get('company_id'))->first();
+        $groups  = $users->groups()->whereId(Session::get('group_id'))->first();
 
         $parse['MENU_DESKTOP'] 		= $this->_loadMenus($menus);
         self::$_titulo              = (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
@@ -448,8 +443,8 @@ abstract class MasterController extends Controller
             $response = $users->where($where)->first();
             $conditions['api_token'] = ( $response ) ? $response->api_token : NULL;
 			$user = $users::with(['menus' => function( $query ){
-					return $query->where(['sys_rol_menu.estatus' => TRUE ] )->groupby('id');
-			},'empresas','sucursales','roles'])->where( $conditions )->first();
+					return $query->groupby('id');
+			},'companies','groups','roles'])->where( $conditions )->first();
 			if ( $user ) {
                 $session = [];
                 $keys = ['password', 'remember_token', 'confirmed_code'];
@@ -458,7 +453,7 @@ abstract class MasterController extends Controller
                         $session[$value] = $user->$value;
                     }
                 }
-				if ( count( $user->empresas ) > 1 ) {
+				if ( count( $user->companies ) > 1 ) {
 					Session::put( $session );
 					$this->_binnacleCreate($users);
 					$session['ruta'] = 'list/companies';
@@ -468,18 +463,18 @@ abstract class MasterController extends Controller
                         "message"   => "¡Usuario Inicio Sesión Correctamente!"
                     ],Response::HTTP_OK);
 				}
-				$sessions['id_empresa']     = isset( $user->empresas[0]->id) ? $user->empresas[0]->id : 0;
-				$sessions['id_sucursal']    = isset( $user->sucursales[0]->id) ? $user->sucursales[0]->id : 0;
-				$sessions['id_rol']         = isset( $user->roles[0]->id) ? $user->roles[0]->id : "";
-				$ruta       = self::dataSession( $user->menus );
-				$sesiones   = array_merge($sessions, $ruta);
-				if ( count($user->menus) < 1 ) {
+				$sessions['company_id']  = isset( $user->companies[0]->id) ? $user->companies[0]->id : 0;
+				$sessions['group_id']    = isset( $user->groups[0]->id) ? $user->groups[0]->id : 0;
+				$sessions['roles_id']    = isset( $user->roles[0]->id) ? $user->roles[0]->id : "";
+                $path       = self::dataSession( $user->menus );
+                $sesiones   = array_merge($sessions, $path);
+                if ( count($user->menus) < 1 ) {
                     return new JsonResponse([
                         "success"   => FALSE ,
                         "data"      => $sesiones ,
                         "message"   => "¡No cuenta con permisos necesarios, favor de contactar al administrador!"
                     ],Response::HTTP_BAD_REQUEST);
-				}
+                }
                 Session::put( array_merge( $session, $sesiones ) );
                 $this->_binnacleCreate($users);
                 return new JsonResponse([
@@ -747,9 +742,9 @@ abstract class MasterController extends Controller
 	{
 		$session = [];
 		if ($request) {
-			foreach ($request as $rutas ) {
-				if (isset( $rutas->link ) && $rutas->link != "") {
-					$session['ruta'] = $rutas->link;
+			foreach ($request as $path ) {
+				if (isset( $path->link ) && $path->link != "") {
+					$session['ruta'] = $path->link;
 					break;
 				}
 			}
@@ -1180,9 +1175,9 @@ abstract class MasterController extends Controller
         $users = $users->with('acciones')->whereId(Session::get('id'))->first();
         return $users->acciones()->where([
             "sys_users_permisos.estatus"      => TRUE
-            ,"sys_users_permisos.id_empresa"  => Session::get('id_empresa')
-            ,"sys_users_permisos.id_sucursal" => Session::get('id_sucursal')
-            ,"sys_users_permisos.id_rol"      => Session::get('id_rol')
+            ,"sys_users_permisos.id_empresa"  => Session::get('company_id')
+            ,"sys_users_permisos.id_sucursal" => Session::get('group_id')
+            ,"sys_users_permisos.id_rol"      => Session::get('roles_id')
         ])->groupby('id')->orderby('id','ASC')->get();
 
     }
@@ -1193,7 +1188,7 @@ abstract class MasterController extends Controller
      */
     protected function _rolesByCompanies(SysEmpresasModel $companies )
     {
-        $company = $companies->with('roles')->whereId(Session::get('id_empresa'))->first();
+        $company = $companies->with('roles')->whereId(Session::get('company_id'))->first();
         return $company->roles()->where([
             "sys_empresas_roles.id_empresa"  => Session::get('id_empresa')
         ])->groupby('id')->orderby('id','ASC')->get();

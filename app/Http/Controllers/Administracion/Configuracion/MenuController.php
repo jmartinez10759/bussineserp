@@ -275,7 +275,7 @@ class MenuController extends MasterController
                         ->groupby('id')
                         ->get();
         }else{
-            $response = SysEmpresasModel::with('menu')
+            $response = SysEmpresasModel::with('menus')
                 ->whereId( Session::get('id_empresa') )
                 ->first()
                 ->menu()->with('companies')
