@@ -269,9 +269,7 @@ abstract class MasterController extends Controller
     {
         $menusArray = [];
         for ($j = 0; $j < count($response); $j++) {
-            if ($response[$j]->pivot->estatus == 1) {
-                $menusArray[] = ($response[$j]);
-            }
+            $menusArray[] = ($response[$j]);
         }
         if ($status) {
             return $menusArray;
@@ -1189,9 +1187,7 @@ abstract class MasterController extends Controller
     protected function _rolesByCompanies(SysEmpresasModel $companies )
     {
         $company = $companies->with('roles')->whereId(Session::get('company_id'))->first();
-        return $company->roles()->where([
-            "sys_empresas_roles.id_empresa"  => Session::get('id_empresa')
-        ])->groupby('id')->orderby('id','ASC')->get();
+        return $company->roles()->whereEstatus(TRUE)->groupby('id')->orderby('id','ASC')->get();
     }
 
     /**
@@ -1200,11 +1196,8 @@ abstract class MasterController extends Controller
      */
     protected function _groupsByCompanies(SysEmpresasModel $companies )
     {
-        $company = $companies->with('sucursales')->whereId(Session::get('id_empresa'))->first();
-        return $company->sucursales()->where([
-            "sys_empresas_sucursales.estatus"      => TRUE
-            ,"sys_empresas_sucursales.id_empresa"  => Session::get('id_empresa')
-        ])->groupby('id')->orderby('id','ASC')->get();
+        $company = $companies->with('groups')->whereId(Session::get('company_id'))->first();
+        return $company->groups()->whereEstatus(TRUE)->groupby('id')->orderby('id','ASC')->get();
     }
 
     /**
@@ -1213,11 +1206,8 @@ abstract class MasterController extends Controller
      */
     protected function _userBelongsCompany(SysUsersModel $user )
     {
-        $users = $user->with('empresas')->whereId(Session::get('id'))->first();
-        return $users->empresas()->where([
-            "sys_users_roles.estatus"      => TRUE
-            ,"sys_users_roles.id_empresa"  => Session::get('id_empresa')
-        ])->groupby('id')->orderby('id','ASC')->get();
+        $users = $user->with('companies')->whereId(Session::get('id'))->first();
+        return $users->companies()->whereEstatus(TRUE)->groupby('id')->orderby('id','ASC')->get();
     }
     /**
      * Metodo para obtener la validacion de la consulta

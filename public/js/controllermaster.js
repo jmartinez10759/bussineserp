@@ -131,7 +131,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 }]);
 
 
-app.controller('ApplicationController', ['$scope','masterservice','ServiceController','$http','$rootScope','FactoryController','$window' ,function( $scope,masterservice,sc,$http,rs,fc,w ){
+app.controller('ApplicationController', ['$scope','masterservice','ServiceController','$http','$rootScope','FactoryController',"NotificationsFactory",'$window',function( $scope,masterservice,sc,$http,rs,fc,nf,w ){
 
 	rs.$on("services", function(){
 	    $scope.services();
@@ -150,6 +150,10 @@ app.controller('ApplicationController', ['$scope','masterservice','ServiceContro
 	$scope.services = function(){
 		sc.serviceNotification( $scope );
 		$scope.userLogged = w.localStorage['rolesId'];
+	};
+
+	$scope.modalShow = function(){
+		nf.modal('#modal_add_register');
 	};
 
 	$scope.update_notify = function(){

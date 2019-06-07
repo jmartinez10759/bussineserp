@@ -287,25 +287,30 @@ class EmpresasController extends MasterController
       return view('administracion.configuracion.list_bussines',$data);
   }
 
-  public static function load_empresa(){
+  public function loadCompanies(){
 
         try {
-          $response = SysUsersModel::with(['empresas' => function( $query ) {
-            return $query->where(['sys_empresas.estatus' => 1])->groupBy('id_users','id','nombre_comercial');
-          }])->where(['id' => Session::get('id')])->get();
-          foreach ($response as $request ) {
-            $empresas = $request->empresas;
-          }
-          return message(true,$empresas,self::$message_success);
+          $user = SysUsersModel::with('companies')->whereId(Session::get('id') )->first();
+          $companies = $user->companies()->WhereEstatus(TRUE)->get();
+          return new JsonResponse([
+              "success" => TRUE ,
+              "data"    => $companies ,
+              "message" => self::$message_success
+          ],Response::HTTP_OK);
 
         } catch (Exception $e) {
-          return message(false,$e->getMessage(),self::$message_error);
+            $error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
+            return new JsonResponse([
+                "success" => TRUE ,
+                "data"    => $error ,
+                "message" => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
         }
   
   }
 
     /**
-     *Metodo obtener los datos de las sucursales de cada empresa..
+     * This method is for get the relations between comoany and group
      * @access public
      * @param Request $request [Description]
      * @return JsonResponse
@@ -320,17 +325,19 @@ class EmpresasController extends MasterController
                 ,"message"  => "¡No se encontró ningún Grupo en esta Empresa!"
             ],Response::HTTP_BAD_REQUEST);
         }
-      $companies = SysEmpresasModel::with(['sucursales'])->whereIn('id',$request->get("id_empresa"))->get();
-        $i = 0;
-      foreach ($companies as $company ){
-          foreach ($company->sucursales as $groups){
-              $response[$i]['groups']  = [
-                  'id'            => $groups->id
-                  ,'descripcion'  => $company->razon_social." - ".$groups->sucursal
-              ];
-              $i++;
-          }
-      }
+      $companies = SysEmpresasModel::with("groups")->whereIn('id',$request->get("id_empresa"))->get();
+      if ( count($companies) > 0 ){
+            $i = 0;
+            foreach ($companies as $company ){
+                foreach ($company->groups as $groups){
+                    $response[$i]['groups']  = [
+                        'id'            => $groups->id
+                        ,'descripcion'  => $company->razon_social." - ".$groups->sucursal
+                    ];
+                    $i++;
+                }
+            }
+        }
       return new JsonResponse([
           "success"   => true
           ,"data"     => $response
@@ -346,9 +353,9 @@ class EmpresasController extends MasterController
     public function findByUserGroups(Request $request)
     {
       try {
-          $users      = SysUsersModel::with('empresas')->whereId($request->userId)->first();
-          $companies  = $users->empresas()->with('sucursales')->whereId($request->companyId)->first();
-          $groups     = $companies->sucursales()->where(['sys_sucursales.estatus' => true])->get();
+          $user       = SysUsersModel::with('companies')->whereId($request->get("userId"))->first();
+          $companies  = $user->empresas()->with('groups')->whereId($request->get("companyId"))->first();
+          $groups     = $companies->groups()->whereEstatus(TRUE)->get();
           return new JsonResponse([
               "success" => true ,
               "data"    => $groups ,

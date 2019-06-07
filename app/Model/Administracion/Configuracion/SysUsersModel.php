@@ -41,7 +41,7 @@ class SysUsersModel extends Model
     }
     public function permission()
     {
-        return $this->belongsToMany(App\SysPermission::class,'sys_users_permission','user_id','permission_id');
+        return $this->belongsToMany('App\SysPermission','sys_users_permission','user_id','permission_id');
     }
 
 

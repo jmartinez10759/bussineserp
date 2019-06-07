@@ -65,9 +65,9 @@ class UsuariosController extends MasterController
         try {
             $data = [
                 'users'         => $this->_usersBelongsCompany( new SysEmpresasModel )
-                ,'roles'        => ( Session::get('id_rol') == 1 ) ? SysRolesModel::whereEstatus(1)->get() : $this->_rolesByCompanies(new SysEmpresasModel)
-                ,'companies'    => ( Session::get('id_rol') == 1 ) ? SysEmpresasModel::whereEstatus(1)->get() : $this->_userBelongsCompany(new SysUsersModel)
-                ,'groups'       => ( Session::get('id_rol') == 1 ) ? SysSucursalesModel::whereEstatus(1)->get() : $this->_groupsByCompanies(new SysEmpresasModel)
+                ,'roles'        => ( Session::get('roles_id') == 1 ) ? SysRolesModel::whereEstatus(1)->get() : $this->_rolesByCompanies(new SysEmpresasModel)
+                ,'companies'    => ( Session::get('roles_id') == 1 ) ? SysEmpresasModel::whereEstatus(1)->get() : $this->_userBelongsCompany(new SysUsersModel)
+                ,'groups'       => ( Session::get('roles_id') == 1 ) ? SysSucursalesModel::whereEstatus(1)->get() : $this->_groupsByCompanies(new SysEmpresasModel)
             ];
 
             return new JsonResponse([
@@ -410,30 +410,30 @@ class UsuariosController extends MasterController
     private function _usersBelongsCompany( SysEmpresasModel $companies )
     {
         $groupRoles =  function($query){
-            return $query->groupBy('sys_users_roles.id_users');
+            return $query->groupBy('id');
         };
         $groupGroups = function($query){
-            return $query->groupBy('sys_users_roles.id_users','sys_users_roles.id_sucursal');
+            return $query->groupBy('id');
         };
 
-        if( Session::get('id_rol') == 1 ){
+        if( Session::get('roles_id') == 1 ){
 
             $response = SysUsersModel::with([
                  'bitacora'
                 ,'roles'        => $groupRoles
-                ,'sucursales'   => $groupGroups
-                ,'empresas:id,razon_social,nombre_comercial,rfc_emisor'
+                ,'groups'   => $groupGroups
+                ,'companies:id,razon_social,nombre_comercial,rfc_emisor'
             ])->orderBy('id','DESC')->groupby('id')->get();
 
         }else{
-            $response = $companies->with('usuarios')
-                                    ->whereId( Session::get('id_empresa') )
+            $response = $companies->with('users')
+                                    ->whereId( Session::get('company_id') )
                                     ->first()
-                                    ->usuarios()->with([
-                                        'roles'         => $groupRoles
-                                        ,'sucursales'   => $groupGroups
+                                    ->users()->with([
+                                        'roles'     => $groupRoles
+                                        ,'groups'   => $groupGroups
                                         ,'bitacora'
-                                        ,'empresas:id,razon_social,nombre_comercial,rfc_emisor'
+                                        ,'companies:id,razon_social,nombre_comercial,rfc_emisor'
                                     ])
                                     ->orderBy('id','DESC')
                                     ->groupby('id')

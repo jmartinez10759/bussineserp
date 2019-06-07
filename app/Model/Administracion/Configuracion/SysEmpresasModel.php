@@ -37,9 +37,9 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany(SysRolesModel::class,'sys_companies_roles','company_id','roles_id');
   }
-  public function permissions()
+  public function permission()
   {
-    return $this->belongsToMany(App\SysPermission::class,'sys_companies_permission','company_id','permission_id');
+    return $this->belongsToMany('App\SysPermission','sys_companies_permission','company_id','permission_id');
   }
   public function users()
   {

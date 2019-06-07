@@ -21,7 +21,7 @@ app.controller('LoginController', ['ServiceController','FactoryController','Noti
         $scope.serching = true;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                w.localStorage['rolesId'] = response.data.data.id_rol;
+                w.localStorage['rolesId'] = response.data.data.roles_id;
                 redirect(response.data.data.ruta);
                 /*w.localStorage.removeItem('rolesId');
                 console.log(w.localStorage['rolesId']);*/

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use App\Model\Administracion\Configuracion\SysRolMenuModel;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\MasterController;
@@ -36,12 +37,7 @@ class PermisosController extends MasterController
                 }
             }
             $user = $users->with('menus')->whereId($request->get("userId"))->first();
-            $permission = $user->menus()->where([
-                'sys_rol_menu.estatus'      => true ,
-                'sys_rol_menu.id_empresa'   => $request->get("companyId"),
-                'sys_rol_menu.id_rol'       => $request->get("rolesId"),
-                'sys_rol_menu.id_sucursal'  => $request->get("groupId")
-            ])->groupby('sys_rol_menu.id_menu')->get();
+            $permission = $user->menus()->whereEstatus(TRUE)->groupby('id')->get();
 
             return new JsonResponse([
                 "success"   => TRUE ,
@@ -68,17 +64,18 @@ class PermisosController extends MasterController
      */
     public function findActionsByMenu(Request $request, SysUsersModel $users )
     {
-
+        //var_export($request->all());die();
         try {
-            $user = $users->with('acciones')->whereId($request->userId)->first();
-            $actions = $user->acciones()->where([
-                'sys_users_permisos.estatus'      => true ,
-                'sys_users_permisos.id_empresa'   => $request->companyId ,
-                'sys_users_permisos.id_rol'       => $request->rolesId ,
-                'sys_users_permisos.id_sucursal'  => $request->groupId ,
-                'sys_users_permisos.id_menu'      => $request->menuId
-            ])->groupby('sys_users_permisos.id_accion')->orderby('id','DESC')->get();
-
+            $user = $users->with('menus')->whereId($request->get("userId"))->first();
+            if(Session::get('roles_id') == 1){
+                $menus = $user->menus()->with('permission')->whereEstatusAndId(TRUE,$request->get("menuId"))->first();
+                $actions = $menus->permission()->whereStatus(TRUE)->groupby('id')->orderby('id','DESC')->get();
+            }else{
+                $menus      = $user->menus()->with('companies')->whereEstatusAndId(TRUE,$request->get("menuId"))->first();
+                $companies  = $menus->companies()->with('groups')->whereEstatusAndId(TRUE,$request->get("companyId"))->first();
+                $groups     = $companies ->groups()->with('permission')->whereEstatusAndId(TRUE,$request->get("groupId"))->first();
+                $actions    = $groups->permission()->whereStatus(TRUE)->groupby('id')->orderby('id','DESC')->get();
+            }
             return new JsonResponse([
                 "success"   => true ,
                 "data"      => ["actionsByUser" => $actions] ,

@@ -23,8 +23,13 @@
                         {!! $upload_files !!}
                     
                         <input id="search_general" class="form-control" type="text" placeholder="Buscar" onkeyup="buscador_general(this,'{{ $buscador }}')" />
-                    
-                        {!! $modal !!}
+
+                        <div class="btn-group" ng-if="permisos.AGR">
+                            <button type = "button" class="btn btn-success" ng-click="modalShow()">
+                               <i class="fa fa-plus-circle"></i> Agregar
+                            </button>
+                        </div>
+                        {{--{!! $modal !!}--}}
                     </div>
                     
 

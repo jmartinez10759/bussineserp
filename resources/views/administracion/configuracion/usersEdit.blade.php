@@ -1,7 +1,8 @@
-<!-- <div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true"> -->
-<div id="modal_add_register" style="display:none;">
+<div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+            </button>
             <div class="modal-header">
                 <h3>{{$titulo_modal}}</h3>
             </div>
@@ -129,7 +130,9 @@
 
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-fancybox-close><i class="fa fa-times-circle"></i> Cancelar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
+                        <i class="fa fa-times-circle"></i> Cancelar
+                    </button>
                     <button type= "button" class="btn btn-success" ng-click="insertRegister()" ng-if="permisos.INS">
                         <i class="fa fa-save"></i> Registrar
                     </button>
@@ -409,7 +412,7 @@
             <div class="modal-body" style="overflow-y:scroll; height:500px;">
 
                 <div class="panel-body" ng-repeat="action in permission.TblAction">
-                    <div class="col-sm-3" ng-bind="action.descripcion"></div>
+                    <div class="col-sm-3" ng-bind="action.description"></div>
                     <div class="material-switch pull-right col-sm-3">
                         <input id="action_@{{ action.id }}" type="checkbox" ng-model="actions.dataChecked[action.id]" />
                         <label for="action_@{{ action.id }}" class="label-info"></label>
