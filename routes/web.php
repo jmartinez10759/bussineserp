@@ -369,7 +369,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
     Route::get('/empresas/listado', [
-    'uses'      => 'Administracion\Configuracion\EmpresasController@load_empresa'
+    'uses'      => 'Administracion\Configuracion\EmpresasController@loadCompanies'
     ,'as'       => 'empresas.listo'
     ]);
     

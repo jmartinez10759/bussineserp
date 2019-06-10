@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use App\SysPermission;
+use App\SysUsersPivot;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysRolesModel;
-use App\Model\Administracion\Configuracion\SysAccionesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysCorreosModel;
@@ -95,7 +95,7 @@ class UsuariosController extends MasterController
     public function show( int $userId = null )
     {
         try {
-            $users      = SysUsersModel::with(['menus','roles','companies','groups','details'])->whereId($userId)->first();
+            $users      = SysUsersModel::find($userId);
             $action     = ( Session::get('roles_id') == 1 ) ? SysPermission::whereStatus(1)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysUsersModel);
             $menus      = ( Session::get('roles_id') == 1 ) ? SysMenuModel::whereEstatus(1)->orderBy('orden', 'asc')->get() : $this->_menusByCompanies(new SysUsersModel);
             $menuPadre = [];
@@ -108,15 +108,15 @@ class UsuariosController extends MasterController
                     ];
                 }
             }
-            $companyByUser     = $users->companies()->where(['sys_empresas.estatus'=> TRUE])->groupby('id')->get();
-            $rolesByUser       = $users->roles()->where(['sys_roles.estatus'=> TRUE])->groupby('id')->get();
-            $groupsByUser      = $users->groups()->where(['sys_sucursales.estatus'=> TRUE])->groupby('id')->get();
+            $companyByUser     = $users->companies()->whereEstatus(TRUE)->groupby('id')->get();
+            $rolesByUser       = $users->roles()->whereEstatus(TRUE)->groupby('id')->get();
+            #$groupsByUser      = $users->groups()->whereEstatus(TRUE)->groupby('id')->get();
             $data = [
                 "menus"           => $menuPadre ,
                 "action"          => $action ,
                 "companyByUser"   => $companyByUser ,
                 "rolesByUser"     => $rolesByUser ,
-                "groupsByUser"    => $groupsByUser ,
+                #"groupsByUser"    => $groupsByUser ,
             ];
 
             return new JsonResponse([
@@ -207,18 +207,16 @@ class UsuariosController extends MasterController
         DB::beginTransaction();
         try {
             $usersRegister = SysUsersModel::create($requestUsers);
-            for ($i = 0; $i < count($request->get("id_sucursal")); $i++) {
+            for ($i=0; $i < count($request->get("id_empresa")); $i++){
                 $data = [
-                    'id_users'     => $usersRegister->get('id')
-                    ,'id_empresa'  => $this->_companies($request->get("id_sucursal")[$i])
-                    ,'id_sucursal' => $request->get("id_sucursal")[$i]
+                    "user_id"       =>  $usersRegister->id ,
+                    "roles_id"      =>  $request->get("id_rol") ,
+                    "company_id"    =>  $request->get("id_empresa")[$i] ,
+                    "group_id"      =>  isset($request->get('id_sucursal')[$i])? $request->get('id_sucursal')[$i]: 0
                 ];
-                $roles = [$request->get("id_rol")];
-                for ($j = 0; $j < count($roles); $j++) {
-                    $data['id_rol'] = $roles[$j];
-                    SysUsersRolesModel::create($data);
-                }
+                SysUsersPivot::insert($data);
             }
+
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
@@ -287,27 +285,20 @@ class UsuariosController extends MasterController
         DB::beginTransaction();
         try {
             $users->whereId($request->get("id"))->update($requestUsers);
-            if (Session::get('id_rol') != 1) {
-                SysUsersRolesModel::whereIdUsers($request->get('id'))->delete();
-                $sql = "DELETE FROM sys_rol_menu WHERE id_users = " . $request->get("id");
-                $where = "";
-                for ($i = 0; $i < count($request->get('id_empresa')); $i++) {
-                    $where .= " AND id_empresa != " . $request->get('id_empresa')[$i];
+            if($request->get("id_rol") != 1 ){
+                for ($i=0; $i < count($request->get("id_empresa")); $i++){
+                    SysUsersPivot::whereUserId($request->get("id") )
+                        ->where("company_id", "!=",$request->get("id_empresa")[$i] )
+                        ->delete();
                 }
-                $sql .= $where;
-                DB::select($sql);
-                $response = [];
-                for ($i = 0; $i < count($request->get("id_sucursal")); $i++) {
+                for ($i=0; $i < count($request->get("id_empresa")); $i++){
                     $data = [
-                        'id_users' => $request->get('id')
-                        , 'id_empresa' => $this->_companies($request->get('id_sucursal')[$i])
-                        , 'id_sucursal' => $request->get('id_sucursal')[$i]
+                        "user_id"       =>  $request->get("id") ,
+                        "roles_id"      =>  $request->get("id_rol") ,
+                        "company_id"    =>  $request->get("id_empresa")[$i] ,
+                        "group_id"      =>  isset($request->get('id_sucursal')[$i])? $request->get('id_sucursal')[$i]: 0
                     ];
-                    $roles = [$request->get('id_rol')];
-                    for ($j = 0; $j < count($roles); $j++) {
-                        $data['id_rol'] = $roles[$j];
-                        $response[] = SysUsersRolesModel::create($data);
-                    }
+                    SysUsersPivot::insert($data);
                 }
             }
             DB::commit();
@@ -320,7 +311,7 @@ class UsuariosController extends MasterController
         if ($success) {
             return new JsonResponse([
                 'success'   => $success
-                ,'data'     => $userUpdate
+                ,'data'     => $users
                 ,'message'  => self::$message_success
             ],Response::HTTP_OK);
         }
@@ -409,20 +400,14 @@ class UsuariosController extends MasterController
      */
     private function _usersBelongsCompany( SysEmpresasModel $companies )
     {
-        $groupRoles =  function($query){
-            return $query->groupBy('id');
-        };
-        $groupGroups = function($query){
-            return $query->groupBy('id');
-        };
 
         if( Session::get('roles_id') == 1 ){
 
             $response = SysUsersModel::with([
                  'bitacora'
-                ,'roles'        => $groupRoles
-                ,'groups'   => $groupGroups
-                ,'companies:id,razon_social,nombre_comercial,rfc_emisor'
+                ,'roles'
+                ,'groups'
+                ,'companies'
             ])->orderBy('id','DESC')->groupby('id')->get();
 
         }else{
@@ -430,10 +415,10 @@ class UsuariosController extends MasterController
                                     ->whereId( Session::get('company_id') )
                                     ->first()
                                     ->users()->with([
-                                        'roles'     => $groupRoles
-                                        ,'groups'   => $groupGroups
+                                        'roles'
+                                        ,'groups'
                                         ,'bitacora'
-                                        ,'companies:id,razon_social,nombre_comercial,rfc_emisor'
+                                        ,'companies'
                                     ])
                                     ->orderBy('id','DESC')
                                     ->groupby('id')

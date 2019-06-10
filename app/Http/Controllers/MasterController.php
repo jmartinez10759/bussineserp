@@ -59,7 +59,7 @@ abstract class MasterController extends Controller
 		self::$message_success = "¡Transacción Exitosa!";
 		self::$message_error = "¡Ocurrio un error, favor de verificar!";
 		$this->_today = new \DateTime('now');
-		$this->middleware('permisos.menus', ['except' => ['load_lista_sucursal', 'lista', 'lista_sucursal', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code'] ] );
+		$this->middleware('permisos.menus', ['except' => ['listCompanies', 'listGroup', 'loadCompanies', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code'] ] );
 		$this->middleware('permisos.rutas', ['only' => ['index']]);
 	}
 
@@ -314,7 +314,7 @@ abstract class MasterController extends Controller
 		$parse['rol'] 				= isset($response[0]->roles[0])? $response[0]->roles[0]->perfil : "Perfil No Asignado";
 		$parse['empresa'] 			= (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
 		$parse['sucursal'] 			= (isset(SysSucursalesModel::whereId( Session::get('id_sucursal') )->first()->sucursal)) ? SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal : "Sucursal No Asignada";
-		$parse['url_previus'] 		= (Session::get('id_empresa') != 0 && Session::get('id_sucursal') != 0) ? route('list.empresas') : route("/");
+		$parse['url_previus'] 		= (Session::get('company_id') != 0 && Session::get('group_id') != 0) ? route('list.empresas') : route("/");
 
 		$parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
 		$parse['title'] 			= isset($parse['title']) 	  ? $parse['title'] : "";
@@ -375,10 +375,15 @@ abstract class MasterController extends Controller
         if( Session::get('roles_id') != 1 && Session::get('permisos')['GET'] ){
             return view('errors.error');
         }
-        $users = SysUsersModel::with(['menus','roles','details','companies','correos'])->whereId( Session::get('id') )->first();
-        $menus = $users->menus()->whereEstatus(TRUE)->orderBy('orden','ASC')->get();
-        $company = $users->companies()->whereId(Session::get('company_id'))->first();
-        $groups  = $users->groups()->whereId(Session::get('group_id'))->first();
+        $users = SysUsersModel::find( Session::get('id') );
+        $company = $users->companies()->find(Session::get('company_id'));
+        $groups  = $users->groups()->find(Session::get('group_id'));
+        $menus = $users->menus()->where([
+            "sys_users_menus.user_id"    =>  $users->id ,
+            "sys_users_menus.roles_id"   =>  Session::get("roles_id") ,
+            "sys_users_menus.company_id" =>  Session::get("company_id") ,
+            "sys_users_menus.group_id"   =>  Session::get("group_id") ,
+        ])->whereEstatus(TRUE)->orderBy('orden','ASC')->get();
 
         $parse['MENU_DESKTOP'] 		= $this->_loadMenus($menus);
         self::$_titulo              = (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
@@ -396,7 +401,7 @@ abstract class MasterController extends Controller
         $parse['rol'] 				= isset($users->roles[0])? $users->roles[0]->perfil : "Perfil No Asignado";
         $parse['empresa'] 			= (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
         $parse['sucursal'] 			= (isset($groups->sucursal))?$groups->sucursal : "Sucursal no asignada";
-        $parse['url_previus'] 		= (Session::get('id_empresa') != 0 && Session::get('id_sucursal') != 0) ? route('list.empresas') : route("/");
+        $parse['url_previus'] 		= (Session::get('company_id') != 0 && Session::get('group_id') != 0) ? route('list.empresas') : route("/");
 
         $parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
         $parse['title'] 			= isset($parse['title']) 	  ? $parse['title'] : "";
@@ -451,7 +456,7 @@ abstract class MasterController extends Controller
                         $session[$value] = $user->$value;
                     }
                 }
-				if ( count( $user->companies ) > 1 ) {
+				if ( count( $user->companies ) > 1 || count($user->groups) > 1 ) {
 					Session::put( $session );
 					$this->_binnacleCreate($users);
 					$session['ruta'] = 'list/companies';
@@ -1154,12 +1159,12 @@ abstract class MasterController extends Controller
      */
     protected function _menusByCompanies(SysUsersModel $users )
     {
-        $users = $users->with('menus')->whereId(Session::get('id'))->first();
-        return $users->menus()->where([
-             "sys_rol_menu.estatus"     => true
-            ,"sys_rol_menu.id_empresa"  => Session::get('id_empresa')
-            ,"sys_rol_menu.id_sucursal" => Session::get('id_sucursal')
-            ,"sys_rol_menu.id_rol"      => Session::get('id_rol')
+        $user = $users->find(Session::get('id'));
+        return $user->menus()->where([
+             "estatus"      => TRUE
+            ,"sys_users_menus.company_id"   => Session::get('company_id')
+            ,"sys_users_menus.group_id"     => Session::get('group_id')
+            ,"sys_users_menus.roles_id"     => Session::get('roles_id')
         ])->groupby('id')->orderby('orden','ASC')->get();
 
     }
@@ -1170,12 +1175,12 @@ abstract class MasterController extends Controller
      */
     protected function _actionByCompanies(SysUsersModel $users )
     {
-        $users = $users->with('acciones')->whereId(Session::get('id'))->first();
-        return $users->acciones()->where([
-            "sys_users_permisos.estatus"      => TRUE
-            ,"sys_users_permisos.id_empresa"  => Session::get('company_id')
-            ,"sys_users_permisos.id_sucursal" => Session::get('group_id')
-            ,"sys_users_permisos.id_rol"      => Session::get('roles_id')
+        $user = $users->find(Session::get('id'));
+        return $user->permission()->where([
+            "status"       => TRUE
+            ,"sys_permission_menus.company_id"  => Session::get('company_id')
+            ,"sys_permission_menus.group_id"    => Session::get('group_id')
+            ,"sys_permission_menus.roles_id"    => Session::get('roles_id')
         ])->groupby('id')->orderby('id','ASC')->get();
 
     }

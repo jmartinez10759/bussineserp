@@ -196,6 +196,6 @@
         <!--/ script indispensables /-->
         <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
         <!-- script desarrollador -->
-        <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_business.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/administracion/configuracion/buildBusinessController.js')}}"></script>
     </body>
 </html>

@@ -20,14 +20,18 @@ class SysPermission extends Model
     }
     public function companies()
     {
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_companies_permission','permission_id','company_id');
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_permission_menus','permission_id','company_id');
     }
     public function groups()
     {
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_groups_permission','permission_id','group_id');
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_permission_menus','permission_id','group_id');
     }
     public function users()
     {
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_permission','permission_id','user_id');
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_permission_menus','permission_id','user_id');
+    }
+    public function roles()
+    {
+        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysRolesModel','sys_permission_menus','permission_id','roles_id');
     }
 }

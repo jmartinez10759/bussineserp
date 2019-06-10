@@ -2,9 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Model\Administracion\Configuracion\SysUsersModel;
 use Closure;
-use GuzzleHttp\Client;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysRolMenuModel;
@@ -22,31 +21,21 @@ class RutaMiddleware
     {
 
         if (Session::get("roles_id") != 1 ){
-
-            $where = [substr(parse_domain()->uri,1)];
-            $permisos_menus = [];
-            $menu = SysMenuModel::select('id')->whereIn('link', $where)->get();
-            #se realiza la consulta para obtener el permiso.
-            $where = [
-                'id_users'      => Session::get('id')
-                ,'id_rol'        => Session::get('id_rol')
-                ,'id_empresa'    => Session::get('id_empresa')
-                ,'id_sucursal'   => Session::get('id_sucursal')
-                ,'id_menu'       => isset($menu[0]->id)? $menu[0]->id : 0
-                ,'estatus'       => 1
-            ];
-            $rutas = SysRolMenuModel::select('*')->where( $where )->get();
-            if( count( $rutas ) > 0){
-                return $next($request);
-            }else{
+            $pathWeb = substr(parse_domain()->uri,1);
+            $user = SysUsersModel::find(Session::get('id'));
+            $menus = $user->menus()->whereLink($pathWeb)->first();
+            $actions = $user->permission()->where([
+                'user_id'        => $user->id
+                ,'roles_id'      => Session::get('roles_id')
+                ,'company_id'    => Session::get('company_id')
+                ,'group_id'      => Session::get('group_id')
+                ,'menu_id'       => isset($menus->id)? $menus->id : 0
+            ])->get();
+            if (!$actions) {
                 return redirect('failed/error');
             }
         }
-
         return $next($request);
-
-
-
 
     }
 

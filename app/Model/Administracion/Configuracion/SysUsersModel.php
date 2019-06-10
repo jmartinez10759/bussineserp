@@ -23,26 +23,32 @@ class SysUsersModel extends Model
   		,'confirmed_code'
     ];
 
-    public function menus()
+    public function roles()
     {
-      return $this->belongsToMany(SysMenuModel::class,'sys_users_menus','user_id','menu_id');
+        return $this->belongsToMany(SysRolesModel::class,'sys_users_pivot','user_id','roles_id');
     }
     public function companies()
     {
-      return $this->belongsToMany(SysEmpresasModel::class,'sys_users_companies','user_id','company_id');
+      return $this->belongsToMany(SysEmpresasModel::class,'sys_users_pivot','user_id','company_id');
     }
     public function groups()
     {
-      return $this->belongsToMany(SysSucursalesModel::class,'sys_users_groups','user_id','group_id');
+      return $this->belongsToMany(SysSucursalesModel::class,'sys_users_pivot','user_id','group_id');
     }
-    public function roles()
+    public function menus()
     {
-        return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','user_id','roles_id');
+        return $this->belongsToMany(SysMenuModel::class,'sys_users_menus','user_id','menu_id');
     }
     public function permission()
     {
-        return $this->belongsToMany('App\SysPermission','sys_users_permission','user_id','permission_id');
+        return $this->belongsToMany('App\SysPermission','sys_permission_menus','user_id','permission_id');
     }
+
+
+
+
+
+
 
 
     public function categorias()

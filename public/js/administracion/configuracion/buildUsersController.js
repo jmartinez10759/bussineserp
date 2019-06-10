@@ -54,7 +54,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     };
 
     $scope.updateRegister = function () {
-        let discrim = ['empresas', 'sucursales', 'roles', 'created_at', 'id_bitacora'];
+        let discrim = ['companies', 'groups', 'roles', 'created_at', 'bitacora','id_bitacora'];
         let url = fm.domain(URL.url_update);
         let fields = sc.mapObject($scope.update, discrim, false);
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
@@ -75,12 +75,12 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         var i = 0;
         $scope.update.id_empresa = [];
         $scope.update.id_sucursal = [];
-        angular.forEach($scope.update.empresas, function (value, key) {
+        angular.forEach($scope.update.companies, function (value, key) {
             $scope.update.id_empresa[i] = value.id;
             i++;
         });
         var j = 0;
-        angular.forEach($scope.update.sucursales, function (value, key) {
+        angular.forEach($scope.update.groups, function (value, key) {
             $scope.update.id_sucursal[j] = value.id;
             j++;
         });
@@ -130,7 +130,6 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     };
 
     $scope.findPermissionMenuByUser = function(groupsId){
-
         var url = fm.domain("setting/users/permission");
         var fields = {
             "companyId" : $scope.permission.companyId ,
@@ -154,12 +153,11 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     };
 
     $scope.actionsMenuByUsers = function( menuId ){
-        $scope.permission.menuId = menuId;
+         $scope.permission.menuId = menuId;
         if ($scope.permission.dataChecked[menuId]){
-
             var url = fm.domain("setting/menus/action");
             var fields = {
-                "menuId"    : menuId ,
+                "menuId"    : $scope.permission.menuId ,
                 "companyId" : $scope.permission.companyId ,
                 "groupId"   : $scope.permission.groupsId ,
                 "rolesId"   : $scope.permission.rolesId ,

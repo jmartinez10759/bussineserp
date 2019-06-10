@@ -287,18 +287,21 @@ class EmpresasController extends MasterController
       return view('administracion.configuracion.list_bussines',$data);
   }
 
-  public function loadCompanies(){
-
+    /**
+     * @return JsonResponse
+     */
+    public function loadCompanies()
+    {
         try {
           $user = SysUsersModel::with('companies')->whereId(Session::get('id') )->first();
-          $companies = $user->companies()->WhereEstatus(TRUE)->get();
+          $companies = $user->companies()->whereEstatus(TRUE)->get();
           return new JsonResponse([
               "success" => TRUE ,
               "data"    => $companies ,
               "message" => self::$message_success
           ],Response::HTTP_OK);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
             return new JsonResponse([
                 "success" => TRUE ,
@@ -306,11 +309,11 @@ class EmpresasController extends MasterController
                 "message" => self::$message_error
             ],Response::HTTP_BAD_REQUEST);
         }
-  
-  }
+
+    }
 
     /**
-     * This method is for get the relations between comoany and group
+     * This method is for get the relations between company and group
      * @access public
      * @param Request $request [Description]
      * @return JsonResponse
@@ -353,8 +356,9 @@ class EmpresasController extends MasterController
     public function findByUserGroups(Request $request)
     {
       try {
-          $user       = SysUsersModel::with('companies')->whereId($request->get("userId"))->first();
-          $companies  = $user->empresas()->with('groups')->whereId($request->get("companyId"))->first();
+          $user       = SysUsersModel::with('roles')->whereId($request->get("userId"))->first();
+          $roles      = $user->roles()->with('companies')->whereId($request->get("rolId"))->first();
+          $companies  = $roles->companies()->with('groups')->whereId($request->get("companyId"))->first();
           $groups     = $companies->groups()->whereEstatus(TRUE)->get();
           return new JsonResponse([
               "success" => true ,

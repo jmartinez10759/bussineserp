@@ -27,16 +27,19 @@ class ServicesController extends MasterController
     public function services(){
 
     	try {
-    		$user = SysUsersModel::with(['notificaciones','correos','companies'])->whereId( Session::get('id') )->first();
+    		$user = SysUsersModel::find( Session::get('id') );
 			$mails  = $user->correos()->whereEstatus_recibidosAndEstatus_vistos(1,0)->orderBy('id','desc')->get();
-			$menuText = [substr(parse_domain()->urls, 1)];
+			$menuText = substr(parse_domain()->urls, 1);
 			$permissionMenu = [];
-			$menus = SysMenuModel::with('permission')->whereIn('link', $menuText)->first();
-			if (Session::get('roles_id') != 1 ){
-                $companies = $user->companies()->with('groups')->whereEstatusAndId(TRUE,Session::get('company_id'))->first();
-                $groups = $companies->groups()->with('menus')->whereEstatusAndId(TRUE,Session::get('group_id'))->first();
-                $menus = $groups->menus()->with('permission')->whereLink($menuText)->first();
-            }
+			$menu = $user->menus()->with('permission')->whereLink($menuText)->first();
+            $actions = $menu->permission()->where([
+                "sys_permission_menus.user_id"      => $user->id ,
+                "sys_permission_menus.roles_id"     => Session::get("roles_id") ,
+                "sys_permission_menus.company_id"   => Session::get("company_id") ,
+                "sys_permission_menus.group_id"     => Session::get("group_id") ,
+                "sys_permission_menus.menu_id"      => $menu->id ,
+            ])->get();
+
             $permissionAll = SysPermission::whereStatus(TRUE)->get();
             $keys = [];
 			$i = $j = 0;
@@ -45,9 +48,9 @@ class ServicesController extends MasterController
 				$permissionMenu['permisos'][$keys[$i]] = false;
 				$i++;
 			}
-            foreach ($menus->permission as $actions) {
-                if (in_array($actions->short_key, $keys)) {
-                    $permissionMenu['permisos'][$actions->short_key] = $actions->status;
+            foreach ($actions as $action) {
+                if (in_array($action->short_key, $keys)) {
+                    $permissionMenu['permisos'][$action->short_key] = $action->status;
                 }
             }
             if( Session::get('roles_id') != 1){

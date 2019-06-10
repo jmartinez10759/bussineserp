@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
+use App\SysUsersMenus;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -169,65 +170,51 @@ class SucursalesController extends MasterController
      */
       public function listGroup(Request $request)
       {
-        Session::put(['id_empresa' => $request->id_empresa ]);
-        $response = SysEmpresasModel::with(['sucursales'])->where(['id' => $request->id_empresa])->first();
-        $sucursales = $response->sucursales()->groupBy('id')->get();
-        $sucursal = [];
-        foreach ($sucursales as $bussines) {
-            if( $bussines->pivot->estatus == 1){
-              $sucursal[] = $bussines;
-            }
-        }
-         $data['sucursales'] = $sucursal;
+        Session::put(['company_id' => $request->get("id_empresa")]);
+        $companies = SysEmpresasModel::with(['groups'])->whereId($request->get("id_empresa"))->first();
+        $groups = $companies->groups()->groupBy('id')->get();
+         $data['groups'] = $groups;
          return new JsonResponse([
              'success'  => true
             ,'data'     => $data
-            ,'message'  => "¡Listado de sucursales de la empresa!"
+            ,'message'  => "¡Listado de sucursales por empresa!"
          ],Response::HTTP_OK);
 
       }
-    /**
-     *Metodo para Cargar la vista de las sucursales por empresa.
-     * @access public
-     * @return void
-     */
-      /*public function load_lista_sucursal(){
-          return view('administracion.configuracion.lista_sucursales' );
-      }*/
 
     /**
-     *Metodo meter en session la empresa y/o sucursal..
+     *This method is for get acces the portal system
      * @access public
-     * @param $groupId
+     * @param int $groupId
+     * @param SysUsersMenus $usersMenus
      * @return JsonResponse
      */
-      public function portal( $groupId )
+      public function portal( int $groupId = null )
       {
-          $sessions['id_sucursal']  = $groupId;
-          #Session::put( $sessions );
-          $response = SysUsersModel::with(['menus','roles'])->where(['id' => Session::get('id')])->first();
-          $menus    = $response->menus()->where([
-              'sys_rol_menu.estatus'     => true
-              ,'sys_rol_menu.id_empresa' => Session::get('id_empresa')
-          ])->groupBy('sys_rol_menu.id_users','sys_rol_menu.id_menu','sys_rol_menu.estatus')->get();
-          $roles = $response->roles()->where(['sys_roles.estatus' => 1])
-                                    ->groupBy('sys_users_roles.id_users','sys_users_roles.id_rol')
-                                    ->first();
-           $sessions['id_rol'] = isset($roles->id)? $roles->id: "";
-           $ruta = self::dataSession( $menus );
-           $sesiones = array_merge($sessions,$ruta);
+          $sessions['group_id']  = $groupId;
+          $user  = SysUsersModel::find(Session::get('id'));
+          $roles = $user->roles()->first();
+          $menus = $user->menus()->where([
+              "sys_users_menus.user_id"     => $user->id ,
+              "sys_users_menus.roles_id"    => $roles->id ,
+              "sys_users_menus.company_id"  => Session::get("company_id") ,
+              "sys_users_menus.group_id"    => $groupId
+          ])->get();
+          $sessions['roles_id'] = isset($roles->id)? $roles->id: "";
+          $pathWeb = self::dataSession( $menus );
+          $session = array_merge($sessions,$pathWeb);
             if( count($menus) < 1 ){
                 return new JsonResponse([
                     'success'   => true
                     ,'data'     => $sessions
-                    ,"message"  => '¡No cuenta con permisos necesarios, favor de contactar al administrador!'
+                    ,"message"  => '¡No cuenta con Menus asignados, favor de contactar al administrador!'
                 ],Response::HTTP_OK);
             }
-           Session::put( $sesiones );
+           Session::put( $session );
             return new JsonResponse([
                 'success'   => true
+                ,'data'     => $session
                 ,'message'  => "¡Grupo seleccionado correctamente!"
-                ,'data'     => array_merge($sessions,$ruta)
             ], Response::HTTP_OK);
 
       }

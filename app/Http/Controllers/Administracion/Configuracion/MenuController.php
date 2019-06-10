@@ -134,7 +134,6 @@ class MenuController extends MasterController
                 #"menu_id"    => $response->id
             ];
             $response->companies()->create($data);
-            #$companiesMenus->create($data);
         }else{
             for ($i = 0; $i < count($request->get("companyId")); $i++){
                 $data = [
