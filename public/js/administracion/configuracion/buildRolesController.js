@@ -33,10 +33,7 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
-                jQuery.fancybox.close({
-                    'type'      : 'inline'
-                    ,'src'      : "#modal_add_register"
-                });
+                nf.modal("#modal_add_register",true);
                 $scope.index();
             }
         });
@@ -45,7 +42,7 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
 
     $scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
-        var fields = sc.mapObject($scope.update, ['empresas'], false);
+        var fields = sc.mapObject($scope.update, ['companies_roles'], false);
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastInfo(response.data.message, nf.titleMgsSuccess);
@@ -57,10 +54,10 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
     };
 
     $scope.editRegister = function( entry ){
-        var datos = ['id', 'perfil', 'clave_corta', 'estatus',"empresas" ];
+        var datos = ['id', 'perfil', 'clave_corta', 'estatus',"companies_roles"];
         $scope.update = sc.mapObject(entry, datos, true);
         $scope.update.companyId = [];
-        angular.forEach($scope.update.empresas,function (value, key) {
+        angular.forEach($scope.update.companies_roles,function (value, key) {
             $scope.update.companyId[key] = value.id;
         });
         console.log($scope.update);

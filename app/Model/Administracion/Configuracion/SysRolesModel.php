@@ -34,6 +34,28 @@ class SysRolesModel extends Model
         return $this->belongsToMany('App\SysPermission','sys_permission_menus','roles_id','permission_id');
     }
 
+    public function groupsRoles()
+    {
+        return $this->belongsToMany(SysSucursalesModel::class,'sys_groups_roles','roles_id','group_id');
+    }
+    public function companiesRoles()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_roles','roles_id','company_id');
+    }
+
+    /*public function usersCompanies()
+    {
+        return $this->belongsToMany(SysUsersModel::class,'sys_companies_users','roles_id','user_id');
+    }*/
+    /*public function menusCompanies()
+    {
+        return $this->belongsToMany(SysMenuModel::class,'sys_companies_menus','roles_id','menu_id');
+    }
+    public function permissionCompanies()
+    {
+        return $this->belongsToMany('App\SysPermission','sys_companies_permission','roles_id','permission_id');
+    }*/
+
 
 
     public function notificaciones()

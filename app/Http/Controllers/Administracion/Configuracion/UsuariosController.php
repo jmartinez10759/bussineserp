@@ -405,9 +405,9 @@ class UsuariosController extends MasterController
 
             $response = SysUsersModel::with([
                  'bitacora'
-                ,'roles'
-                ,'groups'
-                ,'companies'
+                ,'rolesCompanies'
+                ,'groupsCompanies'
+                ,'companyCompanies'
             ])->orderBy('id','DESC')->groupby('id')->get();
 
         }else{

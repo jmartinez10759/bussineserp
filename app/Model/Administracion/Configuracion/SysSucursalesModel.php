@@ -18,30 +18,37 @@ class SysSucursalesModel extends Model
     ,'estatus'
   ];
 
-  public function menus()
-  {
-    return $this->belongsToMany(SysMenuModel::class,'sys_users_menus','group_id','menu_id');
-  }
-  public function companies()
-  {
-    return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_groups','group_id','company_id');
-  }
-  public function users()
-  {
-    return $this->belongsToMany(SysUsersModel::class,'sys_users_pivot','group_id','user_id');
-  }
-  public function roles()
-  {
-      return $this->belongsToMany(SysRolesModel::class,'sys_groups_roles','group_id','roles_id');
-  }
-
+    public function companies()
+      {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_users_pivot','group_id','company_id');
+      }
+    public function users()
+      {
+        return $this->belongsToMany(SysUsersModel::class,'sys_users_pivot','group_id','user_id');
+      }
+      public function roles()
+      {
+          return $this->belongsToMany(SysRolesModel::class,'sys_users_pivot','group_id','roles_id');
+      }
+    public function menus()
+    {
+        return $this->belongsToMany(SysMenuModel::class,'sys_users_menus','group_id','menu_id');
+    }
     public function permission()
     {
         return $this->belongsToMany('App\SysPermission' ,'sys_permission_menus','group_id','permission_id');
     }
 
+    public function rolesGroups()
+    {
+        return $this->belongsToMany(SysSucursalesModel::class,'sys_groups_roles','group_id','roles_id');
+    }
 
-  public function estados()
+
+
+
+
+    public function estados()
   {
     return $this->hasOne(SysEstadosModel::class,'id_estado','id');
   }

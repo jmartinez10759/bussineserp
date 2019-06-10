@@ -49,7 +49,6 @@ class RolesController extends MasterController
      public function all()
      {
         try {
-
           $data = [
               "roles"     => $this->_rolesBelongsCompany() ,
           ];
@@ -75,10 +74,9 @@ class RolesController extends MasterController
      * @access public
      * @param Request $request [Description]
      * @param SysRolesModel $roles
-     * @param SysCompaniesRoles $companyRoles
      * @return JsonResponse
      */
-     public function store( Request $request, SysRolesModel $roles, SysCompaniesRoles $companyRoles )
+     public function store( Request $request, SysRolesModel $roles )
      {
         $error = null;
         DB::beginTransaction();
@@ -94,21 +92,11 @@ class RolesController extends MasterController
             },ARRAY_FILTER_USE_KEY);
 
             $response = $roles->create($data);
-            if( Session::get('id_rol') != 1 ){
-                $data = [
-                  'id_rol'       => $response->id ,
-                  'id_empresa'   => Session::get('id_empresa') ,
-                  'id_sucursal'  => Session::get('id_sucursal') ,
-                ];
-                $companyRoles->create($data);
+            $rol = $roles->find($response->id);
+            if ( isset($request->companyId ) ){
+                $rol->companiesRoles()->sync($request->get("companyId"));
             }else{
-                for ($i = 0; $i < count($request->get("companyId")); $i++){
-                    $data = [
-                        'id_rol'       => $response->id ,
-                        'id_empresa'   => $request->get("companyId")[$i] ,
-                    ];
-                    $companyRoles->create($data);
-                }
+                $rol->companiesRoles()->sync([Session::get('company_id')]);
             }
           DB::commit();
           $success = true;
@@ -143,7 +131,7 @@ class RolesController extends MasterController
      public function show( Request $request, SysRolesModel $roles )
      {
         try {
-          $response = $roles->with('empresas')->whereId( $request->get("id") )->first();
+          $response = $roles->find( $request->get("id") );
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
@@ -167,10 +155,9 @@ class RolesController extends MasterController
      * @access public
      * @param Request $request [Description]
      * @param SysRolesModel $roles
-     * @param SysCompaniesRoles $companyRoles
      * @return JsonResponse
      */
-     public function update( Request $request, SysRolesModel $roles, SysCompaniesRoles $companyRoles )
+     public function update( Request $request, SysRolesModel $roles )
      {
         $error = null;
         DB::beginTransaction();
@@ -186,21 +173,16 @@ class RolesController extends MasterController
             },ARRAY_FILTER_USE_KEY);
 
             $roles->whereId($request->get('id'))->update($data);
-            if( Session::get('id_rol') == 1 ){
-                $companyRoles->whereIdRol($request->get("id"))->delete();
-                if ( isset($request->companyId ) ){
-                    for ($i = 0; $i < count($request->get("companyId")); $i++){
-                        $data = [
-                            'id_rol'       => $request->get("id") ,
-                            'id_empresa'   => $request->get("companyId")[$i] ,
-                        ];
-                        $companyRoles->create($data);
-                    }
-                }
+            $rol = $roles->find($request->get('id'));
+            if ( isset($request->companyId ) && Session::get('roles_id') == 1 ){
+                $rol->companiesRoles()->sync($request->get("companyId"));
+            }else{
+                $rol->companiesRoles()->sync([Session::get('company_id')]);
             }
+
             DB::commit();
           $success = true;
-        } catch (\Exception $e) {
+        } catch ( \Exception $e) {
           $success = false;
           $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
           DB::rollback();
@@ -229,9 +211,10 @@ class RolesController extends MasterController
         $error = null;
         DB::beginTransaction();
         try {
-            $roles->whereId($id)->delete();
-            SysUsersRolesModel::whereIdRol($id)->delete();
-            SysCompaniesRoles::whereIdRol($id)->delete();
+            $rol = $roles->find($id);
+            $rol->companiesRoles()->detach($id);
+            $rol->companies()->detach($id);
+            $rol->delete();
           DB::commit();
           $success = true;
         } catch (\Exception $e) {
@@ -256,33 +239,25 @@ class RolesController extends MasterController
      }
 
     /**
-     * Metodo para realizar la parte de consulta de general
+     * This method is for get roles by companies
      * @access public
      * @return void
      */
-    private function _rolesBelongsCompany(){
-
-        if( Session::get('id_rol') == 1 ){
-            $response = SysRolesModel::with(['empresas','sucursales'])
-                                      ->orderBy('id','DESC')
-                                      ->groupby('id')
-                                      ->get();
-
+     private function _rolesBelongsCompany()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $response = SysRolesModel::with('companiesRoles','groupsRoles')
+                        ->orderBy('id','DESC')
+                        ->get();
         }else{
-
-            $response = SysEmpresasModel::with('roles')
-                                    ->whereId( Session::get('id_empresa') )            
-                                    ->first()
-                                    ->roles()->with(['empresas','sucursales'])
-                                    ->orderBy('id','DESC')
-                                    ->groupby('id')
-                                    ->get();
+            $response = SysEmpresasModel::find( Session::get('company_id') )
+                        ->rolesCompanies()->with('companiesRoles','groupsRoles')
+                        ->orderBy('id','DESC')
+                        ->groupby('id')
+                        ->get();
         }
-
         return $response;
-
     }
-
 
 
 }

@@ -1,8 +1,10 @@
-<div id="modal_add_register" style="display:none;">
+<div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<h3>{!! $titulo_modal !!}</h3>
-			<hr>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>{!! $titulo_modal !!}</h3>
+			</div>
 			<div class="modal-body panel-body">
 
 				<form class="form-horizontal row-border panel panel-body">
@@ -61,7 +63,7 @@
 			</div>
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
-					<button type= "button" class="btn btn-danger" data-fancybox-close >
+					<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
 						<i class="fa fa-times-circle"></i> Cancelar
 					</button>
 					<button type= "button" class="btn btn-success" ng-click="insertRegister()" ng-if="permisos.INS">

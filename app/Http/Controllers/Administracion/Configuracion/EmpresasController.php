@@ -293,7 +293,7 @@ class EmpresasController extends MasterController
     public function loadCompanies()
     {
         try {
-          $user = SysUsersModel::with('companies')->whereId(Session::get('id') )->first();
+          $user = SysUsersModel::find(Session::get('id') );
           $companies = $user->companies()->whereEstatus(TRUE)->get();
           return new JsonResponse([
               "success" => TRUE ,

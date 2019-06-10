@@ -25,6 +25,7 @@ app.controller('LoginController', ['ServiceController','FactoryController','Noti
                 redirect(response.data.data.ruta);
                 /*w.localStorage.removeItem('rolesId');
                 console.log(w.localStorage['rolesId']);*/
+                return;
             }
             $scope.enabled  = false;
             $scope.serching = false;

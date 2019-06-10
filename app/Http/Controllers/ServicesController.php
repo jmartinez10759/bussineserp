@@ -3,17 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\SysPermission;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
-
-use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysAccionesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysNotificacionesModel;
-use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,8 +19,12 @@ class ServicesController extends MasterController
         parent::__construct();
     }
 
-    public function services(){
-
+    /**
+     * This services is for get the permission by users
+     * @return JsonResponse
+     */
+    public function services()
+    {
     	try {
     		$user = SysUsersModel::find( Session::get('id') );
 			$mails  = $user->correos()->whereEstatus_recibidosAndEstatus_vistos(1,0)->orderBy('id','desc')->get();
@@ -39,7 +38,6 @@ class ServicesController extends MasterController
                 "sys_permission_menus.group_id"     => Session::get("group_id") ,
                 "sys_permission_menus.menu_id"      => $menu->id ,
             ])->get();
-
             $permissionAll = SysPermission::whereStatus(TRUE)->get();
             $keys = [];
 			$i = $j = 0;
