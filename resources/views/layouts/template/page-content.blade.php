@@ -21,8 +21,10 @@
                 <form class="form-inline" id="form_general">
                     <div class="row">
                         {!! $upload_files !!}
-                    
-                        <input id="search_general" class="form-control" type="text" placeholder="Buscar" onkeyup="buscador_general(this,'{{ $buscador }}')" />
+
+                        <div class="btn-group">
+                            <input class="form-control" type="text" ng-model="searching" placeholder="Buscar">
+                        </div>
 
                         <div class="btn-group" ng-if="permisos.AGR">
                             <button type = "button" class="btn btn-success" ng-click="modalShow()">

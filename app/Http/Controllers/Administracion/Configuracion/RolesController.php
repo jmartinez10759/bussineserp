@@ -8,15 +8,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysRolesModel;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysUsersRolesModel;
-use App\SysCompaniesRoles;
-use function Matrix\diagonal;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RolesController extends MasterController
 {
-
       public function __construct()
       {
         parent::__construct();
@@ -36,9 +31,7 @@ class RolesController extends MasterController
          ,'campo_2' 		          => 'Clave Corta'
          ,'campo_3' 		          => 'Estatus'
        ];
-
        return $this->_loadView( 'administracion.configuracion.roles', $data );
-
      }
 
     /**
@@ -173,11 +166,9 @@ class RolesController extends MasterController
             },ARRAY_FILTER_USE_KEY);
 
             $roles->whereId($request->get('id'))->update($data);
-            $rol = $roles->find($request->get('id'));
-            if ( isset($request->companyId ) && Session::get('roles_id') == 1 ){
+            if ( isset($request->companyId) && $request->companyId){
+                $rol = $roles->find($request->get('id'));
                 $rol->companiesRoles()->sync($request->get("companyId"));
-            }else{
-                $rol->companiesRoles()->sync([Session::get('company_id')]);
             }
 
             DB::commit();
@@ -237,27 +228,5 @@ class RolesController extends MasterController
          ],Response::HTTP_BAD_REQUEST);
 
      }
-
-    /**
-     * This method is for get roles by companies
-     * @access public
-     * @return void
-     */
-     private function _rolesBelongsCompany()
-    {
-        if( Session::get('roles_id') == 1 ){
-            $response = SysRolesModel::with('companiesRoles','groupsRoles')
-                        ->orderBy('id','DESC')
-                        ->get();
-        }else{
-            $response = SysEmpresasModel::find( Session::get('company_id') )
-                        ->rolesCompanies()->with('companiesRoles','groupsRoles')
-                        ->orderBy('id','DESC')
-                        ->groupby('id')
-                        ->get();
-        }
-        return $response;
-    }
-
 
 }

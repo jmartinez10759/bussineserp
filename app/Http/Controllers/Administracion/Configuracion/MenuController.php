@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
-use App\SysCompaniesMenus;
-use App\SysUsersMenus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MenuController extends MasterController
 {
-
     public function __construct()
     {
        parent::__construct();
@@ -42,9 +38,7 @@ class MenuController extends MasterController
             ,'campo_6' 		      => 'Estatus'
             ,'campo_7' 		      => 'Posición'
         ];
-
      return $this->_loadView( 'administracion.configuracion.menu', $data );
-
     }
 
     /**
@@ -57,7 +51,7 @@ class MenuController extends MasterController
     public function show( Request $request, SysMenuModel $menus )
     {
         try {
-            $response = $menus->with('companies')->whereId( $request->get("id") )->first();
+            $response = $menus->with('companiesMenus')->whereId( $request->get("id") )->first();
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
@@ -109,10 +103,9 @@ class MenuController extends MasterController
      * @access public
      * @param Request $request [Description]
      * @param SysMenuModel $menus
-     * @param SysCompaniesMenus $companiesMenus
      * @return JsonResponse
      */
-   public function store( Request $request, SysMenuModel $menus, SysCompaniesMenus $companiesMenus )
+   public function store( Request $request, SysMenuModel $menus )
    {
       $error = null;
       DB::beginTransaction();
@@ -127,22 +120,12 @@ class MenuController extends MasterController
               }
           },ARRAY_FILTER_USE_KEY);
 
-        $response = $menus->create( $data );
-        if( Session::get('id_rol') != 1){
-            $data = [
-                "company_id" => Session::get("id_empresa") ,
-                #"menu_id"    => $response->id
-            ];
-            $response->companies()->create($data);
+        $response = $menus->create($data);
+        $menu = $menus->find($response->id);
+        if ( isset($request->companyId ) && Session::get('roles_id') == 1 ){
+            $menu->companiesMenus()->sync($request->get("companyId"));
         }else{
-            for ($i = 0; $i < count($request->get("companyId")); $i++){
-                $data = [
-                    "company_id" => $request->get("companyId")[$i] ,
-                    #"menu_id"    => $response->id
-                ];
-                $response->companies()->create($data);
-            }
-
+            $menu->companiesMenus()->sync([Session::get('company_id')]);
         }
 
         DB::commit();
@@ -156,7 +139,7 @@ class MenuController extends MasterController
        if ($success) {
            return new JsonResponse([
                "success" => TRUE ,
-               "data"    => $response ,
+               "data"    => $menu ,
                "message" => self::$message_success
            ],Response::HTTP_CREATED);
        }
@@ -180,10 +163,10 @@ class MenuController extends MasterController
       $error = null;
       DB::beginTransaction();
       try {
-          $menus->find($id)->companies()->newPivotStatement()->whereMenuId($id)->delete();
-          $menus->find($id)->users()->newPivotStatement()->whereMenuId($id)->delete();
-          $menus->find($id)->delete();
-
+          $menu = $menus->find($id);
+          $menu->companiesMenus()->detach($id);
+          $menu->companies()->detach($id);
+          $menu->delete();
         DB::commit();
         $success = true;
 
@@ -212,10 +195,9 @@ class MenuController extends MasterController
      * @access public
      * @param Request $request [Description]
      * @param SysMenuModel $menus
-     * @param SysCompaniesMenus $companiesMenus
      * @return JsonResponse
      */
-    public function update( Request $request, SysMenuModel $menus, SysCompaniesMenus $companiesMenus )
+    public function update( Request $request, SysMenuModel $menus )
     {
       $error = null;
       DB::beginTransaction();
@@ -230,18 +212,10 @@ class MenuController extends MasterController
               }
           },ARRAY_FILTER_USE_KEY);
 
-          $menus->whereId($request->id)->update($data);
-          if( Session::get('id_rol') == 1 ){
-              $companiesMenus->whereMenuId($request->get("id"))->delete();
-              if ( isset($request->companyId ) ){
-                  for ($i = 0; $i < count($request->get("companyId")); $i++){
-                      $data = [
-                          'company_id'    => $request->get("companyId")[$i] ,
-                          'menu_id'       => $request->get("id") ,
-                      ];
-                      $companiesMenus->create($data);
-                  }
-              }
+          $menus->whereId($request->get("id"))->update($data);
+          if ( isset($request->companyId) && $request->companyId ){
+              $menu = $menus->find($request->get("id"));
+              $menu->companiesMenus()->sync($request->get("companyId"));
           }
 
         DB::commit();
@@ -262,29 +236,5 @@ class MenuController extends MasterController
         ],Response::HTTP_BAD_REQUEST);
 
     }
-
-    /**
-     * @return SysMenuModel[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
-     */
-    private function _menusBelongsCompany()
-    {
-        if (Session::get("id_rol") == 1){
-            $response = SysMenuModel::with('companies')
-                        ->orderBy('orden','ASC')
-                        ->groupby('id')
-                        ->get();
-        }else{
-            $response = SysEmpresasModel::with('menus')
-                ->whereId( Session::get('id_empresa') )
-                ->first()
-                ->menu()->with('companies')
-                ->orderBy('orden','ASC')
-                ->groupby('id')
-                ->get();
-        }
-
-        return $response;
-    }
-
 
 }

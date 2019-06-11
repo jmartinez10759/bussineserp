@@ -5,8 +5,6 @@ namespace App\Http\Middleware;
 use App\Model\Administracion\Configuracion\SysUsersModel;
 use Closure;
 use Illuminate\Support\Facades\Session;
-use App\Model\Administracion\Configuracion\SysMenuModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
 
 class RutaMiddleware
 {
@@ -19,7 +17,6 @@ class RutaMiddleware
      */
     public function handle($request, Closure $next)
     {
-
         if (Session::get("roles_id") != 1 ){
             $pathWeb = substr(parse_domain()->uri,1);
             $user = SysUsersModel::find(Session::get('id'));

@@ -2,7 +2,6 @@
 <html lang=&quot;es&quot;>
      <head>
 		<meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; />
-		<meta name=&quot;description&quot; content=&quot;Esta Tienda está desarrollada con PrestaShop&quot; />
         <meta charset="utf-8">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <style>
@@ -19,7 +18,7 @@
         </style>
     </head>
     <body>
-            <a class="btn btn-primary btn-lg" href="{{ url( Session::get('ruta') ) }}">
+            <a class="btn btn-primary btn-lg" href="{{ url( $url_previus ) }}">
                 <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Regresar
             </a>
 

@@ -36,10 +36,7 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
-                jQuery.fancybox.close({
-                    'type'      : 'inline'
-                    ,'src'      : "#modal_add_register"
-                });
+                nf.modal("#modal_add_register",true);
                 scope.index();
             }
         });
@@ -48,7 +45,7 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
 
     scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
-        var fields = sc.mapObject(scope.update, ['companies'], false);
+        var fields = sc.mapObject(scope.update, ['companies_menus','pivot'], false);
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastInfo(response.data.message, nf.titleMgsSuccess);
@@ -63,7 +60,7 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
         var datos = ["created_at","updated_at"];
         scope.update = sc.mapObject(entry, datos, false);
         scope.update.companyId = [];
-        angular.forEach(scope.update.companies,function (value, key) {
+        angular.forEach(scope.update.companies_menus,function (value, key) {
             scope.update.companyId[key] = value.id;
         });
         console.log(scope.update);

@@ -64,8 +64,8 @@ class UsuariosController extends MasterController
     {
         try {
             $data = [
-                'users'         => $this->_usersBelongsCompany( new SysEmpresasModel )
-                ,'roles'        => ( Session::get('roles_id') == 1 ) ? SysRolesModel::whereEstatus(1)->get() : $this->_rolesByCompanies(new SysEmpresasModel)
+                'users'         => $this->_usersBelongsCompany()
+                ,'roles'        => $this->_rolesBelongsCompany()
                 ,'companies'    => ( Session::get('roles_id') == 1 ) ? SysEmpresasModel::whereEstatus(1)->get() : $this->_userBelongsCompany(new SysUsersModel)
                 ,'groups'       => ( Session::get('roles_id') == 1 ) ? SysSucursalesModel::whereEstatus(1)->get() : $this->_groupsByCompanies(new SysEmpresasModel)
             ];
@@ -392,42 +392,5 @@ class UsuariosController extends MasterController
         $requestCompany= SysEmpresasSucursalesModel::select('id_empresa')->where($where)->first();
         return isset($requestCompany->id_empresa) ? $requestCompany->id_empresa : 0;
     }
-
-    /**
-     * This is method is for do query
-     * @param SysEmpresasModel $companies
-     * @return SysUsersModel[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
-     */
-    private function _usersBelongsCompany( SysEmpresasModel $companies )
-    {
-
-        if( Session::get('roles_id') == 1 ){
-
-            $response = SysUsersModel::with([
-                 'bitacora'
-                ,'rolesCompanies'
-                ,'groupsCompanies'
-                ,'companyCompanies'
-            ])->orderBy('id','DESC')->groupby('id')->get();
-
-        }else{
-            $response = $companies->with('users')
-                                    ->whereId( Session::get('company_id') )
-                                    ->first()
-                                    ->users()->with([
-                                        'roles'
-                                        ,'groups'
-                                        ,'bitacora'
-                                        ,'companies'
-                                    ])
-                                    ->orderBy('id','DESC')
-                                    ->groupby('id')
-                                    ->get();
-        }
-
-        return $response;
-
-    }
-
 
 }

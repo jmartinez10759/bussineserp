@@ -38,6 +38,10 @@ class SysMenuModel extends Model
     {
         return $this->belongsToMany('App\SysPermission','sys_permission_menus','menu_id','permission_id');
     }
+    public function companiesMenus()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_menus','menu_id','company_id');
+    }
 
 
 

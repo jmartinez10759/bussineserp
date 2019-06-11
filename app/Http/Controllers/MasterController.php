@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\Administracion\Configuracion\SysRolesModel;
 use PDF;
 use DOMDocument;
 use App\Facades\Menu;
@@ -983,7 +984,6 @@ abstract class MasterController extends Controller
      */
 	public static function reporte_general( $filtros = [] )
 	{
-
 		$fecha_actual = date('Y-m-d');
 		$fecha_actual = explode('-', $fecha_actual);
 		$anio = isset($fecha_actual[0]) ? $fecha_actual[0] : "";
@@ -1154,19 +1154,24 @@ abstract class MasterController extends Controller
 	}
 
     /**
-     * @param SysUsersModel $users
      * @return mixed
      */
-    protected function _menusByCompanies(SysUsersModel $users )
+    protected function _menusBelongsCompany()
     {
-        $user = $users->find(Session::get('id'));
-        return $user->menus()->where([
-             "estatus"      => TRUE
-            ,"sys_users_menus.company_id"   => Session::get('company_id')
-            ,"sys_users_menus.group_id"     => Session::get('group_id')
-            ,"sys_users_menus.roles_id"     => Session::get('roles_id')
-        ])->groupby('id')->orderby('orden','ASC')->get();
+        if (Session::get("roles_id") == 1){
 
+            $response = SysMenuModel::with('companiesMenus')
+                ->orderBy('orden','ASC')
+                ->groupby('id')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find(Session::get('company_id'))
+                ->menusCompanies()->with('companiesMenus')
+                ->orderBy('orden','ASC')
+                ->groupby('id')
+                ->get();
+        }
+        return $response;
     }
 
     /**
@@ -1186,13 +1191,24 @@ abstract class MasterController extends Controller
     }
 
     /**
-     * @param SysEmpresasModel $companies
-     * @return mixed
+     * This method is for get roles by companies
+     * @access public
+     * @return void
      */
-    protected function _rolesByCompanies(SysEmpresasModel $companies )
+    protected function _rolesBelongsCompany()
     {
-        $company = $companies->with('roles')->whereId(Session::get('company_id'))->first();
-        return $company->roles()->whereEstatus(TRUE)->groupby('id')->orderby('id','ASC')->get();
+        if( Session::get('roles_id') == 1 ){
+            $response = SysRolesModel::with('companiesRoles','groupsRoles')
+                        ->orderBy('id','DESC')
+                        ->get();
+        }else{
+            $response = SysEmpresasModel::find( Session::get('company_id') )
+                        ->rolesCompanies()->with('companiesRoles','groupsRoles')
+                        ->orderBy('id','DESC')
+                        ->groupby('id')
+                        ->get();
+        }
+        return $response;
     }
 
     /**
@@ -1202,17 +1218,35 @@ abstract class MasterController extends Controller
     protected function _groupsByCompanies(SysEmpresasModel $companies )
     {
         $company = $companies->with('groups')->whereId(Session::get('company_id'))->first();
-        return $company->groups()->whereEstatus(TRUE)->groupby('id')->orderby('id','ASC')->get();
+        return $company->groups()->whereEstatus(TRUE)->groupby('sys_users_pivot.company_id')->groupby('sys_users_pivot.group_id')->orderby('id','ASC')->get();
     }
 
     /**
-     * @param SysUsersModel $user
-     * @return mixed
+     * This is method is for do query
+     * @param SysEmpresasModel $companies
+     * @return SysUsersModel[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
-    protected function _userBelongsCompany(SysUsersModel $user )
+    protected function _usersBelongsCompany()
     {
-        $users = $user->with('companies')->whereId(Session::get('id'))->first();
-        return $users->companies()->whereEstatus(TRUE)->groupby('id')->orderby('id','ASC')->get();
+        if( Session::get('roles_id') == 1 ){
+            $response = SysUsersModel::with([
+                            'bitacora'
+                            ,'roles'
+                            ,'groups'
+                            ,'companies'
+                        ])->orderBy('id','DESC')
+                        ->groupby('id')->get();
+        }else{
+            $response = SysEmpresasModel::find(Session::get('company_id'))
+                        ->users()
+                        ->with([
+                            'roles' ,
+                            'groups' ,
+                            'bitacora' ,
+                            'companies' ,
+                        ])->orderBy('id','DESC')->groupby('id')->get();
+        }
+        return $response;
     }
     /**
      * Metodo para obtener la validacion de la consulta

@@ -1,5 +1,4 @@
-<!-- <div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true"> -->
-<div style="display:none;" id="modal_add_register" role="dialog" aria-hidden="true">
+<div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -111,7 +110,9 @@
 
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
-					<button type= "button" class="btn btn-danger" data-fancybox-close ><i class="fa fa-times-circle"></i> Cancelar</button>
+					<button type= "button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
+						<i class="fa fa-times-circle"></i> Cancelar
+					</button>
 					<button type= "button" class="btn btn-success" ng-click="insertRegister()" ng-if="permisos.INS">
 						<i class="fa fa-save"></i> Registrar
 					</button>
