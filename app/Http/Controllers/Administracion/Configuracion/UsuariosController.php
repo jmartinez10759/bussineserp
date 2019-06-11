@@ -66,8 +66,8 @@ class UsuariosController extends MasterController
             $data = [
                 'users'         => $this->_usersBelongsCompany()
                 ,'roles'        => $this->_rolesBelongsCompany()
-                ,'companies'    => ( Session::get('roles_id') == 1 ) ? SysEmpresasModel::whereEstatus(1)->get() : $this->_userBelongsCompany(new SysUsersModel)
-                ,'groups'       => ( Session::get('roles_id') == 1 ) ? SysSucursalesModel::whereEstatus(1)->get() : $this->_groupsByCompanies(new SysEmpresasModel)
+                ,'companies'    => $this->_companyBelongsUsers()
+                #,'groups'       => $this->_groupsBelongsCompanies()
             ];
 
             return new JsonResponse([
@@ -97,7 +97,7 @@ class UsuariosController extends MasterController
         try {
             $users      = SysUsersModel::find($userId);
             $action     = ( Session::get('roles_id') == 1 ) ? SysPermission::whereStatus(1)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysUsersModel);
-            $menus      = ( Session::get('roles_id') == 1 ) ? SysMenuModel::whereEstatus(1)->orderBy('orden', 'asc')->get() : $this->_menusByCompanies(new SysUsersModel);
+            $menus      = $this->_menusBelongsCompany();
             $menuPadre = [];
             foreach ($menus as $menu ){
                 if ($menu->tipo == "PADRE"){

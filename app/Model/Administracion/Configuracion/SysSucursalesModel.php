@@ -43,6 +43,10 @@ class SysSucursalesModel extends Model
     {
         return $this->belongsToMany(SysSucursalesModel::class,'sys_groups_roles','group_id','roles_id');
     }
+    public function companiesGroups()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_groups','group_id','company_id');
+    }
 
 
 

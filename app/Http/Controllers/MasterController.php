@@ -1212,18 +1212,26 @@ abstract class MasterController extends Controller
     }
 
     /**
-     * @param SysEmpresasModel $companies
      * @return mixed
      */
-    protected function _groupsByCompanies(SysEmpresasModel $companies )
+    protected function _groupsBelongsCompanies()
     {
-        $company = $companies->with('groups')->whereId(Session::get('company_id'))->first();
-        return $company->groups()->whereEstatus(TRUE)->groupby('sys_users_pivot.company_id')->groupby('sys_users_pivot.group_id')->orderby('id','ASC')->get();
+        if( Session::get('roles_id') == 1 ){
+            $response = SysSucursalesModel::with('companiesGroups')
+                ->orderBy('id','DESC')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find( Session::get('company_id') )
+                ->groupsCompanies()->with('companiesGroups','groupsRoles')
+                ->orderBy('id','DESC')
+                ->groupby('id')
+                ->get();
+        }
+        return $response;
     }
 
     /**
      * This is method is for do query
-     * @param SysEmpresasModel $companies
      * @return SysUsersModel[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
     protected function _usersBelongsCompany()
@@ -1248,6 +1256,20 @@ abstract class MasterController extends Controller
         }
         return $response;
     }
+
+    /**
+     * @return mixed
+     */
+    protected function _companyBelongsUsers()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $response = SysEmpresasModel::whereEstatus(TRUE)->get();
+        }else{
+            $user = SysUsersModel::find(Session::get("id"));
+            $response = $user->companies()->orderBy('id','DESC')->groupby('id')->get();
+        }
+        return $response;
+    }
     /**
      * Metodo para obtener la validacion de la consulta
      * @access public
@@ -1259,7 +1281,7 @@ abstract class MasterController extends Controller
      * @param bool $method
      * @return void
      */
-	protected function _validate_consulta( $table_model, $with = [],$where = [],$where_pivot = [],$where_admin = [],$method= false )
+	/*protected function _validate_consulta( $table_model, $with = [],$where = [],$where_pivot = [],$where_admin = [],$method= false )
 	{
 		if( Session::get('id_rol') == 1 ){
         	return $table_model::with(['empresas'])->with($with)->where($where_admin)->orderBy('id','desc')->get();
@@ -1269,7 +1291,7 @@ abstract class MasterController extends Controller
             
         }
 
-	}
+	}*/
 
     /**
      * Metodo para obtener los catalogos de cada empresas
@@ -1280,7 +1302,7 @@ abstract class MasterController extends Controller
      * @param array $where_pivot
      * @return void
      */
-	protected function _catalogos_bussines( $table_model, $with = [], $where = [], $where_pivot = [] )
+	/*protected function _catalogos_bussines( $table_model, $with = [], $where = [], $where_pivot = [] )
 	{
 		if( Session::get('id_rol') == 1 ){
         	return $table_model::with($with)->orderBy('id','desc')->get();
@@ -1288,7 +1310,7 @@ abstract class MasterController extends Controller
         	return $this->_consulta($table_model,$with,$where,$where_pivot, false );
         }
 
-	}
+	}*/
 
     /**
      * Metodo para cargar la platilla de forma general para la generacion de las cotizaciones/ pedidos

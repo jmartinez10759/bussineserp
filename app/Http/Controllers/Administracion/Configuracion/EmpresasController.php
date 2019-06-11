@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
+use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -319,16 +320,19 @@ class EmpresasController extends MasterController
      * @return JsonResponse
      */
     public static function findRelGroups( Request $request )
-  {
-      $response = [];
+    {
+        $response = [];
         if(is_null($request->get('id_empresa'))){
             return new JsonResponse([
                 "success"   => false
                 ,"data"     => $response
-                ,"message"  => "¡No se encontró ningún Grupo en esta Empresa!"
+                ,"message"  => "¡No se encontró ningún grupo en esta Empresa!"
             ],Response::HTTP_BAD_REQUEST);
         }
-      $companies = SysEmpresasModel::with("groups")->whereIn('id',$request->get("id_empresa"))->get();
+      $companies = SysEmpresasModel::with(["groups" => function($query){
+                        return $query->groupBy('sys_users_pivot.group_id');
+                    }])->whereIn('id',$request->get("id_empresa"))->get();
+
       if ( count($companies) > 0 ){
             $i = 0;
             foreach ($companies as $company ){
@@ -347,19 +351,23 @@ class EmpresasController extends MasterController
           ,"message"  => "¡Se cargo correctamente las sucursales!"
       ],Response::HTTP_OK);
 
-  }
+    }
 
     /**
      * @param Request $request
+     * @param SysUsersModel $users
      * @return JsonResponse
      */
-    public function findByUserGroups(Request $request)
+    public function findByUserGroups(Request $request, SysUsersModel $users )
     {
       try {
-          $user       = SysUsersModel::with('roles')->whereId($request->get("userId"))->first();
-          $roles      = $user->roles()->with('companies')->whereId($request->get("rolId"))->first();
-          $companies  = $roles->companies()->with('groups')->whereId($request->get("companyId"))->first();
-          $groups     = $companies->groups()->whereEstatus(TRUE)->get();
+          $user = $users->find($request->get("userId"));
+          $groups     = $user->groups()->where([
+                "sys_users_pivot.roles_id"      =>  $request->get("rolId") ,
+                "sys_users_pivot.companies_id"  =>  $request->get("companyId") ,
+                "estatus"       =>  TRUE ,
+          ])->groupBy('sys_users_pivot.group_id')->get();
+
           return new JsonResponse([
               "success" => true ,
               "data"    => $groups ,

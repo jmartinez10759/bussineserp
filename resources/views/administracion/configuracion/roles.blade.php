@@ -16,7 +16,7 @@
 	            </tr>
 	        </thead>
 	        <tbody>
-	            <tr ng-repeat="data in datos" id="tr_@{{data.id}}">
+	            <tr ng-repeat="data in datos | filter: searching" id="tr_@{{data.id}}">
 	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.id" ></td>
 	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.perfil" ></td>
 	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.clave_corta" ></td>

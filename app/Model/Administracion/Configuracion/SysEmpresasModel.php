@@ -55,11 +55,6 @@ class SysEmpresasModel extends Model
     {
         return $this->belongsToMany(SysRolesModel::class,'sys_companies_roles','company_id','roles_id');
     }
-
-    public function usersCompanies()
-    {
-        return $this->belongsToMany(SysUsersModel::class,'sys_companies_users','company_id','user_id');
-    }
     public function menusCompanies()
     {
         return $this->belongsToMany(SysMenuModel::class,'sys_companies_menus','company_id','menu_id');
@@ -68,6 +63,10 @@ class SysEmpresasModel extends Model
     {
         return $this->belongsToMany('App\SysPermission','sys_companies_permission','company_id','permission_id');
     }
+    /*  public function usersCompanies()
+      {
+          return $this->belongsToMany(SysUsersModel::class,'sys_companies_users','company_id','user_id');
+      }*/
 
 
 
