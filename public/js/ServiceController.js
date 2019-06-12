@@ -21,8 +21,11 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
     };
 
     ServiceController.prototype.validateSessionStatus = function(response){
-        if ( angular.isDefined(response.status) ){
-
+        if ( angular.isDefined(response.status)){
+            /*if ( !response.data.data){
+                time(function(){ redirect(fc.domain()); }, 2000);
+                return false;
+            }*/
             if( response.status == 419 ){
                 nf.toastError(nf.sessionExpired);
                 time(function(){ redirect(fc.domain()); }, 2000);

@@ -438,7 +438,6 @@ abstract class MasterController extends Controller
 			$conditions = [];
 			if ( isset( $request->email ) && isset( $request->password ) ) {
 				$conditions     = ( filter_var( $request->email, FILTER_VALIDATE_EMAIL ) )? ['email' => $request->email ]: ['username' => $request->email];
-				$conditions['password']  = $request->password;
 				$conditions['confirmed'] = TRUE;
 			}
 			$information = ['api_token' => str_random(50)];
@@ -446,10 +445,11 @@ abstract class MasterController extends Controller
 			$users::where( $where )->update($information);
             $response = $users->where($where)->first();
             $conditions['api_token'] = ( $response ) ? $response->api_token : NULL;
-			$user = $users::with(['menus' => function( $query ){
+            $user = $users::with(['menus' => function( $query ){
 					return $query->groupby('id');
 			},'companies','groups','roles'])->where( $conditions )->first();
-			if ( $user ) {
+
+            if ( password_verify($request->password, $user->password) ) {
                 $session = [];
                 $keys = ['password', 'remember_token', 'confirmed_code'];
                 foreach ($user->fillable as $key => $value) {
@@ -653,7 +653,7 @@ abstract class MasterController extends Controller
 	 * @param array $data [Description]
 	 * @return array
 	 */
-	private static function _parse_array( $data = [] )
+	/*private static function _parse_array( $data = [] )
 	{
 		$datos = [];
 		foreach ($data as $key => $value) {
@@ -662,7 +662,7 @@ abstract class MasterController extends Controller
 			}
 		}
 		return $datos;
-	}
+	}*/
 	/**
 	 * Metodo para hacer la consulta de la vacante
 	 * @access public
@@ -1077,83 +1077,6 @@ abstract class MasterController extends Controller
 	}
 
     /**
-     * Metodo para obtener los registros de los productos por empresa.
-     * @access public
-     * @param $table_model
-     * @param array $with
-     * @param array $where
-     * @param array $where_pivot
-     * @param bool $method
-     * @param array $with_pivot
-     * @return void
-     */
-	protected function _consulta($table_model, $with = [], $where = [], $where_pivot = [],$method = false, $with_pivot = [])
-	{
-		$response = $table_model::with(['empresas' => function ($query) use ($where_pivot, $with_pivot) {
-			return $query->with($with_pivot)->where($where_pivot)->get();
-		}])->with($with)->where($where)->orderby('id', 'desc')->get();
-		$request = [];		
-		foreach ($response as $respuesta) {
-			if (count($respuesta->empresas) > 0) {
-				if ($method) {
-					$request = $respuesta->$method;
-				} else {
-					$request[] = $respuesta;
-				}
-			}
-		}
-		#debuger($response);
-		return $request;
-	
-	}
-
-    /**
-     * Metodo para obtener los registros de los productos por empresa.
-     * @access public
-     * @param $table_model
-     * @param array $with
-     * @return void
-     */
-	protected function _consulta_employes($table_model, $with = [])
-	{
-        #SysUsersModel
-		$response = $table_model::with(['empresas' => function ($query) {
-			if (Session::get('id_rol') != 1) {
-				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
-			}
-		}])->with($with)->where(['id' => Session::get('id')])->orderby('id', 'desc')->get();
-		$request = [];
-		foreach ($response as $respuesta) {
-			if (count($respuesta->empresas) > 0) {
-				$request = $respuesta->empresas;
-			}
-		}
-		return $request;
-
-	}
-
-    /**
-     * Metodo para obtener los registros de los menus de esa empresa.
-     * @access public
-     * @param $table_model
-     * @return void
-     */
-	protected function _consulta_menus($table_model)
-	{
-		$usuarios = $table_model::with(['menus' => function ($query) {
-			$where = [
-				'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
-			];
-			return $query->where($where)->groupby('id')->orderBy('orden', 'asc')->get();
-		}])->where(['id' => Session::get('id')])->get();
-		$response = [];
-		foreach ($usuarios as $menu) {
-			$response = $menu->menus;
-		}
-		return $response;
-	}
-
-    /**
      * @return mixed
      */
     protected function _menusBelongsCompany()
@@ -1191,6 +1114,25 @@ abstract class MasterController extends Controller
     }
 
     /**
+     * @return mixed
+     */
+    protected function _groupsBelongsCompanies()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $response = SysSucursalesModel::with('companiesGroups')
+                ->orderBy('id','DESC')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find( Session::get('company_id') )
+                ->groupsCompanies()->with('companiesGroups','rolesGroups')
+                ->orderBy('id','DESC')
+                ->groupby('id')
+                ->get();
+        }
+        return $response;
+    }
+
+    /**
      * This method is for get roles by companies
      * @access public
      * @return void
@@ -1207,25 +1149,6 @@ abstract class MasterController extends Controller
                         ->orderBy('id','DESC')
                         ->groupby('id')
                         ->get();
-        }
-        return $response;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function _groupsBelongsCompanies()
-    {
-        if( Session::get('roles_id') == 1 ){
-            $response = SysSucursalesModel::with('companiesGroups')
-                ->orderBy('id','DESC')
-                ->get();
-        }else{
-            $response = SysEmpresasModel::find( Session::get('company_id') )
-                ->groupsCompanies()->with('companiesGroups','groupsRoles')
-                ->orderBy('id','DESC')
-                ->groupby('id')
-                ->get();
         }
         return $response;
     }

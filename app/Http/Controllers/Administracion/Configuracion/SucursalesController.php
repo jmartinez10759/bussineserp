@@ -21,45 +21,49 @@ class SucursalesController extends MasterController
         parent::__construct();
         $this->_tabla_model = new SysSucursalesModel;
     }
+
     /**
-     *Metodo para pintar la vista y cargar la informacion principal del menu
-     *@access public
-     *@return void
+     * This method load the view.
+     * @access public
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-     public function index(){
-      if( Session::get('permisos')['GET'] )
-        { return view('errors.error'); }
+     public function index()
+     {
            $data = [
-             'page_title' 	     => "Configuracion"
-             ,'title'  		       => "Sucursales"
-             
+             'page_title' 	     => "Configuracion" ,
+             'title'  		     => "Sucursales" ,
            ];
-            
-         return self::_load_view( 'administracion.configuracion.sucursales', $data );
-
+         return $this->_loadView( 'administracion.configuracion.sucursales', $data );
      }
-      /**
-         *Metodo para obtener los datos de manera asicronica.
-         *@access public
-         *@param Request $request [Description]
-         *@return void
-         */
-        public function all( Request $request ){
 
-            try {
-                $response = $this->_tabla_model::get();
+    /**
+     * This method is for load all information
+     * @access public
+     * @return JsonResponse
+     */
+      public function all()
+      {
+          try {
+              $data = [
+                  "groups"     => $this->_groupsBelongsCompanies() ,
+              ];
+              return new JsonResponse([
+                  "success" => TRUE ,
+                  "data"    => $data ,
+                  "message" => self::$message_success
+              ],Response::HTTP_OK);
 
-        // debuger($data);
-        $data = [
-          'sucursales'  => $response
-        ];
-              return $this->_message_success( 200, $data , self::$message_success );
-            } catch (\Exception $e) {
-                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-                return $this->show_error(6, $error, self::$message_error );
-            }
+          } catch ( \Exception $e) {
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              return new JsonResponse([
+                  "success" => FALSE ,
+                  "data"    => $error ,
+                  "message" => self::$message_error
+              ],Response::HTTP_BAD_REQUEST);
+          }
 
-        }
+      }
+
         /**
         *Metodo para realizar la consulta por medio de su id
         *@access public

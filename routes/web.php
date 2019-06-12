@@ -514,29 +514,29 @@ Route::group(['middleware' => ['admin.only']], function() {
        'uses'      => 'Administracion\Configuracion\SucursalesController@index'
        ,'as'       => 'configuracion.sucursales'
     ]);
-    Route::get('/sucursales/all', [
-        'uses'      => 'Administracion\Configuracion\sucursalesController@all'
-        ,'as'       => 'sucursales.all'
+    Route::get('/groups/all', [
+        'uses'      => 'Administracion\Configuracion\SucursalesController@all'
+        ,'as'       => 'groups.all'
     ]);
 
-    Route::get('sucursales/edit', [
+    Route::get('groups/edit', [
         'uses'      => 'Administracion\Configuracion\SucursalesController@show'
         ,'as'       => 'sucursales.edit'
     ]);
 
-    Route::delete('sucursales/destroy', [
+    Route::delete('groups/destroy', [
         'uses'      => 'Administracion\Configuracion\SucursalesController@destroy'
-        ,'as'       => 'sucursales.destroy'
+        ,'as'       => 'groups.destroy'
     ]);
 
-    Route::post('/sucursales/register', [
+    Route::post('/groups/register', [
         'uses'      => 'Administracion\Configuracion\SucursalesController@store'
-        ,'as'       => 'sucursales.register'
+        ,'as'       => 'groups.register'
     ]);
 
-    Route::put('/sucursales/update', [
+    Route::put('/groups/update', [
         'uses'      => 'Administracion\Configuracion\SucursalesController@update'
-        ,'as'       => 'sucursales.update'
+        ,'as'       => 'groups.update'
     ]);
 
     Route::post('/list/sucursales', [

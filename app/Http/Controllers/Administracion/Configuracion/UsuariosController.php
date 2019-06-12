@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
+use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\SysPermission;
 use App\SysUsersPivot;
 use Illuminate\Http\Request;
@@ -10,13 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
-use App\Model\Administracion\Configuracion\SysRolesModel;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysCorreosModel;
 use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use App\Model\Administracion\Configuracion\SysUsersRolesModel;
-use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
 use App\Model\Administracion\Facturacion\SysFacturacionModel;
@@ -110,13 +108,11 @@ class UsuariosController extends MasterController
             }
             $companyByUser     = $users->companies()->whereEstatus(TRUE)->groupby('id')->get();
             $rolesByUser       = $users->roles()->whereEstatus(TRUE)->groupby('id')->get();
-            #$groupsByUser      = $users->groups()->whereEstatus(TRUE)->groupby('id')->get();
             $data = [
                 "menus"           => $menuPadre ,
                 "action"          => $action ,
                 "companyByUser"   => $companyByUser ,
                 "rolesByUser"     => $rolesByUser ,
-                #"groupsByUser"    => $groupsByUser ,
             ];
 
             return new JsonResponse([
@@ -164,7 +160,7 @@ class UsuariosController extends MasterController
     public function store( Request $request )
     {
         $requestUsers = [];
-        $responseUsers = SysUsersModel::whereEmail($request->email)->first();
+        $responseUsers = SysUsersModel::whereEmail($request->get("email"))->first();
         if ($responseUsers) {
             return new JsonResponse([
                 'success'   => false
@@ -207,7 +203,10 @@ class UsuariosController extends MasterController
         DB::beginTransaction();
         try {
             $usersRegister = SysUsersModel::create($requestUsers);
-            for ($i=0; $i < count($request->get("id_empresa")); $i++){
+            $begin = (count($request->get("id_empresa")) >= count($request->get('id_sucursal')) )
+                        ? count($request->get("id_empresa"))
+                        : count($request->get("id_sucursal"));
+            for ($i=0; $i < $begin ; $i++){
                 $data = [
                     "user_id"       =>  $usersRegister->id ,
                     "roles_id"      =>  $request->get("id_rol") ,
@@ -291,15 +290,16 @@ class UsuariosController extends MasterController
                         ->where("company_id", "!=",$request->get("id_empresa")[$i] )
                         ->delete();
                 }
-                for ($i=0; $i < count($request->get("id_empresa")); $i++){
+                for ($i = 0; $i < count($request->get('id_sucursal'));$i++){
                     $data = [
                         "user_id"       =>  $request->get("id") ,
                         "roles_id"      =>  $request->get("id_rol") ,
-                        "company_id"    =>  $request->get("id_empresa")[$i] ,
-                        "group_id"      =>  isset($request->get('id_sucursal')[$i])? $request->get('id_sucursal')[$i]: 0
+                        "company_id"    =>  $this->_getCompany($request->get('id_sucursal')[$i]),
+                        "group_id"      =>  $request->get('id_sucursal')[$i]
                     ];
                     SysUsersPivot::insert($data);
                 }
+
             }
             DB::commit();
             $success = true;
@@ -383,14 +383,18 @@ class UsuariosController extends MasterController
     /**
      *Metodo para obtener las empresas del usuario
      * @access public
-     * @param int|null $id_sucursal
+     * @param int|null $groupId
      * @return void
      */
-    private function _companies(int $id_sucursal = null )
+    private function _getCompany(int $groupId = null )
     {
-        $where = ['id_sucursal' => $id_sucursal, 'estatus' => 1];
-        $requestCompany= SysEmpresasSucursalesModel::select('id_empresa')->where($where)->first();
-        return isset($requestCompany->id_empresa) ? $requestCompany->id_empresa : 0;
+        $group = SysSucursalesModel::find($groupId);
+        $company = $group->companiesGroups()->where([
+            "sys_companies_groups.group_id" =>  $groupId
+        ])->whereEstatus(TRUE)->first();
+        var_export($groupId);die();
+        var_export($company);die();
+        return isset($company->id) ? $company->id : 0;
     }
 
 }

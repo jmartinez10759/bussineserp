@@ -2,70 +2,50 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-app="application" ng-controller="SucursalesController" ng-init="constructor()" ng-cloak >   
+<div ng-controller="GroupsController" ng-init="constructor()" ng-cloak >
             
-            <div class="table-responsive">
-                <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable">
-                    <thead>
-                        <tr style="background-color: #337ab7; color: #ffffff;">
-                            <th>#</th>
-                            <th>Código</th>
-                            <th>Sucursal</th>
-                            <th>Direccion</th>
-                            <th>Telefono</th>
-                            <th class="text-right">Estatus</th>
-                            <th class="text-right"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
+    <div class="table-responsive table-container">
 
-                        <tr ng-repeat="data in datos.sucursales" id="tr_@{{data.id}}">
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.id}}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.codigo }}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">@{{data.sucursal }}</td>
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
-                                @{{data.direccion}}
-                            </td>
-                            
-                            <td ng-click="edit_register(data.id)" style="cursor: pointer;">
-                                @{{ data.telefono }}
-                            </td>
-                            <td>
-                            <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
-                            <span class="label label-danger" ng-if="data.estatus == 0">Baja</span>
-                            </td>
-                            <td class="text-right">
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                        Acciones
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                                        <!-- <li>
-                                            <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
-                                                <i class="glyphicon glyphicon-edit"></i> Editar
-                                            </a>
-                                        </li> -->
-                                        
-                                        <li {{$eliminar}}>
-                                            <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
-                                                <i class="glyphicon glyphicon-trash"></i> Eliminar
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
+        <table class="table table-striped table-responsive highlight table-hover" id="datatable">
+            <thead>
+                <tr style="background-color: #337ab7; color: #ffffff;">
+                    <th>#</th>
+                    <th>Código</th>
+                    <th>Sucursal</th>
+                    <th>Direccion</th>
+                    <th>Telefono</th>
+                    <th class="text-right">Estatus</th>
+                    <th class="text-right"></th>
+                </tr>
+            </thead>
+            <tbody>
 
-                    </tbody>
-                </table>
-            </div>
-            
+                <tr ng-repeat="data in datos | filter: searching" id="tr_@{{data.id}}">
+                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.id"></td>
+                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.codigo"></td>
+                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.sucursal"></td>
+                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.direccion"></td>
+                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.telefono"></td>
+                    <td>
+                        <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
+                        <span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="destroyRegister(data.id)" title="Eliminar Registro" ng-if="permisos.DEL">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </button>
+                    </td>
+                </tr>
 
-	@include('administracion.configuracion.sucursales_edit')
+            </tbody>
+        </table>
+
+    </div>
+
+	@include('administracion.configuracion.groupEdit')
 </div>
 
 @stop
 @push('scripts')
-  <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_sucursales.js')}}" ></script>
+  <script type="text/javascript" src="{{asset('js/administracion/configuracion/buildGroupsController.js')}}" ></script>
 @endpush

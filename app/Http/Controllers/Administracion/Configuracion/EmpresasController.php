@@ -364,8 +364,8 @@ class EmpresasController extends MasterController
           $user = $users->find($request->get("userId"));
           $groups     = $user->groups()->where([
                 "sys_users_pivot.roles_id"      =>  $request->get("rolId") ,
-                "sys_users_pivot.companies_id"  =>  $request->get("companyId") ,
-                "estatus"       =>  TRUE ,
+                "sys_users_pivot.company_id"    =>  $request->get("companyId") ,
+
           ])->groupBy('sys_users_pivot.group_id')->get();
 
           return new JsonResponse([
