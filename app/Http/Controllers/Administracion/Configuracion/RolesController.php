@@ -203,8 +203,8 @@ class RolesController extends MasterController
         DB::beginTransaction();
         try {
             $rol = $roles->find($id);
-            $rol->companiesRoles()->detach($id);
-            $rol->companies()->detach($id);
+            $rol->companiesRoles()->detach();
+            $rol->companies()->detach();
             $rol->delete();
           DB::commit();
           $success = true;

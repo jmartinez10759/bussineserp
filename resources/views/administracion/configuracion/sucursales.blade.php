@@ -21,11 +21,11 @@
             <tbody>
 
                 <tr ng-repeat="data in datos | filter: searching" id="tr_@{{data.id}}">
-                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.id"></td>
-                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.codigo"></td>
-                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.sucursal"></td>
-                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.direccion"></td>
-                    <td ng-click="editRegister(data.id)" style="cursor: pointer;" ng-bind="data.telefono"></td>
+                    <td ng-click="editRegister(data)" style="cursor: pointer;" ng-bind="data.id"></td>
+                    <td ng-click="editRegister(data)" style="cursor: pointer;" ng-bind="data.codigo"></td>
+                    <td ng-click="editRegister(data)" style="cursor: pointer;" ng-bind="data.sucursal"></td>
+                    <td ng-click="editRegister(data)" style="cursor: pointer;" ng-bind="data.direccion"></td>
+                    <td ng-click="editRegister(data)" style="cursor: pointer;" ng-bind="data.telefono"></td>
                     <td>
                         <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
                         <span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>

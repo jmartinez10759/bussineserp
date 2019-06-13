@@ -41,7 +41,7 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
 
     $scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
-        var fields = sc.mapObject($scope.update, ['companies_roles'], false);
+        var fields = sc.mapObject($scope.update, ['companies_groups'], false);
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastInfo(response.data.message, nf.titleMgsSuccess);
@@ -53,11 +53,11 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
     };
 
     $scope.editRegister = function( entry ){
-        var datos = ['id', 'perfil', 'clave_corta', 'estatus',"companies_roles"];
-        $scope.update = sc.mapObject(entry, datos, true);
-        $scope.update.companyId = [];
-        angular.forEach($scope.update.companies_roles,function (value, key) {
-            $scope.update.companyId[key] = value.id;
+        var datos = ['created_at',"updated_at"];
+        $scope.update = sc.mapObject(entry, datos, false);
+        $scope.update.companyId = "";
+        angular.forEach($scope.update.companies_groups,function (value, key) {
+            $scope.update.companyId = value.id;
         });
         console.log($scope.update);
         nf.modal("#modal_edit_register");
@@ -65,7 +65,7 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
 
     $scope.destroyRegister = function( id ){
 
-        var url = fc.domain( URL.url_destroy+"/"+id+"/company" );
+        var url = fc.domain( URL.url_destroy+"/"+id+"/companies" );
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {

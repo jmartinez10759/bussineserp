@@ -275,6 +275,7 @@ abstract class MasterController extends Controller
         if ($status) {
             return $menusArray;
         }
+        #var_export($menusArray);die();
         return Menu::build_menu_tle($menusArray);
     }
 

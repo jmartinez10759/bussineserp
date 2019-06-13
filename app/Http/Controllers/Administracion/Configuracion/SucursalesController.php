@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
-use App\SysUsersMenus;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -15,13 +14,10 @@ use App\Model\Administracion\Configuracion\SysEmpresasModel;
 
 class SucursalesController extends MasterController
 {
-    private $_tabla_model;
-
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
-        $this->_tabla_model = new SysSucursalesModel;
     }
-
     /**
      * This method load the view.
      * @access public
@@ -37,7 +33,7 @@ class SucursalesController extends MasterController
      }
 
     /**
-     * This method is for load all information
+     * This method is used load all information
      * @access public
      * @return JsonResponse
      */
@@ -64,110 +60,168 @@ class SucursalesController extends MasterController
 
       }
 
-        /**
-        *Metodo para realizar la consulta por medio de su id
-        *@access public
-        *@param Request $request [Description]
-        *@return void
-        */
-        public function show( Request $request ){
+    /**
+     * This method is used get data with id of group
+     * @access public
+     * @param Request $request [Description]
+     * @param SysSucursalesModel $groups
+     * @return JsonResponse
+     */
+    public function show( Request $request, SysSucursalesModel $groups )
+    {
+        try {
+            $response = $groups->find($request->get("id") );
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $response
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
 
-            try {
-                $response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
-                
-            return $this->_message_success( 200, $response[0] , self::$message_success );
-            } catch (\Exception $e) {
+        } catch ( \Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            return $this->show_error(6, $error, self::$message_error );
-            }
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
 
         }
-     /**
-      *Metodo para
-      *@access public
-      *@param Request $request [Description]
-      *@return void
-      */
-    public function store( Request $request){
-            // debuger($request->all());
-            $error = null;
-            DB::beginTransaction();
-            try {
-              $response = $this->_tabla_model::create( $request->all());
-                // debuger($request->all());
-            DB::commit();
-            $success = true;
-            } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            DB::rollback();
-            }
-
-            if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
-            }
-            return $this->show_error(6, $error, self::$message_error );
-
-
-        }
-     
-     /**
-      *Metodo para la actualizacion de los registros
-      *@access public
-      *@param Request $request [Description]
-      *@return void
-      */
-     public function update( Request $request){
-
-            $error = null;
-            DB::beginTransaction();
-            try {
-                // debuger($request->all());
-                $response = $this->_tabla_model::where(['id' => $request->id] )->update( $request->all() );
-            DB::commit();
-            $success = true;
-            } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            DB::rollback();
-            }
-
-            if ($success) {
-            return $this->_message_success( 200, $response , self::$message_success );
-            }
-            return $this->show_error(6, $error, self::$message_error );
-
-        }
-     /**
-      *Metodo para borrar el registro
-      *@access public
-      *@param Request $request [Description]
-      *@return void
-      */
-     public function destroy( Request $request ){
-         $error = null;
-                DB::beginTransaction();
-                try {
-                    // debuger($request->id);
-                    $response = $this->_tabla_model ::where(['id' => $request->id])->delete(); 
-                    
-                DB::commit();
-                $success = true;
-                } catch (\Exception $e) {
-                $success = false;
-                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-                DB::rollback();
-                }
-
-                if ($success) {
-                return $this->_message_success( 201, $response , self::$message_success );
-                }
-                return $this->show_error(6, $error, self::$message_error );
-
-            }
+    }
 
     /**
-     *Metodo para listar las sucursales. por empresa.
+     * This method is used to insert data in relations tables
+     * @access public
+     * @param Request $request [Description]
+     * @param SysSucursalesModel $groups
+     * @return JsonResponse
+     */
+    public function store( Request $request, SysSucursalesModel $groups )
+    {
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $data = array_filter($request->all(), function ($key) use ($request){
+                if($key != "companyId"){
+                    $data[$key] = $request->$key;
+                    if ($request->$key == 0){
+                        $data[$key] = "0";
+                    }
+                    return $data;
+                }
+            },ARRAY_FILTER_USE_KEY);
+
+            $response = $groups->create($data);
+            $group = $groups->find($response->id);
+            if ( isset($request->companyId ) && $request->companyId){
+                $group->companiesGroups()->sync($request->get("companyId"));
+            }else{
+                $group->companiesGroups()->sync([Session::get('company_id')]);
+            }
+
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => $response
+                ,'message' => self::$message_success
+            ],Response::HTTP_CREATED);
+        }
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
+
+    }
+
+    /**
+     * This method is used to update the information
+     * @access public
+     * @param Request $request [Description]
+     * @param SysSucursalesModel $groups
+     * @return JsonResponse
+     */
+     public function update( Request $request, SysSucursalesModel $groups )
+     {
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $data = array_filter($request->all(), function ($key) use ($request){
+                if($key != "companyId"){
+                    $data[$key] = $request->$key;
+                    if ($request->$key == 0){
+                        $data[$key] = "0";
+                    }
+                    return $data;
+                }
+            },ARRAY_FILTER_USE_KEY);
+            $groups->whereId($request->get('id'))->update($data);
+            if ( isset($request->companyId) && $request->companyId){
+                $group = $groups->find($request->get("id") );
+                $group->companiesGroups()->sync($request->get("companyId"));
+            }
+            DB::commit();
+            $success = true;
+
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+            return $this->show( new Request($request->all()), new SysSucursalesModel );
+        }
+         return new JsonResponse([
+             'success'   => FALSE
+             ,'data'     => $error
+             ,'message'  => self::$message_error
+         ],Response::HTTP_BAD_REQUEST);
+
+     }
+
+    /**
+     *This method is delete register of group
+     * @access public
+     * @param int|null $id
+     * @param SysSucursalesModel $groups
+     * @return void
+     */
+     public function destroy( int $id = null, SysSucursalesModel $groups )
+     {
+         $error = null;
+         DB::beginTransaction();
+
+         try {
+             $group = $groups->find($id);
+             $group->companiesGroups()->detach();
+             $group->companies()->detach();
+             $group->delete();
+
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+
+        }
+
+
+     }
+
+    /**
+     * This method is used to list group by company
      * @access public
      * @param Request $request
      * @return JsonResponse
@@ -175,8 +229,11 @@ class SucursalesController extends MasterController
       public function listGroup(Request $request)
       {
         Session::put(['company_id' => $request->get("id_empresa")]);
-        $companies = SysEmpresasModel::with(['groups'])->whereId($request->get("id_empresa"))->first();
-        $groups = $companies->groups()->groupBy('id')->get();
+        $companies = SysEmpresasModel::find($request->get("id_empresa"));
+        $groups = $companies->groups()->where([
+            "sys_users_pivot.user_id"    => Session::get("id") ,
+            "sys_users_pivot.company_id" => $request->get("id_empresa")
+        ])->groupBy('id')->get();
          $data['groups'] = $groups;
          return new JsonResponse([
              'success'  => true
@@ -187,17 +244,18 @@ class SucursalesController extends MasterController
       }
 
     /**
-     *This method is for get acces the portal system
+     * This method is used get access system portal
      * @access public
      * @param int $groupId
-     * @param SysUsersMenus $usersMenus
      * @return JsonResponse
      */
       public function portal( int $groupId = null )
       {
           $sessions['group_id']  = $groupId;
           $user  = SysUsersModel::find(Session::get('id'));
-          $roles = $user->roles()->first();
+          $roles = $user->roles()->where([
+              "sys_users_pivot.user_id" => Session::get('id')
+          ])->first();
           $menus = $user->menus()->where([
               "sys_users_menus.user_id"     => $user->id ,
               "sys_users_menus.roles_id"    => $roles->id ,
@@ -209,10 +267,10 @@ class SucursalesController extends MasterController
           $session = array_merge($sessions,$pathWeb);
             if( count($menus) < 1 ){
                 return new JsonResponse([
-                    'success'   => true
+                    'success'   => false
                     ,'data'     => $sessions
                     ,"message"  => '¡No cuenta con Menus asignados, favor de contactar al administrador!'
-                ],Response::HTTP_OK);
+                ],Response::HTTP_BAD_REQUEST);
             }
            Session::put( $session );
             return new JsonResponse([

@@ -295,7 +295,7 @@ class EmpresasController extends MasterController
     {
         try {
           $user = SysUsersModel::find(Session::get('id') );
-          $companies = $user->companies()->whereEstatus(TRUE)->get();
+          $companies = $user->companies()->whereEstatus(TRUE)->groupby("id")->get();
           return new JsonResponse([
               "success" => TRUE ,
               "data"    => $companies ,
@@ -314,7 +314,7 @@ class EmpresasController extends MasterController
     }
 
     /**
-     * This method is for get the relations between company and group
+     * This method is used get for the between relations company and group
      * @access public
      * @param Request $request [Description]
      * @return JsonResponse
@@ -329,14 +329,14 @@ class EmpresasController extends MasterController
                 ,"message"  => "¡No se encontró ningún grupo en esta Empresa!"
             ],Response::HTTP_BAD_REQUEST);
         }
-      $companies = SysEmpresasModel::with(["groups" => function($query){
-                        return $query->groupBy('sys_users_pivot.group_id');
+      $companies = SysEmpresasModel::with(["groupsCompanies" => function($query){
+                        return $query->groupBy('sys_companies_groups.group_id');
                     }])->whereIn('id',$request->get("id_empresa"))->get();
 
       if ( count($companies) > 0 ){
             $i = 0;
             foreach ($companies as $company ){
-                foreach ($company->groups as $groups){
+                foreach ($company->groupsCompanies as $groups){
                     $response[$i]['groups']  = [
                         'id'            => $groups->id
                         ,'descripcion'  => $company->razon_social." - ".$groups->sucursal

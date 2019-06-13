@@ -524,7 +524,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'sucursales.edit'
     ]);
 
-    Route::delete('groups/destroy', [
+    Route::delete('groups/destroy/{id}/companies', [
         'uses'      => 'Administracion\Configuracion\SucursalesController@destroy'
         ,'as'       => 'groups.destroy'
     ]);

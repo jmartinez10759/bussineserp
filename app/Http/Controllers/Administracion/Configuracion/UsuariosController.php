@@ -240,7 +240,7 @@ class UsuariosController extends MasterController
     }
 
     /**
-     *This method is need for update register of users
+     * This method is used for register update of users
      * @access public
      * @param Request $request [Description]
      * @param SysUsersModel $users
@@ -284,6 +284,7 @@ class UsuariosController extends MasterController
         DB::beginTransaction();
         try {
             $users->whereId($request->get("id"))->update($requestUsers);
+            $user = $users->find($request->get("id"));
             if($request->get("id_rol") != 1 ){
                 for ($i=0; $i < count($request->get("id_empresa")); $i++){
                     SysUsersPivot::whereUserId($request->get("id") )
@@ -311,7 +312,7 @@ class UsuariosController extends MasterController
         if ($success) {
             return new JsonResponse([
                 'success'   => $success
-                ,'data'     => $users
+                ,'data'     => $user
                 ,'message'  => self::$message_success
             ],Response::HTTP_OK);
         }
@@ -381,10 +382,10 @@ class UsuariosController extends MasterController
     }
 
     /**
-     *Metodo para obtener las empresas del usuario
+     * This method is used get for company by group id
      * @access public
      * @param int|null $groupId
-     * @return void
+     * @return int
      */
     private function _getCompany(int $groupId = null )
     {
@@ -392,8 +393,6 @@ class UsuariosController extends MasterController
         $company = $group->companiesGroups()->where([
             "sys_companies_groups.group_id" =>  $groupId
         ])->whereEstatus(TRUE)->first();
-        var_export($groupId);die();
-        var_export($company);die();
         return isset($company->id) ? $company->id : 0;
     }
 
