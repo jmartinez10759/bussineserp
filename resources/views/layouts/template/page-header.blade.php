@@ -1,6 +1,5 @@
 <header class="main-header">
         <!-- Logo -->
-        <!-- <a href="{{route('list.empresas')}}" class="logo"> -->
         <a href="{{$url_previus}}" class="logo" title="Regresar a Listado de Empresas">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini">{{$empresa}}</span>
@@ -21,7 +20,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-envelope-o"></i>
                   <span class="label label-primary notify" ng-if="correos.length > 0">.</span>
-                  <span class="label label-success ">@{{ correos.length }}</span>
+                  <span class="label label-success " ng-bind="correos.length "></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header">Tu Tienes @{{ correos.length }} Mensajes </li>
