@@ -2,10 +2,9 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-controller="EmpresasController" ng-init="constructor()" ng-cloak >
-	<!-- {!! $data_table !!} -->
-	<div class="table-responsive">
-	    <table class="table table-striped table-responsive highlight table-hover fixed_header" id="datatable">
+<div ng-controller="CompaniesController" ng-init="constructor()" ng-cloak >
+	<div class="table-responsive table-container">
+	    <table class="table table-striped table-responsive highlight table-hover" id="datatable">
 	        <thead>
 	            <tr style="background-color: #337ab7; color: #ffffff;">
 	                <th>Nombre Comercial</th>
@@ -20,54 +19,30 @@
 	        </thead>
 	        <tbody>
 
-	            <tr ng-repeat="data in datos.response" id="tr_@{{data.id}}">
-	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.nombre_comercial}}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.razon_social }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{data.rfc_emisor }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{(data.comerciales  !== null )? data.comerciales.nombre: "" }}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{ (data.contactos.length > 0)? data.contactos[0].correo: ""}}</td>
-	                <td style="cursor: pointer;" ng-click="edit_register(data)" >@{{ (data.contactos.length > 0)? data.contactos[0].telefono: ""}}</td>
+	            <tr ng-repeat="data in datos | filter: searching" id="tr_@{{data.id}}">
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.nombre_comercial"></td>
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.razon_social"></td>
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.rfc_emisor"></td>
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.comerciales"></td>
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="(data.contactos.length > 0)? data.contactos[0].correo: ''"></td>
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="(data.contactos.length > 0)? data.contactos[0].telefono: ''"></td>
 	                <td>
 		                <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
 	                	<span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>
 	            	</td>
-	                <td class="text-right">
-	                    <div class="dropdown">
-	                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-	                            Acciones
-	                            <span class="caret"></span>
-	                        </button>
-	                        <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-	                            <!-- <li>
-	                                <a title="Editar" style="cursor:pointer;" ng-click="edit_register(data.id)">
-	                                    <i class="glyphicon glyphicon-edit"></i> Editar
-	                                </a>
-	                            </li> -->
-	                            
-	                            <li {{$eliminar}}>
-	                                <a style="cursor:pointer;" title="Borrar" ng-click="destroy_register(data.id)" >
-	                                    <i class="glyphicon glyphicon-trash"></i> Eliminar
-	                                </a>
-	                            </li>
-
-	                            <li {{$permisos}}>
-	                                <a style="cursor:pointer;" title="Asignar Sucursales" ng-click="sucursales(data.id)" >
-	                                    <i class="fa fa-building-o"></i> Sucursales
-	                                </a>
-	                            </li>
-
-	                        </ul>
-	                    </div>
+	                <td class="text-center">
+						<button type="button" class="btn btn-danger btn-sm" ng-click="destroyRegister(data.id)" title="Eliminar Registro" ng-if="permisos.DEL">
+							<i class="glyphicon glyphicon-trash"></i>
 	                </td>
-	                </tr>
+				</tr>
 
 	        </tbody>
 	    </table>
 	</div>
-	@include('administracion.configuracion.empresas_edit')
+	@include('administracion.configuracion.empresasEdit')
 </div>
 
 @stop
 @push('scripts')
-  <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_empresas.js')}}" ></script>
+  <script type="text/javascript" src="{{asset('js/administracion/configuracion/buildCompaniesController.js')}}" ></script>
 @endpush

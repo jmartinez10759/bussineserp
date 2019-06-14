@@ -323,32 +323,32 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'configuracion.empresas'
     ]);
 
-    Route::get('/empresas/all', [
+    Route::get('/company/all', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@all'
         ,'as'       => 'empresas.all'
     ]);
 
-    Route::get('empresas/edit', [
+    Route::get('company/edit', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@show'
         ,'as'       => 'empresas.edit'
     ]);
 
-    Route::delete('empresas/destroy', [
+    Route::delete('company/destroy', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@destroy'
         ,'as'       => 'empresas.destroy'
     ]);
 
-    Route::post('/empresas/register', [
+    Route::post('/company/register', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@store'
         ,'as'       => 'empresas.register'
     ]);
 
-    Route::put('/empresas/update', [
+    Route::put('/company/update', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@update'
         ,'as'       => 'empresas.update'
     ]);
 
-    Route::post('/empresas/insert_relacion', [
+    Route::post('/company/insert_relacion', [
             'uses'      => 'Administracion\Configuracion\EmpresasController@store_relacion'
             ,'as'       => 'empresas.insert_relacion'
     ]);

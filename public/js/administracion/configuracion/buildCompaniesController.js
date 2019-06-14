@@ -1,3 +1,96 @@
+const URL = {
+    url_insert            : "company/register"
+    ,url_update           : 'company/update'
+    ,url_edit             : 'company/edit'
+    ,url_all              : 'company/all'
+    ,url_destroy          : "company/destroy"
+};
+app.controller('CompaniesController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
+
+    $scope.constructor = function(){
+        $scope.datos  = [];
+        $scope.cmbCompanies = [];
+        $scope.cmbTradeService = [];
+        $scope.cmbTaxRegime = [];
+        $scope.insert = { estatus: 1 };
+        $scope.update = {};
+        $scope.edit   = {};
+        $scope.fields = {};
+        $scope.index();
+    };
+
+    $scope.index = function(){
+        var url = fc.domain( URL.url_all );
+        sc.requestHttp(url,null,"GET",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
+                console.log(response);
+                $scope.datos     = response.data.data.companies;
+                $scope.cmbCountries = response.data.data.countries;
+                $scope.cmbTradeService = response.data.data.tradeService;
+                $scope.cmbTaxRegime= response.data.data.taxRegime;
+            }
+        });
+    };
+
+    $scope.insertRegister = function(){
+        var url     = fc.domain(  URL.url_insert );
+        var fields  = $scope.insert;
+        sc.requestHttp(url, fields, 'POST', false).then(function (response) {
+            if (sc.validateSessionStatus(response)) {
+                nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
+                nf.modal("#modal_add_register",true);
+                $scope.index();
+            }
+        });
+
+    };
+
+    $scope.updateRegister = function(){
+        let url = fc.domain(URL.url_update);
+        var fields = sc.mapObject($scope.update, ['companies_groups'], false);
+        sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
+            if (sc.validateSessionStatus(response)) {
+                nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                nf.modal("#modal_edit_register",true);
+                nf.trEffect($scope.update.id);
+                $scope.index();
+            }
+        });
+    };
+
+    $scope.editRegister = function( entry ){
+        var datos = ['created_at',"updated_at"];
+        $scope.update = sc.mapObject(entry, datos, false);
+        $scope.update.companyId = "";
+        angular.forEach($scope.update.companies_groups,function (value, key) {
+            $scope.update.companyId = value.id;
+        });
+        console.log($scope.update);
+        nf.modal("#modal_edit_register");
+    };
+
+    $scope.destroyRegister = function( id ){
+
+        var url = fc.domain( URL.url_destroy+"/"+id+"/companies" );
+        nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
+            sc.requestHttp(url, null, "DELETE", false).then(function (response) {
+                if (sc.validateSessionStatus(response)) {
+                    nf.toastSuccess(response.data.message, nf.titleMgsSuccess);
+                    $scope.index();
+                }
+            });
+        }, null, "SI", "NO");
+
+    };
+
+}]);
+
+
+
+
+
+
+/*
 var url_insert  = "empresas/register";
 var url_all     = "empresas/all";
 var url_update  = 'empresas/update';
@@ -92,8 +185,8 @@ app.controller('EmpresasController', function( masterservice, $scope, $http, $lo
             toastr.error("RFC Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
-        /*var datos = ['contactos'];
-        $scope.update = iterar_object($scope.update,datos);*/
+        /!*var datos = ['contactos'];
+        $scope.update = iterar_object($scope.update,datos);*!/
       var url = domain( url_update );
       var fields = $scope.update;
       MasterController.request_http(url,fields,'put',$http, false )
@@ -325,4 +418,4 @@ app.controller('EmpresasController', function( masterservice, $scope, $http, $lo
 
     }
 
-});
+});*/

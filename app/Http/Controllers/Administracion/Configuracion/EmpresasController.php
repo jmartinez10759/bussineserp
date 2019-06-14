@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
-use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -25,137 +24,121 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EmpresasController extends MasterController
 {
-    #se crea las propiedades
-    private $_tabla_model;
-
-    public function __construct(){
+    /**
+     * EmpresasController constructor.
+     */
+    public function __construct()
+    {
         parent::__construct();
-        $this->_tabla_model = new SysEmpresasModel;
     }
-/**
- *Metodo para pintar la vista y cargar la informacion principal del menu
- *@access public
- *@return void
- */
-  public function index(){
 
-    if( Session::get('permisos')['GET'] ){
-      return view('errors.error');
-    }    
-    $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
+    /**
+     * This method is used load for view companies
+     * @access public
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+      public function index()
+      {
+           $data = [
+             'page_title'               =>  "Configuración"
+             ,'title'                   =>  "Empresas"
+           ];
 
-   foreach ($response_sucursales as $respuesta) {
-     $id['id'] = $respuesta->id;
-     $checkbox = build_actions_icons($id,'id_sucursal= "'.$respuesta->id.'" ','check_sucursales');
-     $registros_sucursales[] = [
-        $respuesta->id
-       ,$respuesta->codigo
-       ,$respuesta->sucursal
-       ,$checkbox
-     ];
-   }
-
-   $titulos = [ 'id','Codigo','Sucursal',''];
-   $table_sucursales = [
-     'titulos'        => $titulos
-     ,'registros'     => $registros_sucursales
-     ,'id'            => "data_table_sucursales"
-   ];
-
-
-   $data = [
-     'page_title'               =>  "Configuración"
-     ,'title'                   =>  "Empresas"
-     ,'data_table'              =>  "data_table(table)"
-     ,'data_table_sucursales'   =>  data_table($table_sucursales)
-   ];
-    #debuger($data);
-    return self::_load_view( 'administracion.configuracion.empresas', $data );
-  
-  }
-  /**
-  *Metodo para realizar la consulta por medio de su id
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public function all( Request $request ){    
-   try {
-        $response = ( Session::get('id_rol') == 1 )? 
-        $this->_tabla_model::with(['contactos','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->orderby('id','desc')->get()
-        :$this->_consulta(new SysUsersModel,[],[],['id' => Session::get('id_empresa')],'empresas',['contactos','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion']);
-
-        $data = [
-          'response'                 => $response  
-          ,'paises'                  => SysPaisModel::get()
-          ,'servicio_comercial'      => SysServiciosComercialesModel::get()
-          ,'regimen_fiscal'          => SysRegimenFiscalModel::get()
-        ];
-
-        return $this->_message_success( 200, $data , self::$message_success );
-      } catch (\Exception $e) {
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          return $this->show_error(6, $error, self::$message_error );
+           return $this->_loadView( 'administracion.configuracion.empresas', $data );
       }
 
-  }
- /**
-  *Metodo para
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public function store( Request $request){
-       #debuger($request->all());
-       $error = null;
-          DB::beginTransaction();
+    /**
+     * This method is used for load information data
+     * @access public
+     * @return JsonResponse
+     */
+      public function all()
+      {
           try {
-              $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-              $string_data_empresa = [];
-              $string_data_contactos = [];
-              foreach( $request->all() as $key => $value ){
-                  if( in_array( $key, $string_key_contactos) ){
-                      if( $key == 'contacto' ){
-                          $string_data_contactos['nombre_completo'] = strtoupper($value);
-                      }else{
-                          if($key != "correo"){
-                            $string_data_contactos[$key] = strtoupper($value);
-                          }else{
-                            $string_data_contactos[$key] = $value;
-                          }
-                      }
-                  };
-                  if( !in_array( $key, $string_key_contactos) ){
-                      if($key == "logo"){
-                        $string_data_empresa[$key] = (trim($value));
-                      }else{
-                        $string_data_empresa[$key] = strtoupper($value);
-                      }
-                  };
-                  
-              }
-             $response = $this->_tabla_model::create( $string_data_empresa );
-             $response_contactos = SysContactosModel::create($string_data_contactos);
-              $data = [
-                  'id_empresa'      => $response->id
-                  ,'id_contacto'    => $response_contactos->id
-              ];
-             SysContactosSistemasModel::create($data);   
 
-          DB::commit();
-          $success = true;
+            $data = [
+              'companies'          => $this->_companyBelongsUsers(),
+              'countries'          => SysPaisModel::get() ,
+              'tradeService'      => SysServiciosComercialesModel::get() ,
+              'taxRegime'          => SysRegimenFiscalModel::get() ,
+            ];
+
+              return new JsonResponse([
+                  "success" => TRUE ,
+                  "data"    => $data ,
+                  "message" => self::$message_success
+              ], Response::HTTP_OK);
+
+
           } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          DB::rollback();
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              return new JsonResponse([
+                  "success" => FALSE ,
+                  "data"    => $error ,
+                  "message" => self::$message_error
+              ], Response::HTTP_BAD_REQUEST);
           }
 
-          if ($success) {
-          return $this->_message_success( 201, $response , self::$message_success );
-          }
-          return $this->show_error(6, $error, self::$message_error );
+      }
 
-  }
+    /**
+     *This method is used for insert data information
+     * @access public
+     * @param Request $request [Description]
+     * @param SysEmpresasModel $companies
+     * @return void
+     */
+      public function store( Request $request, SysEmpresasModel $companies )
+      {
+           $error = null;
+              DB::beginTransaction();
+              try {
+                  $string_key_contactos  = [ 'contacto','departamento','telefono', 'correo' ];
+                  $string_data_empresa   = [];
+                  $string_data_contactos = [];
+                  foreach( $request->all() as $key => $value ){
+                      if( in_array( $key, $string_key_contactos) ){
+                          if( $key == 'contacto' ){
+                              $string_data_contactos['nombre_completo'] = strtoupper($value);
+                          }else{
+                              if($key != "correo"){
+                                $string_data_contactos[$key] = strtoupper($value);
+                              }else{
+                                $string_data_contactos[$key] = $value;
+                              }
+                          }
+                      };
+                      if( !in_array( $key, $string_key_contactos) ){
+                          if($key == "logo"){
+                            $string_data_empresa[$key] = (trim($value));
+                          }else{
+                            $string_data_empresa[$key] = strtoupper($value);
+                          }
+                      };
+
+                  }
+                 $response = $this->_tabla_model::create( $string_data_empresa );
+                 $response_contactos = SysContactosModel::create($string_data_contactos);
+                  $data = [
+                      'id_empresa'      => $response->id
+                      ,'id_contacto'    => $response_contactos->id
+                  ];
+                 SysContactosSistemasModel::create($data);
+
+              DB::commit();
+              $success = true;
+              } catch (\Exception $e) {
+              $success = false;
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              DB::rollback();
+              }
+
+              if ($success) {
+              return $this->_message_success( 201, $response , self::$message_success );
+              }
+              return $this->show_error(6, $error, self::$message_error );
+
+      }
  /**
   *Metodo para realizar la consulta por medio de su id
   *@access public
@@ -276,17 +259,17 @@ class EmpresasController extends MasterController
           return $this->show_error(6, $error, self::$message_error );
 
   }
- /**
-  * Metodo para seleccionar si es que tiene mas de 1 empresa ese usuario.
-  * @access public
-  * @return void
-  */
-  public static function listCompanies()
-  {
-      $data['titulo'] = "LISTADO DE EMPRESAS";
-      $data['titulo_sucusales'] = "LISTADO DE SUCURSALES";
-      return view('administracion.configuracion.list_bussines',$data);
-  }
+     /**
+      * This method is used load for companies
+      * @access public
+      * @return void
+      */
+     public function listCompanies()
+      {
+          $data['titulo'] = "LISTADO DE EMPRESAS";
+          $data['titulo_sucusales'] = "LISTADO DE SUCURSALES";
+          return view('administracion.configuracion.list_bussines',$data);
+      }
 
     /**
      * @return JsonResponse

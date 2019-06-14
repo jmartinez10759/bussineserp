@@ -1,5 +1,4 @@
-<!-- esta es la vista que se utilizara para el agregado de empresas -->
-<div class="col-sm-12" id="modal_add_register" style="display:none;">
+<div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true">
     <div class="modal-header">
         <h3> Registro de Empresas </h3>
     </div>
@@ -100,7 +99,7 @@
                                             width="'100%'"
                                             ng-change="select_estado()" 
                                             ng-model="insert.id_country" 
-                                            ng-options="value.id as value.descripcion for (key, value) in datos.paises">
+                                            ng-options="value.id as value.descripcion for (key, value) in cmbCountries">
                                             <option value="">--Seleccione Opcion--</option>  
                                             </select>  
                                         </div>
@@ -138,7 +137,7 @@
                                             chosen
                                             width="'100%'"
                                             ng-model="insert.id_regimen_fiscal" 
-                                            ng-options="value.id as value.descripcion for (key, value) in datos.regimen_fiscal"> 
+                                            ng-options="value.id as value.descripcion for (key, value) in cmbTaxRegime">
                                                 <option value="">--Seleccione Opcion--</option> 
                                             </select> 
                                         </div>
@@ -153,18 +152,18 @@
                                             chosen
                                             width="'100%'"
                                             ng-model="insert.id_servicio_comercial" 
-                                            ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
+                                            ng-options="value.id as value.nombre for (key, value) in cmbTradeService">
                                                 <option value="">--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
 
-                                        <label for="estatus" class="col-sm-2 control-label">Estatus</label>
+                                        <label class="col-sm-2 control-label">Estatus</label>
                                         <div class="col-sm-4">
                                              <select class="form-control"
                                              chosen
                                              width="'100%'" 
                                              ng-model="insert.estatus" 
-                                             ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+                                             ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
                                                 <option value="">--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
@@ -191,8 +190,12 @@
 
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
-            <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-            <button type="button" class="btn btn-primary" ng-click="insert_register()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
+                <i class="fa fa-times-circle"></i> Cancelar
+            </button>
+            <button type="button" class="btn btn-primary" ng-click="insertRegister()" ng-if="permisos.INS">
+                <i class="fa fa-save"></i> Registrar
+            </button>
         </div>
     </div>
 </div>
@@ -338,7 +341,7 @@
                                             <select class="form-control"
                                             chosen
                                             width="'100%'"
-                                            ng-model="update.id_codigo" 
+                                            ng-model="update.id_codigo"
                                             ng-options="value.id as value.codigo_postal for (key, value) in cmb_codigos"> 
                                                 <option value="">--Seleccione Opcion--</option> 
                                             </select> 
@@ -350,7 +353,7 @@
                                             chosen
                                             width="'100%'"
                                             ng-model="update.id_regimen_fiscal" 
-                                            ng-options="value.id as value.descripcion for (key, value) in datos.regimen_fiscal"> 
+                                            ng-options="value.id as value.descripcion for (key, value) in datos.taxRegime">
                                                 <option value="">--Seleccione Opcion--</option> 
                                             </select> 
                                         </div>
@@ -365,7 +368,7 @@
                                             chosen
                                             width="'100%'"
                                             ng-model="update.id_servicio_comercial" 
-                                            ng-options="value.id as value.nombre for (key, value) in datos.servicio_comercial">
+                                            ng-options="value.id as value.nombre for (key, value) in datos.tradeService">
                                                 <option value="">--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
@@ -376,7 +379,7 @@
                                              chosen
                                              width="'100%'" 
                                              ng-model="update.estatus" 
-                                             ng-options="value.id as value.descripcion for (key, value) in cmb_estatus">
+                                             ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
                                                 <option value="">--Seleccione Opcion--</option> 
                                             </select>
                                         </div>
@@ -384,11 +387,9 @@
                                     </div>
 
                                     <div class="form-group">
-
-                                        <button type="button" class="btn btn-warning" ng-click="upload_file(1)" {{$upload}}>
-                                            <i class="fa fa-upload"></i> Subir Imagen  
+                                        <button type="button" class="btn btn-warning" ng-click="uploadFile(1)" ng-if="permisos.UPL">
+                                            <i class="fa fa-upload"></i> Cargar Logo
                                         </button>
-
                                     </div>
 
 
@@ -410,56 +411,30 @@
 
     <div class="modal-footer">
         <div class="btn-toolbar pull-right">
-            <button type="button" class="btn btn-danger" data-fancybox-close> 
+            <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true" >
                 <i class="fa fa-times-circle"></i> Cancelar
             </button>
-            <button type="button" class="btn btn-info" ng-click="update_register()" {{$update}}>
+            <button type="button" class="btn btn-info" ng-click="updateRegister()" ng-if="permisos.UPD">
                 <i class="fa fa-save"></i> Actualizar 
             </button>
         </div>
     </div>
 </div>
 
-<div class="" id="modal_sucusales_register" style="display: none;">
-	<div class="modal-header">
-		<h3>Asignar Sucursales</h3>
-    </div>
-
-	<div class="modal-body panel-body">
-			{!! $data_table_sucursales !!}
-	</div>
-
-	<div class="modal-footer">
-		<div class="btn-toolbar pull-right">
-			<button type="button" class="btn btn-danger" data-fancybox-close >
-                <i class="fa fa-times-circle"></i> Cancelar
-			</button>
-			<button type= "button" class="btn btn-success" ng-click="insert_sucursales()" {{$insertar}}>
-                <i class="fa fa-save"></i> Registrar
-            </button>
-		</div>
-	</div>
-		
-</div>
-
-
-<div class="" id="upload_file" style="display:none;">
+<div class="modal fade" id="upload_file" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3> Subir Imagen </h3>
+                <h3> Cargar Logo Empresa </h3>
             </div>
             <div class="modal-body">
                 <div id="div_dropzone_file_empresas"></div> 
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-fancybox-close>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true" >
                         <i class="fa fa-times-circle"></i> Cerrar
                     </button>
-                    <!-- <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}>
-                        <i class="fa fa-save"></i> Aceptar 
-                    </button> -->
                 </div>
             </div>
 

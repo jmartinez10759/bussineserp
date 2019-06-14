@@ -52,13 +52,10 @@ abstract class MasterController extends Controller
 
 	public function __construct()
 	{
-      #self::$ssl_ruta = ["verify" => $_SERVER['DOCUMENT_ROOT']. "/cacert.pem"];
-		self::$ssl_ruta = ["verify" => false];
 		self::$_client = new Client(self::$ssl_ruta);
 		self::$_domain = domain();
-		self::$_model = new MasterModel();
-		self::$message_success = "¡Transacción Exitosa!";
-		self::$message_error = "¡Ocurrio un error, favor de verificar!";
+		self::$message_success  = "¡Transacción Exitosa!";
+		self::$message_error    = "¡Ocurrio un error, favor de verificar!";
 		$this->_today = new \DateTime('now');
 		$this->middleware('permisos.menus', ['except' => ['listCompanies', 'listGroup', 'loadCompanies', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code'] ] );
 		$this->middleware('permisos.rutas', ['only' => ['index']]);
@@ -87,7 +84,7 @@ abstract class MasterController extends Controller
      * @param bool $message
      * @return JsonResponse
      */
-	protected function _message_success( int $code = null, $data = [], $message = false)
+	/*protected function _message_success( int $code = null, $data = [], $message = false)
 	{
 		$code = ( $code ) ? $code : 200;
 		$datos = [
@@ -97,14 +94,14 @@ abstract class MasterController extends Controller
 			"result" => $data
 		];
 		return new JsonResponse($datos, $code);
-	}
+	}*/
 	/**
 	 * Metodo para establecer si se realizo con exito la peticion
 	 * @access private
 	 * @param bool $codigo [description]
 	 * @return string [description]
 	 */
-	private function get_status_message( $codigo = false )
+/*	private function get_status_message( $codigo = false )
 	{
 		$estado = array(
 			200 => 'OK',
@@ -125,7 +122,7 @@ abstract class MasterController extends Controller
 			500 => 'Internal Server Error'
 		);
 		return ($estado[ $codigo ]) ? $estado[$codigo] : $estado[500];
-	}
+	}*/
 
     /**
      *Se crea un metodo para mostrar los errores dependinedo la accion a realizar
@@ -135,7 +132,7 @@ abstract class MasterController extends Controller
      * @param string $message
      * @return string $errores
      */
-	protected function show_error( int $id = null, $datos = [], string $message = null)
+	/*protected function show_error( int $id = null, $datos = [], string $message = null)
 	{
 		switch ($id) {
 			case 0:
@@ -223,20 +220,20 @@ abstract class MasterController extends Controller
 
 		];
 		return new JsonResponse($errors[$id], $codigo);
-	}
+	}*/
 	/**
 	 * Se crea un metodo en el cual se establece el formato en el que se enviara la informacion del REST
 	 * @access protected
 	 * @param $codigo int [description]
 	 * @return void
 	 */
-	protected function setCabecera($codigo)
+	/*protected function setCabecera($codigo)
 	{
 		header("HTTP/1.0 " . $codigo . " " . $this->get_status_message($codigo));
 		header("Content-Type:" . $this->tipo);
 		header("status:" . $codigo);
 		return $this->get_status_message($codigo);
-	}
+	}*/
 
     /**
      * Metodo para mandar a cargar el menu dependiendo el rol del usuario
@@ -245,7 +242,7 @@ abstract class MasterController extends Controller
      * @param bool $estatus
      * @return array
      */
-	protected static function menus( $response = [], bool $estatus = false)
+	/*protected static function menus( $response = [], bool $estatus = false)
 	{
 		$menusArray = [];
         for ($j = 0; $j < count($response->menus); $j++) {
@@ -258,7 +255,7 @@ abstract class MasterController extends Controller
 		}
 		return Menu::build_menu_tle($menusArray);
         #return Menu::build_menu( $menus_array );
-	}
+	}*/
 
     /**
      * This method is for load all menus of users
@@ -286,7 +283,7 @@ abstract class MasterController extends Controller
      * @param array $parse
      * @return void
      */
-	protected function _load_view(string $view = null, array $parse = [])
+	/*protected function _load_view(string $view = null, array $parse = [])
 	{
 		$emails = [];
 		$response = SysUsersModel::with(['menus' => function($query){
@@ -365,7 +362,7 @@ abstract class MasterController extends Controller
 		
 		return View($view, $parse);
 
-	}
+	}*/
 
     /**
      * @param string|null $view
@@ -413,14 +410,14 @@ abstract class MasterController extends Controller
         $notify         = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
         $reportes       = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
         $excel          = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
-        $modal          = (isset(Session::get('permisos')['AGR'])) ? Session::get('permisos')['AGR'] : true;
+        #$modal          = (isset(Session::get('permisos')['AGR'])) ? Session::get('permisos')['AGR'] : true;
 
         $parse['seccion_reportes'] = reportes($reportes, $excel);
         $parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
         $parse['upload_files']  = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
-        $parse['buscador']      = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
-        $parse['agregar']       = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
-        $parse['modal']         = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
+        #$parse['buscador']      = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
+        #$parse['agregar']       = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
+        #$parse['modal']         = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
 
         return View($view, $parse);
     }
