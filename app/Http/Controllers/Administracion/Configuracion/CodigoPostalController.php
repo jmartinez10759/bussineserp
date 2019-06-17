@@ -2,16 +2,17 @@
     namespace App\Http\Controllers\Administracion\Configuracion;
     use File;
     use Illuminate\Http\Request;
+    use Illuminate\Http\Response;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Cache;
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysEstadosModel;
     use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
+    use Symfony\Component\HttpFoundation\JsonResponse;
 
     class CodigoPostalController extends MasterController
     {
-        #se crea las propiedades
         private $_tabla_model;
 
         public function __construct(){
@@ -176,6 +177,35 @@
 
         }
 
+        /**
+         * This method is used get for postal code
+         * @param int $postalCode
+         * @param SysEstadosModel $states
+         * @return JsonResponse
+         */
+        public function getPostalCode( int $postalCode = null, SysEstadosModel $states )
+        {
+            try {
+
+                if(strlen($postalCode) >= 4 ){
+                    $state = $states->with("countries")->where('cp','LIKE', $postalCode.'%')->get();
+                    return new JsonResponse([
+                        "success" => TRUE ,
+                        "data"    => $state,
+                        "message" => self::$message_success
+                    ],Response::HTTP_OK);
+                }
+
+            } catch (\Exception $e) {
+                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+                return new JsonResponse([
+                    "success" => FALSE ,
+                    "data"    => $error ,
+                    "message" => self::$message_error
+                ],Response::HTTP_BAD_REQUEST);
+            }
+
+        }
 
 
     }

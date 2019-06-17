@@ -3,7 +3,7 @@ const URL = {
     ,urlListGroup         : 'list/sucursales'
     ,urlPortal            : 'portal'
 };
-app.controller('BussinesListController', ['ServiceController','FactoryController','NotificationsFactory','masterservice','$scope', '$http', '$location', function( sc,fc,nf,masterservice, $scope, $http, $location ) {
+app.controller('BussinesListController', ['ServiceController','FactoryController','NotificationsFactory','masterservice','$scope', '$http', '$location','$window', function( sc,fc,nf,masterservice, $scope, $http, $location, w ) {
 
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -33,11 +33,15 @@ app.controller('BussinesListController', ['ServiceController','FactoryController
 
     };
     $scope.beginPortal = function(groupId){
-        var url = domain(URL.urlPortal+"/"+groupId);
+        var url = fc.domain(URL.urlPortal+"/"+groupId);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
-                console.log(domain( response.data.data.ruta ) );
-                redirect( domain( response.data.data.ruta ) );
+                w.localStorage['rolesId'] = response.data.data.roles_id;
+                if (w.localStorage['rolesId'] != 1 && w.localStorage['pathWeb']){
+                    redirect(fc.domain(w.localStorage['pathWeb']));
+                }else{
+                    redirect( fc.domain( response.data.data.ruta ) );
+                }
             }
         });
     };

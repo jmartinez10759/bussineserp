@@ -129,11 +129,8 @@
           }
 
         });
-
-        jQuery('.select_chosen').chosen({width: "100%"});
+        /*jQuery('.select_chosen').chosen({width: "100%"});*/
         jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
-        window.onload = function() { jQuery(".loader").fadeOut("slow"); }
-
     </script>
 
     <!-- script desarrollador -->

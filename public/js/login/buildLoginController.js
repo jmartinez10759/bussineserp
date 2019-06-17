@@ -22,8 +22,11 @@ app.controller('LoginController', ['ServiceController','FactoryController','Noti
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 w.localStorage['rolesId'] = response.data.data.roles_id;
-                w.localStorage['pathWeb'] = response.data.data.ruta;
-                redirect(response.data.data.ruta);
+                if (w.localStorage['rolesId'] == 1 && w.localStorage['pathWeb']){
+                    redirect(w.localStorage['pathWeb']);
+                }else{
+                    redirect(response.data.data.ruta);
+                }
                 /*w.localStorage.removeItem('rolesId');
                 console.log(w.localStorage['rolesId']);*/
                 return;

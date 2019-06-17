@@ -152,20 +152,9 @@
       .slimScrollDiv section::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
        body{display:block;width: 100%;overflow: auto;height: 350px;}
        body::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
-       [v-cloak]{display: none}
        [ng-cloak]{display: none}
-       .loader {
-            position: fixed;
-            left: 0px;
-            top: 0px;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            background: url('img/loading04.gif') 50% 50% no-repeat rgb(249,249,249);
-            opacity: .8;
-        }
   </style>
-  <style type="text/css">
+  {{--<style type="text/css">
     .fixed_headers{
       width: 400px;
       table-layout: fixed;
@@ -187,5 +176,5 @@
       text-align: left;
       width: 200px;
     }
-  </style>
+  </style>--}}
    @stack('styles')

@@ -16,9 +16,9 @@
 }]);*/
 
 app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope ) {
-  
+
 	return {
-	    
+
 	    format_date : function(fecha, format) {
 		    var d = new Date(fecha);
 	        if( format === "yyyy-mm-dd"){
@@ -39,7 +39,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
   		        count++;
   		    }
   		    return calendar;
-  		
+
   		},
 
 		select_anios : function(){
@@ -52,7 +52,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 	            cont++;
 	        }
 	        return { anio: select[1].id, cmb_anios: select };
-	    
+
 	    },
 
 		calcular_suma : function( precio = false, cantidad = false ){
@@ -79,12 +79,12 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 	    	loading(true);
 	    	if( isset(error.status) && error.status == 419 ){
               toastr.error( session_expired );
-              setTimeout(function(){ redirect(domain()); }, 1000);  
+              setTimeout(function(){ redirect(domain()); }, 1000);
               return;
             }
 	        console.error( error );
             toastr.error( error.result , expired );
-	    
+
 	    },
 
 	    time_fechas: function( fecha ){
@@ -112,17 +112,17 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
   			// Calcular las horas , minutos y segundos
   			var hours = Math.floor(interval / msecPerHour );
   			interval = interval - (hours * msecPerHour );
-  			
+
   			var minutes = Math.floor(interval / msecPerMinute );
   			interval = interval - (minutes * msecPerMinute );
 
   			var seconds = Math.floor(interval / 1000 );
   			// Mostrar el resultado.
-  			//var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": "" )+ ((seconds > 0)? seconds + " segundos." : ""); 
+  			//var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": "" )+ ((seconds > 0)? seconds + " segundos." : "");
   			var time_elapsed = ( (days > 0 ) ? days + " dias, " : "" ) + ( (hours > 0 )? hours + " horas, " : " " ) + ( (minutes > 0) ? minutes + " minutos, ": " unos segundos" );
   			return  time_elapsed;
   			//Output: 164 días, 23 horas, 0 minutos, 0 segundos.
-	    
+
 	    },
 
 
@@ -131,7 +131,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 }]);
 
 
-app.controller('ApplicationController', ['$scope','masterservice','ServiceController','$http','$rootScope','FactoryController',"NotificationsFactory",'$window',function( $scope,masterservice,sc,$http,rs,fc,nf,w ){
+app.controller('ApplicationController', ['$scope','masterservice','ServiceController','$http','$rootScope','FactoryController',"NotificationsFactory",'$window','$location',function( $scope,masterservice,sc,$http,rs,fc,nf,w,l ){
 
 	rs.$on("services", function(){
 	    $scope.services();
@@ -143,13 +143,14 @@ app.controller('ApplicationController', ['$scope','masterservice','ServiceContro
 	  $scope.cmbEstatusRoot = [];
 	  $scope.permisos = {};
 	  $scope.rootCmbCompanies = {};
-	  $scope.loading = true;
+	  $scope.spinning= false;
+	  $scope.loader = true;
 	  $scope.userLogged;
 	};
 
 	$scope.services = function(){
-		sc.serviceNotification( $scope );
-		$scope.userLogged = w.localStorage['rolesId'];
+		sc.serviceNotification($scope);
+		$scope.userLogged 		= w.localStorage['rolesId'];
 	};
 
 	$scope.modalShow = function(){

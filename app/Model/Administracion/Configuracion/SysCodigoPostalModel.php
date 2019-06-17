@@ -19,4 +19,9 @@ class SysCodigoPostalModel extends Model
     {
       return $this->belongsTo(SysEmpresasModel::class, 'id_codigo', 'id');
     }
+    public function estados()
+    {
+        return $this->belongsTo(SysEstadosModel::class, 'id_codigo', 'id');
+    }
+
 }

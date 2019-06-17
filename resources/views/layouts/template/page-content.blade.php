@@ -42,9 +42,9 @@
         </div>
 
         <div class="panel-body">
-            <!-- section of load -->
-            <img class="loader"/>
-            
+            <!-- section loader -->
+                <img class="loading" ng-show="loader"/>
+            <!-- end section loader -->
             @yield('content')
 
             <div class="" id="seccion_upload" style="display:none;">

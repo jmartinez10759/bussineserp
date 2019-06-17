@@ -3,7 +3,10 @@ const URL = {
     ,url_update           : 'company/update'
     ,url_edit             : 'company/edit'
     ,url_all              : 'company/all'
-    ,url_destroy          : "company/destroy"
+    ,url_destroy          : "company/{id}/destroy"
+    ,url_country          : "edit/{countryId}/country"
+    ,url_state            : "edit/{stateId}/state"
+    ,url_code             : "edit/{code}/code"
 };
 app.controller('CompaniesController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
@@ -24,10 +27,9 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response);
-                $scope.datos     = response.data.data.companies;
-                $scope.cmbCountries = response.data.data.countries;
-                $scope.cmbTradeService = response.data.data.tradeService;
-                $scope.cmbTaxRegime= response.data.data.taxRegime;
+                $scope.datos            = response.data.data.companies;
+                $scope.cmbTradeService  = response.data.data.tradeService;
+                $scope.cmbTaxRegime     = response.data.data.taxRegime;
             }
         });
     };
@@ -35,6 +37,11 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
     $scope.insertRegister = function(){
         var url     = fc.domain(  URL.url_insert );
         var fields  = $scope.insert;
+        $scope.spinning = true;
+        if (!fields.correo || !fields.razon_social || !fields.rfc_emisor){
+            $scope.spinning = false;
+            return nf.toastWarning("Campos con asterisco vacios, favor de revisar", nf.titleMgsError);
+        }
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
@@ -42,12 +49,23 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
                 $scope.index();
             }
         });
+        $scope.spinning= false;
 
     };
 
     $scope.updateRegister = function(){
-        let url = fc.domain(URL.url_update);
-        var fields = sc.mapObject($scope.update, ['companies_groups'], false);
+        var url = fc.domain(URL.url_update);
+        var fields = sc.mapObject($scope.update, [
+            'comerciales',
+            'postal_code',
+            'regimenes',
+            'states',
+            'countries'], false);
+        $scope.spinning = true;
+        if (!fields.correo || !fields.razon_social || !fields.rfc_emisor){
+            $scope.spinning = false;
+            return nf.toastWarning("Campos con asterisco vacios, favor de revisar", nf.titleMgsError);
+        }
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastInfo(response.data.message, nf.titleMgsSuccess);
@@ -55,17 +73,21 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
                 nf.trEffect($scope.update.id);
                 $scope.index();
             }
+            $scope.spinning = false;
         });
     };
 
     $scope.editRegister = function( entry ){
         var datos = ['created_at',"updated_at"];
         $scope.update = sc.mapObject(entry, datos, false);
-        $scope.update.companyId = "";
-        angular.forEach($scope.update.companies_groups,function (value, key) {
-            $scope.update.companyId = value.id;
-        });
+        if( entry.contacts.length > 0 ){
+            $scope.update.contacto     = entry.contacts[0].nombre_completo;
+            $scope.update.departamento = entry.contacts[0].departamento;
+            $scope.update.telefono     = entry.contacts[0].telefono;
+            $scope.update.correo       = entry.contacts[0].correo;
+        }
         console.log($scope.update);
+        $scope.actionCodePostal(entry.codigo,true);
         nf.modal("#modal_edit_register");
     };
 
@@ -82,6 +104,40 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
         }, null, "SI", "NO");
 
     };
+
+    $scope.actionCodePostal = function(postalCode, update ){
+        var url = fc.domain(URL.url_code, postalCode);
+        $scope.cmbCountries = [];
+        $scope.cmbStates    = [];
+        $scope.cmbMunicipalities = [];
+        if (postalCode){
+            sc.requestHttp(url, null, "GET", false).then(function (response) {
+                if (sc.validateSessionStatus(response)) {
+                    if (angular.isDefined(response.data.data)){
+                        console.log(response.data.data);
+                        $scope.cmbMunicipalities = response.data.data;
+                        if ( angular.isDefined(response.data.data[0] ) ){
+                            $scope.cmbCountries = [response.data.data[0].countries];
+                            $scope.cmbStates    = [{"id" : response.data.data[0].idEstado , "estados" : response.data.data[0].estado}];
+                            if (update){
+                                $scope.update.id_country    = response.data.data[0].countries.id;
+                                $scope.update.id_estado     = response.data.data[0].idEstado;
+                                $scope.update.id_municipay  = response.data.data[0].idMunicipio;
+                            } else{
+                                $scope.insert.id_country = response.data.data[0].countries.id;
+                                $scope.insert.id_estado   = response.data.data[0].idEstado;
+                            }
+
+                        }
+                        return;
+                    }
+
+                }
+
+            });
+        }
+    };
+
 
 }]);
 

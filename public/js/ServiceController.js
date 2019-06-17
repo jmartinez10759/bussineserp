@@ -1,7 +1,12 @@
-app.service('ServiceController',["$http","NotificationsFactory", "FactoryController","$timeout","$location",function (http,nf,fc,time,l) {
+app.service('ServiceController',["$http","NotificationsFactory", "FactoryController","$timeout","$location","$window",function (http,nf,fc,time,l,w) {
 
     function ServiceController() {
-        this.loading();
+        this.notificaciones;
+        this.correos;
+        this.permisos;
+        this.rootCmbCompanies;
+        this.cmbEstatusRoot;
+        this.loader;
     };
 
     ServiceController.prototype.requestHttp = function ( url, fields, methods,headers ) {
@@ -11,10 +16,8 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
             headers: headers,
             data: fields
         }).then(function successCallback(resp) {
-            this.loading(true);
             return resp
         }).catch(function errorCallback(error) {
-            this.loading(true);
             console.error(error);
             return error;
         });
@@ -22,10 +25,7 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
 
     ServiceController.prototype.validateSessionStatus = function(response){
         if ( angular.isDefined(response.status)){
-            /*if ( !response.data.data){
-                time(function(){ redirect(fc.domain()); }, 2000);
-                return false;
-            }*/
+
             if( response.status == 419 ){
                 nf.toastError(nf.sessionExpired);
                 time(function(){ redirect(fc.domain()); }, 2000);
@@ -41,7 +41,7 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
         return false;
     };
 
-    ServiceController.prototype.validateStatusError = function(error){
+    /*ServiceController.prototype.validateStatusError = function(error){
 
         if (angular.isDefined(error)){
             if( angular.isDefined(error.status) && error.status == 419 ){
@@ -52,16 +52,18 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
             nf.toastError(error.data.message, nf.titleMgsError);
             return;
         }
-    };
+    };*/
 
     ServiceController.prototype.serviceNotification = function(scope){
         var url = fc.domain('services');
         this.requestHttp(url,{},"GET", false).then(function (response) {
-            scope.notificaciones    = response.data.data.notification;
+            scope.notificaciones     = response.data.data.notification;
             scope.correos 		    = response.data.data.correos;
             scope.permisos 		    = response.data.data.permisos;
+            w.localStorage['pathWeb']= response.data.data.pathWeb;
             scope.rootCmbCompanies  = response.data.data.companies;
             scope.cmbEstatusRoot    = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
+            scope.loader = false;
         });
 
     };

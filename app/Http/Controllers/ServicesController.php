@@ -60,6 +60,7 @@ class ServicesController extends MasterController
 	        	'notification' => $notification
 				,'correos'	   => $mails
 				,'companies'   => SysEmpresasModel::whereEstatus(1)->get()
+				,'pathWeb'     => $menuText
 			];
 			$datos = array_merge($data,$permissionMenu);
             return new JsonResponse([

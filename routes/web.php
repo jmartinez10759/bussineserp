@@ -817,7 +817,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'pais.register'
     ]);
     
-    Route::get('/pais/edit', [
+    Route::get('/country/{id}/edit', [
         'uses'      => 'Administracion\Configuracion\PaisController@show'
         ,'as'       => 'pais.edit'
     ]);
@@ -849,9 +849,9 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'codigopostal.register'
     ]);
     
-    Route::get('/codigopostal/edit', [
-        'uses'      => 'Administracion\Configuracion\CodigoPostalController@show'
-        ,'as'       => 'codigopostal.edit'
+    Route::get('/edit/{postalCode}/code', [
+        'uses'      => 'Administracion\Configuracion\CodigoPostalController@getPostalCode'
+        ,'as'       => 'edit.code'
     ]);
 
     Route::get('/codigopostal/show', [

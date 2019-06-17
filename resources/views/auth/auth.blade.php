@@ -29,6 +29,7 @@
                 </div>
                 <div class="login-logo animated bounceInDown">
                     {{--<a href="#"><img width="35%" src="{{asset('img/company.png')}}" alt="Company Logo"/></a>--}}
+                    <a href="#"><img width="35%" src="" alt="Company Logo"/></a>
                 </div>
                 <hr/>
 
@@ -37,7 +38,6 @@
                     <form class="login-form right" ng-submit="startSession()" id="form-login" method="POST" autocomplete="true">
                         <input type="text" placeholder="username / correo" ng-model="datos.email"  required>
                         <input type="password" ng-model="datos.password" placeholder="Contraseña" required>
-                            {{$error}}
                         <button type="submit" class="btn btn-blue" ng-disabled="enabled">
                             <span ng-show="serching"><i class="glyphicon glyphicon-refresh spinning"></i></span>
                             Entrar

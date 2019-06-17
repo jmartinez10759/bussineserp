@@ -13,6 +13,7 @@
 /*Developer stylesheets*/
 @import url("../css/list.css");
 @import url("../css/table.fixed.css");
+@import url("../css/modal.screen.css");
 @import url("../css/checkbox/switch.css");
 @import url("../css/checkbox/checkbox.css");
 @import url("../css/checkbox/checkbox_template.css");

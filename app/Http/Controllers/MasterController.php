@@ -1184,54 +1184,16 @@ abstract class MasterController extends Controller
     protected function _companyBelongsUsers()
     {
         if( Session::get('roles_id') == 1 ){
-            $response = SysEmpresasModel::whereEstatus(TRUE)->get();
+            $response = SysEmpresasModel::with("comerciales","postalCode","regimenes","states","countries","contacts" )
+                        ->orderBy('id','DESC')->get();
         }else{
             $user = SysUsersModel::find(Session::get("id"));
-            $response = $user->companies()->orderBy('id','DESC')->groupby('id')->get();
+            $response = $user->companies()
+                            ->with("comerciales","postalCode","regimenes","states","countries","contacts" )
+                            ->orderBy('id','DESC')->groupby('id')->get();
         }
         return $response;
     }
-    /**
-     * Metodo para obtener la validacion de la consulta
-     * @access public
-     * @param $table_model
-     * @param array $with
-     * @param array $where
-     * @param array $where_pivot
-     * @param array $where_admin
-     * @param bool $method
-     * @return void
-     */
-	/*protected function _validate_consulta( $table_model, $with = [],$where = [],$where_pivot = [],$where_admin = [],$method= false )
-	{
-		if( Session::get('id_rol') == 1 ){
-        	return $table_model::with(['empresas'])->with($with)->where($where_admin)->orderBy('id','desc')->get();
-        }if( Session::get('id_rol') == 3 ){
-        	return $this->_consulta($table_model,$with,$where,$where_pivot, $method );
-        }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
-            
-        }
-
-	}*/
-
-    /**
-     * Metodo para obtener los catalogos de cada empresas
-     * @access public
-     * @param $table_model
-     * @param array $with
-     * @param array $where
-     * @param array $where_pivot
-     * @return void
-     */
-	/*protected function _catalogos_bussines( $table_model, $with = [], $where = [], $where_pivot = [] )
-	{
-		if( Session::get('id_rol') == 1 ){
-        	return $table_model::with($with)->orderBy('id','desc')->get();
-        }if( Session::get('id_rol') != 1 ){
-        	return $this->_consulta($table_model,$with,$where,$where_pivot, false );
-        }
-
-	}*/
 
     /**
      * Metodo para cargar la platilla de forma general para la generacion de las cotizaciones/ pedidos

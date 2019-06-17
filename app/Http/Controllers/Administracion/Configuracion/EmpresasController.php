@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
+use App\Model\Administracion\Configuracion\SysRolesModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -43,7 +44,6 @@ class EmpresasController extends MasterController
              'page_title'               =>  "Configuración"
              ,'title'                   =>  "Empresas"
            ];
-
            return $this->_loadView( 'administracion.configuracion.empresas', $data );
       }
 
@@ -55,11 +55,9 @@ class EmpresasController extends MasterController
       public function all()
       {
           try {
-
             $data = [
               'companies'          => $this->_companyBelongsUsers(),
-              'countries'          => SysPaisModel::get() ,
-              'tradeService'      => SysServiciosComercialesModel::get() ,
+              'tradeService'       => SysServiciosComercialesModel::get() ,
               'taxRegime'          => SysRegimenFiscalModel::get() ,
             ];
 
@@ -86,145 +84,158 @@ class EmpresasController extends MasterController
      * @access public
      * @param Request $request [Description]
      * @param SysEmpresasModel $companies
-     * @return void
+     * @return JsonResponse
      */
       public function store( Request $request, SysEmpresasModel $companies )
       {
-           $error = null;
-              DB::beginTransaction();
-              try {
-                  $string_key_contactos  = [ 'contacto','departamento','telefono', 'correo' ];
-                  $string_data_empresa   = [];
-                  $string_data_contactos = [];
-                  foreach( $request->all() as $key => $value ){
-                      if( in_array( $key, $string_key_contactos) ){
-                          if( $key == 'contacto' ){
-                              $string_data_contactos['nombre_completo'] = strtoupper($value);
+          $error = null;
+          DB::beginTransaction();
+          try {
+              $stringKeyContacts = [ 'contacto','departamento','telefono', 'correo' ];
+              $stringDataCompany = [];
+              $stringDataContact = [];
+              foreach( $request->all() as $key => $value ){
+                  if( in_array( $key, $stringKeyContacts) ){
+                      if( $key == 'contacto' ){
+                          $stringDataContact['nombre_completo'] = strtoupper($value);
+                      }else{
+                          if($key != "correo"){
+                              $stringDataContact[$key] = strtoupper($value);
                           }else{
-                              if($key != "correo"){
-                                $string_data_contactos[$key] = strtoupper($value);
-                              }else{
-                                $string_data_contactos[$key] = $value;
-                              }
+                              $stringDataContact[$key] = strtolower($value);
                           }
-                      };
-                      if( !in_array( $key, $string_key_contactos) ){
-                          if($key == "logo"){
-                            $string_data_empresa[$key] = (trim($value));
-                          }else{
-                            $string_data_empresa[$key] = strtoupper($value);
-                          }
-                      };
+                      }
+                  };
+                  if( !in_array( $key, $stringKeyContacts) && $key != "contacts"){
+                      if($key == "logo"){
+                          $stringDataCompany[$key] = (trim($value));
+                      }else{
+                          $stringDataCompany[$key] = strtoupper($value);
+                      }
+                  };
 
-                  }
-                 $response = $this->_tabla_model::create( $string_data_empresa );
-                 $response_contactos = SysContactosModel::create($string_data_contactos);
-                  $data = [
-                      'id_empresa'      => $response->id
-                      ,'id_contacto'    => $response_contactos->id
-                  ];
-                 SysContactosSistemasModel::create($data);
+              }
+              $response = $companies->create($stringDataCompany);
+              $company = $companies->find($response->id);
+              $contacts = $company->contacts()->create($stringDataContact);
+              $company->contacts()->sync($contacts->id);
 
               DB::commit();
               $success = true;
-              } catch (\Exception $e) {
+          } catch (\Exception $e) {
               $success = false;
               $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
               DB::rollback();
-              }
+          }
 
-              if ($success) {
-              return $this->_message_success( 201, $response , self::$message_success );
-              }
-              return $this->show_error(6, $error, self::$message_error );
+          if ($success) {
+              return new JsonResponse([
+                  'success'   => TRUE
+                  ,'data'     => $company
+                  ,'message'  => self::$message_error
+              ], Response::HTTP_OK);
+          }
+          return new JsonResponse([
+              'success'   => FALSE
+              ,'data'     => $error
+              ,'message'  => self::$message_error
+          ], Response::HTTP_BAD_REQUEST);
 
       }
- /**
-  *Metodo para realizar la consulta por medio de su id
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public function show( Request $request ){
 
-      try {
-        $where = ['id' => $request->id];
-        $response = SysEmpresasModel::with( ['contactos' => function($query){
-            return $query->where(['sys_contactos.estatus' => 1])->get();
-        },'sucursales' => function( $query ){
-            return $query->where(['sys_empresas_sucursales.estatus' => 1])->groupby('id_sucursal')->get();
-        },'clientes','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])
-        ->where( $where )->groupby('id')->get();
-        return $this->_message_success( 200, $response[0] , self::$message_success );
-      } catch (\Exception $e) {
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          return $this->show_error(6, $error, self::$message_error );
+    /**
+     * this method is used ger for information by  company id
+     * @access public
+     * @param Request $request [Description]
+     * @param SysEmpresasModel $companies
+     * @return JsonResponse
+     */
+      public function show( Request $request, SysEmpresasModel $companies )
+      {
+          try {
+              $response = $companies->find( $request->get("id") );
+              return new JsonResponse([
+                  'success'   => TRUE
+                  ,'data'     => $response
+                  ,'message'  => self::$message_success
+              ],Response::HTTP_OK);
+
+          } catch (\Exception $e) {
+              $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+              return new JsonResponse([
+                  'success'   => FALSE
+                  ,'data'     => $error
+                  ,'message'  => self::$message_error
+              ],Response::HTTP_BAD_REQUEST);
+
+          }
+
       }
 
-  }
- /**
-  *Metodo para la actualizacion de los registros
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public function update( Request $request){
-      #debuger($request->all());
-      $error = null;
-      DB::beginTransaction();
-      try {
-              $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-              $string_key_empresas = [ 'contacto','departamento','telefono', 'correo','contactos' ];
-              $string_data_empresa = [];
-              $string_data_contactos = [];
+    /**
+     * This method is used update for register information of companies
+     * @access public
+     * @param Request $request [Description]
+     * @param SysEmpresasModel $companies
+     * @return JsonResponse
+     */
+      public function update( Request $request, SysEmpresasModel $companies )
+      {
+          $error = null;
+          DB::beginTransaction();
+          try {
+              $stringKeyContacts = [ 'contacto','departamento','telefono', 'correo' ];
+              $stringDataCompany = [];
+              $stringDataContact = [];
               foreach( $request->all() as $key => $value ){
-                  if( in_array( $key, $string_key_contactos) ){
+                  if( in_array( $key, $stringKeyContacts) ){
                       if( $key == 'contacto' ){
-                          $string_data_contactos['nombre_completo'] = strtoupper($value);
+                          $stringDataContact['nombre_completo'] = strtoupper($value);
                       }else{
                           if($key != "correo"){
-                            $string_data_contactos[$key] = strtoupper($value);
+                              $stringDataContact[$key] = strtoupper($value);
                           }else{
-                            $string_data_contactos[$key] = strtolower($value);
+                              $stringDataContact[$key] = strtolower($value);
                           }
                       }
                   };
-                  if( !in_array( $key, $string_key_empresas) ){
+                  if( !in_array( $key, $stringKeyContacts) && $key != "contacts"){
                       if($key == "logo"){
-                        $string_data_empresa[$key] = (trim($value));
+                          $stringDataCompany[$key] = (trim($value));
                       }else{
-                        $string_data_empresa[$key] = strtoupper($value);
+                          $stringDataCompany[$key] = strtoupper($value);
                       }
                   };
-                  
+
               }
-           $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_empresa );
-          if( count($request->contactos) > 0){
-             SysContactosModel::where(['id' => $request->contactos[0]['id'] ])->update($string_data_contactos);
-          }else{
-              $response_contactos = SysContactosModel::create($string_data_contactos);
-              $data = [
-                  'id_empresa'      => $request->id
-                  ,'id_contacto'    => $response_contactos->id
-              ];
-             SysContactosSistemasModel::create($data);   
-              
+              $companies->whereId($request->get("id"))->update($stringDataCompany);
+              $company = $companies->find($request->get("id"));
+
+              if( count($request->get("contacts") ) > 0 ){
+                  $company->contacts()->whereId($request->contacts[0]['id'])->update($stringDataContact);
+              }else{
+                  $contacts = $company->contacts()->create($stringDataContact);
+                  $company->contacts()->sync($contacts->id);
+              }
+
+            DB::commit();
+            $success = true;
+          } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
           }
-          
-      DB::commit();
-      $success = true;
-      } catch (\Exception $e) {
-      $success = false;
-      $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-      DB::rollback();
-      }
 
-      if ($success) {
-      return $this->_message_success( 201, $success , self::$message_success );
-      }
-      return $this->show_error(6, $error, self::$message_error );
+          if ($success) {
+              return $this->show( new Request($request->all()), new SysEmpresasModel );
+          }
+          return new JsonResponse([
+              'success'   => FALSE
+              ,'data'     => $error
+              ,'message'  => self::$message_error
+          ], Response::HTTP_BAD_REQUEST);
 
-  }
+      }
  /**
   *Metodo para borrar el registro
   *@access public

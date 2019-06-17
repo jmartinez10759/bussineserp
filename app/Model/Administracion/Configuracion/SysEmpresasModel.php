@@ -13,9 +13,8 @@ class SysEmpresasModel extends Model
     ,'nombre_comercial'
     ,'razon_social'
     ,'calle'
-    ,'colonia'
-    ,'municipio'
-    ,'id_codigo'
+    ,'id_municipay'
+    ,'codigo'
     ,'id_country'
     ,'id_estado'
     ,'id_regimen_fiscal'
@@ -63,12 +62,30 @@ class SysEmpresasModel extends Model
     {
         return $this->belongsToMany('App\SysPermission','sys_companies_permission','company_id','permission_id');
     }
-    /*  public function usersCompanies()
-      {
-          return $this->belongsToMany(SysUsersModel::class,'sys_companies_users','company_id','user_id');
-      }*/
-
-
+    public function regimenes()
+    {
+        return $this->hasOne(SysRegimenFiscalModel::class, 'id','id_regimen_fiscal');
+    }
+    public function states()
+    {
+        return $this->hasOne(SysEstadosModel::class, 'idEstado','id_estado');
+    }
+    public function countries()
+    {
+        return $this->hasOne(SysPaisModel::class, 'id','id_country');
+    }
+    public function comerciales()
+    {
+        return $this->hasOne( SysServiciosComercialesModel::class, 'id','id_servicio_comercial');
+    }
+    public function postalCode()
+    {
+        return $this->hasOne( SysEstadosModel::class, 'id','id_codigo');
+    }
+    public function contacts()
+    {
+        return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_empresa','id_contacto');
+    }
 
 
 
@@ -78,13 +95,9 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany(SysProveedoresModel::class,'sys_proveedores_empresas','id_empresa','id_proveedor');
   }
-  public function cuentas()
+    public function cuentas()
   {
     return $this->belongsToMany(SysCuentasModel::class,'sys_cuentas_empresas','id_empresa','id_cuenta');
-  }
-  public function contactos()
-  {
-    return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_empresa','id_contacto');
   }
   public function productos()
   {
@@ -110,26 +123,7 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_empresa','id_notificacion')->withPivot('estatus');
   }
-  public function regimenes()
-  {
-    return $this->hasOne(SysRegimenFiscalModel::class, 'id','id_regimen_fiscal');
-  }
-  public function estados()
-  {
-    return $this->hasOne(SysEstadosModel::class, 'id','id_estado');
-  }
-  public function paises()
-  {
-    return $this->hasOne(SysPaisModel::class, 'id','id_country');
-  }
-  public function comerciales()
-  {
-    return $this->hasOne( SysServiciosComercialesModel::class, 'id','id_servicio_comercial');
-  }
-  public function codigos()
-  {
-     return $this->hasOne( SysCodigoPostalModel::class, 'id','id_codigo');
-  }
+
   public function plantillas()
   {
     return $this->belongsToMany('App\Model\Administracion\Correos\SysTemplatesModel','sys_users_templates','id_empresa','id_template');

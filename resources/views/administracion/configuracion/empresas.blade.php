@@ -23,9 +23,9 @@
 	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.nombre_comercial"></td>
 	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.razon_social"></td>
 	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.rfc_emisor"></td>
-	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.comerciales"></td>
-	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="(data.contactos.length > 0)? data.contactos[0].correo: ''"></td>
-	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="(data.contactos.length > 0)? data.contactos[0].telefono: ''"></td>
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.comerciales.nombre"></td>
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="(data.contacts.length > 0)? data.contacts[0].nombre_completo: ''"></td>
+	                <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="(data.contacts.length > 0)? data.contacts[0].telefono: ''"></td>
 	                <td>
 		                <span class="label label-success" ng-if="data.estatus == 1">Activo</span>
 	                	<span class="label label-danger" ng-if="data.estatus == 0">Inactivo</span>

@@ -84,9 +84,8 @@ app.factory('FactoryController',['$http', function (http) {
         return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
     };
 
-    FactoryController.prototype.domain = function (url) {
-
-        var url = (url)? url : "";
+    FactoryController.prototype.domain = function (url, replaceString = "" ) {
+        var url = (url)? url.replace(/{(.*)}/,replaceString ) : "";
         var pathGeneral = document.getElementsByTagName("META");
         var content = "";
         for (var i = 0; i < pathGeneral.length; i++) {

@@ -6,36 +6,47 @@ use Illuminate\Database\Eloquent\Model;
 
 class SysEstadosModel extends Model
 {
-  public $table = "sys_estados";
+  public $table = "sepomex";
   public $fillable = [
       'id'
-      ,'country_id'
-      ,'nombre'
+      ,'idCountry'
+      ,'idEstado'
+      ,'estado'
+      ,'idMunicipio'
+      ,'municipio'
+      ,'ciudad'
+      ,'zona'
+      ,'cp'
+      ,'asentamiento'
+      ,'tipo'
   ];
 
     public function clientes()
     {
-        return $this->hasOne('App\Model\Administracion\Configuracion\SysClientesModel','id_estado','id');
+        return $this->hasOne(SysClientesModel::class,'id_estado','idEstado');
     }
     
     public function sucursales()
     {
-        return $this->hasOne('App\Model\Administracion\Configuracion\SysSucursalesModel','id_estado','id');
+        return $this->hasOne(SysSucursalesModel::class,'id_estado','idEstado');
     }
     
     public function empresas()
     {
-        return $this->hasOne('App\Model\Administracion\Configuracion\SysEmpresasModel','id_estado','id');
+        return $this->hasOne(SysEmpresasModel::class,'id_estado','idEstado');
     }
     
     public function proveedores()
     {
-        return $this->hasOne('App\Model\Administracion\Configuracion\SysProveedoresModel','id_estado','id');
+        return $this->hasOne(SysProveedoresModel::class,'id_estado','id');
     }
-    public function paises()
+    public function countries()
     {
-        return $this->belongsTo( SysPaisModel::class,'id','country_id' );
+        return $this->hasOne( SysPaisModel::class,'id','idCountry');
     }
-
+    public function postalCode()
+    {
+        return $this->hasMany( SysEstadosModel::class,'idMunicipio','id' );
+    }
 
 }
