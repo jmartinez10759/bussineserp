@@ -37,14 +37,14 @@
 
                     <form class="login-form right" ng-submit="startSession()" id="form-login" method="POST" autocomplete="true">
                         <input type="text" placeholder="username / correo" ng-model="datos.email"  required>
-                        <input type="password" ng-model="datos.password" placeholder="Contraseña" required>
+                        <input type="password" ng-model="datos.password" placeholder="Contraseña" required watch-password ><span id="eyeIcon" class="glyphicon glyphicon-eye-open"></span>
                         <button type="submit" class="btn btn-blue" ng-disabled="enabled">
                             <span ng-show="serching"><i class="glyphicon glyphicon-refresh spinning"></i></span>
                             Entrar
                         </button>
                     </form>
-                    <div class="login-links">
-                        <a href="forgot-password.html">¿Recordar Contraseña?</a>
+                    <div class="login-links" ng-hide="false">
+                        <a href="forgot-password.html">¿Olvido su Contraseña?</a>
                         <a href="sign-up.html"></a>
                     </div>
 

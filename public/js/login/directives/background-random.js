@@ -14,3 +14,20 @@ app.directive("backgroundRandom", function() {
         }
     }
 });
+
+app.directive("watchPassword", function() {
+    return {
+        restrict: "A",
+        scope: "=",
+        link: function(scope,element) {
+            var eyeIcon = $("#eyeIcon");
+            eyeIcon.show();
+            eyeIcon.mouseover(function() {
+                element.attr("type","text");
+            });
+            eyeIcon.mouseout(function() {
+                element.attr("type","password");
+            });
+        }
+    }
+});
