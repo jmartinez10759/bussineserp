@@ -42,7 +42,7 @@
                         <div class="form-group">
                             <div class="inner-addon right-addon">
                                 <input type="password" class="form-control" ng-model="datos.password" placeholder="Contraseña" required watch-password >
-                                <span id="eyeIcon" class="glyphicon glyphicon-eye-open"></span>
+                                {{--<span id="eyeIcon" class="glyphicon glyphicon-eye-open"></span>--}}
                             </div>
                         </div>
                         <div class="form-group">

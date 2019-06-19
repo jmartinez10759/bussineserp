@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\Administracion\Configuracion\SysProductosModel;
 use App\Model\Administracion\Configuracion\SysRolesModel;
 use PDF;
 use DOMDocument;
@@ -365,15 +366,17 @@ abstract class MasterController extends Controller
 	}*/
 
     /**
+     * This method is used view load with you permission
      * @param string|null $view
      * @param array $parse
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     protected function _loadView(string $view = null, array $parse = [] )
     {
+        /*var_export(Session::all());die();
         if( Session::get('roles_id') != 1 && Session::get('permisos')['GET'] ){
             return view('errors.error');
-        }
+        }*/
         $users = SysUsersModel::find( Session::get('id') );
         $company = $users->companies()->find(Session::get('company_id'));
         $groups  = $users->groups()->find(Session::get('group_id'));
@@ -415,15 +418,12 @@ abstract class MasterController extends Controller
         $parse['seccion_reportes'] = reportes($reportes, $excel);
         $parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
         $parse['upload_files']  = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
-        #$parse['buscador']      = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
-        #$parse['agregar']       = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
-        #$parse['modal']         = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
 
         return View($view, $parse);
     }
 
     /**
-     * This is method is for login session for system.
+     * This method is used for login session for system.
      * @access public
      * @param Request $request
      * @param SysUsersModel $users
@@ -735,7 +735,7 @@ abstract class MasterController extends Controller
 	}
 
     /**
-     * Metodo para hacer la consulta para los menus
+     * This method is used get for menus the user by group
      * @access public
      * @param string $request [Description]
      * @return array
@@ -757,8 +757,8 @@ abstract class MasterController extends Controller
 	}
 
     /**
-     *This method is for created one bitacora
-     * @access private
+     *This method is used for created user binnacle
+     * @access protected
      * @param bool $logout
      * @param SysUsersModel $users
      * @return void
@@ -1096,12 +1096,11 @@ abstract class MasterController extends Controller
     }
 
     /**
-     * @param SysUsersModel $users
      * @return mixed
      */
-    protected function _actionByCompanies(SysUsersModel $users )
+    protected function _actionByCompanies()
     {
-        $user = $users->find(Session::get('id'));
+        $user = SysUsersModel::find(Session::get('id'));
         return $user->permission()->where([
             "status"       => TRUE
             ,"sys_permission_menus.company_id"  => Session::get('company_id')
@@ -1158,22 +1157,22 @@ abstract class MasterController extends Controller
     protected function _usersBelongsCompany()
     {
         if( Session::get('roles_id') == 1 ){
-            $response = SysUsersModel::with([
+            $response = SysUsersModel::with(
                             'bitacora'
                             ,'roles'
                             ,'groups'
                             ,'companies'
-                        ])->orderBy('id','DESC')
+                        )->orderBy('id','DESC')
                         ->groupby('id')->get();
         }else{
             $response = SysEmpresasModel::find(Session::get('company_id'))
                         ->users()
-                        ->with([
-                            'roles' ,
-                            'groups' ,
-                            'bitacora' ,
-                            'companies' ,
-                        ])->orderBy('id','DESC')->groupby('id')->get();
+                        ->with(
+                            'roles'
+                            ,'groups'
+                            ,'bitacora'
+                            ,'companies'
+                        )->orderBy('id','DESC')->groupby('id')->get();
         }
         return $response;
     }
@@ -1193,6 +1192,31 @@ abstract class MasterController extends Controller
                             ->orderBy('id','DESC')->groupby('id')->get();
         }
         return $response;
+    }
+
+    /**
+     * this method is used load products by company
+     * @access public
+     * @return void
+     */
+    protected function _productsBelongCompany()
+    {
+        if( Session::get('roles_id') == 1 ){
+
+            $response = SysProductosModel::with('units','categories','companies')
+                ->orderBy('id','DESC')
+                ->groupby('id')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find(Session::get("company_id"))
+                ->products()
+                ->with('units','categories','companies')
+                ->orderBy('id','DESC')
+                ->groupby('id')
+                ->get();
+        }
+        return $response;
+
     }
 
     /**

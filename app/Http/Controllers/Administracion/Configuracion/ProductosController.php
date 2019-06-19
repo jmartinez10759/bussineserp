@@ -80,6 +80,7 @@ class ProductosController extends MasterController
         }
 
     }
+
     /**
     *Metodo para realizar la consulta por medio de su id
     *@access public
@@ -304,32 +305,6 @@ class ProductosController extends MasterController
 
 
     }
-
-    /**
-     * this method is used load products by company
-     * @access public
-     * @return void
-     */
-    private function _productsBelongCompany()
-    {
-        if( Session::get('roles_id') == 1 ){
-
-            $response = SysProductosModel::with('units','categories','companies')
-                            ->orderBy('id','DESC')
-                            ->groupby('id')
-                            ->get();
-        }else{
-            $response = SysEmpresasModel::find(Session::get("company_id"))
-                                ->products()
-                                ->with('units','categories','companies')
-                                ->orderBy('id','DESC')
-                                ->groupby('id')
-                                ->get();
-        }
-        return $response;
-
-    }
-
 
 
 }
