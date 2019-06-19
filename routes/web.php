@@ -710,15 +710,26 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProductosController@index'
         ,'as'       => 'configuracion.clientes'
     ]);
-     
-    Route::get('/productos/all', [
+    Route::get('/products/all', [
         'uses'      => 'Administracion\Configuracion\ProductosController@all'
         ,'as'       => 'productos.all'
     ]);
-    
-    Route::post('/productos/register', [
+    Route::post('/products/register', [
         'uses'      => 'Administracion\Configuracion\ProductosController@store'
         ,'as'       => 'productos.register'
+    ]);
+    Route::get('/products/{id}/edit', [
+        'uses'      => 'Administracion\Configuracion\ProductosController@show'
+        ,'as'       => 'productos.edit'
+    ]);
+    Route::put('/products/update', [
+        'uses'      => 'Administracion\Configuracion\ProductosController@update'
+        ,'as'       => 'productos.update'
+    ]);
+
+    Route::delete('/products/{id}/destroy', [
+        'uses'      => 'Administracion\Configuracion\ProductosController@destroy'
+        ,'as'       => 'productos.destroy'
     ]);
 
     Route::post('/productos/register_permisos', [
@@ -727,24 +738,12 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
     
     
-    Route::get('/productos/edit', [
-        'uses'      => 'Administracion\Configuracion\ProductosController@show'
-        ,'as'       => 'productos.edit'
-    ]);
-    Route::get('/productos/display_sucursales', [
+
+    Route::get('/products/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\ProductosController@display_sucursales'
         ,'as'       => 'productos.edit'
     ]);
     
-    Route::put('/productos/update', [
-        'uses'      => 'Administracion\Configuracion\ProductosController@update'
-        ,'as'       => 'productos.update'
-    ]);
-
-    Route::delete('/productos/destroy', [
-        'uses'      => 'Administracion\Configuracion\ProductosController@destroy'
-        ,'as'       => 'productos.destroy'
-    ]);
 
 ############################ SECCION DE FORMAS DE PAGO #######################################
     
@@ -1264,9 +1263,9 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as' => 'tasa.destroy'
     ]);
 
-    Route::get('/tasa/factor_tasa', [
-        'uses' => 'Administracion\Configuracion\TasaController@factor_tasa'
-        ,'as' => 'tasa.factor_tasa'
+    Route::get('/tasa/{factorId}/tasaByFactor', [
+        'uses' => 'Administracion\Configuracion\TasaController@tasaByFactor'
+        ,'as' => 'tasas.tasaByFactor'
     ]);
 
 ################################## CATALOGO NOTIFICACIONES ################################
@@ -1314,9 +1313,9 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'  => 'impuesto.all'
     ]);
 
-    Route::get('/impuesto/clave_impuesto', [
-        'uses' => 'Administracion\Configuracion\ImpuestoController@clave_impuesto'
-        ,'as'  => 'impuesto.clave_impuesto'
+    Route::get('/taxes/{tasaId}/taxesByTasa', [
+        'uses' => 'Administracion\Configuracion\ImpuestoController@taxesByTasa'
+        ,'as'  => 'taxes.taxesByTasa'
     ]);
 
     Route::post('/impuesto/register', [

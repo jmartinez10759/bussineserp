@@ -132,7 +132,7 @@ class EmpresasController extends MasterController
               return new JsonResponse([
                   'success'   => TRUE
                   ,'data'     => $company
-                  ,'message'  => self::$message_error
+                  ,'message'  => self::$message_success
               ], Response::HTTP_OK);
           }
           return new JsonResponse([

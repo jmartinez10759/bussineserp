@@ -31,7 +31,14 @@ class ServicesController extends MasterController
 			$menuText = substr(parse_domain()->urls, 1);
 			$permissionMenu = [];
 			$menu = $user->menus()->with('permission')->whereLink($menuText)->first();
-            $actions = $menu->permission()->where([
+            if ( is_null($menu->permission()) ){
+                return new JsonResponse([
+                    "success"   => FALSE ,
+                    "data"      => "" ,
+                    "message"   => "¡No cuenta con permisos para ingresar favor de contactar a un administrador!"
+                ],Response::HTTP_BAD_REQUEST);
+            }
+			$actions = $menu->permission()->where([
                 "sys_permission_menus.user_id"      => $user->id ,
                 "sys_permission_menus.roles_id"     => Session::get("roles_id") ,
                 "sys_permission_menus.company_id"   => Session::get("company_id") ,

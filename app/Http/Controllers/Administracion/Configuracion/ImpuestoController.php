@@ -7,6 +7,8 @@
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysImpuestoModel;
     use App\Model\Administracion\Configuracion\SysTasaModel;
+    use Symfony\Component\HttpFoundation\JsonResponse;
+    use Symfony\Component\HttpFoundation\Response;
 
     class ImpuestoController extends MasterController
     {
@@ -169,30 +171,40 @@
         return $this->show_error(6, $error, self::$message_error );
 
     }
-    /**
-     * Metodo para consultar el impuesto con la clave de tasa 
-     * @access public
-     * @param Request $request [Description]
-     * @return void
-     */
-    public function clave_impuesto( Request $request ){
-        
-        try {
-            $where = ['id' => $request->id];
-            $tasa= SysTasaModel::select('clave','valor_maximo')->where( $where )->groupby('id')->get();
-            $response = $this->_tabla_model::where(['descripcion' => isset($tasa[0])? $tasa[0]->clave: 0 ])->get();
-            $data = [
-                'valor_maximo' =>  isset($tasa[0])? $tasa[0]->valor_maximo : ""
-                ,'response'    =>  $response
-            ];
-        return $this->_message_success( 200, $data , self::$message_success );
-        } catch (\Exception $e) {
-        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-        return $this->show_error(6, $error, self::$message_error );
+
+        /**
+         * This method is used get for taxes tasas
+         * @access public
+         * @param int|null $tasaId
+         * @param SysTasaModel $tasas
+         * @return JsonResponse
+         */
+        public function taxesByTasa( int $tasaId = null, SysTasaModel $tasas )
+        {
+            try {
+                $tasa= $tasas->find($tasaId);
+                $taxes = SysImpuestoModel::whereDescripcion($tasa->clave)->get();
+                $data = [
+                    'valor_maximo' =>  $tasa->valor_maximo
+                    ,'taxes'    =>  $taxes
+                ];
+                return new JsonResponse([
+                    "success" => TRUE ,
+                    "data"    => $data ,
+                    "message" => self::$message_success
+                ], Response::HTTP_OK);
+
+            } catch (\Exception $e) {
+                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+                return new JsonResponse([
+                    "success" => FALSE ,
+                    "data"    => $error ,
+                    "message" => self::$message_error
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+
         }
-
-
-    }
 
 
 }

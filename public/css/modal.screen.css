@@ -25,6 +25,24 @@ Full screen Modal
     background:  url('../img/loading04.gif') 50% 50% no-repeat rgb(249,249,249);
     opacity: .8;
 }
+/* enable absolute positioning */
+.inner-addon {
+    position: relative;
+}
+/* style glyph */
+.inner-addon .glyphicon {
+    position: absolute;
+    padding: 10px;
+    /*pointer-events: none;*/
+}
+/* align glyph */
+.left-addon .glyphicon  { left:  0px;}
+.right-addon .glyphicon { right: 0px;}
+/* add padding  */
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }
+
+
 @media (min-width: 768px) {
     .fullscreen-modal .modal-dialog {
         width: 750px;

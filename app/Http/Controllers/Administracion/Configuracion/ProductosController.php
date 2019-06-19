@@ -15,57 +15,68 @@ use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
 use App\Model\Administracion\Configuracion\SysPlanesProductosModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductosController extends MasterController
 {
-    private $_tabla_model;
 
+    /**
+     * ProductosController constructor.
+     */
     public function __construct()
     {
         parent::__construct();
-        $this->_tabla_model = new SysProductosModel;
     }
 
     /**
-     *Metodo para obtener la vista y cargar los datos
+     * This method is used load for view
      * @access public
-     * @return void
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        if( Session::get('permisos')['GET'] ){ return view('errors.error'); }
-
         $data = [
             'page_title' 	         => "Configuración"
             ,'title'  		         => "Productos"
             ,'data_table'  		     => "data_table(table)"
         ];
 
-        return self::_load_view( "administracion.configuracion.productos",$data );
+        return $this->_loadView( "administracion.configuracion.productos",$data );
     }
+
     /**
-     *Method for get all products.
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * This Method is used get all products.
+     * @access public
+     * @return JsonResponse
      */
-    public function all( Request $request )
+    public function all()
     {
-        var_export($request);die();
         try {
-            $response = $this->_queryProducts();
+            $products = $this->_productsBelongCompany();
             $data = [
-             'response'         => $response
-             ,'empresas'        => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
-             ,'unidad_medida'   => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
-             ,'categorias'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
-             ,'servicios'       => SysClaveProdServicioModel::get()
-             ,'tipo_factor'     => SysTipoFactorModel::get()
+             'products'         => $products
+             ,'companies'       => SysEmpresasModel::whereEstatus(TRUE)->groupby('id')->get()
+             ,'units'           => SysUnidadesMedidasModel::whereEstatus(TRUE)->get()
+             ,'categories'      => SysCategoriasProductosModel::whereEstatus(TRUE)->get()
+             ,'services'        => SysClaveProdServicioModel::get()
+             ,'factorType'      => SysTipoFactorModel::get()
+             ,'tasas'           => SysTasaModel::get()
            ];
-          return $this->_message_success( 200, $data , self::$message_success );
+            return new JsonResponse([
+                "success" => TRUE ,
+                "data"    => $data ,
+                "message" => self::$message_success
+            ], Response::HTTP_OK);
+
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            return $this->show_error(6, $error, self::$message_error );
+            return new JsonResponse([
+                "success" => FALSE ,
+                "data"    => $error ,
+                "message" => self::$message_error
+            ], Response::HTTP_BAD_REQUEST);
+
         }
 
     }
@@ -127,29 +138,32 @@ class ProductosController extends MasterController
 
 
     }
+
     /**
-    *Metodo para la actualizacion de los registros
-    *@access public
-    *@param Request $request [Description]
-    *@return void
-    */
-    public function update( Request $request){
-        #debuger($request->all());
+     * This method is used update information of products
+     * @access public
+     * @param Request $request [Description]
+     * @param SysProductosModel $products
+     * @return JsonResponse
+     */
+    public function update( Request $request, SysProductosModel $products )
+    {
         $error = null;
         DB::beginTransaction();
         try {
-            $registros = [];
+            $dataRegister = [];
             foreach ($request->all() as $key => $value) {
                 if($key == "logo"){
-                  $registros[$key] = ($value);
+                    $dataRegister[$key] = ($value);
                 }else{
-                  $registros[$key] = strtoupper($value);
+                    $dataRegister[$key] = strtoupper($value);
                 }
             }
-            $this->_tabla_model::where(['id' => $request->id])->update($registros);
-            $response = $this->_tabla_model::where(['id' => $request->id])->get();
-        DB::commit();
-        $success = true;
+            $products->whereId($request->get("id"))->update($dataRegister);
+            $product = $products->find($request->get("id"));
+
+            DB::commit();
+            $success = true;
         } catch (\Exception $e) {
             $success = false;
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
@@ -157,9 +171,17 @@ class ProductosController extends MasterController
         }
 
         if ($success) {
-             return $this->_message_success( 201, $response[0] , self::$message_success );
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $product
+                ,'message'  => self::$message_success
+            ], Response::HTTP_OK);
         }
-        return $this->show_error(6, $error, self::$message_error );
+        return new JsonResponse([
+            'success'   => FALSE
+            ,'data'     => $error
+            ,'message'  => self::$message_error
+        ], Response::HTTP_BAD_REQUEST);
 
     }
     /**
@@ -284,46 +306,25 @@ class ProductosController extends MasterController
     }
 
     /**
-     * Method for use query Products
+     * this method is used load products by company
      * @access public
      * @return void
      */
-    private function _queryProducts()
+    private function _productsBelongCompany()
     {
-        var_export(Session::all());die();
-        if( Session::get('id_rol') == 1 ){
+        if( Session::get('roles_id') == 1 ){
 
-            $response = SysProductosModel::with(['unidades','categorias','empresas'])
-                            ->orderBy('id','desc')
+            $response = SysProductosModel::with('units','categories','companies')
+                            ->orderBy('id','DESC')
                             ->groupby('id')
                             ->get();
-
-        }elseif( Session::get('id_rol') == 3 ){
-            $data = SysEmpresasModel::with(['productos'])
-                                    ->where(['id' => Session::get('id_empresa')])            
-                                    ->first();
-
-            $response = $data->productos()
-                                ->with(['unidades','categorias','empresas'])
-                                ->orderBy('id','desc')
+        }else{
+            $response = SysEmpresasModel::find(Session::get("company_id"))
+                                ->products()
+                                ->with('units','categories','companies')
+                                ->orderBy('id','DESC')
                                 ->groupby('id')
                                 ->get();
-
-        }else{
-
-            $data = SysUsersModel::with(['empresas'])
-                                  ->where(['id' => Session::get('id')])            
-                                  ->first();
-            $company = $data->empresas()
-                                ->with(['productos'])
-                                ->where([ 'id' => Session::get('id_empresa') ])
-                                ->first();
-            $response = $company->productos()
-                                    ->with(['unidades','categorias','empresas'])
-                                    ->orderBy('id','desc')
-                                    ->groupby('id')
-                                    ->get();
-
         }
         return $response;
 

@@ -88,6 +88,16 @@ app.factory("NotificationsFactory",["sweetAlert","toastr","swangular", function 
         jQuery('#tr_' + id).effect("highlight", {}, time);
     };
 
+    NotificationsFactory.prototype.fieldsValidation = function( validation ){
+        for(var i in validation ){
+            var valores = validation[i];
+            if( valores == "" || valores == null || valores === undefined ){
+                this.toastError('Verificar campo '+ i +' para poder continuar' , this.validateRegister);
+                return false;
+            }
+        }
+        return true;
+    };
 
     return new NotificationsFactory();
 }]);

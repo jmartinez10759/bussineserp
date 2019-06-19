@@ -44,8 +44,6 @@ class SysEmpresasModel extends Model
     {
         return $this->belongsToMany('App\SysPermission','sys_permission_menus','company_id','permission_id');
     }
-
-
     public function groupsCompanies()
     {
         return $this->belongsToMany(SysSucursalesModel::class,'sys_companies_groups','company_id','group_id');
@@ -86,7 +84,10 @@ class SysEmpresasModel extends Model
     {
         return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_empresa','id_contacto');
     }
-
+    public function products()
+    {
+        return $this->belongsToMany(SysProductosModel::class, 'sys_companies_products', 'company_id', 'product_id');
+    }
 
 
 
@@ -99,10 +100,7 @@ class SysEmpresasModel extends Model
   {
     return $this->belongsToMany(SysCuentasModel::class,'sys_cuentas_empresas','id_empresa','id_cuenta');
   }
-  public function productos()
-  {
-    return $this->belongsToMany(SysProductosModel::class, 'sys_planes_productos', 'id_empresa', 'id_producto');
-  }
+
   public function planes()
   {
     return $this->belongsToMany(SysPlanesModel::class, 'sys_planes_productos', 'id_empresa', 'id_plan');

@@ -1,47 +1,44 @@
 const URL = {
-
-  url_insert           : "productos/register"
-  ,url_update          : "productos/update"
-  ,url_edit            : "productos/edit"
-  ,url_destroy         : "productos/destroy"
-  ,url_all             : "productos/all"
-  ,redireccion         : "configuracion/productos"
-  ,url_display         : "productos/display_sucursales"
-  ,url_insert_permisos : "productos/register_permisos"
+  url_insert           : "products/register"
+  ,url_update          : "products/update"
+  ,url_edit            : "products/{id}/edit"
+  ,url_destroy         : "products/{id}/destroy"
+  ,url_all             : "products/all"
+  ,url_display         : "products/display_sucursales"
+  ,url_insert_permisos : "products/register_permisos"
   ,url_unidades        : 'unidadesmedidas/edit'
-  ,url_edit_tipo       : "tasa/factor_tasa"
-  ,url_edit_tasa       : "impuesto/clave_impuesto"
+  ,url_edit_tasa       : "tasa/{factorId}/tasaByFactor"
+  ,url_edit_taxes      : "taxes/{tasaId}/taxesByTasa"
   ,url_upload          : 'upload/files'
+};
 
-}
+app.controller('ProductosController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
-app.controller('ProductosController', function( masterservice ,$scope, $http, $location ) {
-    /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
         $scope.insert = {estatus: 1};
         $scope.update = {};
         $scope.edit   = {};
         $scope.fields = {};
-        $scope.cmb_estatus = [{id: 0 ,descripcion:"Inactivo"},{id: 1 ,descripcion :"Activo"}];
         $scope.index();
-    }
+    };
 
     $scope.index = function(){
-        var url = domain( URL.url_all );
-        var fields = {};
-        MasterController.request_http(url,fields,'get',$http, false )
-        .then(function(response){
-            //not remove function this is  verify the session
-            if(masterservice.session_status( response )){return;};
-
-            $scope.datos = response.data.result;
-            loading(true);
-        }).catch(function(error){
-            masterservice.session_status_error( error );
+        var url = fc.domain( URL.url_all );
+        sc.requestHttp(url,null,"GET",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
+                console.log(response.data.data);
+                $scope.datos         = response.data.data.products;
+                $scope.cmbUnits      = response.data.data.units;
+                $scope.cmbServices   = response.data.data.services;
+                $scope.cmbCategories = response.data.data.categories;
+                $scope.cmbFactorType = response.data.data.factorType;
+                $scope.cmbTasas      = response.data.data.tasas;
+            }
         });
-    }
-    
+
+    };
+
     $scope.insert_register = function(){
 
         var validacion = {
@@ -72,57 +69,44 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             masterservice.session_status_error(error);
         });
     }
-    $scope.update_register = function(){
-
-      var validacion = {
+    $scope.updateRegister = function(){
+        var url = fc.domain( URL.url_update );
+        var fields = $scope.update;
+        var validation = {
              'CODIGO'       : $scope.update.codigo
             ,'PRODUCTOS'    : $scope.update.nombre
             ,'DESCRIPCION'  : $scope.update.descripcion
-          };
-      if(validaciones_fields(validacion)){return;}
-      var url = domain( URL.url_update );
-      var fields = $scope.update;
-      MasterController.request_http(url,fields,"put",$http, false )
-      .then(function( response ){
-          //not remove function this is  verify the session
-            if(masterservice.session_status( response )){return;};
+        };
 
-          toastr.info( response.data.message , title );
-          jQuery.fancybox.close({
-                'type'      : 'inline'
-                ,'src'      : "#modal_edit_register"
-                ,'modal'    : true
-                ,'width'    : 900
-                ,'height'   : 400
-                ,'autoSize' : false
-            });
-          jQuery('#tr_'+$scope.update.id).effect("highlight",{},5000);
-          $scope.index();
-      }).catch(function( error ){
-          masterservice.session_status_error( error );
-      });
-    
-    }
+      if( nf.fieldsValidation(validation)){
+          $scope.spinning = true;
+          sc.requestHttp(url,fields,"PUT",false).then(function (response) {
+              if (sc.validateSessionStatus(response)){
+                  nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                  nf.modal("#modal_edit_register",true);
+                  nf.trEffect($scope.update.id);
+                  $scope.index();
+              }
+              $scope.spinning = false;
+          });
+      }
 
-    $scope.edit_register = function( data ){
+    };
 
-      var datos = ['empresas','categorias','unidades','updated_at','created_at','$$hashKey','pivot'];
-      $scope.update = iterar_object(data,datos);
-      var html = '';
-      html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
-      jQuery('#imagen_edit').html("");        
-      jQuery('#imagen_edit').html(html);
+    $scope.editRegister = function(entry){
+        var datos = ['companies','categories','units','updated_at','created_at','$$hashKey','pivot'];
+        $scope.update = sc.mapObject(entry, datos);
+        $scope.getTasas($scope.update.id_tipo_factor);
+        $scope.getTaxes($scope.update.id_tasa,true);
+        nf.modal("#modal_edit_register");
+        console.log($scope.update);
 
-      jQuery.fancybox.open({
-          'type'      : 'inline'
-          ,'src'      : "#modal_edit_register"
-          ,'modal'    : true
-      });
-      $scope.tipo_factor(1);
-      $scope.clave_impuesto(1);
-      console.log($scope.update);
-    
-    }
+        /*var html = '';
+        html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
+        jQuery('#imagen_edit').html("");
+        jQuery('#imagen_edit').html(html);*/
+
+    };
 
     $scope.destroy_register = function( id ){
 
@@ -144,31 +128,21 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
     
     }
 
-    $scope.total_concepto = function(){
-
-        var iva = ($scope.insert.iva) ? $scope.insert.iva : 0;
-        var subtotal = ($scope.insert.subtotal) ? $scope.insert.subtotal : 0;
-        //var impuesto = parseFloat( subtotal * iva / 100);
+    $scope.totalConcepts = function(subTotal, taxIva, update){
+        var iva = (taxIva) ? taxIva : 0;
+        var subtotal = (subTotal) ? subTotal : 0;
         console.log(iva);
         console.log(subtotal);
-        var impuesto = parseFloat( subtotal * iva );
-        $scope.insert.total = parseFloat(parseFloat( subtotal ) + parseFloat(impuesto)).toFixed(2);
-        console.log($scope.insert.total);
+        var taxes = parseFloat( subtotal * iva );
+        var result = parseFloat(parseFloat( subtotal ) + parseFloat(taxes)).toFixed(2);
+        if (update){
+            $scope.update.total = result;
+        } else {
+            $scope.insert.total = result;
+        }
+        console.log(result);
     
-    }
-
-    $scope.total_concepto_edit = function() {
-
-        var iva = ($scope.update.iva) ? $scope.update.iva : 0;
-        var subtotal = ($scope.update.subtotal) ? $scope.update.subtotal : 0;
-        //var impuesto = parseFloat( subtotal * iva / 100);
-        console.log(iva);
-        console.log(subtotal);
-        var impuesto = parseFloat( subtotal * iva );
-        $scope.update.total = parseFloat(parseFloat( subtotal ) + parseFloat(impuesto)).toFixed(2);
-        console.log($scope.update.total);
-    
-    }
+    };
 
     $scope.display_sucursales = function( id ) {
 
@@ -235,46 +209,40 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
             masterservice.session_status_error( error );
         });
 
-    }
+    };
 
-    $scope.tipo_factor = function( update = false){
-
-      var url = domain( URL.url_edit_tipo );
-      var fields = {id : (update)?$scope.update.id_tipo_factor:$scope.insert.id_tipo_factor };
-      MasterController.request_http(url,fields,'get',$http, false )
-        .then(function( response ){
-            //not remove function this is  verify the session
-          if(masterservice.session_status( response )){return;};
-
-            $scope.cmb_tasas = response.data.result;
-            loading(true);
-        }).catch(function( error ){
-           masterservice.session_status_error(error);
-        });
-    
-    }
-    $scope.clave_impuesto = function( update = false ){
-
-      var url = domain( URL.url_edit_tasa );
-      var fields = {id : (update)? $scope.update.id_tasa: $scope.insert.id_tasa };
-      
-      MasterController.request_http(url,fields,'get',$http, false )
-        .then(function( response ){
-            //not remove function this is  verify the session
-          if(masterservice.session_status( response )){return;};
-          
-            $scope.cmb_impuestos = response.data.result.response;
-            if (update) {
-              $scope.update.iva = response.data.result.valor_maximo;
-            }else{
-              $scope.insert.iva = response.data.result.valor_maximo;
+    $scope.getTasas = function(factorId){
+      var url = fc.domain( URL.url_edit_tasa, factorId );
+      sc.requestHttp(url,null,"GET",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
+                $scope.cmbTasas = response.data.data;
+                console.log(response.data.data);
             }
-            loading(true);
-        }).catch(function( error ){
-            masterservice.session_status_error( error );
-        });
+      });
     
-    }
+    };
+
+    $scope.getTaxes = function(tasaId,update){
+      var url = fc.domain( URL.url_edit_taxes, tasaId );
+      sc.requestHttp(url,null,"GET",false).then(function (response) {
+            if (sc.validateSessionStatus(response)){
+                $scope.cmbTaxes = response.data.data.taxes;
+                var subtotal = 0;
+                if (update) {
+                    $scope.update.iva = response.data.data.valor_maximo;
+                    $scope.update.id_impuesto = ($scope.cmbTaxes)? $scope.cmbTaxes[0].id:"";
+                    subtotal = $scope.update.subtotal;
+                }else{
+                    $scope.insert.iva = response.data.data.valor_maximo;
+                    $scope.insert.id_impuesto = ($scope.cmbTaxes)? $scope.cmbTaxes[0].id:"";
+                    subtotal = $scope.insert.subtotal;
+                }
+                $scope.totalConcepts(subtotal,response.data.data.valor_maximo,update);
+                console.log(response.data.data);
+            }
+      });
+
+    };
 
     $scope.upload_file = function(update){
 
@@ -316,4 +284,4 @@ app.controller('ProductosController', function( masterservice ,$scope, $http, $l
 
     }
 
-});
+}]);

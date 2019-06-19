@@ -41,19 +41,6 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
         return false;
     };
 
-    /*ServiceController.prototype.validateStatusError = function(error){
-
-        if (angular.isDefined(error)){
-            if( angular.isDefined(error.status) && error.status == 419 ){
-                nf.toastError(nf.sessionExpired );
-                time(function(){ redirect( fc.domain() ); }, 1000);
-                return;
-            }
-            nf.toastError(error.data.message, nf.titleMgsError);
-            return;
-        }
-    };*/
-
     ServiceController.prototype.serviceNotification = function(scope){
         var url = fc.domain('services');
         this.requestHttp(url,{},"GET", false).then(function (response) {

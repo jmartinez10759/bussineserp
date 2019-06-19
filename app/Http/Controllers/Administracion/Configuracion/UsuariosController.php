@@ -12,15 +12,6 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysCorreosModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
-use App\Model\Administracion\Configuracion\SysUsersRolesModel;
-use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
-use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
-use App\Model\Administracion\Facturacion\SysFacturacionModel;
-use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
-use App\Model\Administracion\Facturacion\SysParcialidadesFechasModel;
-use App\Model\Administracion\Facturacion\SysUsersFacturacionModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
@@ -94,7 +85,7 @@ class UsuariosController extends MasterController
     {
         try {
             $users      = SysUsersModel::find($userId);
-            $action     = ( Session::get('roles_id') == 1 ) ? SysPermission::whereStatus(1)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysUsersModel);
+            $action     = ( Session::get('roles_id') == 1 ) ? SysPermission::whereStatus(TRUE)->orderBy('id', 'ASC')->get() : $this->_actionByCompanies(new SysUsersModel);
             $menus      = $this->_menusBelongsCompany();
             $menuPadre = [];
             foreach ($menus as $menu ){
@@ -203,7 +194,8 @@ class UsuariosController extends MasterController
         DB::beginTransaction();
         try {
             $usersRegister = SysUsersModel::create($requestUsers);
-            $begin = (count($request->get("id_empresa")) >= count($request->get('id_sucursal')) )
+            $group = (isset($request->id_sucursal))? count($request->get('id_sucursal')) : 0;
+            $begin = (count($request->get("id_empresa")) >= $group )
                         ? count($request->get("id_empresa"))
                         : count($request->get("id_sucursal"));
             for ($i=0; $i < $begin ; $i++){
@@ -286,11 +278,9 @@ class UsuariosController extends MasterController
             $users->whereId($request->get("id"))->update($requestUsers);
             $user = $users->find($request->get("id"));
             if($request->get("id_rol") != 1 ){
-                for ($i=0; $i < count($request->get("id_empresa")); $i++){
-                    SysUsersPivot::whereUserId($request->get("id") )
-                        ->where("company_id", "!=",$request->get("id_empresa")[$i] )
-                        ->delete();
-                }
+                $user->roles()->detach($request->get('id_rol'));
+                $user->groups()->detach($request->get('id_sucursal'));
+                $user->companies()->detach($request->get('id_empresa'));
                 for ($i = 0; $i < count($request->get('id_sucursal'));$i++){
                     $data = [
                         "user_id"       =>  $request->get("id") ,
@@ -327,37 +317,17 @@ class UsuariosController extends MasterController
      * This method is for destroy the register of user
      * @access public
      * @param int|null $userId
+     * @param SysUsersModel $users
      * @return JsonResponse
      */
-    public function destroy(int $userId = null)
+    public function destroy(int $userId = null, SysUsersModel $users )
     {
         $error = null;
         DB::beginTransaction();
         try {
-            $mailId = [];
-            $invoiceId= [];
-            $usersMails = SysCategoriasCorreosModel::whereIdUsers($userId)->get();
-            $usersInvoice = SysUsersFacturacionModel::whereIdUsers($userId)->get();
-            if (count($usersMails) > 0) {
-                foreach ($usersMails as $mails) {
-                    $mailId[] = $mails->id_correo;
-                }
-                SysCorreosModel::whereIn('id',$mailId)->delete();
-            }
-            if (count($usersInvoice) > 0) {
-                foreach ($usersInvoice as $invoice) {
-                    $invoiceId[] = $invoice->id_factura;
-                }
-                SysFacturacionModel::whereIn('id',$invoiceId)->delete();
-                SysParcialidadesFechasModel::whereIn('id_factura', $invoiceId)->delete();
-            }
-            SysUsersPermisosModel::whereIdUsers($userId)->delete();
-            SysRolMenuModel::whereIdUsers($userId)->delete();
-            SysUsersFacturacionModel::whereIdUsers($userId)->delete();
-            SysCategoriasCorreosModel::whereIdUsers($userId)->delete();
-            SysUsersRolesModel::whereIdUsers($userId)->delete();
-            SysUsersModel::whereId($userId)->delete();
-
+            $user = $users->find($userId);
+            $user->roles()->detach();
+            $user->delete();
             DB::commit();
             $success = true;
         } catch (\Exception $e) {

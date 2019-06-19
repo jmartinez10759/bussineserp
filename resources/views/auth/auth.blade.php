@@ -36,12 +36,21 @@
                 <div class="login-form">
 
                     <form class="login-form right" ng-submit="startSession()" id="form-login" method="POST" autocomplete="true">
-                        <input type="text" placeholder="username / correo" ng-model="datos.email"  required>
-                        <input type="password" ng-model="datos.password" placeholder="Contraseña" required watch-password ><span id="eyeIcon" class="glyphicon glyphicon-eye-open"></span>
-                        <button type="submit" class="btn btn-blue" ng-disabled="enabled">
-                            <span ng-show="serching"><i class="glyphicon glyphicon-refresh spinning"></i></span>
-                            Entrar
-                        </button>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="username / correo" ng-model="datos.email"  required>
+                        </div>
+                        <div class="form-group">
+                            <div class="inner-addon right-addon">
+                                <input type="password" class="form-control" ng-model="datos.password" placeholder="Contraseña" required watch-password >
+                                <span id="eyeIcon" class="glyphicon glyphicon-eye-open"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-blue" ng-disabled="enabled">
+                                <span ng-show="serching"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+                                Entrar
+                            </button>
+                        </div>
                     </form>
                     <div class="login-links" ng-hide="false">
                         <a href="forgot-password.html">¿Olvido su Contraseña?</a>
