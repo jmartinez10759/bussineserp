@@ -140,9 +140,10 @@ app.controller('ApplicationController', ['$scope','masterservice','ServiceContro
 	  $scope.services();
 	  $scope.notificaciones = {};
 	  $scope.correos = {};
-	  $scope.cmbEstatusRoot = [];
 	  $scope.permisos = {};
+	  $scope.cmbEstatusRoot = [];
 	  $scope.rootCmbCompanies = {};
+	  $scope.rootCmbGroups = {};
 	  $scope.spinning= false;
 	  $scope.loader = true;
 	  $scope.userLogged;

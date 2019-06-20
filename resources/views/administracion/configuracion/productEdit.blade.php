@@ -39,7 +39,7 @@
 
                                                 <label for="modelo" class="col-sm-2 control-label">Stock</label>
                                                 <div class="col-sm-4">
-                                                    <input type="number" class="form-control" ng-model="insert.stock">
+                                                    <input type="number" class="form-control" ng-model="insert.stock" >
                                                 </div>
 
                                                 <label for="unidad_medida" class="col-sm-2 control-label">Unidad de Medida</label>
@@ -54,12 +54,14 @@
                                                 </div>
 
                                             </div>
+
                                             <div class="form-group">
                                                 <label for="note" class="col-sm-2 control-label">Descripción</label>
                                                 <div class="col-sm-10">
                                                     <textarea class="form-control" ng-model="insert.descripcion" capitalize></textarea>
                                                 </div>
                                             </div>
+
                                             <div class="form-group">
                                                 <label for="product_code" class="col-sm-2 control-label">Clave Servicio</label>
                                                 <div class="col-sm-4">
@@ -79,7 +81,7 @@
                                                             width="'100%'"
                                                             chosen
                                                             ng-model="insert.id_categoria"
-                                                            ng-options="value.id as value.nombre for (key, value) in datos.cmbCategories">
+                                                            ng-options="value.id as value.nombre for (key, value) in cmbCategories">
                                                         <option value="">--Seleccione Opcion--</option>
                                                     </select>
                                                 </div>
@@ -93,7 +95,7 @@
                                                     <select class="form-control"
                                                             width="'100%'"
                                                             chosen
-                                                            ng-change="getFactorType(insert.id_tipo_factor)"
+                                                            ng-change="getTasas(insert.id_tipo_factor)"
                                                             ng-model="insert.id_tipo_factor"
                                                             ng-options="value.id as value.clave for (key, value) in cmbFactorType">
                                                         <option value="">--Seleccione Opcion--</option>
@@ -106,9 +108,9 @@
                                                     <select class="form-control"
                                                             width="'100%'"
                                                             chosen
-                                                            ng-change="getTaxKey(insert.id_tasa)"
+                                                            ng-change="getTaxes(insert.id_tasa)"
                                                             ng-model="insert.id_tasa"
-                                                            ng-options="value.id as value.clave for (key, value) in cmbTasas">
+                                                            ng-options="value.id as (value.valor_maximo +' - '+value.clave ) for (key, value) in cmbTasas">
                                                         <option value="">--Seleccione Opcion--</option>
                                                     </select>
                                                 </div>
@@ -129,19 +131,20 @@
                                                     </select>
                                                 </div>
 
-                                            </div>
-
-                                            <div class="form-group">
                                                 <label for="subtotal" class="col-sm-2 control-label">Subtotal</label>
-
                                                 <div class="col-sm-4">
                                                     <div class="input-group">
                                                         <div class="input-group-addon">
                                                             <i class="fa fa-usd"></i>
                                                         </div>
-                                                        <input type="number" class="form-control" ng-model="insert.subtotal" ng-keyup="totalConcepts(insert.subtotal)">
+                                                        <input type="number" class="form-control" ng-model="insert.subtotal" ng-keyup="totalConcepts(insert.subtotal, insert.iva)">
                                                     </div>
                                                 </div>
+
+                                            </div>
+
+                                            <div class="form-group">
+
                                                 <label for="iva" class="col-sm-2 control-label">IVA</label>
 
                                                 <div class="col-sm-4">
@@ -149,13 +152,10 @@
                                                         <div class="input-group-addon">
                                                             <strong>%</strong>
                                                         </div>
-                                                        <input type="text" class="form-control" ng-model="insert.iva" ng-keyup="totalConcepts(insert.iva)" readonly="">
+                                                        <input type="text" class="form-control" ng-model="insert.iva" ng-keyup="totalConcepts(insert.subtotal,insert.iva)" readonly="">
                                                     </div>
                                                 </div>
 
-                                            </div>
-
-                                            <div class="form-group">
                                                 <label for="selling_price" class="col-sm-2 control-label">Total</label>
 
                                                 <div class="col-sm-4">
@@ -167,6 +167,9 @@
                                                     </div>
                                                 </div>
 
+                                            </div>
+
+                                            <div class="form-group">
 
                                                 <label for="estatus" class="col-sm-2 control-label">Estatus</label>
 
@@ -178,7 +181,36 @@
                                                             ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
                                                     </select>
                                                 </div>
+                                                <div ng-if="userLogged == 1">
 
+                                                    <label class="col-sm-2 control-label">Empresas</label>
+                                                    <div class="col-sm-4">
+                                                        <select class="form-control"
+                                                                chosen
+                                                                width="'100%'"
+                                                                ng-change="getGroupByCompany(insert.companyId)"
+                                                                ng-model="insert.companyId"
+                                                                ng-options="value.id as value.razon_social for (key, value) in rootCmbCompanies">
+                                                            <option value="">--Seleccione Opcion--</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="form-group" ng-if="userLogged == 1">
+                                                <label class="col-sm-2 control-label">Sucursales</label>
+                                                <div class="col-sm-4">
+                                                    <select class="form-control"
+                                                            chosen
+                                                            width="'100%'"
+                                                            ng-model="insert.groupId"
+                                                            multiple
+                                                            ng-options="value.id as value.sucursal for (key, value) in rootCmbGroups">
+                                                        <option value="">--Seleccione Opcion--</option>
+                                                    </select>
+                                                </div>
                                             </div>
 
                                         </div>
@@ -201,7 +233,7 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
                         <i class="fa fa-times-circle"></i> Cancelar
                     </button>
-                    <button type="button" class="btn btn-primary" ng-click="insertRegister()" ng-if="permisos.INS" ng-disabled="spinning">
+                    <button type="button" class="btn btn-success" ng-click="insertRegister()" ng-if="permisos.INS" ng-disabled="spinning">
                         <span ng-show="spinning"><i class="glyphicon glyphicon-refresh spinning"></i></span>
                         <span ng-hide="spinning"><i class="fa fa-save"></i></span> Registrar
                     </button>
@@ -284,7 +316,7 @@
                                             <div class="form-group">
                                                 <label for="note" class="col-sm-2 control-label">Descripción</label>
                                                 <div class="col-sm-10">
-                                                    <textarea class="form-control" id="descripcion" ng-model="update.descripcion" capitalize></textarea>
+                                                    <textarea class="form-control" ng-model="update.descripcion" capitalize></textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -390,7 +422,7 @@
                                                         <div class="input-group-addon">
                                                             <i class="fa fa-usd"></i>
                                                         </div>
-                                                        <input type="text" class="form-control" id="total" ng-model="update.total" readonly>
+                                                        <input type="text" class="form-control" ng-model="update.total" readonly>
                                                     </div>
                                                 </div>
 

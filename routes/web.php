@@ -716,7 +716,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
     Route::post('/products/register', [
         'uses'      => 'Administracion\Configuracion\ProductosController@store'
-        ,'as'       => 'productos.register'
+        ,'as'       => 'products.register'
     ]);
     Route::get('/products/{id}/edit', [
         'uses'      => 'Administracion\Configuracion\ProductosController@show'

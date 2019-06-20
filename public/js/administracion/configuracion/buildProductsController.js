@@ -39,36 +39,28 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
 
     };
 
-    $scope.insert_register = function(){
-
-        var validacion = {
-             'CODIGO'       : $scope.insert.codigo
+    $scope.insertRegister = function(){
+        var url = fc.domain( URL.url_insert );
+        var fields = $scope.insert;
+        var validation = {
+            'CODIGO'       : $scope.insert.codigo
             ,'PRODUCTOS'    : $scope.insert.nombre
             ,'DESCRIPCION'  : $scope.insert.descripcion
-          };
-        if(validaciones_fields(validacion)){return;}
-        var url = domain( URL.url_insert );
-        var fields = $scope.insert;
-        MasterController.request_http(url,fields,'post',$http, false )
-        .then(function( response ){
-            //not remove function this is  verify the session
-            if(masterservice.session_status( response )){return;};
+        };
 
-            toastr.success( response.data.message , title );
-            jQuery.fancybox.close({
-                'type'      : 'inline'
-                ,'src'      : "#modal_add_register"
-                ,'modal'    : true
-                ,'width'    : 900
-                ,'height'   : 400
-                ,'autoSize' : false
+        if( nf.fieldsValidation(validation)){
+            $scope.spinning = true;
+            sc.requestHttp(url,fields,"POST",false).then(function (response) {
+                if (sc.validateSessionStatus(response)){
+                    nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                    nf.modal("#modal_add_register",true);
+                    $scope.constructor();
+                }
+                $scope.spinning = false;
             });
-            $scope.index();
-            for(var i in $scope.insert){ $scope.insert[i] = ""; }
-        }).catch(function( error ){
-            masterservice.session_status_error(error);
-        });
-    }
+        }
+    };
+
     $scope.updateRegister = function(){
         var url = fc.domain( URL.url_update );
         var fields = $scope.update;
@@ -144,36 +136,10 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
     
     };
 
-    $scope.display_sucursales = function( id ) {
-
-       var id_empresa = jQuery('#cmb_empresas_'+id).val().replace('number:','');
-       var url = domain( URL.url_display );
-       var fields = { 
-           id_empresa : id_empresa
-           ,id_producto : id
-       };
-       $scope.fields.id_empresa = id_empresa;
-       $scope.fields.id_producto = id;
-       MasterController.request_http(url, fields, "get", $http ,false)
-       .then(response => {
-          //not remove function this is  verify the session
-          if(masterservice.session_status( response )){return;};
-
-           jQuery('#sucursal_empresa').html(response.data.result.tabla_sucursales);
-           jQuery.fancybox.open({
-               'type': 'inline',
-               'src':  "#permisos",
-               'buttons': ['share', 'close']
-           });
-           for (var i = 0; i < response.data.result.sucursales.length; i++) {
-               console.log(response.data.result.sucursales[i].id_sucursal);
-               jQuery(`#${response.data.result.sucursales[i].id_sucursal}`).prop('checked', true);
-           };
-       }).catch(error => {
-          masterservice.session_status_error(error); 
-       });
-
-    }
+    $scope.getGroupByCompany = function( companyId ) {
+        console.log(companyId);
+        alert(companyId);
+    };
 
     $scope.insert_permisos = function(){
 

@@ -41,7 +41,6 @@ class ProductosController extends MasterController
             ,'title'  		         => "Productos"
             ,'data_table'  		     => "data_table(table)"
         ];
-
         return $this->_loadView( "administracion.configuracion.productos",$data );
     }
 
@@ -56,7 +55,6 @@ class ProductosController extends MasterController
             $products = $this->_productsBelongCompany();
             $data = [
              'products'         => $products
-             ,'companies'       => SysEmpresasModel::whereEstatus(TRUE)->groupby('id')->get()
              ,'units'           => SysUnidadesMedidasModel::whereEstatus(TRUE)->get()
              ,'categories'      => SysCategoriasProductosModel::whereEstatus(TRUE)->get()
              ,'services'        => SysClaveProdServicioModel::get()
@@ -82,48 +80,54 @@ class ProductosController extends MasterController
     }
 
     /**
-    *Metodo para realizar la consulta por medio de su id
-    *@access public
-    *@param Request $request [Description]
-    *@return void
-    */
-    public function show( Request $request ){
-        #debuger($request->all());
+     *This method is used show register of products by id
+     * @access public
+     * @param Request $request [Description]
+     * @param SysProductosModel $products
+     * @return JsonResponse
+     */
+    public function show( Request $request, SysProductosModel $products )
+    {
         try {
-            $response = $this->_tabla_model::with(['servicios:id,clave','categorias','unidades','tasas','impuestos','tipoFactor'])->where(['id' => $request->id])->first();
-        return $this->_message_success( 200, $response , self::$message_success );
+            $product = $products->find($request->get("id"));
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $product
+                ,'message'  => self::$message_success
+            ], Response::HTTP_OK);
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            return $this->show_error(6, $error, self::$message_error );
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ], Response::HTTP_BAD_REQUEST);
         }
 
     }
+
     /**
-    *Metodo para
-    *@access public
-    *@param Request $request [Description]
-    *@return void
-    */
-    public function store( Request $request){
-        #debuger($request->all());
+     * This method is used for register information products by companies
+     * @access public
+     * @param Request $request [Description]
+     * @param SysProductosModel $products
+     * @return JsonResponse
+     */
+    public function store( Request $request, SysProductosModel $products )
+    {
         $error = null;
         DB::beginTransaction();
         try {
-            $registros = [];
+            $dataRegister = [];
             foreach ($request->all() as $key => $value) {
                 if($key == "logo"){
-                  $registros[$key] = ($value);
+                    $dataRegister[$key] = ($value);
                 }else{
-                  $registros[$key] = strtoupper($value);
+                    $dataRegister[$key] = strtoupper($value);
                 }
             }
-            $response = $this->_tabla_model::create( $registros );
-            $data = [
-                'id_empresa'      => Session::get('id_empresa')
-                ,'id_sucursal'    => Session::get('id_sucursal')
-                ,'id_producto'    => $response->id
-            ];
-            SysPlanesProductosModel::create($data);
+            $insertProduct = $products->create($dataRegister);
+
         DB::commit();
         $success = true;
         } catch (\Exception $e) {
@@ -133,11 +137,17 @@ class ProductosController extends MasterController
         }
 
         if ($success) {
-        return $this->_message_success( 201, $response , self::$message_success );
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $insertProduct
+                ,'message'  => self::$message_success
+            ], Response::HTTP_OK);
         }
-        return $this->show_error(6, $error, self::$message_error );
-
-
+        return new JsonResponse([
+            'success'   => FALSE
+            ,'data'     => $error
+            ,'message'  => self::$message_error
+        ], Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -161,7 +171,6 @@ class ProductosController extends MasterController
                 }
             }
             $products->whereId($request->get("id"))->update($dataRegister);
-            $product = $products->find($request->get("id"));
 
             DB::commit();
             $success = true;
@@ -172,11 +181,7 @@ class ProductosController extends MasterController
         }
 
         if ($success) {
-            return new JsonResponse([
-                'success'   => TRUE
-                ,'data'     => $product
-                ,'message'  => self::$message_success
-            ], Response::HTTP_OK);
+           return $this->show(new Request($request->all()), new SysProductosModel );
         }
         return new JsonResponse([
             'success'   => FALSE
@@ -218,7 +223,7 @@ class ProductosController extends MasterController
  * @param Request $request [Description]
  * @return void
  */
-    public function display_sucursales( Request $request ){
+    /*public function display_sucursales( Request $request ){
         #debuger($request->all());
         try {
             #$sucursales = [];
@@ -257,14 +262,14 @@ class ProductosController extends MasterController
             return $this->show_error(6, $error, self::$message_error);
         }
 
-    }
+    }*/
     /**
      * Metodo para insertar los permisos de los productos
      * @access public
      * @param Request $request [Description]
      * @return void
      */
-    public function register_permisos(Request $request){
+    /*public function register_permisos(Request $request){
         #debuger($request->all());
         $error = null;
         DB::beginTransaction();
@@ -304,7 +309,7 @@ class ProductosController extends MasterController
         return $this->show_error(6, $error, self::$message_error);
 
 
-    }
+    }*/
 
 
 }
