@@ -27,11 +27,11 @@ class SysProductosModel extends Model
       ];
     public function companies()
     {
-        return $this->belongsToMany(SysEmpresasModel::class, 'sys_companies_products', 'product_id', 'company_id');
+        return $this->belongsToMany(SysEmpresasModel::class, 'sys_companies_products', 'product_id', 'company_id')->withPivot('group_id');;
     }
     public function groups()
     {
-        return $this->belongsToMany(SysSucursalesModel::class, 'sys_companies_products', 'product_id', 'group_id');
+        return $this->belongsToMany(SysSucursalesModel::class, 'sys_companies_products', 'product_id', 'group_id')->withPivot('company_id');;
     }
     public function categories()
     {
@@ -69,7 +69,6 @@ class SysProductosModel extends Model
     {
       return $this->belongsToMany(SysProveedoresModel::class,'sys_proveedores_productos','id_producto','id_proveedor');
     }
-
     public function concepts()
     {
       return $this->belongsTo('App\Model\Ventas\SysConceptosPedidosModel', 'id', 'id_producto');

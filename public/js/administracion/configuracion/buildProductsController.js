@@ -4,8 +4,6 @@ const URL = {
   ,url_edit            : "products/{id}/edit"
   ,url_destroy         : "products/{id}/destroy"
   ,url_all             : "products/all"
-  ,url_display         : "products/display_sucursales"
-  ,url_insert_permisos : "products/register_permisos"
   ,url_unidades        : 'unidadesmedidas/edit'
   ,url_edit_tasa       : "tasa/{factorId}/tasaByFactor"
   ,url_edit_taxes      : "taxes/{tasaId}/taxesByTasa"
@@ -44,7 +42,7 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
         var fields = $scope.insert;
         var validation = {
             'CODIGO'       : $scope.insert.codigo
-            ,'PRODUCTOS'    : $scope.insert.nombre
+            ,'PRODUCTO'    : $scope.insert.nombre
             ,'DESCRIPCION'  : $scope.insert.descripcion
         };
 
@@ -86,8 +84,14 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
     };
 
     $scope.editRegister = function(entry){
-        var datos = ['companies','categories','units','updated_at','created_at','$$hashKey','pivot'];
+        var datos = ['categories','units','updated_at','created_at','$$hashKey','pivot'];
         $scope.update = sc.mapObject(entry, datos);
+        $scope.update.companyId = angular.isDefined($scope.update.companies[0])?$scope.update.companies[0].id : "";
+        $scope.getGroupByCompany($scope.update.companyId);
+        $scope.update.groupId = [];
+        angular.forEach($scope.update.groups,function (value, key) {
+            $scope.update.groupId[key] = value.id;
+        });
         $scope.getTasas($scope.update.id_tipo_factor);
         $scope.getTaxes($scope.update.id_tasa,true);
         nf.modal("#modal_edit_register");
@@ -100,25 +104,18 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
 
     };
 
-    $scope.destroy_register = function( id ){
-
-      var url = domain( URL.url_destroy );
-      var fields = {id : id };
-      buildSweetAlertOptions("¿Borrar Registro?","¿Realmente desea eliminar el registro?",function(){
-        MasterController.request_http(url,fields,'delete',$http, false )
-        .then(function( response ){
-          //not remove function this is  verify the session
-            if(masterservice.session_status( response )){return;};
-
-            toastr.success( response.data.message , title );
-            $scope.index();
-        }).catch(function( error ){
-            masterservice.session_status_error(error);
-        });
-          
-      },"warning",true,["SI","NO"]);  
+    $scope.destroyRegister = function( id ){
+      var url = fc.domain( URL.url_destroy,id );
+        nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
+            sc.requestHttp(url, null, "DELETE", false).then(function (response) {
+                if (sc.validateSessionStatus(response)) {
+                    nf.toastSuccess(response.data.message, nf.titleMgsSuccess);
+                    $scope.constructor();
+                }
+            });
+        }, null, "SI", "NO");
     
-    }
+    };
 
     $scope.totalConcepts = function(subTotal, taxIva, update){
         var iva = (taxIva) ? taxIva : 0;
@@ -134,47 +131,6 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
         }
         console.log(result);
     
-    };
-
-    $scope.getGroupByCompany = function( companyId ) {
-        console.log(companyId);
-        alert(companyId);
-    };
-
-    $scope.insert_permisos = function(){
-
-        var matrix = [];
-        var i = 0;
-        jQuery('#sucursales input[type="checkbox"]').each(function () {
-            if (jQuery(this).is(':checked') == true) {
-                var id = jQuery(this).attr('id_sucursal');
-                matrix[i] = `${id}|${jQuery(this).is(':checked')}`;
-                i++;
-            }
-        });
-        var url = domain( URL.url_insert_permisos);
-        var fields = {
-            'matrix' : matrix
-            , 'id_empresa': $scope.fields.id_empresa
-            , 'id_producto': $scope.fields.id_producto
-        }
-        MasterController.request_http(url, fields, "post", $http, false )
-        .then(response => {
-            //not remove function this is  verify the session
-          if(masterservice.session_status( response )){return;};
-
-            jQuery.fancybox.close({
-                'type': 'inline',
-                'src': "#permisos",
-                'buttons': ['share', 'close']
-            });
-            jQuery('#tr_'+$scope.fields.id_producto).effect("highlight",{},5000);
-            $scope.index();
-
-        }).catch(error => {
-            masterservice.session_status_error( error );
-        });
-
     };
 
     $scope.getTasas = function(factorId){
@@ -210,7 +166,7 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
 
     };
 
-    $scope.upload_file = function(update){
+    $scope.fileUpload = function(update){
 
       var upload_url = domain( URL.url_upload );
       var identificador = {

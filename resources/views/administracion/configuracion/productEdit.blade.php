@@ -260,10 +260,7 @@
                             <div class="box box-primary">
                                 <center>
                                     <div class="box-body box-profile drop-shadow">
-                                        <div id="load_img" class="col-sm-12">
-                                            <div id="imagen_edit"></div>
-                                        </div>
-                                        <input type="hidden" class="form-control" ng-model="update.logo">
+                                        <image-load image="update.logo"></image-load>
                                     </div>
                                 </center>
                             </div>
@@ -388,11 +385,7 @@
                                                     </select>
                                                 </div>
 
-                                            </div>
-
-                                            <div class="form-group">
                                                 <label for="subtotal" class="col-sm-2 control-label">Subtotal</label>
-
                                                 <div class="col-sm-4">
                                                     <div class="input-group">
                                                         <div class="input-group-addon">
@@ -401,8 +394,13 @@
                                                         <input type="number" class="form-control" ng-model="update.subtotal" ng-keyup="totalConcepts(update.subtotal, update.iva,true)">
                                                     </div>
                                                 </div>
-                                                <label for="iva" class="col-sm-2 control-label">IVA</label>
 
+
+                                            </div>
+
+                                            <div class="form-group">
+
+                                                <label for="iva" class="col-sm-2 control-label">IVA</label>
                                                 <div class="col-sm-4">
                                                     <div class="input-group">
                                                         <div class="input-group-addon">
@@ -412,11 +410,7 @@
                                                     </div>
                                                 </div>
 
-                                            </div>
-
-                                            <div class="form-group">
                                                 <label for="selling_price" class="col-sm-2 control-label">Total</label>
-
                                                 <div class="col-sm-4">
                                                     <div class="input-group">
                                                         <div class="input-group-addon">
@@ -426,9 +420,11 @@
                                                     </div>
                                                 </div>
 
+                                            </div>
+
+                                            <div class="form-group">
 
                                                 <label for="estatus" class="col-sm-2 control-label">Estatus</label>
-
                                                 <div class="col-sm-4">
                                                     <select class="form-control"
                                                             width="'100%'"
@@ -438,11 +434,39 @@
                                                     </select>
                                                 </div>
 
+                                                <div ng-if="userLogged == 1">
+                                                    <label class="col-sm-2 control-label">Empresas</label>
+                                                    <div class="col-sm-4">
+                                                        <select class="form-control"
+                                                                chosen
+                                                                width="'100%'"
+                                                                ng-change="getGroupByCompany(update.companyId)"
+                                                                ng-model="update.companyId"
+                                                                ng-options="value.id as value.razon_social for (key, value) in rootCmbCompanies">
+                                                            <option value="">--Seleccione Opcion--</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+
                                             </div>
 
                                             <div class="form-group">
+                                                <div ng-if="userLogged == 1"></div>
+                                                <label class="col-sm-2 control-label">Sucursales</label>
+                                                <div class="col-sm-4">
+                                                    <select class="form-control"
+                                                            chosen
+                                                            width="'100%'"
+                                                            ng-model="update.groupId"
+                                                            multiple
+                                                            ng-options="value.groups.id as value.groups.descripcion for (key, value) in rootCmbGroups">
+                                                        <option value="">--Seleccione Opcion--</option>
+                                                    </select>
+                                                </div>
 
-                                                <button type="button" class="btn btn-warning" ng-click="upload_file(1)" ng-if="permisos.UPL">
+                                                <button type="button" class="btn btn-warning" ng-click="fileUpload(true)" ng-if="permisos.UPL">
                                                     <i class="fa fa-upload"></i> Cargar Imagen
                                                 </button>
 
@@ -476,31 +500,6 @@
         </div>
     </div>
 </div>
-
-
-{{--<div class="" id="permisos" style="display:none;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3> Asigne Sucursales </h3>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="id_producto">
-                <input type="hidden" id="id_empresa">
-                <div id="sucursal_empresa"></div>
-                <!-- <div v-html="sucursales.tabla_sucursales" id="sucursal_empresa"></div> -->
-            </div>
-            <div class="modal-footer">
-                <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
-                    <button type="button" class="btn btn-primary" ng-click="insert_permisos()" {{$insertar}}><i class="fa fa-save"></i> Registrar </button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>--}}
-
 
 <div class="" id="upload_file" style="display:none;">
     <div class="modal-dialog">

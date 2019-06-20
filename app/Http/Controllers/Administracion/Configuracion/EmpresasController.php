@@ -313,7 +313,7 @@ class EmpresasController extends MasterController
      * @param Request $request [Description]
      * @return JsonResponse
      */
-    public static function findRelGroups( Request $request )
+    public function findRelGroups( Request $request )
     {
         $response = [];
         if(is_null($request->get('id_empresa'))){
@@ -323,27 +323,29 @@ class EmpresasController extends MasterController
                 ,"message"  => "¡No se encontró ningún grupo en esta Empresa!"
             ],Response::HTTP_BAD_REQUEST);
         }
-      $companies = SysEmpresasModel::with(["groupsCompanies" => function($query){
-                        return $query->groupBy('sys_companies_groups.group_id');
-                    }])->whereIn('id',$request->get("id_empresa"))->get();
+        $companies = SysEmpresasModel::with(["groupsCompanies" => function($query){
+            return $query->groupBy('sys_companies_groups.group_id');
+        }])->whereIn('id',[$request->get("id_empresa")])->get();
 
-      if ( count($companies) > 0 ){
-            $i = 0;
-            foreach ($companies as $company ){
-                foreach ($company->groupsCompanies as $groups){
-                    $response[$i]['groups']  = [
-                        'id'            => $groups->id
-                        ,'descripcion'  => $company->razon_social." - ".$groups->sucursal
-                    ];
-                    $i++;
+        if ( count($companies) > 0){
+                $i = 0;
+                foreach ($companies as $company ){
+                    if (count($company->groupsCompanies) > 0){
+                        foreach ($company->groupsCompanies as $groups){
+                            $response[$i]['groups']  = [
+                                'id'            => $groups->id
+                                ,'descripcion'  => $company->razon_social." - ".$groups->sucursal
+                            ];
+                            $i++;
+                        }
+                    }
                 }
-            }
         }
-      return new JsonResponse([
-          "success"   => true
-          ,"data"     => $response
-          ,"message"  => "¡Se cargo correctamente las sucursales!"
-      ],Response::HTTP_OK);
+          return new JsonResponse([
+              "success"   => true
+              ,"data"     => $response
+              ,"message"  => "¡Se cargo correctamente las sucursales!"
+          ],Response::HTTP_OK);
 
     }
 

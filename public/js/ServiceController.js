@@ -1,12 +1,7 @@
 app.service('ServiceController',["$http","NotificationsFactory", "FactoryController","$timeout","$location","$window",function (http,nf,fc,time,l,w) {
 
     function ServiceController() {
-        this.notificaciones;
-        this.correos;
-        this.permisos;
-        this.rootCmbCompanies;
-        this.cmbEstatusRoot;
-        this.loader;
+
     };
 
     ServiceController.prototype.requestHttp = function ( url, fields, methods,headers ) {
@@ -52,15 +47,6 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
             scope.cmbEstatusRoot    = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
             scope.loader = false;
         });
-
-    };
-
-    ServiceController.prototype.loading = function (hide = false) {
-        if (hide) {
-            jQuery('.loader').fadeOut('hide');
-            return;
-        }
-        jQuery('.loader').fadeIn('slow');
 
     };
 

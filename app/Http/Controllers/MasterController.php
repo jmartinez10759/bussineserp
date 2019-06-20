@@ -1021,14 +1021,14 @@ abstract class MasterController extends Controller
     {
         if( Session::get('roles_id') == 1 ){
 
-            $response = SysProductosModel::with('units','categories','companies')
+            $response = SysProductosModel::with('units','categories','companies',"groups")
                 ->orderBy('id','DESC')
                 ->groupby('id')
                 ->get();
         }else{
             $response = SysEmpresasModel::find(Session::get("company_id"))
                 ->products()
-                ->with('units','categories','companies')
+                ->with('units','categories','companies',"groups")
                 ->orderBy('id','DESC')
                 ->groupby('id')
                 ->get();

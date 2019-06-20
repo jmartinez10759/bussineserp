@@ -16,7 +16,7 @@ app.factory("NotificationsFactory",["sweetAlert","toastr","swangular", function 
     NotificationsFactory.prototype.titleMgsUpdate      = "Registro actualizado corretamente";
     NotificationsFactory.prototype.titleRegisterSuccess= "Registro insertado corretamente.";
     NotificationsFactory.prototype.titleRegisterError  = "Ocurrio un error, Favor de verificar";
-    NotificationsFactory.prototype.validateRegister    = "Favor de Verificar los campos color Rojo";
+    NotificationsFactory.prototype.validateRegister    = "¡Favor de verificar los campos!";
     NotificationsFactory.prototype.sessionExpired      = "Expiro su sesión, favor de ingresar al portal";
     NotificationsFactory.prototype.contentType         = 'application/json';
 
@@ -92,7 +92,7 @@ app.factory("NotificationsFactory",["sweetAlert","toastr","swangular", function 
         for(var i in validation ){
             var valores = validation[i];
             if( valores == "" || valores == null || valores === undefined ){
-                this.toastError('Verificar campo '+ i +' para poder continuar' , this.validateRegister);
+                this.toastWarning('Verificar campo '+ i +' para poder continuar' , this.validateRegister);
                 return false;
             }
         }

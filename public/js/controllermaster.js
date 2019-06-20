@@ -153,9 +153,16 @@ app.controller('ApplicationController', ['$scope','masterservice','ServiceContro
 		sc.serviceNotification($scope);
 		$scope.userLogged 		= w.localStorage['rolesId'];
 	};
+	$scope.getGroupByCompany = function(companyId){
+		var url = fc.domain("empresas/findGroups");
+		var fields = {"id_empresa" : companyId };
+		sc.requestHttp(url,fields,"POST", false).then(function (response) {
+			$scope.rootCmbGroups = response.data.data;
+		});
+	};
 
 	$scope.modalShow = function(){
-		nf.modal('#modal_add_register');
+		nf.modal("#modal_add_register");
 	};
 
 	$scope.update_notify = function(){

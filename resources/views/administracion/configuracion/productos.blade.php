@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-controller="ProductosController" ng-init="constructor()" ng-cloak >
+<div ng-controller="ProductosController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
     <div class="table-responsive table-container">
 	    <table class="table table-striped table-responsive highlight table-hover" id="datatable">
 	        <thead>
@@ -45,4 +45,5 @@
 @stop
 @push('scripts')
 <script type="text/javascript" src="{{asset('js/administracion/configuracion/buildProductsController.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/administracion/configuracion/directives/image-load.js')}}"></script>
 @endpush
