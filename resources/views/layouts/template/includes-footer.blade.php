@@ -129,10 +129,11 @@
           }
 
         });
-        /*jQuery('.select_chosen').chosen({width: "100%"});*/
         jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
     </script>
 
     <!-- script desarrollador -->
       @stack('scripts')
       <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
+      <script type="text/javascript" src="{{asset('js/directives/directives-master.js')}}"></script>
+      <script type="text/javascript" src="{{asset('js/components/components-master.js')}}"></script>

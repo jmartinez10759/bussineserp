@@ -207,7 +207,7 @@
                                                             width="'100%'"
                                                             ng-model="insert.groupId"
                                                             multiple
-                                                            ng-options="value.id as value.sucursal for (key, value) in rootCmbGroups">
+                                                            ng-options="value.groups.id as value.groups.descripcion for (key, value) in rootCmbGroups">
                                                         <option value="">--Seleccione Opcion--</option>
                                                     </select>
                                                 </div>

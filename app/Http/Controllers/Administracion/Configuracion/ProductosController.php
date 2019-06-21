@@ -82,14 +82,14 @@ class ProductosController extends MasterController
     /**
      *This method is used show register of products by id
      * @access public
-     * @param Request $request [Description]
+     * @param int|null $id
      * @param SysProductosModel $products
      * @return JsonResponse
      */
-    public function show( Request $request, SysProductosModel $products )
+    public function show( int $id = null, SysProductosModel $products )
     {
         try {
-            $product = $products->find($request->get("id"));
+            $product = $products->with('units','categories','companies',"groups")->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $product
@@ -205,7 +205,7 @@ class ProductosController extends MasterController
         }
 
         if ($success) {
-           return $this->show(new Request($request->all()), new SysProductosModel );
+           return $this->show($request->get("id"), new SysProductosModel );
         }
         return new JsonResponse([
             'success'   => FALSE

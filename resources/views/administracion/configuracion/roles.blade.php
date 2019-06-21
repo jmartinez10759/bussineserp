@@ -8,9 +8,9 @@
 	    <table class="table table-striped table-responsive highlight table-hover" id="datatable">
 	        <thead>
 	            <tr style="background-color: #337ab7; color: #ffffff;">
-	                <th>ID</th>
-	                <th>Perfil</th>
-	                <th>Nombre Corto</th>
+					<th>ID</th>
+					<th>Perfil</th>
+					<th>Nombre Corto</th>
 	                <th>Estatus</th>
 	                <th class="text-right"></th>
 	            </tr>
@@ -35,7 +35,6 @@
 	    </table>
 	</div>
 	@include('administracion.configuracion.rolesEdit')
-	<!-- <div class="modal fade" id="modal_add_register" role="dialog" aria-hidden="true"> -->
 </div>
 @stop
 @push('scripts')

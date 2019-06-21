@@ -4,13 +4,12 @@ const URL = {
   ,url_edit            : "products/{id}/edit"
   ,url_destroy         : "products/{id}/destroy"
   ,url_all             : "products/all"
-  ,url_unidades        : 'unidadesmedidas/edit'
   ,url_edit_tasa       : "tasa/{factorId}/tasaByFactor"
   ,url_edit_taxes      : "taxes/{tasaId}/taxesByTasa"
   ,url_upload          : 'upload/files'
 };
 
-app.controller('ProductosController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
+app.controller('ProductsController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -26,7 +25,33 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response.data.data);
-                $scope.datos         = response.data.data.products;
+                var register = [];
+                angular.forEach(response.data.data.products,function (value,key) {
+                    register[key] = {
+                        'id'        : value.id ,
+                        'categories': (value.categories) ? value.categories.nombre : '' ,
+                        'keys'      : value.codigo ,
+                        'units'     : (value.units)? value.units.clave+' - '+value.units.descripcion : '' ,
+                        'products'  : value.nombre ,
+                        'stock'     : value.stock ,
+                        'subtotal'  : '$ '+value.subtotal.toLocaleString(),
+                        'total'     : '$ '+value.total.toLocaleString() ,
+                        'estatus'   : value.estatus ,
+                        'btnDelete' : ""
+                    };
+                });
+                var titles = [
+                        "Categorias",
+                        "Codigo Producto",
+                        "Unidad de Medida",
+                        "Producto",
+                        "Stock",
+                        "SubTotal",
+                        "Total",
+                        "Estatus" ,
+                        ""
+                    ];
+                $scope.datos         = {"titles" : titles, "register" : register};
                 $scope.cmbUnits      = response.data.data.units;
                 $scope.cmbServices   = response.data.data.services;
                 $scope.cmbCategories = response.data.data.categories;
@@ -83,24 +108,26 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
 
     };
 
-    $scope.editRegister = function(entry){
-        var datos = ['categories','units','updated_at','created_at','$$hashKey','pivot'];
-        $scope.update = sc.mapObject(entry, datos);
-        $scope.update.companyId = angular.isDefined($scope.update.companies[0])?$scope.update.companies[0].id : "";
-        $scope.getGroupByCompany($scope.update.companyId);
-        $scope.update.groupId = [];
-        angular.forEach($scope.update.groups,function (value, key) {
-            $scope.update.groupId[key] = value.id;
-        });
-        $scope.getTasas($scope.update.id_tipo_factor);
-        $scope.getTaxes($scope.update.id_tasa,true);
-        nf.modal("#modal_edit_register");
-        console.log($scope.update);
+    $scope.editRegister = function(id){
 
-        /*var html = '';
-        html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
-        jQuery('#imagen_edit').html("");
-        jQuery('#imagen_edit').html(html);*/
+        var url = fc.domain(URL.url_edit,id);
+        $scope.loader = true;
+        sc.requestHttp(url,null,"GET",false).then(function (response) {
+
+            var datos = ['categories','units','updated_at','created_at','$$hashKey','pivot'];
+            $scope.update = sc.mapObject(response.data.data, datos);
+            $scope.update.companyId = angular.isDefined($scope.update.companies[0])?$scope.update.companies[0].id : "";
+            $scope.getGroupByCompany($scope.update.companyId);
+            $scope.update.groupId = [];
+            angular.forEach($scope.update.groups,function (value, key) {
+                $scope.update.groupId[key] = value.id;
+            });
+            $scope.getTasas($scope.update.id_tipo_factor);
+            $scope.getTaxes($scope.update.id_tasa,true);
+            nf.modal("#modal_edit_register");
+            console.log($scope.update);
+
+        });
 
     };
 
@@ -110,7 +137,7 @@ app.controller('ProductosController', ['ServiceController','FactoryController','
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {
                     nf.toastSuccess(response.data.message, nf.titleMgsSuccess);
-                    $scope.constructor();
+                    $scope.index();
                 }
             });
         }, null, "SI", "NO");

@@ -15,7 +15,7 @@
 
 }]);*/
 
-app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope ) {
+/*app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope ) {
 
 	return {
 
@@ -65,7 +65,7 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 	    },
 
 	    session_status: function( response = {} ){
-	    	/*se carga el metodo para obtener los correos y/o las notificaciones*/
+	    	/!*se carga el metodo para obtener los correos y/o las notificaciones*!/
         	$rootScope.$emit("services", {});
 			if( typeof response.data != "object" ){
 			  toastr.error( session_expired );
@@ -128,10 +128,10 @@ app.service('masterservice', ['$http','$rootScope', function( $http , $rootScope
 
   	}
 
-}]);
+}]);*/
 
 
-app.controller('ApplicationController', ['$scope','masterservice','ServiceController','$http','$rootScope','FactoryController',"NotificationsFactory",'$window','$location',function( $scope,masterservice,sc,$http,rs,fc,nf,w,l ){
+app.controller('ApplicationController', ['$scope','ServiceController','$http','$rootScope','FactoryController',"NotificationsFactory",'$window','$location',function( $scope,sc,$http,rs,fc,nf,w,l ){
 
 	rs.$on("services", function(){
 	    $scope.services();
@@ -153,10 +153,12 @@ app.controller('ApplicationController', ['$scope','masterservice','ServiceContro
 		sc.serviceNotification($scope);
 		$scope.userLogged 		= w.localStorage['rolesId'];
 	};
+
 	$scope.getGroupByCompany = function(companyId){
 		var url = fc.domain("empresas/findGroups");
 		var fields = {"id_empresa" : companyId };
 		sc.requestHttp(url,fields,"POST", false).then(function (response) {
+			console.log(response.data.data);
 			$scope.rootCmbGroups = response.data.data;
 		});
 	};
@@ -165,7 +167,7 @@ app.controller('ApplicationController', ['$scope','masterservice','ServiceContro
 		nf.modal("#modal_add_register");
 	};
 
-	$scope.update_notify = function(){
+	/*$scope.update_notify = function(){
 
 	    var url      = domain('api/sistema/token');
 	    var fields   = { email: "jorge.martinez@burolaboralmexico.com" };
@@ -216,6 +218,6 @@ app.controller('ApplicationController', ['$scope','masterservice','ServiceContro
 		        masterservice.session_status_error( error );
 		      });
 
-	}
+	}*/
 
 }]);
