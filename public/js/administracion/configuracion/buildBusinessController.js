@@ -3,7 +3,7 @@ const URL = {
     ,urlListGroup         : 'list/sucursales'
     ,urlPortal            : 'portal'
 };
-app.controller('BussinesListController', ['ServiceController','FactoryController','NotificationsFactory','masterservice','$scope', '$http', '$location','$window', function( sc,fc,nf,masterservice, $scope, $http, $location, w ) {
+app.controller('BussinesListController', ['ServiceController','FactoryController','NotificationsFactory','$scope', '$http', '$location','$window', function( sc,fc,nf,$scope,$http,$location, w ) {
 
     $scope.constructor = function(){
         $scope.datos  = [];

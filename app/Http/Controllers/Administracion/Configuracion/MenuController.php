@@ -44,14 +44,14 @@ class MenuController extends MasterController
     /**
      * This method is for get information of the menu belong to company
      * @access public
-     * @param Request $request [Description]
+     * @param int|null $id
      * @param SysMenuModel $menus
      * @return JsonResponse
      */
-    public function show( Request $request, SysMenuModel $menus )
+    public function show( int $id = null , SysMenuModel $menus )
     {
         try {
-            $response = $menus->with('companiesMenus')->whereId( $request->get("id") )->first();
+            $response = $menus->with('companiesMenus')->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
@@ -227,7 +227,7 @@ class MenuController extends MasterController
       }
 
       if ($success) {
-          return $this->show( new Request($request->all()), new SysMenuModel);
+          return $this->show( $request->get("id"), new SysMenuModel);
       }
         return new JsonResponse([
             "success" => FALSE ,

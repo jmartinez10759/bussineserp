@@ -146,14 +146,14 @@ class EmpresasController extends MasterController
     /**
      * this method is used ger for information by  company id
      * @access public
-     * @param Request $request [Description]
+     * @param int|null $id
      * @param SysEmpresasModel $companies
      * @return JsonResponse
      */
-      public function show( Request $request, SysEmpresasModel $companies )
+      public function show( int $id = null , SysEmpresasModel $companies )
       {
           try {
-              $response = $companies->find( $request->get("id") );
+              $response = $companies->with("comerciales","postalCode","regimenes","states","countries","contacts" )->find($id);
               return new JsonResponse([
                   'success'   => TRUE
                   ,'data'     => $response
@@ -227,7 +227,7 @@ class EmpresasController extends MasterController
           }
 
           if ($success) {
-              return $this->show( new Request($request->all()), new SysEmpresasModel );
+              return $this->show( $request->get("id"), new SysEmpresasModel );
           }
           return new JsonResponse([
               'success'   => FALSE
@@ -236,17 +236,20 @@ class EmpresasController extends MasterController
           ], Response::HTTP_BAD_REQUEST);
 
       }
- /**
-  *Metodo para borrar el registro
-  *@access public
-  *@param $id [Description]
-  *@return void
-  */
-  public function destroy(Request $request ){
-      
-      $error = null;
-          DB::beginTransaction();
-          try {  
+
+    /**
+     * this method is used register delete of company
+     * @access public
+     * @param int $id [Description]
+     * @param SysEmpresasModel $companies
+     * @return void
+     */
+    public function destroy(int $id = null, SysEmpresasModel $companies )
+    {
+        var_export($id);die();
+        $error = null;
+        DB::beginTransaction();
+        try {
               $response = SysEmpresasSucursalesModel::where(['id_empresa' => $request->id])->get(); 
               if( count($response) > 0){
                   for($i = 0; $i < count($response); $i++){
@@ -256,20 +259,20 @@ class EmpresasController extends MasterController
               $this->_tabla_model::where(['id' => $request->id])->delete();
               SysEmpresasSucursalesModel::where(['id_empresa' => $request->id])->delete();
               SysContactosSistemasModel::where(['id_empresa' => $request->id])->delete();
-          DB::commit();
-          $success = true;
-          } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          DB::rollback();
-          }
+              DB::commit();
+              $success = true;
+        } catch (\Exception $e) {
+              $success = false;
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              DB::rollback();
+        }
 
-          if ($success) {
-          return $this->_message_success( 200, $response , self::$message_success );
-          }
-          return $this->show_error(6, $error, self::$message_error );
+        if ($success) {
 
-  }
+        }
+
+
+    }
      /**
       * This method is used load for companies
       * @access public

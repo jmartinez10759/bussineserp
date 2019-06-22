@@ -1,20 +1,26 @@
 const URL = {
   url_insert            : "roles/register"
   ,url_update           : 'roles/update'
-  ,url_edit             : 'roles/edit'
+  ,url_edit             : 'roles/edit/{id}/company'
   ,url_all              : 'roles/all'
-  ,url_destroy          : "roles/destroy"
+  ,url_destroy          : "roles/{id}/destroy"
 };
 
 app.controller('RolesController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
     $scope.constructor = function(){
-      $scope.datos  = [];
-      $scope.insert = { estatus: 1 };
-      $scope.update = {};
-      $scope.edit   = {};
-      $scope.fields = {};
-      $scope.index();
+        $scope.datos  = [];
+        $scope.insert = { estatus: 1 };
+        $scope.update = {};
+        $scope.fields = {};
+        $scope.index();
+        $scope.register = [];
+        $scope.titles   = [
+            "Perfil",
+            "Nombre Corto",
+            "Estatus",
+            ""
+        ];
     };
 
     $scope.index = function(){
@@ -22,9 +28,19 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response);
-                $scope.datos = response.data.data.roles;
+                angular.forEach(response.data.data.roles,function (value,key) {
+                    $scope.register[key] = {
+                        'id'          : value.id ,
+                        'perfil'      : value.perfil,
+                        'shortKey'    : value.clave_corta ,
+                        'estatus'     : value.estatus ,
+                        'btnDelete'   : ""
+                    };
+                });
+                $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
             }
         });
+
     };
 
     $scope.insertRegister = function(){
@@ -53,15 +69,18 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
         });
     };
 
-    $scope.editRegister = function( entry ){
-        var datos = ['id', 'perfil', 'clave_corta', 'estatus',"companies_roles"];
-        $scope.update = sc.mapObject(entry, datos, true);
-        $scope.update.companyId = [];
-        angular.forEach($scope.update.companies_roles,function (value, key) {
-            $scope.update.companyId[key] = value.id;
+    $scope.editRegister = function( id ){
+        var url = fc.domain(URL.url_edit,id);
+        sc.requestHttp(url,null,"GET",false).then(function (response) {
+            var datos = ['id', 'perfil', 'clave_corta', 'estatus',"companies_roles"];
+            $scope.update = sc.mapObject(response.data.data, datos, true);
+            $scope.update.companyId = [];
+            angular.forEach($scope.update.companies_roles,function (value, key) {
+                $scope.update.companyId[key] = value.id;
+            });
+            console.log($scope.update);
+            nf.modal("#modal_edit_register");
         });
-        console.log($scope.update);
-        nf.modal("#modal_edit_register");
     };
 
     $scope.destroyRegister = function( id ){

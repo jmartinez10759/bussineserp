@@ -220,11 +220,8 @@
                             <!-- Profile Image -->
                             <div class="box box-primary">
                                 <center>
-                                    <div class="box-body box-profile">
-                                        <div id="load_img" class="col-sm-12">
-                                            <div id="imagen_edit"></div>
-                                        </div>
-                                        <input type="hidden" class="form-control" ng-model="update.logo">
+                                    <div class="box-body box-profile drop-shadow">
+                                        <image-load image="update.logo"></image-load>
                                     </div>
                                 </center>
                             </div>

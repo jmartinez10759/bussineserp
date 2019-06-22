@@ -194,9 +194,9 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'menus.destroy'
     ]);
 
-    Route::get('/menus/edit', [
+    Route::get('/menus/{id}/edit', [
         'uses'      => 'Administracion\Configuracion\MenuController@show'
-        ,'as'       => 'menus.show'
+        ,'as'       => 'menus.edit'
     ]);
 
     Route::put('/menus/update', [
@@ -328,12 +328,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'empresas.all'
     ]);
 
-    Route::get('company/edit', [
+    Route::get('company/{id}/edit', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@show'
         ,'as'       => 'empresas.edit'
     ]);
 
-    Route::delete('company/destroy', [
+    Route::delete('company/{id}/destroy', [
         'uses'      => 'Administracion\Configuracion\EmpresasController@destroy'
         ,'as'       => 'empresas.destroy'
     ]);

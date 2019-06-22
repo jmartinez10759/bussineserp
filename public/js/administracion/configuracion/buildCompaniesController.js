@@ -1,7 +1,7 @@
 const URL = {
     url_insert            : "company/register"
     ,url_update           : 'company/update'
-    ,url_edit             : 'company/edit'
+    ,url_edit             : 'company/{id}/edit'
     ,url_all              : 'company/all'
     ,url_destroy          : "company/{id}/destroy"
     ,url_country          : "edit/{countryId}/country"
@@ -17,9 +17,19 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
         $scope.cmbTaxRegime = [];
         $scope.insert = { estatus: 1 };
         $scope.update = {};
-        $scope.edit   = {};
         $scope.fields = {};
         $scope.index();
+        $scope.register = [];
+        $scope.titles   = [
+            "Nombre Comercial",
+            "Razon Social",
+            "RFC",
+            "Servicio Comercial",
+            "Contacto",
+            "Telefono",
+            "Estatus",
+            ""
+        ];
     };
 
     $scope.index = function(){
@@ -27,7 +37,20 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response);
-                $scope.datos            = response.data.data.companies;
+                angular.forEach(response.data.data.companies,function (value,key) {
+                    $scope.register[key] = {
+                        'id'                : value.id ,
+                        'companyName'       : value.nombre_comercial ,
+                        'socialReason'      : value.razon_social ,
+                        'rfc'               : value.rfc_emisor ,
+                        'commercialName'    : value.comerciales.nombre ,
+                        'contactName'       : (value.contacts.length > 0)? value.contacts[0].nombre_completo: '' ,
+                        'contactPhone'      : (value.contacts.length > 0)? value.contacts[0].telefono: '' ,
+                        'estatus'           : value.estatus ,
+                        'btnDelete'         : ""
+                    };
+                });
+                $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
                 $scope.cmbTradeService  = response.data.data.tradeService;
                 $scope.cmbTaxRegime     = response.data.data.taxRegime;
             }
@@ -77,23 +100,25 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
         });
     };
 
-    $scope.editRegister = function( entry ){
-        var datos = ['created_at',"updated_at"];
-        $scope.update = sc.mapObject(entry, datos, false);
-        if( entry.contacts.length > 0 ){
-            $scope.update.contacto     = entry.contacts[0].nombre_completo;
-            $scope.update.departamento = entry.contacts[0].departamento;
-            $scope.update.telefono     = entry.contacts[0].telefono;
-            $scope.update.correo       = entry.contacts[0].correo;
-        }
-        console.log($scope.update);
-        $scope.actionCodePostal(entry.codigo,true);
-        nf.modal("#modal_edit_register");
+    $scope.editRegister = function( id ){
+        var url = fc.domain(URL.url_edit,id);
+        sc.requestHttp(url,null,"GET",false).then(function (response) {
+            var datos = ['created_at',"updated_at"];
+            $scope.update = sc.mapObject(response.data.data, datos, false);
+            if( response.data.data.contacts.length > 0 ){
+                $scope.update.contacto     = response.data.data.contacts[0].nombre_completo;
+                $scope.update.departamento = response.data.data.contacts[0].departamento;
+                $scope.update.telefono     = response.data.data.contacts[0].telefono;
+                $scope.update.correo       = response.data.data.contacts[0].correo;
+            }
+            console.log($scope.update);
+            $scope.actionCodePostal(response.data.data.codigo,true);
+            nf.modal("#modal_edit_register");
+        });
     };
 
     $scope.destroyRegister = function( id ){
-
-        var url = fc.domain( URL.url_destroy+"/"+id+"/companies" );
+        var url = fc.domain( URL.url_destroy,id);
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {

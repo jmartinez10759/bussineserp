@@ -2,7 +2,7 @@
 @section('content')
 @push('styles')
 @endpush
-<div ng-controller="UsuarioController" ng-init="constructor()" ng-cloak >
+<div ng-controller="UsuarioController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
   <div class="table-responsive table-container" >
     <table class="table table-striped table-responsive highlight table-hover" id="datatable">
       <thead>

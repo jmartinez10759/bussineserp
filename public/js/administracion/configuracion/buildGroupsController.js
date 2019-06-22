@@ -1,9 +1,9 @@
 const URL = {
   url_insert            : "groups/register"
   ,url_update           : 'groups/update'
-  ,url_edit             : 'groups/edit'
+  ,url_edit             : 'groups/{}/edit'
   ,url_all              : 'groups/all'
-  ,url_destroy          : "groups/destroy"
+  ,url_destroy          : "groups/{}/destroy"
 };
 app.controller('GroupsController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
@@ -11,9 +11,17 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
         $scope.datos  = [];
         $scope.insert = { estatus: 1 };
         $scope.update = {};
-        $scope.edit   = {};
         $scope.fields = {};
         $scope.index();
+        $scope.register = [];
+        $scope.titles   = [
+            "Código",
+            "Sucursal",
+            "Direccion",
+            "Telefono",
+            "Estatus",
+            ""
+        ];
     };
 
     $scope.index = function(){
@@ -21,7 +29,18 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response);
-                $scope.datos = response.data.data.groups;
+                angular.forEach(response.data.data.groups,function (value,key) {
+                    $scope.register[key] = {
+                        'id'          : value.id ,
+                        'codigo'      : value.codigo ,
+                        'sucursal'    : value.sucursal ,
+                        'direccion'   : value.direccion ,
+                        'telefono'    : value.telefono ,
+                        'estatus'     : value.estatus ,
+                        'btnDelete'   : ""
+                    };
+                });
+                $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
             }
         });
     };

@@ -1,9 +1,9 @@
 const URL = {
     url_insert            : "menus/register"
     ,url_update           : 'menus/update'
-    ,url_edit             : 'menus/edit'
+    ,url_edit             : 'menus/{id}/edit'
     ,url_all              : 'menus/all'
-    ,url_destroy          : "menus/destroy"
+    ,url_destroy          : "menus/{}/destroy"
 };
 
 app.controller('MenusController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,scope ) {
@@ -12,11 +12,19 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
         scope.datos  = [];
         scope.insert = { estatus: 1 };
         scope.update = {};
-        scope.edit   = {};
         scope.fields = {};
         scope.cmbTypeMenu= [{id:"SIMPLE",descripcion: "Principal"},{id:"PADRE",descripcion: "Menu"},{id:"HIJO",descripcion: "SubMenus"}];
         scope.cmbTypeMenus= {};
         scope.index();
+        scope.register = [];
+        scope.titles   = [
+            "Menu",
+            "Url",
+            "Tipo Menu",
+            "Icono",
+            "Estatus",
+            ""
+        ];
     };
 
     scope.index = function(){
@@ -24,7 +32,18 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response);
-                scope.datos = response.data.data.menus;
+                angular.forEach(response.data.data.menus,function (value,key) {
+                    scope.register[key] = {
+                        'id'          : value.id ,
+                        'texto'       : value.texto ,
+                        'link'        : value.link ,
+                        'tipo'        : value.tipo ,
+                        'icon'        : value.icon ,
+                        'estatus'     : value.estatus ,
+                        'btnDelete'   : ""
+                    };
+                });
+                scope.datos         = {"titles" : scope.titles, "register" : scope.register};
                 scope.cmbTypeMenus = response.data.data.cmbMenus
             }
         });
@@ -44,7 +63,8 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
     };
 
     scope.updateRegister = function(){
-        let url = fc.domain(URL.url_update);
+        var url = fc.domain(URL.url_update);
+        scope.spinning = true;
         var fields = sc.mapObject(scope.update, ['companies_menus','pivot'], false);
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
@@ -53,18 +73,24 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
                 nf.trEffect(scope.update.id);
                 scope.index();
             }
+            scope.spinning = false;
         });
     };
 
-    scope.editRegister = function( entry ){
-        var datos = ["created_at","updated_at"];
-        scope.update = sc.mapObject(entry, datos, false);
-        scope.update.companyId = [];
-        angular.forEach(scope.update.companies_menus,function (value, key) {
-            scope.update.companyId[key] = value.id;
+    scope.editRegister = function( id ){
+        var url = fc.domain(URL.url_edit,id);
+        sc.requestHttp(url,null,"GET",false).then(function (response) {
+
+            var datos = ["created_at","updated_at"];
+            scope.update = sc.mapObject(response.data.data, datos, false);
+            scope.update.companyId = [];
+            angular.forEach(scope.update.companies_menus,function (value, key) {
+                scope.update.companyId[key] = value.id;
+            });
+            console.log(scope.update);
+            nf.modal("#modal_edit_register");
+
         });
-        console.log(scope.update);
-        nf.modal("#modal_edit_register");
     };
 
     scope.destroyRegister = function( id ){

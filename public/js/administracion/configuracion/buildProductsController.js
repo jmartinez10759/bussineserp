@@ -12,12 +12,23 @@ const URL = {
 app.controller('ProductsController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
     $scope.constructor = function(){
-        $scope.datos  = [];
-        $scope.insert = {estatus: 1};
-        $scope.update = {};
-        $scope.edit   = {};
-        $scope.fields = {};
+        $scope.datos    = [];
+        $scope.insert   = {estatus: 1};
+        $scope.update   = {};
+        $scope.fields   = {};
         $scope.index();
+        $scope.register = [];
+        $scope.titles   = [
+            "Categorias",
+            "Codigo Producto",
+            "Unidad de Medida",
+            "Producto",
+            "Stock",
+            "SubTotal",
+            "Total",
+            "Estatus" ,
+            ""
+        ];
     };
 
     $scope.index = function(){
@@ -25,9 +36,8 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response.data.data);
-                var register = [];
                 angular.forEach(response.data.data.products,function (value,key) {
-                    register[key] = {
+                    $scope.register[key] = {
                         'id'        : value.id ,
                         'categories': (value.categories) ? value.categories.nombre : '' ,
                         'keys'      : value.codigo ,
@@ -40,18 +50,7 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
                         'btnDelete' : ""
                     };
                 });
-                var titles = [
-                        "Categorias",
-                        "Codigo Producto",
-                        "Unidad de Medida",
-                        "Producto",
-                        "Stock",
-                        "SubTotal",
-                        "Total",
-                        "Estatus" ,
-                        ""
-                    ];
-                $scope.datos         = {"titles" : titles, "register" : register};
+                $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
                 $scope.cmbUnits      = response.data.data.units;
                 $scope.cmbServices   = response.data.data.services;
                 $scope.cmbCategories = response.data.data.categories;
@@ -111,7 +110,6 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
     $scope.editRegister = function(id){
 
         var url = fc.domain(URL.url_edit,id);
-        $scope.loader = true;
         sc.requestHttp(url,null,"GET",false).then(function (response) {
 
             var datos = ['categories','units','updated_at','created_at','$$hashKey','pivot'];

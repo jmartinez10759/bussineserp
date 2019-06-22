@@ -117,14 +117,14 @@ class RolesController extends MasterController
     /**
      * This method is for get information the roles by companies
      * @access public
-     * @param Request $request [Description]
+     * @param int|null $id
      * @param SysRolesModel $roles
      * @return JsonResponse
      */
-     public function show( Request $request, SysRolesModel $roles )
+     public function show( int $id = null, SysRolesModel $roles )
      {
         try {
-          $response = $roles->find( $request->get("id") );
+          $response = $roles->with('companiesRoles','groupsRoles')->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
