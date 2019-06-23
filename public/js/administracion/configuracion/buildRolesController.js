@@ -59,6 +59,7 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
     $scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
         var fields = sc.mapObject($scope.update, ['companies_roles'], false);
+        $scope.spinning = true;
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastInfo(response.data.message, nf.titleMgsSuccess);
@@ -66,6 +67,7 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
                 nf.trEffect($scope.update.id);
                 $scope.index();
             }
+            $scope.spinning = false;
         });
     };
 

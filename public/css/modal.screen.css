@@ -45,17 +45,17 @@ Full screen Modal
 
 @media (min-width: 768px) {
     .fullscreen-modal .modal-dialog {
-        width: 750px;
+        width: 85%;
     }
 }
 @media (min-width: 992px) {
     .fullscreen-modal .modal-dialog {
-        width: 970px;
+        width: 95%;
     }
 }
 @media (min-width: 1200px) {
     .fullscreen-modal .modal-dialog {
-        width: 1170px;
+        width: 95%;
     }
 }
 @keyframes spin {

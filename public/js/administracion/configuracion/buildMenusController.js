@@ -3,7 +3,7 @@ const URL = {
     ,url_update           : 'menus/update'
     ,url_edit             : 'menus/{id}/edit'
     ,url_all              : 'menus/all'
-    ,url_destroy          : "menus/{}/destroy"
+    ,url_destroy          : "menus/destroy/{id}/company"
 };
 
 app.controller('MenusController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,scope ) {
@@ -32,6 +32,7 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response);
+                scope.register = [];
                 angular.forEach(response.data.data.menus,function (value,key) {
                     scope.register[key] = {
                         'id'          : value.id ,
@@ -52,20 +53,22 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
     scope.insertRegister = function(){
         var url     = fc.domain(  URL.url_insert );
         var fields  = scope.insert;
+        scope.spinning = true;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
                 nf.modal("#modal_add_register",true);
-                scope.index();
+                scope.constructor();
             }
+            scope.spinning = false;
         });
 
     };
 
     scope.updateRegister = function(){
         var url = fc.domain(URL.url_update);
-        scope.spinning = true;
         var fields = sc.mapObject(scope.update, ['companies_menus','pivot'], false);
+        scope.spinning = true;
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 nf.toastInfo(response.data.message, nf.titleMgsSuccess);
@@ -95,7 +98,7 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
 
     scope.destroyRegister = function( id ){
 
-        var url = fc.domain( URL.url_destroy+"/"+id+"/company" );
+        var url = fc.domain( URL.url_destroy,id);
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {

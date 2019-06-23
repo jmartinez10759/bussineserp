@@ -31,7 +31,7 @@
                                <i class="fa fa-plus-circle"></i> Agregar
                             </button>
                         </div>
-                        {{--{!! $modal !!}--}}
+
                     </div>
                     
 

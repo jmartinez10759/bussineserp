@@ -22,6 +22,7 @@ app.controller('LoginController', ['ServiceController','FactoryController','Noti
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
                 w.localStorage['rolesId'] = response.data.data.roles_id;
+                w.localStorage['skin'] = "skin-black";
                 if (w.localStorage['rolesId'] == 1 && w.localStorage['pathWeb']){
                     redirect(w.localStorage['pathWeb']);
                 }else{

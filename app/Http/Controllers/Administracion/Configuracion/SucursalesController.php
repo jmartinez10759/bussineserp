@@ -14,6 +14,9 @@ use App\Model\Administracion\Configuracion\SysEmpresasModel;
 
 class SucursalesController extends MasterController
 {
+    /**
+     * SucursalesController constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -63,14 +66,14 @@ class SucursalesController extends MasterController
     /**
      * This method is used get data with id of group
      * @access public
-     * @param Request $request [Description]
+     * @param int|null $id
      * @param SysSucursalesModel $groups
      * @return JsonResponse
      */
-    public function show( Request $request, SysSucursalesModel $groups )
+    public function show( int $id = null , SysSucursalesModel $groups )
     {
         try {
-            $response = $groups->find($request->get("id") );
+            $response = $groups->with('companiesGroups','rolesGroups')->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
@@ -177,7 +180,7 @@ class SucursalesController extends MasterController
         }
 
         if ($success) {
-            return $this->show( new Request($request->all()), new SysSucursalesModel );
+            return $this->show( $request->get("id"), new SysSucursalesModel );
         }
          return new JsonResponse([
              'success'   => FALSE
@@ -192,7 +195,7 @@ class SucursalesController extends MasterController
      * @access public
      * @param int|null $id
      * @param SysSucursalesModel $groups
-     * @return void
+     * @return JsonResponse
      */
      public function destroy( int $id = null, SysSucursalesModel $groups )
      {
@@ -202,6 +205,7 @@ class SucursalesController extends MasterController
          try {
              $group = $groups->find($id);
              $group->companiesGroups()->detach();
+             $group->rolesGroups()->detach();
              $group->companies()->detach();
              $group->delete();
 
@@ -213,9 +217,18 @@ class SucursalesController extends MasterController
             DB::rollback();
         }
 
-        if ($success) {
-
-        }
+         if ($success) {
+             return new JsonResponse([
+                 'success'   => $success
+                 ,'data'     => []
+                 ,'message' => self::$message_success
+             ],Response::HTTP_OK);
+         }
+         return new JsonResponse([
+             'success'   => $success
+             ,'data'     => $error
+             ,'message' => self::$message_error
+         ],Response::HTTP_BAD_REQUEST);
 
 
      }

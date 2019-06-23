@@ -1,11 +1,12 @@
 const URL = {
-  url_insert            : "groups/register"
-  ,url_update           : 'groups/update'
-  ,url_edit             : 'groups/{id}/edit'
-  ,url_all              : 'groups/all'
-  ,url_destroy          : "groups/destroy/{id}/companies"
+    url_insert            : "boxes/register"
+    ,url_update           : "boxes/update"
+    ,url_edit             : "boxes/{id}/edit"
+    ,url_all              : "boxes/all"
+    ,url_destroy          : "boxes/{id}/destroy"
 };
-app.controller('GroupsController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
+
+app.controller('BoxesController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -15,10 +16,8 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
         $scope.index();
         $scope.register = [];
         $scope.titles   = [
-            "Código",
-            "Sucursal",
-            "Direccion",
-            "Telefono",
+            "Nombre",
+            "Descripcion",
             "Estatus",
             ""
         ];
@@ -30,20 +29,20 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
             if (sc.validateSessionStatus(response)){
                 console.log(response);
                 $scope.register = [];
-                angular.forEach(response.data.data.groups,function (value,key) {
+                angular.forEach(response.data.data.boxes,function (value,key) {
                     $scope.register[key] = {
                         'id'          : value.id ,
-                        'codigo'      : value.codigo ,
-                        'sucursal'    : value.sucursal ,
-                        'direccion'   : value.direccion ,
-                        'telefono'    : value.telefono ,
-                        'estatus'     : value.estatus ,
+                        'name'        : value.name,
+                        'description' : value.description ,
+                        'estatus'     : value.status ,
                         'btnDelete'   : ""
                     };
                 });
-                $scope.datos = {"titles" : $scope.titles, "register" : $scope.register};
+                $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
+                $scope.cmbUsers      = response.data.data.users;
             }
         });
+
     };
 
     $scope.insertRegister = function(){
@@ -63,7 +62,7 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
 
     $scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
-        var fields = sc.mapObject($scope.update, ['companies_groups'], false);
+        var fields = sc.mapObject($scope.update, ['companies_roles'], false);
         $scope.spinning = true;
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
@@ -76,14 +75,14 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
         });
     };
 
-    $scope.editRegister = function(id){
+    $scope.editRegister = function( id ){
         var url = fc.domain(URL.url_edit,id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
-            var datos = ['created_at',"updated_at","roles_groups"];
-            $scope.update = sc.mapObject(response.data.data, datos, false);
-            $scope.update.companyId = "";
-            angular.forEach($scope.update.companies_groups,function (value, key) {
-                $scope.update.companyId = value.id;
+            var datos = ['id', 'perfil', 'clave_corta', 'estatus',"companies_roles"];
+            $scope.update = sc.mapObject(response.data.data, datos, true);
+            $scope.update.companyId = [];
+            angular.forEach($scope.update.companies_roles,function (value, key) {
+                $scope.update.companyId[key] = value.id;
             });
             console.log($scope.update);
             nf.modal("#modal_edit_register");
@@ -91,12 +90,13 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
     };
 
     $scope.destroyRegister = function( id ){
-        var url = fc.domain( URL.url_destroy,id);
+
+        var url = fc.domain( URL.url_destroy+"/"+id+"/company" );
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {
                     nf.toastSuccess(response.data.message, nf.titleMgsSuccess);
-                    $scope.constructor();
+                    $scope.index();
                 }
             });
         }, null, "SI", "NO");

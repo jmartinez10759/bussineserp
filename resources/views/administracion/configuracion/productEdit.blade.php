@@ -230,13 +230,7 @@
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
-                        <i class="fa fa-times-circle"></i> Cancelar
-                    </button>
-                    <button type="button" class="btn btn-success" ng-click="insertRegister()" ng-if="permisos.INS" ng-disabled="spinning">
-                        <span ng-show="spinning"><i class="glyphicon glyphicon-refresh spinning"></i></span>
-                        <span ng-hide="spinning"><i class="fa fa-save"></i></span> Registrar
-                    </button>
+                    <button-register method="insertRegister()" permission="permisos" spinning="spinning"></button-register>
                 </div>
             </div>
         </div>
@@ -453,17 +447,18 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <div ng-if="userLogged == 1"></div>
-                                                <label class="col-sm-2 control-label">Sucursales</label>
-                                                <div class="col-sm-4">
-                                                    <select class="form-control"
-                                                            chosen
-                                                            width="'100%'"
-                                                            ng-model="update.groupId"
-                                                            multiple
-                                                            ng-options="value.groups.id as value.groups.descripcion for (key, value) in rootCmbGroups">
-                                                        <option value="">--Seleccione Opcion--</option>
-                                                    </select>
+                                                <div ng-if="userLogged == 1">
+                                                    <label class="col-sm-2 control-label">Sucursales</label>
+                                                    <div class="col-sm-4">
+                                                        <select class="form-control"
+                                                                chosen
+                                                                width="'100%'"
+                                                                ng-model="update.groupId"
+                                                                multiple
+                                                                ng-options="value.groups.id as value.groups.descripcion for (key, value) in rootCmbGroups">
+                                                            <option value="">--Seleccione Opcion--</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
 
                                                 <button type="button" class="btn btn-warning" ng-click="fileUpload(true)" ng-if="permisos.UPL">
@@ -489,13 +484,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true" >
-                    <i class="fa fa-times-circle"></i> Cancelar
-                </button>
-                <button type="button" class="btn btn-info" ng-click="updateRegister()" ng-if="permisos.UPD" ng-disabled="spinning">
-                    <span ng-show="spinning"><i class="glyphicon glyphicon-refresh spinning"></i></span>
-                    <span ng-hide="spinning"><i class="fa fa-save"></i> </span>Actualizar
-                </button>
+                <button-update method="updateRegister()" permission="permisos" spinning="spinning"></button-update>
             </div>
         </div>
     </div>

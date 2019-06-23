@@ -36,6 +36,7 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response.data.data);
+                $scope.register = [];
                 angular.forEach(response.data.data.products,function (value,key) {
                     $scope.register[key] = {
                         'id'        : value.id ,

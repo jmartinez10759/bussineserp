@@ -1,53 +1,54 @@
 <?php
 
-namespace App\Http\Controllers\Administracion\Configuracion;
 
+namespace App\Http\Controllers\SalesOfPoint;
+
+
+use App\Http\Controllers\MasterController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use App\Http\Controllers\MasterController;
-use App\Model\Administracion\Configuracion\SysRolesModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class RolesController extends MasterController
+class OrdersController extends MasterController
 {
+
     /**
-     * RolesController constructor.
+     * SalesController constructor.
      */
     public function __construct()
     {
         parent::__construct();
     }
-
     /**
      * @access public
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-     public function index()
-     {
-       $data = [
-         'page_title' 	              => "Configuración"
-         ,'title'  		              => "Roles"
-         ,'titulo_modal'              => "Agregar Registro"
-         ,'campo_1' 		          => 'Perfil'
-         ,'campo_2' 		          => 'Clave Corta'
-         ,'campo_3' 		          => 'Estatus'
-       ];
-       return $this->_loadView( 'administracion.configuracion.roles', $data );
-     }
+    public function index()
+    {
+        $data = [
+            'page_title' 	          => "Punto de Venta"
+            ,'title'  		          => "Ordenes"
+            ,'titulo_modal'           => "Agregar Registro"
+            ,'campo_1' 		          => 'Perfil'
+            ,'campo_2' 		          => 'Clave Corta'
+            ,'campo_3' 		          => 'Estatus'
+        ];
+        return $this->_loadView( 'administracion.configuracion.roles', $data );
+    }
 
     /**
      * This method is for get all data roles by company
      * @access public
      * @return JsonResponse
      */
-     public function all()
-     {
+    public function all()
+    {
         try {
-          $data = [
-              "roles"     => $this->_rolesBelongsCompany() ,
-          ];
+            $data = [
+                "roles"     => $this->_rolesBelongsCompany() ,
+            ];
             return new JsonResponse([
                 "success" => TRUE ,
                 "data"    => $data ,
@@ -63,7 +64,7 @@ class RolesController extends MasterController
             ],Response::HTTP_BAD_REQUEST);
         }
 
-     }
+    }
 
     /**
      * This method is for insert information in roles
@@ -72,8 +73,8 @@ class RolesController extends MasterController
      * @param SysRolesModel $roles
      * @return JsonResponse
      */
-     public function store( Request $request, SysRolesModel $roles )
-     {
+    public function store( Request $request, SysRolesModel $roles )
+    {
         $error = null;
         DB::beginTransaction();
         try {
@@ -94,12 +95,12 @@ class RolesController extends MasterController
             }else{
                 $rol->companiesRoles()->sync([Session::get('company_id')]);
             }
-          DB::commit();
-          $success = true;
+            DB::commit();
+            $success = true;
         } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-          DB::rollback();
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
         }
 
         if ($success) {
@@ -109,13 +110,13 @@ class RolesController extends MasterController
                 ,'message' => self::$message_success
             ],Response::HTTP_CREATED);
         }
-         return new JsonResponse([
-             'success'   => $success
-             ,'data'     => $error
-             ,'message' => self::$message_error
-         ],Response::HTTP_BAD_REQUEST);
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
 
-     }
+    }
 
     /**
      * This method is for get information the roles by companies
@@ -124,10 +125,10 @@ class RolesController extends MasterController
      * @param SysRolesModel $roles
      * @return JsonResponse
      */
-     public function show( int $id = null, SysRolesModel $roles )
-     {
+    public function show( int $id = null, SysRolesModel $roles )
+    {
         try {
-          $response = $roles->with('companiesRoles','groupsRoles')->find($id);
+            $response = $roles->with('companiesRoles','groupsRoles')->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
@@ -135,7 +136,7 @@ class RolesController extends MasterController
             ],Response::HTTP_OK);
 
         } catch (\Exception $e) {
-          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
             return new JsonResponse([
                 'success'   => FALSE
                 ,'data'     => $error
@@ -144,7 +145,7 @@ class RolesController extends MasterController
 
         }
 
-     }
+    }
 
     /**
      * This method is for update register the roles
@@ -153,8 +154,8 @@ class RolesController extends MasterController
      * @param SysRolesModel $roles
      * @return JsonResponse
      */
-     public function update( Request $request, SysRolesModel $roles )
-     {
+    public function update( Request $request, SysRolesModel $roles )
+    {
         $error = null;
         DB::beginTransaction();
         try {
@@ -175,23 +176,23 @@ class RolesController extends MasterController
             }
 
             DB::commit();
-          $success = true;
+            $success = true;
         } catch ( \Exception $e) {
-          $success = false;
-          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-          DB::rollback();
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
         }
 
         if ($success) {
-           return $this->show( $request->get("id"), new SysRolesModel );
+            return $this->show( $request->get("id"), new SysRolesModel );
         }
-         return new JsonResponse([
-             'success'   => FALSE
-             ,'data'     => $error
-             ,'message'  => self::$message_error
-         ],Response::HTTP_BAD_REQUEST);
+        return new JsonResponse([
+            'success'   => FALSE
+            ,'data'     => $error
+            ,'message'  => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
 
-     }
+    }
 
     /**
      * This method is for destroy register the rol by companies
@@ -200,8 +201,8 @@ class RolesController extends MasterController
      * @param SysRolesModel $roles
      * @return JsonResponse
      */
-     public function destroy( int $id = null, SysRolesModel $roles )
-     {
+    public function destroy( int $id = null, SysRolesModel $roles )
+    {
         $error = null;
         DB::beginTransaction();
         try {
@@ -209,12 +210,12 @@ class RolesController extends MasterController
             $rol->companiesRoles()->detach();
             $rol->companies()->detach();
             $rol->delete();
-          DB::commit();
-          $success = true;
+            DB::commit();
+            $success = true;
         } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-          DB::rollback();
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
         }
 
         if ($success) {
@@ -224,12 +225,12 @@ class RolesController extends MasterController
                 ,'message' => self::$message_success
             ],Response::HTTP_OK);
         }
-         return new JsonResponse([
-             'success'   => $success
-             ,'data'     => $error
-             ,'message' => self::$message_error
-         ],Response::HTTP_BAD_REQUEST);
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
 
-     }
+    }
 
 }

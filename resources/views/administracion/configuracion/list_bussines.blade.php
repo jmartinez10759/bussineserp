@@ -87,7 +87,7 @@
             }
         </style>
     </head>
-    <body ng-app="application" ng-controller="BussinesListController" ng-init="constructor()" ng-cloak>
+    <body ng-app="application" ng-controller="BusinessListController" ng-init="constructor()" ng-cloak>
         <div class="top-right col-sm-2">
             @if (Session::get('id'))
             <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-danger btn-lg" title="Cerrar Sesion">
@@ -105,7 +105,7 @@
 
                   <div class="drop-shadow col-md-12" ng-repeat="company in datos" ng-click="BussinesGroup( company.id )" title="Selecciona Una Empresa" >
                       <div class="col-md-3">
-                          <img :src="company.logo" width="100%" height="100%" ng-if="company.logo">
+                          <img ng-src="../@{{ company.logo }}" width="100%" height="100%" ng-if="company.logo">
                       </div>
                       <div class="col-md-8">
                         <div class="col-sm-2"></div>
@@ -197,5 +197,6 @@
         <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
         <!-- script desarrollador -->
         <script type="text/javascript" src="{{asset('js/administracion/configuracion/buildBusinessController.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/directives/directives-master.js')}}"></script>
     </body>
 </html>

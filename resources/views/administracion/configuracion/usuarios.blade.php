@@ -51,7 +51,6 @@
 
   @include('administracion.configuracion.usersEdit')
 
-  {!! $seccion_reportes !!}
 </div>
 
 @stop

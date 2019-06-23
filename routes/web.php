@@ -35,6 +35,11 @@ date_default_timezone_set('America/Mexico_City');
 	    ,'as'       => 'logout'
 	]);
 
+	Route::get('/logout', [
+        'uses'      => 'Auth\AuthController@logout'
+        ,'as'       => 'logout'
+    ]);
+
 	Route::get('/password/request', [
         'uses'      => 'Auth\PasswordController@index'
         ,'as'       => 'password.request'
@@ -348,11 +353,6 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'empresas.update'
     ]);
 
-    Route::post('/company/insert_relacion', [
-            'uses'      => 'Administracion\Configuracion\EmpresasController@store_relacion'
-            ,'as'       => 'empresas.insert_relacion'
-    ]);
-
     Route::post('/empresas/findGroups', [
     'uses'      => 'Administracion\Configuracion\EmpresasController@findRelGroups'
     ,'as'       => 'empresas.findRelGroups'
@@ -370,7 +370,7 @@ Route::group(['middleware' => ['admin.only']], function() {
 
     Route::get('/empresas/listado', [
     'uses'      => 'Administracion\Configuracion\EmpresasController@loadCompanies'
-    ,'as'       => 'empresas.listo'
+    ,'as'       => 'empresas.listado'
     ]);
     
     ######################### MODULO DE PROVEEDORES #############################
@@ -519,7 +519,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'groups.all'
     ]);
 
-    Route::get('groups/edit', [
+    Route::get('groups/{id}/edit', [
         'uses'      => 'Administracion\Configuracion\SucursalesController@show'
         ,'as'       => 'sucursales.edit'
     ]);
@@ -1607,12 +1607,82 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);*/
 
 
-################################## DEVELOPMENT MODULOS ################################
+        ########################## DEVELOPMENT MODULOS ################################
 
         Route::get('/atencion/llamadas', [
                 'uses'      => 'Development\AtencionesController@index'
                 ,'as'       => 'atencion'
         ]);
+
+        #################################### SECTION SALES OF POINT #####################################
+
+        Route::get('/sales/boxes', [
+            'uses'      => 'SalesOfPoint\BoxesController@index'
+            ,'as'       => 'sales.boxes'
+        ]);
+
+        Route::get('/boxes/all', [
+            'uses'      => 'SalesOfPoint\BoxesController@all'
+            ,'as'       => 'boxes.all'
+        ]);
+
+        Route::get('/boxes/{id}/edit', [
+            'uses'      => 'SalesOfPoint\BoxesController@show'
+            ,'as'       => 'boxes.edit'
+        ]);
+
+        Route::delete('/boxes/{id}/destroy', [
+            'uses'      => 'SalesOfPoint\BoxesController@destroy'
+            ,'as'       => 'boxes.destroy'
+        ]);
+
+        Route::post('/boxes/register', [
+            'uses'      => 'SalesOfPoint\BoxesController@store'
+            ,'as'       => 'sales.register'
+        ]);
+
+        Route::put('/boxes/update', [
+            'uses'      => 'SalesOfPoint\BoxesController@update'
+            ,'as'       => 'boxes.update'
+        ]);
+
+
+        Route::get('/sales/orders', [
+            'uses'      => 'SalesOfPoint\OrdersController@index'
+            ,'as'       => 'orders.orders'
+        ]);
+
+        Route::get('/orders/all', [
+            'uses'      => 'SalesOfPoint\OrdersController@all'
+            ,'as'       => 'orders.all'
+        ]);
+
+        Route::get('/orders/{id}/edit', [
+            'uses'      => 'SalesOfPoint\OrdersController@show'
+            ,'as'       => 'orders.edit'
+        ]);
+
+        Route::delete('/orders/{id}/destroy', [
+            'uses'      => 'SalesOfPoint\OrdersController@destroy'
+            ,'as'       => 'orders.destroy'
+        ]);
+
+        Route::post('/orders/register', [
+            'uses'      => 'SalesOfPoint\OrdersController@store'
+            ,'as'       => 'orders.register'
+        ]);
+
+        Route::put('/orders/update', [
+            'uses'      => 'SalesOfPoint\OrdersController@update'
+            ,'as'       => 'orders.update'
+        ]);
+
+
+
+
+
+
+
 
 ################################## CATALOGO DE PROYECTOS ################################
     Route::get('/proyectos/listado', [

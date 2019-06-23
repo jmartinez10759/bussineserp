@@ -63,12 +63,7 @@
 			</div>
 			<div class="modal-footer">
 				<div class="btn-toolbar pull-right">
-					<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
-						<i class="fa fa-times-circle"></i> Cancelar
-					</button>
-					<button type= "button" class="btn btn-success" ng-click="insertRegister()" ng-if="permisos.INS">
-						<i class="fa fa-save"></i> Registrar
-					</button>
+					<button-register method="insertRegister()" permission="permisos" spinning="spinning"></button-register>
 				</div>
 			</div>
 		</div>
@@ -141,12 +136,7 @@
             
             <div class="modal-footer">
 				 <div class="btn-toolbar pull-right">
-					<button type="button" class="btn btn-danger" data-dismiss="modal">
-						<i class="fa fa-times-circle"></i> Cerrar
-					</button>
-					<button type= "button" class="btn btn-primary" ng-click="updateRegister()" ng-if="permisos.UPD" >
-						<i class="fa fa-save"></i> Actualizar
-					</button>
+					 <button-update method="updateRegister()" permission="permisos" spinning="spinning"></button-update>
 				</div>
             </div>
 

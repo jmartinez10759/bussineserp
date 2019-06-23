@@ -66,7 +66,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
     };
 
     $scope.editRegister = function (entry) {
-        let discrim = ['$$hashKey', 'password'];
+        var discrim = ['$$hashKey', 'password'];
         $scope.update = sc.mapObject(entry, discrim, false);
         $scope.update.name = entry.name + " " + entry.first_surname + " " + entry.second_surname;
         var i = 0;
@@ -186,7 +186,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
         sc.requestHttp(url,fields,"POST",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 $scope.cmbGroups = response.data.data;
-                $scope.permission.cmbGroups = response.data.data;
+                //$scope.permission.cmbGroups = response.data.data;
                 console.log( $scope.cmbGroups );
             }
         });

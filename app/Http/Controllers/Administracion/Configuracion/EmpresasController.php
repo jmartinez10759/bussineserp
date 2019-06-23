@@ -2,23 +2,13 @@
 
 namespace App\Http\Controllers\Administracion\Configuracion;
 
-use App\Model\Administracion\Configuracion\SysRolesModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
-use App\Model\Administracion\Configuracion\SysPaisModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysEstadosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysContactosModel;
-use App\Model\Administracion\Configuracion\SysSucursalesModel;
-use App\Model\Administracion\Configuracion\SysTipoFactorModel;
-use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
-use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
-use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
-use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -242,24 +232,26 @@ class EmpresasController extends MasterController
      * @access public
      * @param int $id [Description]
      * @param SysEmpresasModel $companies
-     * @return void
+     * @return JsonResponse
      */
     public function destroy(int $id = null, SysEmpresasModel $companies )
     {
-        var_export($id);die();
         $error = null;
         DB::beginTransaction();
         try {
-              $response = SysEmpresasSucursalesModel::where(['id_empresa' => $request->id])->get(); 
-              if( count($response) > 0){
-                  for($i = 0; $i < count($response); $i++){
-                      SysContactosModel::where(['id' => $response[$i]->id_contacto])->delete();
-                  }
-              }
-              $this->_tabla_model::where(['id' => $request->id])->delete();
-              SysEmpresasSucursalesModel::where(['id_empresa' => $request->id])->delete();
-              SysContactosSistemasModel::where(['id_empresa' => $request->id])->delete();
-              DB::commit();
+              $company = $companies->find($id);
+              $company->users()->detach();
+              $company->menus()->detach();
+              $company->permission()->detach();
+              $company->contacts()->detach();
+              $company->products()->detach();
+              $company->groupsCompanies()->detach();
+              $company->rolesCompanies()->detach();
+              $company->menusCompanies()->detach();
+              $company->permissionCompanies()->detach();
+              $company->delete();
+
+            DB::commit();
               $success = true;
         } catch (\Exception $e) {
               $success = false;
@@ -268,8 +260,17 @@ class EmpresasController extends MasterController
         }
 
         if ($success) {
-
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => []
+                ,'message' => self::$message_success
+            ],Response::HTTP_OK);
         }
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
 
 
     }
@@ -382,46 +383,5 @@ class EmpresasController extends MasterController
           ],Response::HTTP_BAD_REQUEST);
       }
   }
-  /**
-   * Metodo para insertar los datos de la realcion de empresa sucursal
-   * @access public
-   * @param Request $request [description]
-   * @return array [Description]
-   */
-  public function store_relacion( Request $request ){
-      #se realiza una transaccion
-      $response = [];
-      $error = null;
-      DB::beginTransaction();
-      try {
-          SysEmpresasSucursalesModel::where( ['id_empresa' => $request->id_empresa] )->delete();
-          for ($i=0; $i < count($request->matrix ); $i++) {
-              $matrices = explode('|',$request->matrix[$i] );
-              $id_sucursal =  $matrices[0];
-              $estatus     =  ($matrices[1] === "true")? 1 : 0;
-              $data = [
-                'id_empresa'    => $request->id_empresa
-                ,'id_sucursal'  => $id_sucursal
-              ];
-              $data['estatus'] = $estatus;
-              $response[] = SysEmpresasSucursalesModel::create( $data );
-
-          }
-        DB::commit();
-        $success = true;
-      } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage();
-          DB::rollback();
-      }
-      if ($success) {
-        return $this->_message_success( 200, $response , self::$message_success );
-      }
-      return $this->show_error(6, $error, self::$message_error );
-
-  }
-
-
-
 
 }

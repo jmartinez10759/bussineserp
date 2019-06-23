@@ -199,17 +199,21 @@
                   </li>
                   <!-- Menu Footer-->
                   <li class="user-footer">
-                    <div class="pull-left">
-                      <a href="{{ route('perfiles')}} " class="btn btn-default btn-flat">
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <a href="{{ route('perfiles')}} " class="btn btn-default btn-flat">
                           <i class="fa fa-user pull-left"></i>Perfil Usuario
                         </a>
-                    </div>
-                    <div class="pull-right">
-                      <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-default btn-flat">
-                        <i class="fa fa-sign-out pull-left"></i> Cerrar Sesión
-                      </a>
-                      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} </form>
-                      <!-- <a href="#" class="btn btn-default btn-flat">Sign out</a> -->
+                      </div>
+
+                      <div class="col-sm-6">
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-default btn-flat">
+                          <i class="fa fa-sign-out pull-left"></i>Cerrar Sesión
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} </form>
+
+                      </div>
+
                     </div>
                   </li>
                 </ul>

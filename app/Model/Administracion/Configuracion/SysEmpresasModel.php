@@ -2,6 +2,7 @@
 
 namespace App\Model\Administracion\Configuracion;
 
+use App\SysBoxes;
 use Illuminate\Database\Eloquent\Model;
 
 class SysEmpresasModel extends Model
@@ -60,6 +61,14 @@ class SysEmpresasModel extends Model
     {
         return $this->belongsToMany('App\SysPermission','sys_companies_permission','company_id','permission_id');
     }
+    public function contacts()
+    {
+        return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_empresa','id_contacto');
+    }
+    public function products()
+    {
+        return $this->belongsToMany(SysProductosModel::class, 'sys_companies_products', 'company_id', 'product_id');
+    }
     public function regimenes()
     {
         return $this->hasOne(SysRegimenFiscalModel::class, 'id','id_regimen_fiscal');
@@ -80,15 +89,12 @@ class SysEmpresasModel extends Model
     {
         return $this->hasOne( SysEstadosModel::class, 'id','id_codigo');
     }
-    public function contacts()
+    //relationship section boxes
+    public function boxes()
     {
-        return $this->belongsToMany(SysContactosModel::class,'sys_contactos_sistemas','id_empresa','id_contacto');
+        return $this->belongsToMany(SysBoxes::class,'companies_boxes','company_id','boxes_id')
+            ->withPivot("group_id","user_id");
     }
-    public function products()
-    {
-        return $this->belongsToMany(SysProductosModel::class, 'sys_companies_products', 'company_id', 'product_id');
-    }
-
 
 
 
