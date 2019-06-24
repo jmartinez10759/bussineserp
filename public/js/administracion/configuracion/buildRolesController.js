@@ -87,7 +87,7 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
 
     $scope.destroyRegister = function( id ){
 
-      var url = fc.domain( URL.url_destroy+"/"+id+"/company" );
+      var url = fc.domain( URL.url_destroy,id );
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {

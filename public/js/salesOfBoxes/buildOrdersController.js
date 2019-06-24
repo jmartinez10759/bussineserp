@@ -10,7 +10,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
     $scope.constructor = function(){
         $scope.datos  = [];
-        $scope.insert = { estatus: 1 };
+        $scope.insert = { status: 6 };
         $scope.update = {};
         $scope.fields = {};
         $scope.index();
@@ -86,8 +86,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     };
 
     $scope.destroyRegister = function( id ){
-
-        var url = fc.domain( URL.url_destroy+"/"+id+"/company" );
+        var url = fc.domain( URL.url_destroy.id);
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {

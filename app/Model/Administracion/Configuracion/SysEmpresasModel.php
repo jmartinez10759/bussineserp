@@ -92,7 +92,7 @@ class SysEmpresasModel extends Model
     //relationship section boxes
     public function boxes()
     {
-        return $this->belongsToMany(SysBoxes::class,'companies_boxes','company_id','boxes_id')
+        return $this->belongsToMany(SysBoxes::class,'companies_boxes','company_id','box_id')
             ->withPivot("group_id","user_id");
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Model\Administracion\Configuracion;
 
+use App\SysBoxes;
 use Illuminate\Database\Eloquent\Model;
 
 class SysSucursalesModel extends Model
@@ -46,6 +47,12 @@ class SysSucursalesModel extends Model
     public function companiesGroups()
     {
         return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_groups','group_id','company_id');
+    }
+    //relationship section boxes
+    public function boxes()
+    {
+        return $this->belongsToMany(SysBoxes::class,'companies_boxes','group_id','box_id')
+            ->withPivot("company_id","user_id");
     }
 
 

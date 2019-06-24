@@ -2,6 +2,7 @@
 
 namespace App\Model\Administracion\Configuracion;
 
+use App\SysBoxes;
 use Illuminate\Database\Eloquent\Model;
 
 class SysUsersModel extends Model
@@ -42,6 +43,11 @@ class SysUsersModel extends Model
     public function permission()
     {
         return $this->belongsToMany('App\SysPermission','sys_permission_menus','user_id','permission_id');
+    }
+    public function boxes()
+    {
+        return $this->belongsToMany(SysBoxes::class,'companies_boxes','user_id','box_id')
+            ->withPivot("company_id","group_id");
     }
 
 

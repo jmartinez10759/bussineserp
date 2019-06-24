@@ -10,7 +10,7 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
 
     $scope.constructor = function(){
         $scope.datos  = [];
-        $scope.insert = { estatus: 1 };
+        $scope.insert = { status: 1 };
         $scope.update = {};
         $scope.fields = {};
         $scope.index();
@@ -53,7 +53,7 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
             if (sc.validateSessionStatus(response)) {
                 nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
                 nf.modal("#modal_add_register",true);
-                $scope.index();
+                $scope.constructor();
             }
             $scope.spinning = false;
         });
@@ -78,20 +78,19 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
     $scope.editRegister = function( id ){
         var url = fc.domain(URL.url_edit,id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
-            var datos = ['id', 'perfil', 'clave_corta', 'estatus',"companies_roles"];
+            var datos = ['id', 'name', 'description', 'status',"companies",'groups','users'];
             $scope.update = sc.mapObject(response.data.data, datos, true);
-            $scope.update.companyId = [];
-            angular.forEach($scope.update.companies_roles,function (value, key) {
-                $scope.update.companyId[key] = value.id;
-            });
+            $scope.update.companyId = angular.isDefined($scope.update.companies[0])?$scope.update.companies[0].id : "";
+            $scope.update.userId    = angular.isDefined($scope.update.users[0])?$scope.update.users[0].id : "";
+            $scope.getGroupByCompany($scope.update.companyId);
+            $scope.update.groupId    = angular.isDefined($scope.update.groups[0])?$scope.update.groups[0].id : "";
             console.log($scope.update);
             nf.modal("#modal_edit_register");
         });
     };
 
     $scope.destroyRegister = function( id ){
-
-        var url = fc.domain( URL.url_destroy+"/"+id+"/company" );
+        var url = fc.domain( URL.url_destroy,id );
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {

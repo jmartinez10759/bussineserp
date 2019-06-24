@@ -78,7 +78,7 @@ class BoxesController extends MasterController
         DB::beginTransaction();
         try {
             $data = array_filter($request->all(), function ($key) use ($request){
-                if($key != "groupId" && $key != "companyId"){
+                if($key != "groupId" && $key != "companyId" && $key != "userId"){
                     $data[$key] = $request->$key;
                     if ($request->$key == 0){
                         $data[$key] = "0";
@@ -89,14 +89,14 @@ class BoxesController extends MasterController
             $response = $boxes->create($data);
             $box = $boxes->find($response->id);
             if ( isset($request->companyId ) ){
-                $box->companies()->attach([$request->get("companyId")],[
-                    'group_id' => $request->get("companyId") ,
-                    'user_id'  => $request->get("useId")
+                $box->groups()->attach($request->get("groupId"),[
+                    'company_id' => $request->get("companyId") ,
+                    'user_id'  => $request->get("userId")
                 ]);
             }else{
-                $box->companies()->attach([Session::get('company_id')],[
-                    'group_id' => Session::get('group_id') ,
-                    'user_id'  => $request->get("useId")
+                $box->groups()->attach([Session::get('group_id')],[
+                    'company_id' => Session::get('company_id') ,
+                    'user_id'  => $request->get("userId")
                 ]);
             }
             DB::commit();
@@ -126,13 +126,13 @@ class BoxesController extends MasterController
      * This method is for get information the roles by companies
      * @access public
      * @param int|null $id
-     * @param SysRolesModel $roles
+     * @param SysBoxes $boxes
      * @return JsonResponse
      */
-    public function show( int $id = null, SysRolesModel $roles )
+    public function show( int $id = null, SysBoxes $boxes )
     {
         try {
-            $response = $roles->with('companiesRoles','groupsRoles')->find($id);
+            $response = $boxes->with('companies','groups','users')->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
@@ -155,16 +155,16 @@ class BoxesController extends MasterController
      * This method is for update register the roles
      * @access public
      * @param Request $request [Description]
-     * @param SysRolesModel $roles
+     * @param SysBoxes $boxes
      * @return JsonResponse
      */
-    public function update( Request $request, SysRolesModel $roles )
+    public function update( Request $request, SysBoxes $boxes )
     {
         $error = null;
         DB::beginTransaction();
         try {
             $data = array_filter($request->all(), function ($key) use ($request){
-                if($key != "companyId"){
+                if($key != "companyId" && $key != "groupId" && $key != "userId"){
                     $data[$key] = $request->$key;
                     if ($request->$key == 0){
                         $data[$key] = "0";
@@ -173,10 +173,14 @@ class BoxesController extends MasterController
                 }
             },ARRAY_FILTER_USE_KEY);
 
-            $roles->whereId($request->get('id'))->update($data);
+            $box = $boxes->find($request->get('id'));
+            $box->update($data);
             if ( isset($request->companyId) && $request->companyId){
-                $rol = $roles->find($request->get('id'));
-                $rol->companiesRoles()->sync($request->get("companyId"));
+                $box->groups()->detach();
+                $box->groups()->attach($request->get("groupId"),[
+                    'company_id' => $request->get("companyId") ,
+                    'user_id'  => $request->get("userId")
+                ]);
             }
 
             DB::commit();
@@ -188,7 +192,7 @@ class BoxesController extends MasterController
         }
 
         if ($success) {
-            return $this->show( $request->get("id"), new SysRolesModel );
+            return $this->show( $request->get("id"), new SysBoxes );
         }
         return new JsonResponse([
             'success'   => FALSE
@@ -202,18 +206,17 @@ class BoxesController extends MasterController
      * This method is for destroy register the rol by companies
      * @access public
      * @param int $id [Description]
-     * @param SysRolesModel $roles
+     * @param SysBoxes $boxes
      * @return JsonResponse
      */
-    public function destroy( int $id = null, SysRolesModel $roles )
+    public function destroy( int $id = null, SysBoxes $boxes )
     {
         $error = null;
         DB::beginTransaction();
         try {
-            $rol = $roles->find($id);
-            $rol->companiesRoles()->detach();
-            $rol->companies()->detach();
-            $rol->delete();
+            $box = $boxes->find($id);
+            $box->groups()->detach();
+            $box->delete();
             DB::commit();
             $success = true;
         } catch (\Exception $e) {

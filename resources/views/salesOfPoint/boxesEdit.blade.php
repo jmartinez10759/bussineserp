@@ -65,7 +65,6 @@
                                     chosen
                                     width="'100%'"
                                     ng-model="insert.groupId"
-                                    multiple
                                     ng-options="value.groups.id as value.groups.descripcion for (key, value) in rootCmbGroups">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
@@ -80,7 +79,7 @@
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
-                                    ng-model="insert.estatus"
+                                    ng-model="insert.status"
                                     ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
@@ -128,35 +127,48 @@
                         </div>
                     </div>
 
-                    <div class="form-group" ng-if="userLogged == 1">
+                    <div class="form-group">
                         <div class="control-label">
-                            <label class="col-sm-3 control-label">Empresas</label>
+                            <label class="col-sm-3 control-label">Asignar </label>
                         </div>
                         <div class="col-sm-6">
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
-                                    multiple
-                                    ng-model="insert.companyId"
-                                    ng-options="value.id as value.razon_social for (key, value) in rootCmbCompanies">
+                                    ng-model="update.userId"
+                                    ng-options="value.id as (value.name+' '+value.first_surname+' '+value.second_surname) for (key, value) in cmbUsers">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
                         </div>
+                    </div>
 
-                        <div class="control-label">
-                            <label class="col-sm-3 control-label">Sucursales</label>
-                        </div>
-                        <div class="col-sm-4">
+                    <div class="form-group" ng-if="userLogged == 1">
+                        <label class="col-sm-3 control-label">Empresas</label>
+                        <div class="col-sm-6">
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
-                                    ng-model="insert.groupId"
-                                    multiple
-                                    ng-options="value.groups.id as value.groups.descripcion for (key, value) in rootCmbGroups">
-                                <option value="">--Seleccione Opcion--</option>
+                                    ng-change="getGroupByCompany(update.companyId)"
+                                    ng-model="update.companyId"
+                                    ng-options="value.id as value.razon_social for (key, value) in rootCmbCompanies">
+                                <option disabled>--Seleccione Opcion--</option>
                             </select>
                         </div>
+                    </div>
 
+                    <div class="form-group" ng-if="userLogged == 1">
+                        <div class="control-label">
+                            <label class="col-sm-3 control-label">Sucursales</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <select class="form-control"
+                                    chosen
+                                    width="'100%'"
+                                    ng-model="update.groupId"
+                                    ng-options="value.groups.id as value.groups.descripcion for (key, value) in rootCmbGroups">
+                                <option disabled>--Seleccione Opcion--</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -167,7 +179,7 @@
                             <select class="form-control"
                                     chosen
                                     width="'100%'"
-                                    ng-model="update.estatus"
+                                    ng-model="update.status"
                                     ng-options="value.id as value.descripcion for (key, value) in cmbEstatusRoot">
                                 <option value="">--Seleccione Opcion--</option>
                             </select>
