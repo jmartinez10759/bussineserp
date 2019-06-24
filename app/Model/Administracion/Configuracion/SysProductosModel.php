@@ -2,6 +2,7 @@
 
 namespace App\Model\Administracion\Configuracion;
 
+use App\SysOrders;
 use Illuminate\Database\Eloquent\Model;
 
 class SysProductosModel extends Model
@@ -72,6 +73,10 @@ class SysProductosModel extends Model
     public function concepts()
     {
       return $this->belongsTo('App\Model\Ventas\SysConceptosPedidosModel', 'id', 'id_producto');
+    }
+    public function orders()
+    {
+        return $this->belongsTo(SysOrders::class,'box_id','id');
     }
     
 

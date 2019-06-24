@@ -31,4 +31,8 @@ class SysBoxes extends Model
         return $this->belongsToMany(SysUsersModel::class,'companies_boxes','box_id','user_id')
             ->withPivot("company_id","group_id");
     }
+    public function orders()
+    {
+        return $this->belongsTo(SysOrders::class,'box_id','id');
+    }
 }

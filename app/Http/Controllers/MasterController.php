@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Model\Administracion\Configuracion\SysProductosModel;
 use App\Model\Administracion\Configuracion\SysRolesModel;
+use App\SysBoxes;
 use PDF;
 use DOMDocument;
 use App\Facades\Menu;
@@ -1035,6 +1036,25 @@ abstract class MasterController extends Controller
         }
         return $response;
 
+    }
+
+    /**
+     * This method is used boxes get by companies
+     * @return void
+     */
+    protected function _boxesBelongsCompany()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $response = SysBoxes::with('companies')
+                ->orderBy('id','DESC')
+                ->groupby('id')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find(Session::get('company_id'))
+                ->boxes()->with('companies')->orderBy('id','DESC')
+                ->groupby('id')->get();
+        }
+        return $response;
     }
 
     /**

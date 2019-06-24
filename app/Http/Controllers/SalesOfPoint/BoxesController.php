@@ -240,19 +240,4 @@ class BoxesController extends MasterController
 
     }
 
-    public function _boxesBelongsCompany()
-    {
-        if( Session::get('roles_id') == 1 ){
-            $response = SysBoxes::with('companies')
-                        ->orderBy('id','DESC')
-                        ->groupby('id')
-                        ->get();
-        }else{
-            $response = SysEmpresasModel::find(Session::get('company_id'))
-                        ->boxes()->with('companies')->orderBy('id','DESC')
-                        ->groupby('id')->get();
-        }
-        return $response;
-    }
-
 }

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\SalesOfPoint;
 
 
 use App\Http\Controllers\MasterController;
+use App\Model\Administracion\Configuracion\SysFormasPagosModel;
+use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
+use App\SysBoxes;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -30,16 +33,12 @@ class OrdersController extends MasterController
         $data = [
             'page_title' 	          => "Punto de Venta"
             ,'title'  		          => "Ordenes"
-            ,'titulo_modal'           => "Agregar Registro"
-            ,'campo_1' 		          => 'Perfil'
-            ,'campo_2' 		          => 'Clave Corta'
-            ,'campo_3' 		          => 'Estatus'
         ];
-        return $this->_loadView( 'administracion.configuracion.roles', $data );
+        return $this->_loadView( 'salesOfPoint.orders', $data );
     }
 
     /**
-     * This method is for get all data roles by company
+     * This method is for get all data orders by company
      * @access public
      * @return JsonResponse
      */
@@ -47,7 +46,10 @@ class OrdersController extends MasterController
     {
         try {
             $data = [
-                "roles"     => $this->_rolesBelongsCompany() ,
+                "boxes"             => $this->_boxesBelongsCompany() ,
+                "products"          => $this->_productsBelongCompany() ,
+                "paymentMethod"     => SysMetodosPagosModel::whereEstatus(true)->get() ,
+                "paymentForm"       => SysFormasPagosModel::whereEstatus(true)->get()
             ];
             return new JsonResponse([
                 "success" => TRUE ,
@@ -67,13 +69,13 @@ class OrdersController extends MasterController
     }
 
     /**
-     * This method is for insert information in roles
+     * This method is for insert information in orders
      * @access public
      * @param Request $request [Description]
-     * @param SysRolesModel $roles
+     * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function store( Request $request, SysRolesModel $roles )
+    public function store( Request $request, SysOrders $orders )
     {
         $error = null;
         DB::beginTransaction();

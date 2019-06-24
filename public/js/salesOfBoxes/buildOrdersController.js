@@ -6,7 +6,7 @@ const URL = {
     ,url_destroy          : "orders/{id}/destroy"
 };
 
-app.controller('OrdersController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
+app.controller('OrdersController', ['ServiceController','FactoryController','NotificationsFactory','$scope','$window' ,function( sc,fc,nf,$scope,w ) {
 
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -28,16 +28,10 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 console.log(response);
-                angular.forEach(response.data.data.roles,function (value,key) {
-                    $scope.register[key] = {
-                        'id'          : value.id ,
-                        'perfil'      : value.perfil,
-                        'shortKey'    : value.clave_corta ,
-                        'estatus'     : value.estatus ,
-                        'btnDelete'   : ""
-                    };
-                });
-                $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
+                $scope.datos            = response.data.data.boxes;
+                $scope.cmbPaymentForm   = response.data.data.paymentForm;
+                $scope.cmbPaymentMethod = response.data.data.paymentMethod;
+                $scope.products         = response.data.data.products;
             }
         });
 
@@ -97,5 +91,23 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
         }, null, "SI", "NO");
 
     };
+
+    $scope.BoxOpen = function (boxes) {
+        w.localStorage['boxOpen'] = boxes.id;
+        $scope.boxName = boxes.name;
+        nf.modal("#modal_add_register");
+        /*alert(w.localStorage['boxOpen']);*/
+
+    };
+
+    $scope.boxClosed = function () {
+        w.localStorage.removeItem('boxOpen');
+        alert(w.localStorage['boxOpen']);
+    };
+
+
+
+
+
 
 }]);

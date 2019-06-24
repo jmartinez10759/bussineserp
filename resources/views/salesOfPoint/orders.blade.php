@@ -1,14 +1,165 @@
 @extends('layouts.template.app')
 @section('content')
 @push('styles')
+    <style>
+        img { max-width:100%; }
+
+        a {
+            -webkit-transition: all 150ms ease;
+            -moz-transition: all 150ms ease;
+            -ms-transition: all 150ms ease;
+            -o-transition: all 150ms ease;
+            transition: all 150ms ease;
+        }
+
+        a:hover {
+            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* IE 8 */
+            filter: alpha(opacity=50); /* IE7 */
+            opacity: 0.6;
+            text-decoration: none;
+        }
+
+
+
+        body{
+            border-top:0;
+            background:#fff;
+        }
+        .btn-mini{
+            border-top: 1px solid #e8e8e8;
+            border-radius: 0px;
+            width: 100%;
+            color: #b2adad;
+        }
+        .casing{
+            border:1px solid #e8e8e8;
+            float:left;
+            width:100%;
+        }
+        .thumbnail {
+            padding: 0px !important;
+            border-radius: 0px !important;
+            border: none !important;
+        }
+
+        .thumbnails li> .fff .caption {
+            background:#fff !important;
+            padding:10px
+        }
+
+        .page-header {
+            background: #ffffff7a;
+            margin: 0px 0px 22px;
+            padding: 1px 40px;
+            border-top: 4px solid #ccc;
+            color: #999;
+            text-transform: uppercase;
+        }
+        .page-header p{
+            text-align:center;
+        }
+
+        .page-header h3 {
+            line-height: 0.88rem;
+            color: #000;
+            text-align:center;
+            font-size:20px;
+            font-weight:bold;
+        }
+
+        ul.thumbnails {
+            margin-bottom: 0px;
+        }
+        .caption h4 {
+            color: #444;
+            text-indent: 10px;
+        }
+
+        .caption p {
+            color: #999;
+            padding: 0px 10px;
+        }
+        .control-box {
+            text-align: right;
+            width: 100%;
+            margin-top: -152px;
+        }
+        .carousel-control{
+            background: #666;
+            border: 0px;
+            border-radius: 0px;
+            display: inline-block;
+            font-size: 34px;
+            font-weight: 200;
+            line-height: 18px;
+            opacity: 0.5;
+            padding: 4px 10px 0px;
+            position: static;
+            height: 30px;
+            width: 15px;
+        }
+
+        @media (max-width: 767px) {
+            .page-header, .control-box {
+                text-align: center;
+            }
+        }
+        @media (max-width: 479px) {
+            .caption {
+                word-break: break-all;
+            }
+        }
+
+
+        li { list-style-type:none;}
+
+        ::selection { background: #ff5e99; color: #FFFFFF; text-shadow: 0; }
+        ::-moz-selection { background: #ff5e99; color: #FFFFFF; }
+
+        .left{
+            float:left;
+        }
+        .right{
+            float:right;
+            margin-right:-35px;
+        }
+
+        .arrowStil{
+            border-radius: 23px !important;
+            padding: 11px 14px !important;
+        }
+    </style>
 @endpush
     <div ng-controller="OrdersController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
-        <table-dashboard></table-dashboard>
+        <div class="container">
+            <div class="page-header">
+                <h2> Seleccione una caja para iniciar venta </h2>
+            </div>
+
+            <div class="col-md-4" ng-repeat="boxes in datos | orderBy:id:true">
+                <div class="thumbnail">
+                    <a ng-click="BoxOpen(boxes)" style="cursor: pointer;">
+                        <h4 ng-bind="boxes.name"></h4>
+                        <div class="caption">
+                            <p ng-bind="boxes.description"></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
         @include('salesOfPoint.ordersEdit')
     </div>
 
 @stop
 @push('scripts')
     <script type="text/javascript" src="{{asset('js/salesOfBoxes/buildOrdersController.js')}}" ></script>
+    <script>
+        $(document).ready(function() {
+            $('#Carousel').carousel({
+                interval: 5000
+            })
+        });
+    </script>
 @endpush
 
