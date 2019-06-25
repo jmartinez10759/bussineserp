@@ -10,7 +10,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
     $scope.constructor = function(){
         $scope.datos  = [];
-        $scope.insert = { status: 6 };
+        $scope.insert = { status: 6, paymentForm: 1, paymentMethod: 1 };
         $scope.update = {};
         $scope.fields = {};
         $scope.index();
@@ -37,13 +37,13 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
     };
 
-    $scope.insertRegister = function(){
+    $scope.insertOrder = function(){
         var url     = fc.domain(  URL.url_insert );
+        $scope.insert.boxId = w.localStorage['boxOpen'];
         var fields  = $scope.insert;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
-                nf.modal("#modal_add_register",true);
+                //nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
                 $scope.index();
             }
         });

@@ -7,7 +7,9 @@ namespace App\Http\Controllers\SalesOfPoint;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysFormasPagosModel;
 use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
+use App\Model\Administracion\Configuracion\SysProductosModel;
 use App\SysBoxes;
+use App\SysOrders;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -73,30 +75,30 @@ class OrdersController extends MasterController
      * @access public
      * @param Request $request [Description]
      * @param SysOrders $orders
+     * @param SysProductosModel $products
      * @return JsonResponse
      */
-    public function store( Request $request, SysOrders $orders )
+    public function store( Request $request, SysOrders $orders, SysProductosModel $products )
     {
+
         $error = null;
         DB::beginTransaction();
         try {
-            $data = array_filter($request->all(), function ($key) use ($request){
-                if($key != "companyId"){
-                    $data[$key] = $request->$key;
-                    if ($request->$key == 0){
-                        $data[$key] = "0";
-                    }
-                    return $data;
-                }
-            },ARRAY_FILTER_USE_KEY);
 
-            $response = $roles->create($data);
-            $rol = $roles->find($response->id);
-            if ( isset($request->companyId ) ){
-                $rol->companiesRoles()->sync($request->get("companyId"));
-            }else{
-                $rol->companiesRoles()->sync([Session::get('company_id')]);
-            }
+            $product = $products->find($request->get("productId"));
+
+            $data = [
+                "box_id"            => $request->get("boxId") ,
+                "product_id"        => $request->get("productId") ,
+                "payment_form_id"   => $request->get("paymentForm") ,
+                "payment_method_id" => $request->get("paymentMethod") ,
+                "status_id"         => $request->get("status") ,
+                "quality"           => 1 ,
+                "discount"          => 0 ,
+                "whole"             => $product->total
+            ];
+            $response = $orders->create($data);
+            $order = $orders->with("products")->find($response->id);
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
@@ -108,7 +110,7 @@ class OrdersController extends MasterController
         if ($success) {
             return new JsonResponse([
                 'success'   => $success
-                ,'data'     => $response
+                ,'data'     => $order
                 ,'message' => self::$message_success
             ],Response::HTTP_CREATED);
         }
@@ -124,13 +126,13 @@ class OrdersController extends MasterController
      * This method is for get information the roles by companies
      * @access public
      * @param int|null $id
-     * @param SysRolesModel $roles
+     * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function show( int $id = null, SysRolesModel $roles )
+    public function show( int $id = null, SysOrders $orders )
     {
         try {
-            $response = $roles->with('companiesRoles','groupsRoles')->find($id);
+            $response = $orders->with('companiesRoles','groupsRoles')->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
