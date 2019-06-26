@@ -140,8 +140,14 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr ng-repeat="data in datos.register" id="tr_@{{data.id}}">
-                                                                <td style="cursor:pointer;" ng-bind=""></td>
+                                                            <tr ng-repeat="concept in concepts" id="tr_@{{concept.id}}">
+                                                                <td style="cursor:pointer;"></td>
+                                                                <td style="cursor:pointer;" ng-bind="concept.products.nombre"></td>
+                                                                <td style="cursor:pointer;" ng-bind="concept.products.total"></td>
+                                                                <td style="cursor:pointer;">
+                                                                </td>
+                                                                <td style="cursor:pointer;">
+                                                                </td>
                                                                 <td class="text-center">
                                                                     <button type="button" class="btn btn-danger btn-sm" ng-click="destroyRegister(data.id)" title="Eliminar Registro" ng-if="permisos.DEL" >
                                                                         <i class="glyphicon glyphicon-trash"></i>

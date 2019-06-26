@@ -14,13 +14,9 @@ class SysOrders extends Model
     public $fillable = [
         'id'
         ,'box_id'
-        ,'product_id'
         ,'payment_form_id'
         ,'payment_method_id'
         ,'status_id'
-        ,'quality'
-        ,'discount'
-        ,'whole'
         ,'subtotal'
         ,'iva'
         ,'total'
@@ -29,9 +25,9 @@ class SysOrders extends Model
     {
         return $this->hasOne(SysBoxes::class,'id','box_id');
     }
-    public function products()
+    public function concepts()
     {
-        return $this->hasOne(SysProductosModel::class,'id','product_id');
+        return $this->hasMany(SysConcepts::class,'order_id','id');
     }
     public function paymentsForms()
     {

@@ -9,6 +9,7 @@ use App\Model\Administracion\Configuracion\SysFormasPagosModel;
 use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
 use App\Model\Administracion\Configuracion\SysProductosModel;
 use App\SysBoxes;
+use App\SysConcepts;
 use App\SysOrders;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -80,25 +81,33 @@ class OrdersController extends MasterController
      */
     public function store( Request $request, SysOrders $orders, SysProductosModel $products )
     {
-
         $error = null;
         DB::beginTransaction();
         try {
-
             $product = $products->find($request->get("productId"));
-
-            $data = [
-                "box_id"            => $request->get("boxId") ,
+            if ( isset($request->orderId) ){
+                $data = [
+                    "box_id"            => $request->get("boxId") ,
+                    "payment_form_id"   => $request->get("paymentForm") ,
+                    "payment_method_id" => $request->get("paymentMethod") ,
+                    "status_id"         => $request->get("status") ,
+                ];
+                $response = $orders->create($data);
+                $orderId = $response->id;
+            }else{
+                $orderId = $request->get("orderId");
+            }
+            var_export($orderId);die();
+            $order = $orders->find($orderId);
+            $order->concepts()->create([
+                "order_id"          => $order->id ,
                 "product_id"        => $request->get("productId") ,
-                "payment_form_id"   => $request->get("paymentForm") ,
-                "payment_method_id" => $request->get("paymentMethod") ,
-                "status_id"         => $request->get("status") ,
                 "quality"           => 1 ,
                 "discount"          => 0 ,
-                "whole"             => $product->total
-            ];
-            $response = $orders->create($data);
-            $order = $orders->with("products")->find($response->id);
+                "price"             => $product->total ,
+                "total"             => $product->total
+            ]);
+
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
@@ -108,11 +117,8 @@ class OrdersController extends MasterController
         }
 
         if ($success) {
-            return new JsonResponse([
-                'success'   => $success
-                ,'data'     => $order
-                ,'message' => self::$message_success
-            ],Response::HTTP_CREATED);
+
+            return $this->show($order->id, $orders );
         }
         return new JsonResponse([
             'success'   => $success
@@ -132,7 +138,7 @@ class OrdersController extends MasterController
     public function show( int $id = null, SysOrders $orders )
     {
         try {
-            $response = $orders->with('companiesRoles','groupsRoles')->find($id);
+            $response = $orders->with('concepts')->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response

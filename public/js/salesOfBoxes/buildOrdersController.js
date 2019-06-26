@@ -43,8 +43,12 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
         var fields  = $scope.insert;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                //nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
-                $scope.index();
+                $scope.insert.orderId = response.data.data.id;
+                $scope.concepts= response.data.data.concepts;
+                console.log(response.data.data);
+                console.log($scope.insert.orderId);
+                console.log($scope.concepts);
+                nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
             }
         });
 
