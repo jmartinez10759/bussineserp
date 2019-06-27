@@ -85,7 +85,7 @@ class OrdersController extends MasterController
         DB::beginTransaction();
         try {
             $product = $products->find($request->get("productId"));
-            if ( isset($request->orderId) ){
+            if ( !isset($request->orderId) && !$request->orderId){
                 $data = [
                     "box_id"            => $request->get("boxId") ,
                     "payment_form_id"   => $request->get("paymentForm") ,
@@ -97,7 +97,7 @@ class OrdersController extends MasterController
             }else{
                 $orderId = $request->get("orderId");
             }
-            var_export($orderId);die();
+            #var_export($orderId);die();
             $order = $orders->find($orderId);
             $order->concepts()->create([
                 "order_id"          => $order->id ,
@@ -138,10 +138,22 @@ class OrdersController extends MasterController
     public function show( int $id = null, SysOrders $orders )
     {
         try {
-            $response = $orders->with('concepts')->find($id);
+            $response = $orders->with(['concepts' => function($query){
+                return $query->with('products');
+            }])->find($id);
+            $subtotal = $response->concepts->sum("total");
+            $iva      = $subtotal * 16 / 100;
+            $total    = ($iva + $subtotal);
+            $data = [
+                "order"     => $response ,
+                "subtotal"  => number_format($subtotal ,2),
+                "iva"       => number_format($iva ,2),
+                "total"     => number_format($total,2)
+            ];
+
             return new JsonResponse([
                 'success'   => TRUE
-                ,'data'     => $response
+                ,'data'     => $data
                 ,'message'  => self::$message_success
             ],Response::HTTP_OK);
 
@@ -220,6 +232,43 @@ class OrdersController extends MasterController
             $rol->companiesRoles()->detach();
             $rol->companies()->detach();
             $rol->delete();
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => []
+                ,'message' => self::$message_success
+            ],Response::HTTP_OK);
+        }
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
+
+    }
+
+    /**
+     * This method is for destroy register the rol by companies
+     * @access public
+     * @param int $id [Description]
+     * @param SysConcepts $concepts
+     * @return JsonResponse
+     */
+    public function destroyConcept( int $id = null, SysConcepts $concepts )
+    {
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $concept = $concepts->find($id);
+            $concept->delete();
             DB::commit();
             $success = true;
         } catch (\Exception $e) {

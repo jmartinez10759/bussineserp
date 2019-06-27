@@ -121,10 +121,12 @@
 
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <button type="text" class="btn btn-danger">Cerrar Caja</button>
+                                                    <input type="text" ng-model="insert.orderId" />
+                                                    <button type="button" class="btn btn-danger">Cerrar Caja</button>
                                                 </div>
                                             </div>
                                             <div class="row">
+
                                                 <div class="col-sm-9">
                                                     <div class="table-responsive table-container">
                                                         <table class="table table-striped table-responsive highlight table-hover" id="datatable">
@@ -143,13 +145,12 @@
                                                             <tr ng-repeat="concept in concepts" id="tr_@{{concept.id}}">
                                                                 <td style="cursor:pointer;"></td>
                                                                 <td style="cursor:pointer;" ng-bind="concept.products.nombre"></td>
-                                                                <td style="cursor:pointer;" ng-bind="concept.products.total"></td>
-                                                                <td style="cursor:pointer;">
-                                                                </td>
-                                                                <td style="cursor:pointer;">
-                                                                </td>
+                                                                <td style="cursor:pointer;" ng-bind="concept.price"></td>
+                                                                <td style="cursor:pointer;" ng-bind="concept.quality"></td>
+                                                                <td style="cursor:pointer;" ng-bind="concept.discount"></td>
+                                                                <td style="cursor:pointer;" ng-bind="concept.total"></td>
                                                                 <td class="text-center">
-                                                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroyRegister(data.id)" title="Eliminar Registro" ng-if="permisos.DEL" >
+                                                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroyConcept(concept.id)" title="Eliminar Registro">
                                                                         <i class="glyphicon glyphicon-trash"></i>
                                                                     </button>
                                                                 </td>
@@ -160,7 +161,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <h1>aqui va la seccion</h1>
+                                                    <h1 ng-bind="'Subtotal: '+subtotal"></h1>
+                                                    <h1 ng-bind="'Iva: '+iva"></h1>
+                                                    <h1 ng-bind="'total: '+total"></h1>
                                                 </div>
                                             </div>
 

@@ -4,6 +4,7 @@ const URL = {
     ,url_edit             : 'orders/{id}/edit'
     ,url_all              : 'orders/all'
     ,url_destroy          : "orders/{id}/destroy"
+    ,url_destroy_concept  : "concept/{id}/destroy"
 };
 
 app.controller('OrdersController', ['ServiceController','FactoryController','NotificationsFactory','$scope','$window' ,function( sc,fc,nf,$scope,w ) {
@@ -43,11 +44,11 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
         var fields  = $scope.insert;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                $scope.insert.orderId = response.data.data.id;
-                $scope.concepts= response.data.data.concepts;
-                console.log(response.data.data);
-                console.log($scope.insert.orderId);
-                console.log($scope.concepts);
+                $scope.insert.orderId = response.data.data.order.id;
+                $scope.concepts = response.data.data.order.concepts;
+                $scope.subtotal = response.data.data.subtotal;
+                $scope.iva = response.data.data.iva;
+                $scope.total = response.data.data.total;
                 nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
             }
         });
@@ -72,14 +73,11 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     $scope.editRegister = function( id ){
         var url = fc.domain(URL.url_edit,id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
-            var datos = ['id', 'perfil', 'clave_corta', 'estatus',"companies_roles"];
-            $scope.update = sc.mapObject(response.data.data, datos, true);
-            $scope.update.companyId = [];
-            angular.forEach($scope.update.companies_roles,function (value, key) {
-                $scope.update.companyId[key] = value.id;
-            });
-            console.log($scope.update);
-            nf.modal("#modal_edit_register");
+            $scope.order    = response.data.data.order;
+            $scope.concepts = response.data.data.order.concepts;
+            $scope.subtotal = response.data.data.subtotal;
+            $scope.iva      = response.data.data.iva;
+            $scope.total    = response.data.data.total;
         });
     };
 
@@ -107,6 +105,18 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     $scope.boxClosed = function () {
         w.localStorage.removeItem('boxOpen');
         alert(w.localStorage['boxOpen']);
+    };
+
+    $scope.destroyConcept = function( id ){
+
+        var url = fc.domain( URL.url_destroy_concept,id);
+        nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
+            sc.requestHttp(url, null, "DELETE", false).then(function (response) {
+                if (sc.validateSessionStatus(response)) {
+                    $scope.editRegister($scope.insert.orderId);
+                }
+            });
+        }, null, "SI", "NO");
     };
 
 

@@ -1667,6 +1667,11 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'orders.destroy'
         ]);
 
+        Route::delete('/concept/{id}/destroy', [
+            'uses'      => 'SalesOfPoint\OrdersController@destroyConcept'
+            ,'as'       => 'orders.destroy'
+        ]);
+
         Route::post('/orders/register', [
             'uses'      => 'SalesOfPoint\OrdersController@store'
             ,'as'       => 'orders.register'
@@ -1676,6 +1681,7 @@ Route::group(['middleware' => ['admin.only']], function() {
             'uses'      => 'SalesOfPoint\OrdersController@update'
             ,'as'       => 'orders.update'
         ]);
+
 
 
 
