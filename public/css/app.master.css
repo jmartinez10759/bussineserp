@@ -9,6 +9,7 @@
 @import url("../bower_components/angular-toastr/dist/angular-toastr.css");
 @import url("../bower_components/dropzone/downloads/css/basic.css");
 @import url("../bower_components/dropzone/downloads/css/dropzone.css");
+@import url("../bower_components/angucomplete-alt/angucomplete-alt.css");
 
 /*Developer stylesheets*/
 @import url("../css/list.css");

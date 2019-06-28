@@ -20,83 +20,26 @@
                                     <div class="tab-content">
 
                                         <div class="tab-pane active" id="details">
-                                            {{--<div class="row">
 
-                                                <div class="container">
-                                                    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-                                                        <!-- Wrapper for slides -->
-                                                        <div class="carousel-inner">
+                                            <div class="container">
 
-                                                            <div class="item active" ng-repeat="product in products" ng-if="$first">
-                                                                <div class="col-sm-4">
-                                                                    <a href="#">
-                                                                        <image-load image="product.logo"></image-load>
-                                                                    </a>
-                                                                    <h5 class="text-center" ng-bind="product.nombre"></h5>
-                                                                    <p class="text-center">
-                                                                        Precio <span class="label label-success" ng-bind="'$ '+product.total"></span>
-                                                                    </p>
-
-                                                                    <div class="row">
-                                                                        <div class="col-sm-12 text-center">
-                                                                            <button type="button" class="btn btn-primary btn-sm">
-                                                                                <span class="glyphicon glyphicon-shopping-cart"></span> AGREGAR
-                                                                            </button>
-                                                                            <button class="btn btn-default btn-sm" id="btn2" name="btn2" value="2" type="submit"> <span class="glyphicon glyphicon-info-sign"></span> INFO</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="item " ng-repeat="product in products" ng-if="!$first">
-                                                                <div class="col-xs-12 col-sm-6 col-md-2">
-                                                                    <a href="#">
-                                                                        <image-load image="product.logo"></image-load>
-                                                                    </a>
-                                                                    <h5 class="text-center" ng-bind="product.nombre"></h5>
-                                                                    <p class="text-center">
-                                                                        Precio <span class="label label-success" ng-bind="'$ '+product.total"></span>
-                                                                    </p>
-
-                                                                    <div class="row">
-                                                                        <div class="col-sm-12 text-center">
-                                                                            <button type="button" class="btn btn-primary btn-sm">
-                                                                                <span class="glyphicon glyphicon-shopping-cart"></span> AGREGAR
-                                                                            </button>
-                                                                            <button class="btn btn-default btn-sm" id="btn2" name="btn2" value="2" type="submit"> <span class="glyphicon glyphicon-info-sign"></span> INFO</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                        <!-- Left and right controls -->
-                                                        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-                                                            <span class="glyphicon glyphicon-chevron-left"></span>
-                                                            <span class="sr-only">Previous</span>
-                                                        </a>
-                                                        <a class="right carousel-control" href="#myCarousel" data-slide="next">
-                                                            <span class="glyphicon glyphicon-chevron-right"></span>
-                                                            <span class="sr-only">Next</span>
-                                                        </a>
-                                                    </div>
-
-                                                </div>
-
-                                            </div>--}}
+                                            </div>
 
                                             <div class="row">
                                                 <div class="col-sm-9">
                                                     <div class="row">
                                                         <div class="col-sm-6">
-                                                            <select class="form-control"
-                                                                    chosen
-                                                                    width="'100%'"
-                                                                    ng-change="insertOrder(insert.productId)"
-                                                                    ng-model="insert.productId"
-                                                                    ng-options="value.id as (value.codigo+' '+value.nombre ) for (key, value) in products">
-                                                                <option disabled>--Seleccione Opcion--</option>
-                                                            </select>
+                                                            <angucomplete-alt id="products"
+                                                                              placeholder="Ingrese producto ... "
+                                                                              pause="100"
+                                                                              selected-object="findInsertOrder"
+                                                                              local-data="products"
+                                                                              search-fields="nombre"
+                                                                              title-field="nombre"
+                                                                              minlength="1"
+                                                                              image-field="logo"
+                                                                              clear-selected="true"
+                                                                              input-class="form-control form-control-small"/>
                                                         </div>
                                                         <div class="col-sm-3">
                                                             <select class="form-control"
@@ -121,8 +64,12 @@
 
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <input type="text" ng-model="insert.orderId" />
-                                                    <button type="button" class="btn btn-danger">Cerrar Caja</button>
+                                                    <input type="hidden" ng-model="insert.orderId" />
+                                                    <div class="btn-group pull-right">
+                                                        <button type="button" class="btn btn-danger" title="Cerrar caja" ng-click="boxClosed()">
+                                                            <i class="fa fa-sign-out pull-right"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -146,8 +93,12 @@
                                                                 <td style="cursor:pointer;"></td>
                                                                 <td style="cursor:pointer;" ng-bind="concept.products.nombre"></td>
                                                                 <td style="cursor:pointer;" ng-bind="concept.price"></td>
-                                                                <td style="cursor:pointer;" ng-bind="concept.quality"></td>
-                                                                <td style="cursor:pointer;" ng-bind="concept.discount"></td>
+                                                                <td style="cursor:pointer;">
+                                                                    <input type="number" ng-keyup="sumConcepts(concept.quality,concept.total)" ng-bind="concept.quality" class="form-control col-sm-1">
+                                                                </td>
+                                                                <td style="cursor:pointer;">
+                                                                    <input type="number" ng-model="insert.discoun" ng-bind="concept.discount" class="form-control col-sm-1">
+                                                                </td>
                                                                 <td style="cursor:pointer;" ng-bind="concept.total"></td>
                                                                 <td class="text-center">
                                                                     <button type="button" class="btn btn-danger btn-sm" ng-click="destroyConcept(concept.id)" title="Eliminar Registro">

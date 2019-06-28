@@ -1,10 +1,11 @@
 const URL = {
-    url_insert            : "orders/register"
-    ,url_update           : 'orders/update'
-    ,url_edit             : 'orders/{id}/edit'
-    ,url_all              : 'orders/all'
-    ,url_destroy          : "orders/{id}/destroy"
-    ,url_destroy_concept  : "concept/{id}/destroy"
+    url_insert           : "orders/register" ,
+    url_insert_tip       : "orders/register" ,
+    url_update           : 'orders/update' ,
+    url_edit             : 'orders/{id}/edit' ,
+    url_all              : 'orders/all' ,
+    url_destroy          : "orders/{id}/destroy" ,
+    url_destroy_concept  : "concept/{id}/destroy"
 };
 
 app.controller('OrdersController', ['ServiceController','FactoryController','NotificationsFactory','$scope','$window' ,function( sc,fc,nf,$scope,w ) {
@@ -55,6 +56,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
     };
 
+/*
     $scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
         var fields = sc.mapObject($scope.update, ['companies_roles'], false);
@@ -69,6 +71,14 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
             $scope.spinning = false;
         });
     };
+*/
+
+    $scope.findInsertOrder = function(selected){
+        if ( angular.isDefined(selected) ){
+            $scope.insert.productId = selected.originalObject.id;
+            $scope.insertOrder();
+        }
+    };
 
     $scope.editRegister = function( id ){
         var url = fc.domain(URL.url_edit,id);
@@ -81,8 +91,9 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
         });
     };
 
+/*
     $scope.destroyRegister = function( id ){
-        var url = fc.domain( URL.url_destroy.id);
+        var url = fc.domain( URL.url_destroy,id);
         nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
             sc.requestHttp(url, null, "DELETE", false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {
@@ -93,18 +104,20 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
         }, null, "SI", "NO");
 
     };
+*/
 
     $scope.BoxOpen = function (boxes) {
         w.localStorage['boxOpen'] = boxes.id;
         $scope.boxName = boxes.name;
         nf.modal("#modal_add_register");
-        /*alert(w.localStorage['boxOpen']);*/
-
     };
 
     $scope.boxClosed = function () {
-        w.localStorage.removeItem('boxOpen');
-        alert(w.localStorage['boxOpen']);
+
+        nf.buildSweetAlertOptions("¿Corte de caja?", "¿Realmente desea realizar el corte de caja?", "warning", function () {
+            w.localStorage.removeItem('boxOpen');
+            alert(w.localStorage['boxOpen']);
+        }, null, "SI", "NO");
     };
 
     $scope.destroyConcept = function( id ){
@@ -118,8 +131,13 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
             });
         }, null, "SI", "NO");
     };
-
-
+    
+    $scope.sumConcepts = function (quality, total) {
+        console.log(quality);
+        console.log(total);
+        
+    };
+    
 
 
 

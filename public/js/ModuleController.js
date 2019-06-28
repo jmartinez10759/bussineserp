@@ -7,5 +7,6 @@ var app = angular.module('application',[
     "ngDropzone" ,
     "components" ,
     "stringToNumber" ,
-    "html-unsafe"
+    "html-unsafe" ,
+    "angucomplete-alt"
 ]);
