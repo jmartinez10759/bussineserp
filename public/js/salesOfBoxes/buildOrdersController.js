@@ -5,7 +5,9 @@ const URL = {
     url_edit             : 'orders/{id}/edit' ,
     url_all              : 'orders/all' ,
     url_destroy          : "orders/{id}/destroy" ,
-    url_destroy_concept  : "concept/{id}/destroy"
+
+    url_destroy_concept  : "concept/{id}/destroy",
+    url_update_concept   : 'concept/update'
 };
 
 app.controller('OrdersController', ['ServiceController','FactoryController','NotificationsFactory','$scope','$window' ,function( sc,fc,nf,$scope,w ) {
@@ -116,7 +118,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
         nf.buildSweetAlertOptions("¿Corte de caja?", "¿Realmente desea realizar el corte de caja?", "warning", function () {
             w.localStorage.removeItem('boxOpen');
-            alert(w.localStorage['boxOpen']);
+            nf.modal("#modal_add_register",true);
         }, null, "SI", "NO");
     };
 
@@ -131,12 +133,20 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
             });
         }, null, "SI", "NO");
     };
-    
-    $scope.sumConcepts = function (quality, total) {
-        console.log(quality);
-        console.log(total);
-        
-    };
+
+    $scope.$on('editRegisterConcepts', function (evt, item) {
+        var url = fc.domain(URL.url_update_concept);
+        sc.requestHttp(url, $scope.concepts, 'PUT', false).then(function (response) {
+            if (sc.validateSessionStatus(response)) {
+                $scope.editRegister($scope.insert.orderId);
+                /*$scope.insert.orderId   = response.data.data[0].order_id;
+                $scope.concepts         = response.data.data;
+                $scope.subtotal         = response.data.data.subtotal;
+                $scope.iva              = response.data.data.iva;
+                $scope.total            = response.data.data.total;*/
+            }
+        });
+    });
     
 
 

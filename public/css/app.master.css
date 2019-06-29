@@ -3,6 +3,7 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.css");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css");
+@import url("//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css");
 @import url("../bower_components/angular-chosen-localytics/chosen-spinner.css");
 @import url("../bower_components/sweetalert2/dist/sweetalert2.css");
 @import url("../bower_components/bootstrap/dist/css/bootstrap-theme.min.css");

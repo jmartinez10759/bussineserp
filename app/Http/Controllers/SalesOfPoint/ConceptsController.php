@@ -3,25 +3,20 @@
 
 namespace App\Http\Controllers\SalesOfPoint;
 
-
 use App\Http\Controllers\MasterController;
-use App\Model\Administracion\Configuracion\SysFormasPagosModel;
-use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
-use App\Model\Administracion\Configuracion\SysProductosModel;
-use App\SysBoxes;
 use App\SysConcepts;
-use App\SysOrders;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class OrdersController extends MasterController
+class ConceptsController extends MasterController
 {
 
+
     /**
-     * OrdersController constructor.
+     * ConceptsController constructor.
      */
     public function __construct()
     {
@@ -31,21 +26,21 @@ class OrdersController extends MasterController
      * @access public
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    /*public function index()
     {
         $data = [
             'page_title' 	          => "Punto de Venta"
             ,'title'  		          => "Ordenes"
         ];
         return $this->_loadView( 'salesOfPoint.orders', $data );
-    }
+    }*/
 
     /**
      * This method is for get all data orders by company
      * @access public
      * @return JsonResponse
      */
-    public function all()
+    /*public function all()
     {
         try {
             $data = [
@@ -69,7 +64,7 @@ class OrdersController extends MasterController
             ],Response::HTTP_BAD_REQUEST);
         }
 
-    }
+    }*/
 
     /**
      * This method is for insert information in orders
@@ -79,7 +74,7 @@ class OrdersController extends MasterController
      * @param SysProductosModel $products
      * @return JsonResponse
      */
-    public function store( Request $request, SysOrders $orders, SysProductosModel $products )
+    /*public function store( Request $request, SysOrders $orders, SysProductosModel $products )
     {
         $error = null;
         DB::beginTransaction();
@@ -126,31 +121,20 @@ class OrdersController extends MasterController
             ,'message' => self::$message_error
         ],Response::HTTP_BAD_REQUEST);
 
-    }
+    }*/
 
     /**
      * This method is for get information the roles by companies
      * @access public
      * @param int|null $id
-     * @param SysOrders $orders
+     * @param SysConcepts $concepts
      * @return JsonResponse
      */
-    public function show( int $id = null, SysOrders $orders )
+    public function show( int $id = null, SysConcepts $concepts )
     {
         try {
-            $response = $orders->with(['concepts' => function($query){
-                return $query->with('products');
-            }])->find($id);
-            $subtotal = $response->concepts->sum("total");
-            $iva      = $subtotal * 16 / 100;
-            $total    = ($iva + $subtotal);
-            $data = [
-                "order"     => $response ,
-                "subtotal"  => number_format($subtotal ,2),
-                "iva"       => number_format($iva ,2),
-                "total"     => number_format($total,2)
-            ];
-
+            $data = $concepts->find($id);
+            var_export($data);die();
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $data
@@ -170,32 +154,31 @@ class OrdersController extends MasterController
     }
 
     /**
-     * This method is for update register the roles
+     * This method is for update register the concepts
      * @access public
      * @param Request $request [Description]
-     * @param SysRolesModel $roles
+     * @param SysConcepts $concepts
      * @return JsonResponse
      */
-    public function update( Request $request, SysOrders $orders )
+    public function update( Request $request, SysConcepts $concepts )
     {
         $error = null;
         DB::beginTransaction();
         try {
-            $data = array_filter($request->all(), function ($key) use ($request){
-                if($key != "companyId"){
-                    $data[$key] = $request->$key;
-                    if ($request->$key == 0){
-                        $data[$key] = "0";
+            $data = array_map(function ($value) use ($concepts){
+                $arrayKey = ['created_at','updated_at','products'];
+                foreach ($value as $key => $values){
+                    if (!in_array($key,$arrayKey)){
+                        $data[$key] = $values;
                     }
-                    return $data;
                 }
-            },ARRAY_FILTER_USE_KEY);
-
-            $roles->whereId($request->get('id'))->update($data);
-            if ( isset($request->companyId) && $request->companyId){
-                $rol = $roles->find($request->get('id'));
-                $rol->companiesRoles()->sync($request->get("companyId"));
-            }
+                $total = $data['quality'] * $data['price'];
+                $totalDiscount = $total * $data['discount'] / 100;
+                $data['total'] = ($total - $totalDiscount );
+                $concept = $concepts->find($data['id']);
+                $concept->update($data);
+                return $data;
+            },$request->all());
 
             DB::commit();
             $success = true;
@@ -206,7 +189,11 @@ class OrdersController extends MasterController
         }
 
         if ($success) {
-            return $this->show( $request->get("id"), new SysRolesModel );
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $data
+                ,'message'  => self::$message_error
+            ],Response::HTTP_OK);
         }
         return new JsonResponse([
             'success'   => FALSE
@@ -220,18 +207,16 @@ class OrdersController extends MasterController
      * This method is for destroy register the rol by companies
      * @access public
      * @param int $id [Description]
-     * @param SysRolesModel $roles
+     * @param SysConcepts $concepts
      * @return JsonResponse
      */
-    public function destroy( int $id = null, SysOrders $orders )
+    public function destroy( int $id = null, SysConcepts $concepts )
     {
         $error = null;
         DB::beginTransaction();
         try {
-            $rol = $roles->find($id);
-            $rol->companiesRoles()->detach();
-            $rol->companies()->detach();
-            $rol->delete();
+            $concept = $concepts->find($id);
+            $concept->delete();
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
@@ -254,5 +239,4 @@ class OrdersController extends MasterController
         ],Response::HTTP_BAD_REQUEST);
 
     }
-
 }

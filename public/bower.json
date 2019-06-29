@@ -39,7 +39,8 @@
     "angular-dropzone": "^0.1.2",
     "angular-fancybox-plus": "^1.0.3",
     "angular-fixed-table-header": "^0.2.1",
-    "angucomplete-alt": "^3.0.0"
+    "angucomplete-alt": "^3.0.0",
+    "angular-xeditable": "^0.10.0"
   },
   "resolutions": {
     "angular": "1.7.5",

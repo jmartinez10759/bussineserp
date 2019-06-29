@@ -86,7 +86,7 @@
 <!-- scripts -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<!-- angular -->
+<!-- angular components -->
 <script type="text/javascript" src="{{asset('bower_components/angular/angular.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angular-animate/angular-animate.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angular-chosen-localytics/dist/angular-chosen.js')}}"></script>
@@ -96,10 +96,12 @@
 <script type="text/javascript" src="{{asset('bower_components/angular-toastr/dist/angular-toastr.tpls.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
-<script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/angucomplete-alt/angucomplete-alt.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/angular-xeditable/dist/js/xeditable.js')}}"></script>
+{{--<script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>--}}
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
 <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
-<!-- / angular -->
+<!-- angular components -->
 <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
 

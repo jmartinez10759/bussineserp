@@ -89,19 +89,19 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr ng-repeat="concept in concepts" id="tr_@{{concept.id}}">
+                                                            <tr ng-repeat="item in concepts" id="tr_@{{concept.id}}">
                                                                 <td style="cursor:pointer;"></td>
-                                                                <td style="cursor:pointer;" ng-bind="concept.products.nombre"></td>
-                                                                <td style="cursor:pointer;" ng-bind="concept.price"></td>
+                                                                <td style="cursor:pointer;" ng-bind="item.products.nombre"></td>
+                                                                <td style="cursor:pointer;" ng-bind="item.price | currency:$ "></td>
                                                                 <td style="cursor:pointer;">
-                                                                    <input type="number" ng-keyup="sumConcepts(concept.quality,concept.total)" ng-bind="concept.quality" class="form-control col-sm-1">
+                                                                    <xeditable ng-model="item.quality" placeholder="Cantidad" title="Cantidad" />
                                                                 </td>
                                                                 <td style="cursor:pointer;">
-                                                                    <input type="number" ng-model="insert.discoun" ng-bind="concept.discount" class="form-control col-sm-1">
+                                                                    <xeditable ng-model="item.discount" placeholder="Descuento %" title="Descuento" /> %
                                                                 </td>
-                                                                <td style="cursor:pointer;" ng-bind="concept.total"></td>
+                                                                <td style="cursor:pointer;" ng-bind="item.total | currency:$ "></td>
                                                                 <td class="text-center">
-                                                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroyConcept(concept.id)" title="Eliminar Registro">
+                                                                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroyConcept(item.id)" title="Eliminar Registro">
                                                                         <i class="glyphicon glyphicon-trash"></i>
                                                                     </button>
                                                                 </td>
