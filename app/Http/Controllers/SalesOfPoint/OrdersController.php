@@ -8,7 +8,6 @@ use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysFormasPagosModel;
 use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
 use App\Model\Administracion\Configuracion\SysProductosModel;
-use App\SysBoxes;
 use App\SysConcepts;
 use App\SysOrders;
 use Illuminate\Http\Request;
@@ -19,9 +18,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class OrdersController extends MasterController
 {
-
     /**
-     * SalesController constructor.
+     * OrdersController constructor.
      */
     public function __construct()
     {
