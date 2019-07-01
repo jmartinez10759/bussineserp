@@ -8,14 +8,12 @@
     </script>
     <!-- Bootstrap 3.3.7 -->
         <script src="{{$base_url}}admintle/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- Bootstrap 4.0.1 -->
-    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> -->
     <!-- DataTables -->
     <script src="{{$base_url}}admintle/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="{{$base_url}}admintle/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <!-- Morris.js charts -->
-    <!-- <script src="{{$base_url}}admintle/bower_components/raphael/raphael.min.js"></script>
-    <script src="{{$base_url}}admintle/bower_components/morris.js/morris.min.js"></script> -->
+    <!-- it's need script for xeditable -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <!-- it's need script for xeditable -->
     <!-- Sparkline -->
     <script src="{{$base_url}}admintle/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
     <!-- jvectormap -->
@@ -39,16 +37,12 @@
     <script src="{{$base_url}}admintle/bower_components/fastclick/lib/fastclick.js"></script>
     <!-- AdminLTE App -->
     <script src="{{$base_url}}admintle/dist/js/adminlte.min.js"></script>
-    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <!-- <script src="{{$base_url}}admintle/dist/js/pages/dashboard.js"></script> -->
-    <!-- AdminLTE for demo purposes -->
     <script src="{{$base_url}}admintle/dist/js/demo.js"></script>
-    {{--<script type="text/javascript" src="{{asset('js/axios.js')}}"></script>--}}
-    {{--<script type="text/javascript" src="{{asset('js/vue.js')}}"></script>--}}
+
     <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
     <script type="text/javascript" src="{{asset('bower_components/chosen/chosen.jquery.js')}}"></script>
-     <!-- angular -->
+     <!-- angular components -->
      <script type="text/javascript" src="{{asset('bower_components/angular/angular.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/angular-animate/angular-animate.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/angular-chosen-localytics/dist/angular-chosen.js')}}"></script>
@@ -59,14 +53,12 @@
      <script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/angucomplete-alt/angucomplete-alt.js')}}"></script>
-     {{--<script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>--}}
-
-
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
-
+     {{--<script type="text/javascript" src="{{asset('bower_components/angular-xeditable/dist/js/xeditable.js')}}"></script>--}}
+     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+    <!-- angular components-->
+    {{--<script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>--}}
     <script src="{{asset('js/angular-bootstrap-select.min.js')}}"></script>
-
- <!-- script indispensables -->
+    <!-- script indispensables -->
     <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
 
@@ -75,7 +67,8 @@
     <script type="text/javascript" src="{{asset('js/NotificationsFactory.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/ServiceController.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
- <!--/ script indispensables /-->
+    <!--/ script indispensables /-->
+
  <!-- InputMask -->
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.js')}}"></script>
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.date.extensions.js')}}"></script>

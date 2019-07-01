@@ -10,7 +10,7 @@
 
             <div class="col-md-4" ng-repeat="boxes in datos | orderBy:id:true">
                 <div class="thumbnail">
-                    <a ng-click="BoxOpen(boxes)" style="cursor: pointer;">
+                    <a ng-click="boxOpen(boxes)" style="cursor: pointer;">
                         <h4 ng-bind="boxes.name"></h4>
                         <div class="caption">
                             <p ng-bind="boxes.description"></p>

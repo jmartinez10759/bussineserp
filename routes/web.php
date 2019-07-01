@@ -1631,6 +1631,11 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'boxes.edit'
         ]);
 
+        Route::get('/boxes/{id}/close', [
+            'uses'      => 'SalesOfPoint\BoxesController@boxCut'
+            ,'as'       => 'boxes.cut'
+        ]);
+
         Route::delete('/boxes/{id}/destroy', [
             'uses'      => 'SalesOfPoint\BoxesController@destroy'
             ,'as'       => 'boxes.destroy'
@@ -1667,11 +1672,6 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'orders.destroy'
         ]);
 
-        Route::delete('/concept/{id}/destroy', [
-            'uses'      => 'SalesOfPoint\OrdersController@destroyConcept'
-            ,'as'       => 'orders.destroy'
-        ]);
-
         Route::post('/orders/register', [
             'uses'      => 'SalesOfPoint\OrdersController@store'
             ,'as'       => 'orders.register'
@@ -1680,6 +1680,15 @@ Route::group(['middleware' => ['admin.only']], function() {
         Route::put('/orders/update', [
             'uses'      => 'SalesOfPoint\OrdersController@update'
             ,'as'       => 'orders.update'
+        ]);
+
+        Route::delete('/concept/{id}/destroy', [
+            'uses'      => 'SalesOfPoint\ConceptsController@destroy'
+            ,'as'       => 'concepts.destroy'
+        ]);
+        Route::put('/concept/update', [
+            'uses'      => 'SalesOfPoint\ConceptsController@update'
+            ,'as'       => 'concepts.update'
         ]);
 
 

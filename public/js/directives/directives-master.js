@@ -47,4 +47,39 @@ app.directive("buttonRegister",function () {
         templateUrl: 'js/tpl/button-register.html'
     };
 });
+/**
+ * Directive to generate popup editable table fields
+ */
+app.directive('xeditable', ['$timeout', function ($timeout) {
 
+    return {
+        restrict: 'E',
+        require: 'ngModel',
+        scope: {
+            ngModel: '=',
+            placeholder: '@',
+            title: '@'
+        },
+        replace: true,
+        template: "<a class='editable' href='javascript:;' data-type='text' data-placement='right'>{{ngModel}}</a>",
+        link: function (scope, elem, attrs, ctrl) {
+            var loadXeditable = function () {
+                angular.element(elem).editable({
+                    display: function (value, srcData) {
+                        ctrl.$setViewValue(value);
+                        scope.$apply();
+                    },
+                    success: function (response, newValue) {
+                        scope.ngModel = newValue;
+                        scope.$emit('editRegisterConcepts', scope.$parent.item);
+                    },
+                    placeholder: scope.placeholder
+                });
+            };
+            $timeout(function () {
+                loadXeditable();
+            }, 10);
+        }
+    };
+
+}]);

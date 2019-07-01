@@ -17,13 +17,14 @@ class SysOrders extends Model
         ,'payment_form_id'
         ,'payment_method_id'
         ,'status_id'
+        ,'comments'
         ,'subtotal'
         ,'iva'
         ,'total'
     ];
     public function boxes()
     {
-        return $this->hasOne(SysBoxes::class,'id','box_id');
+        return $this->belongsTo(SysBoxes::class,'id','box_id');
     }
     public function concepts()
     {

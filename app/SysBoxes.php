@@ -12,9 +12,11 @@ class SysBoxes extends Model
     public $table = "boxes";
     public $fillable = [
         'id'
+        ,'log_id'
         ,'name'
         ,'description'
         ,'status'
+        ,'is_active'
     ];
     public function companies()
     {
@@ -33,6 +35,11 @@ class SysBoxes extends Model
     }
     public function orders()
     {
-        return $this->belongsTo(SysOrders::class,'box_id','id');
+        return $this->hasMany(SysOrders::class,'box_id','id');
     }
+    public function logs()
+    {
+        return $this->belongsToMany(SysUsersModel::class,'boxes_logs','box_id','user_id')->withPivot("created_at");
+    }
+
 }

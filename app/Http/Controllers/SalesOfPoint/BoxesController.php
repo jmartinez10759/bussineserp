@@ -240,4 +240,35 @@ class BoxesController extends MasterController
 
     }
 
+    /**
+     * This method is used close box and cut box
+     * @param int|null $id
+     * @param SysBoxes $boxes
+     * @return JsonResponse
+     */
+    public function boxCut(int $id = null, SysBoxes $boxes)
+    {
+        try {
+            $today = $this->_today->format('Y-m-d');
+            $box = $boxes->with(['orders' => function($query) use ($today){
+                return $query->where('created_at','LIKE',$today.'%')->get();
+            }])->find($id);
+            $totalOrder = $box->orders()->sum("total");
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $totalOrder
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+
+        }
+    }
+
 }

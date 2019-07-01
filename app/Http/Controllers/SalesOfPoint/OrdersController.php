@@ -95,7 +95,6 @@ class OrdersController extends MasterController
             }else{
                 $orderId = $request->get("orderId");
             }
-            #var_export($orderId);die();
             $order = $orders->find($orderId);
             $order->concepts()->create([
                 "order_id"          => $order->id ,
@@ -148,6 +147,12 @@ class OrdersController extends MasterController
                 "iva"       => number_format($iva ,2),
                 "total"     => number_format($total,2)
             ];
+            $this->_updateQuantity(new Request([
+                "id"        => $id ,
+                "subtotal"  => $subtotal ,
+                "iva"       => $iva ,
+                "total"     => $total
+            ]), $orders);
 
             return new JsonResponse([
                 'success'   => TRUE
@@ -168,33 +173,59 @@ class OrdersController extends MasterController
     }
 
     /**
-     * This method is for update register the roles
-     * @access public
-     * @param Request $request [Description]
-     * @param SysRolesModel $roles
+     * This is method used find order is active
+     * @param int|null $id
+     * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function update( Request $request, SysRolesModel $roles )
+    /*public function findActiveOrder(int $id = null, SysOrders $orders )
+    {
+        try {
+            $response = $orders->with(['concepts' => function($query){
+                return $query->with('products');
+            }])->find($id);
+            $subtotal = $response->concepts->sum("total");
+            $iva      = $subtotal * 16 / 100;
+            $total    = ($iva + $subtotal);
+            $data = [
+                "order"     => $response ,
+                "subtotal"  => number_format($subtotal ,2),
+                "iva"       => number_format($iva ,2),
+                "total"     => number_format($total,2)
+            ];
+
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $data
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+
+        }
+
+    }*/
+
+    /**
+     * This method is for update register the orders
+     * @access public
+     * @param Request $request [Description]
+     * @param SysOrders $orders
+     * @return JsonResponse
+     */
+    private function _updateQuantity( Request $request, SysOrders $orders )
     {
         $error = null;
         DB::beginTransaction();
         try {
-            $data = array_filter($request->all(), function ($key) use ($request){
-                if($key != "companyId"){
-                    $data[$key] = $request->$key;
-                    if ($request->$key == 0){
-                        $data[$key] = "0";
-                    }
-                    return $data;
-                }
-            },ARRAY_FILTER_USE_KEY);
-
-            $roles->whereId($request->get('id'))->update($data);
-            if ( isset($request->companyId) && $request->companyId){
-                $rol = $roles->find($request->get('id'));
-                $rol->companiesRoles()->sync($request->get("companyId"));
-            }
-
+            $order = $orders->find($request->get("id"));
+            $order->update($request->all());
             DB::commit();
             $success = true;
         } catch ( \Exception $e) {
@@ -204,10 +235,14 @@ class OrdersController extends MasterController
         }
 
         if ($success) {
-            return $this->show( $request->get("id"), new SysRolesModel );
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => $order
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
         }
         return new JsonResponse([
-            'success'   => FALSE
+            'success'   => $success
             ,'data'     => $error
             ,'message'  => self::$message_error
         ],Response::HTTP_BAD_REQUEST);
@@ -218,55 +253,17 @@ class OrdersController extends MasterController
      * This method is for destroy register the rol by companies
      * @access public
      * @param int $id [Description]
-     * @param SysRolesModel $roles
+     * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function destroy( int $id = null, SysRolesModel $roles )
+    public function destroy( int $id = null, SysOrders $orders )
     {
         $error = null;
         DB::beginTransaction();
         try {
-            $rol = $roles->find($id);
-            $rol->companiesRoles()->detach();
-            $rol->companies()->detach();
-            $rol->delete();
-            DB::commit();
-            $success = true;
-        } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-            DB::rollback();
-        }
-
-        if ($success) {
-            return new JsonResponse([
-                'success'   => $success
-                ,'data'     => []
-                ,'message' => self::$message_success
-            ],Response::HTTP_OK);
-        }
-        return new JsonResponse([
-            'success'   => $success
-            ,'data'     => $error
-            ,'message' => self::$message_error
-        ],Response::HTTP_BAD_REQUEST);
-
-    }
-
-    /**
-     * This method is for destroy register the rol by companies
-     * @access public
-     * @param int $id [Description]
-     * @param SysConcepts $concepts
-     * @return JsonResponse
-     */
-    public function destroyConcept( int $id = null, SysConcepts $concepts )
-    {
-        $error = null;
-        DB::beginTransaction();
-        try {
-            $concept = $concepts->find($id);
-            $concept->delete();
+            $order = $orders->find($id);
+            $order->concepts()->delete();
+            $order->delete();
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
