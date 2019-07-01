@@ -122,19 +122,23 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
     $scope.boxOpen = function (boxes) {
 
-        var url = fc.domain();
-        if ( angular.isUndefined(w.localStorage['boxOpen'])  || w.localStorage['boxOpen'] == boxes.id){
-           w.localStorage['boxOpen']      = boxes.id;
-           w.localStorage['boxOpenName']  = boxes.name;
-           $scope.boxName = boxes.name;
-           if ( angular.isDefined(w.localStorage['orderId']) ){
-               $scope.payment = false;
-               $scope.editRegister(w.localStorage['orderId']);
-           }
-           nf.modal("#modal_add_register");
-        }else{
-            nf.buildSweetAlert("¡No puede abrir esta caja, tiene habilitada "+w.localStorage['boxOpenName']+"!","error");
-        }
+        nf.buildSweetAlertOptions("¿Apertura de Caja?", "¿Realmente desea abrir la caja ?", "warning", function () {
+
+            if ( angular.isUndefined(w.localStorage['boxOpen'])  || w.localStorage['boxOpen'] == boxes.id){
+                w.localStorage['boxOpen']      = boxes.id;
+                w.localStorage['boxOpenName']  = boxes.name;
+                $scope.boxName = boxes.name;
+                if ( angular.isDefined(w.localStorage['orderId']) ){
+                    $scope.payment = false;
+                    $scope.editRegister(w.localStorage['orderId']);
+                }
+                nf.modal("#modal_add_register");
+            }else{
+                nf.buildSweetAlert("¡No puede abrir esta caja, tiene habilitada "+w.localStorage['boxOpenName']+"!","error");
+            }
+
+        }, null, "SI", "NO");
+
     };
 
     $scope.boxClosed = function () {
@@ -144,7 +148,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
             sc.requestHttp(url, null, 'GET', false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {
                     var total = response.data.data;
-                    nf.buildSweetAlert("Total de la venta de la caja "+w.localStorage['boxOpenName']+": $"+total ,"success",10000);
+                    nf.buildSweetAlert("TOTAL DE VENTA DE LA CAJA "+w.localStorage['boxOpenName']+": $"+fc.numberFormat(total,2),"success",10000);
                     w.localStorage.removeItem('boxOpen');
                     w.localStorage.removeItem('boxOpenName');
                     w.localStorage.removeItem('orderId');

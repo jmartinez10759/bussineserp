@@ -48,7 +48,7 @@ app.directive("buttonRegister",function () {
     };
 });
 /**
- * Directive to generate popup
+ * Directive to generate popup editable table fields
  */
 app.directive('xeditable', ['$timeout', function ($timeout) {
 

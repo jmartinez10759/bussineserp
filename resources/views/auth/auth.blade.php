@@ -97,7 +97,7 @@
 <script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angucomplete-alt/angucomplete-alt.js')}}"></script>
-<script type="text/javascript" src="{{asset('bower_components/angular-xeditable/dist/js/xeditable.js')}}"></script>
+{{--<script type="text/javascript" src="{{asset('bower_components/angular-xeditable/dist/js/xeditable.js')}}"></script>--}}
 {{--<script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>--}}
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
 <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
