@@ -1631,6 +1631,11 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'boxes.edit'
         ]);
 
+        Route::get('/boxes/{id}/close', [
+            'uses'      => 'SalesOfPoint\BoxesController@boxCut'
+            ,'as'       => 'boxes.cut'
+        ]);
+
         Route::delete('/boxes/{id}/destroy', [
             'uses'      => 'SalesOfPoint\BoxesController@destroy'
             ,'as'       => 'boxes.destroy'

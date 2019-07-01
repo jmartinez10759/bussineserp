@@ -33,6 +33,6 @@ class SysBoxes extends Model
     }
     public function orders()
     {
-        return $this->belongsTo(SysOrders::class,'box_id','id');
+        return $this->hasMany(SysOrders::class,'box_id','id');
     }
 }
