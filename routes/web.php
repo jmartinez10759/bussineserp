@@ -1630,6 +1630,10 @@ Route::group(['middleware' => ['admin.only']], function() {
             'uses'      => 'SalesOfPoint\BoxesController@show'
             ,'as'       => 'boxes.edit'
         ]);
+        Route::get('/boxes/{id}/edit/{userId}', [
+            'uses'      => 'SalesOfPoint\BoxesController@findActiveBox'
+            ,'as'       => 'boxes.active'
+        ]);
 
         Route::get('/boxes/{id}/close', [
             'uses'      => 'SalesOfPoint\BoxesController@boxCut'

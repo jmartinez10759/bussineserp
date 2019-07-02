@@ -147,11 +147,13 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 	  $scope.spinning= false;
 	  $scope.loader = true;
 	  $scope.userLogged;
+	  $scope.loginUser;
 	};
 
 	$scope.services = function(){
 		sc.serviceNotification($scope);
-		$scope.userLogged 		= w.localStorage['rolesId'];
+		$scope.loginUser   = JSON.parse(w.localStorage['data']);
+		$scope.userLogged  = $scope.loginUser.rolesId;
 	};
 
 	$scope.getGroupByCompany = function(companyId){

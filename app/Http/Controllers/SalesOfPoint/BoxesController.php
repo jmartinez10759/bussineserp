@@ -152,6 +152,66 @@ class BoxesController extends MasterController
     }
 
     /**
+     * This method is used find box is active
+     * @param int|null $id
+     * @param int|null $userId
+     * @param SysBoxes $boxes
+     * @param SysUsersModel $users
+     * @return JsonResponse
+     */
+    public function findActiveBox(int $id = null, int $userId = null, SysBoxes $boxes, SysUsersModel $users)
+    {
+        $error = null;
+        DB::beginTransaction();
+        try {
+            /*$user = $users->find($userId);
+            if ($user->logs->count() > 0){
+                return new JsonResponse([
+                    'success'   => false
+                    ,'data'     => $user->logs
+                    ,'message'  => self::$message_success
+                ],Response::HTTP_CREATED);
+            }*/
+            $box = $boxes->with(["logs" => function($query) use ($userId){
+                return $query->where(["boxes_logs.user_id" => $userId]);
+            }])->whereIdAndIsActive($id,true)->first();
+            if (is_null($box)){
+                $findBox = $boxes->find($id);
+                $findBox->logs()->attach($userId);
+                $findBox->update(['is_active' => true]);
+            }else{
+
+                if(!$box->logs->count()){
+                    return new JsonResponse([
+                        'success'   => false
+                        ,'data'     => []
+                        ,'message'  => self::$message_success
+                    ],Response::HTTP_CREATED);
+                }
+            }
+
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => $box
+                ,'message'  => self::$message_success
+            ],Response::HTTP_CREATED);
+        }
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
+    }
+    /**
      * This method is for update register the roles
      * @access public
      * @param Request $request [Description]

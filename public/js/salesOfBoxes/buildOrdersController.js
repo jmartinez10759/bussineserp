@@ -5,6 +5,7 @@ const URL = {
     url_all              : 'orders/all' ,
     url_destroy          : "orders/{id}/destroy" ,
     url_close_box        : "boxes/{id}/close" ,
+    url_box_show         : "boxes/{id}/edit" ,
     url_destroy_concept  : "concept/{id}/destroy",
     url_update_concept   : 'concept/update'
 };
@@ -121,21 +122,25 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     };
 
     $scope.boxOpen = function (boxes) {
-
+        const url = fc.domain(URL.url_box_show+"/"+ $scope.loginUser.userId,boxes.id);
         nf.buildSweetAlertOptions("¿Apertura de Caja?", "¿Realmente desea abrir la caja ?", "warning", function () {
-
-            if ( angular.isUndefined(w.localStorage['boxOpen'])  || w.localStorage['boxOpen'] == boxes.id){
-                w.localStorage['boxOpen']      = boxes.id;
-                w.localStorage['boxOpenName']  = boxes.name;
-                $scope.boxName = boxes.name;
-                if ( angular.isDefined(w.localStorage['orderId']) ){
-                    $scope.payment = false;
-                    $scope.editRegister(w.localStorage['orderId']);
+            sc.requestHttp(url, null, 'GET', false).then(function (response) {
+                if (sc.validateSessionStatus(response)) {
+                    if (response.data.data.is_active == true && response.data.success == true){
+                        w.localStorage['boxOpen']      = boxes.id;
+                        w.localStorage['boxOpenName']  = boxes.name;
+                        $scope.boxName = boxes.name;
+                        if ( angular.isDefined(w.localStorage['orderId']) ){
+                            $scope.payment = false;
+                            $scope.editRegister(w.localStorage['orderId']);
+                        }
+                        nf.modal("#modal_add_register");
+                    }else{
+                        nf.buildSweetAlert("¡No puede abrir esta caja, esta siendo ocupada por otro usuario!","error");
+                    }
                 }
-                nf.modal("#modal_add_register");
-            }else{
-                nf.buildSweetAlert("¡No puede abrir esta caja, tiene habilitada "+w.localStorage['boxOpenName']+"!","error");
-            }
+
+            });
 
         }, null, "SI", "NO");
 

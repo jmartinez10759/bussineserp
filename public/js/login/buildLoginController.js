@@ -21,9 +21,15 @@ app.controller('LoginController', ['ServiceController','FactoryController','Noti
         $scope.serching = true;
         sc.requestHttp(url, fields, 'POST', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                w.localStorage['rolesId'] = response.data.data.roles_id;
+                w.localStorage['data'] = JSON.stringify({
+                    "userId" : response.data.data.id ,
+                    "rolesId" : response.data.data.roles_id ,
+                    "companyId" : response.data.data.company_id ,
+                    "groupId" : response.data.data.group_id
+                });
+                var data = JSON.parse(w.localStorage['data']);
                 w.localStorage['skin'] = "skin-black";
-                if (w.localStorage['rolesId'] == 1 && w.localStorage['pathWeb']){
+                if (data.rolesId == 1 && w.localStorage['pathWeb']){
                     redirect(w.localStorage['pathWeb']);
                 }else{
                     redirect(response.data.data.ruta);
