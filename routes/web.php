@@ -1635,7 +1635,7 @@ Route::group(['middleware' => ['admin.only']], function() {
             ,'as'       => 'boxes.active'
         ]);
 
-        Route::get('/boxes/{id}/close', [
+        Route::get('/boxes/{id}/close/{countCut}', [
             'uses'      => 'SalesOfPoint\BoxesController@boxCut'
             ,'as'       => 'boxes.cut'
         ]);

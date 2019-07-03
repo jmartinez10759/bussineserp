@@ -96,6 +96,11 @@ class OrdersController extends MasterController
                 $orderId = $request->get("orderId");
             }
             $order = $orders->find($orderId);
+            $logs = $order->boxes->logs()->where('boxes_logs.created_at','LIKE',$this->_today->format("Y-m-d").'%' )->count();
+            $order->update([
+                'count'     => $logs ,
+                'comments'  => $request->get("comments")
+            ]);
             $order->concepts()->create([
                 "order_id"          => $order->id ,
                 "product_id"        => $request->get("productId") ,
@@ -173,44 +178,45 @@ class OrdersController extends MasterController
     }
 
     /**
-     * This is method used find order is active
-     * @param int|null $id
+     * This is method used update register and ticket generate
+     * @param Request $request
      * @param SysOrders $orders
      * @return JsonResponse
      */
-    /*public function findActiveOrder(int $id = null, SysOrders $orders )
+    public function update( Request $request, SysOrders $orders )
     {
+        $error = null;
+        DB::beginTransaction();
         try {
-            $response = $orders->with(['concepts' => function($query){
-                return $query->with('products');
-            }])->find($id);
-            $subtotal = $response->concepts->sum("total");
-            $iva      = $subtotal * 16 / 100;
-            $total    = ($iva + $subtotal);
             $data = [
-                "order"     => $response ,
-                "subtotal"  => number_format($subtotal ,2),
-                "iva"       => number_format($iva ,2),
-                "total"     => number_format($total,2)
+                'status'            => $request->get("status") ,
+                'payment_form_id'   => $request->get("paymentForm") ,
+                'payment_method_id' => $request->get("paymentMethod") ,
+                'comments'          => $request->get("comments") ,
+                'swap'              => $request->get("swap") ,
             ];
+            $order = $orders->find($request->get("orderId"));
+            $order->update($data);
+            #aqui colocar la parte del ticket
 
-            return new JsonResponse([
-                'success'   => TRUE
-                ,'data'     => $data
-                ,'message'  => self::$message_success
-            ],Response::HTTP_OK);
-
+            DB::commit();
+            $success = true;
         } catch (\Exception $e) {
+            $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-            return new JsonResponse([
-                'success'   => FALSE
-                ,'data'     => $error
-                ,'message'  => self::$message_error
-            ],Response::HTTP_BAD_REQUEST);
-
+            DB::rollback();
         }
 
-    }*/
+        if ($success) {
+            return $this->show($order->id, $orders );
+        }
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
+
+    }
 
     /**
      * This method is for update register the orders

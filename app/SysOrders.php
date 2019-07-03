@@ -21,10 +21,12 @@ class SysOrders extends Model
         ,'subtotal'
         ,'iva'
         ,'total'
+        ,'swap'
+        ,'count'
     ];
     public function boxes()
     {
-        return $this->belongsTo(SysBoxes::class,'id','box_id');
+        return $this->belongsTo(SysBoxes::class,'box_id','id');
     }
     public function concepts()
     {

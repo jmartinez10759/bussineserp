@@ -49,6 +49,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
             if (sc.validateSessionStatus(response)) {
                 $scope.payment = false;
                 w.localStorage['orderId'] = response.data.data.order.id;
+                w.localStorage['countCut'] = response.data.data.order.count;
                 $scope.insert.orderId = response.data.data.order.id;
                 $scope.concepts = response.data.data.order.concepts;
                 $scope.subtotal = response.data.data.subtotal;
@@ -83,11 +84,11 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     $scope.updateRegister = function(){
         var url = fc.domain(URL.url_update);
         var fields = $scope.insert;
-        console.log(fields);return;
         $scope.spinning = true;
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                nf.modal("#paymentForm",true);
+                nf.buildSweetAlert("¡Se genero la orden "+$scope.insert.orderId+"!","success");
                 $scope.constructor();
                 w.localStorage.removeItem("orderId");
             }
@@ -106,6 +107,9 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
         var url = fc.domain(URL.url_edit,id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             $scope.insert.orderId = response.data.data.order.id;
+            $scope.insert.comments = response.data.data.order.comments;
+            $scope.insert.paymentForm   = response.data.data.order.payment_form_id;
+            $scope.insert.paymentMethod = response.data.data.order.payment_method_id;
             $scope.order    = response.data.data.order;
             $scope.concepts = response.data.data.order.concepts;
             $scope.subtotal = response.data.data.subtotal;
@@ -147,7 +151,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     };
 
     $scope.boxClosed = function () {
-        var url = fc.domain(URL.url_close_box,w.localStorage["boxOpen"]);
+        var url = fc.domain(URL.url_close_box+"/"+w.localStorage["countCut"],w.localStorage["boxOpen"]);
         nf.buildSweetAlertOptions("¿Corte de caja?", "¿Realmente desea realizar el corte de caja?", "warning", function () {
 
             sc.requestHttp(url, null, 'GET', false).then(function (response) {
@@ -157,6 +161,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
                     w.localStorage.removeItem('boxOpen');
                     w.localStorage.removeItem('boxOpenName');
                     w.localStorage.removeItem('orderId');
+                    w.localStorage.removeItem('countCut');
                     nf.modal("#modal_add_register",true);
                 }
             });

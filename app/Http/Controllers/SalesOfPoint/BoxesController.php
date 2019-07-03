@@ -303,17 +303,20 @@ class BoxesController extends MasterController
     /**
      * This method is used close box and cut box
      * @param int|null $id
+     * @param int|null $countCut
      * @param SysBoxes $boxes
      * @return JsonResponse
      */
-    public function boxCut(int $id = null, SysBoxes $boxes)
+    public function boxCut(int $id = null,int $countCut = null ,SysBoxes $boxes)
     {
         try {
+            $countCut = ($countCut)? : 1;
             $today = $this->_today->format('Y-m-d');
-            $box = $boxes->with(['orders' => function($query) use ($today){
-                return $query->where('created_at','LIKE',$today.'%')->get();
+            $box = $boxes->with(['orders' => function($query) use ($today,$countCut){
+                return $query->whereCount($countCut)->where('created_at','LIKE',$today.'%');
             }])->find($id);
-            $totalOrder = $box->orders()->sum("total");
+            $totalOrder = $box->orders->sum("total");
+            $box->update(['is_active' => false]);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $totalOrder
