@@ -86,6 +86,9 @@
 <!-- scripts -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!-- scripts -->
+
 <!-- angular components -->
 <script type="text/javascript" src="{{asset('bower_components/angular/angular.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angular-animate/angular-animate.js')}}"></script>
