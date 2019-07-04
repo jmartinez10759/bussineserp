@@ -4,11 +4,11 @@
 namespace App\Http\Controllers\SalesOfPoint;
 
 
+use App\Facades\Ticket;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysFormasPagosModel;
 use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
 use App\Model\Administracion\Configuracion\SysProductosModel;
-use App\SysConcepts;
 use App\SysOrders;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -18,12 +18,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class OrdersController extends MasterController
 {
+    public $ticket;
     /**
      * OrdersController constructor.
      */
     public function __construct()
     {
         parent::__construct();
+        $this->ticket = new Ticket();
     }
     /**
      * @access public
@@ -31,6 +33,9 @@ class OrdersController extends MasterController
      */
     public function index()
     {
+        $this->ticket->setTicket("Nombre Ticket");
+        $name = $this->ticket->getTicket();
+        var_export($name);die();
         $data = [
             'page_title' 	          => "Punto de Venta"
             ,'title'  		          => "Ordenes"
