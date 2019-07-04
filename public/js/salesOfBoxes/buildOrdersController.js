@@ -127,7 +127,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
     $scope.boxOpen = function (boxes) {
         const url = fc.domain(URL.url_box_show+"/"+ $scope.loginUser.userId,boxes.id);
-        nf.buildSweetAlertOptions("¿Apertura de Caja?", "¿Realmente desea abrir la caja ?", "warning", function () {
+        nf.buildSweetAlertOptions("¿Apertura de Caja?", "¿Realmente desea abrir la caja?", "warning", function () {
             sc.requestHttp(url, null, 'GET', false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {
                     if (response.data.data.is_active == true && response.data.success == true){

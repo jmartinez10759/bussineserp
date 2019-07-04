@@ -156,40 +156,25 @@ class BoxesController extends MasterController
      * @param int|null $id
      * @param int|null $userId
      * @param SysBoxes $boxes
-     * @param SysUsersModel $users
      * @return JsonResponse
      */
-    public function findActiveBox(int $id = null, int $userId = null, SysBoxes $boxes, SysUsersModel $users)
+    public function findActiveBox(int $id = null, int $userId = null, SysBoxes $boxes)
     {
         $error = null;
         DB::beginTransaction();
         try {
-            /*$user = $users->find($userId);
-            if ($user->logs->count() > 0){
-                return new JsonResponse([
-                    'success'   => false
-                    ,'data'     => $user->logs
-                    ,'message'  => self::$message_success
-                ],Response::HTTP_CREATED);
-            }*/
-            $box = $boxes->with(["logs" => function($query) use ($userId){
-                return $query->where(["boxes_logs.user_id" => $userId]);
+            $today = $this->_today->format("Y-m-d");
+            $box = $boxes->with(["logs" => function($query) use ($userId, $today){
+                return $query->where(["boxes_logs.user_id" => $userId])->where('boxes_logs.created_at',"LIKE",$today."%");
             }])->whereIdAndIsActive($id,true)->first();
             if (is_null($box)){
                 $findBox = $boxes->find($id);
                 $findBox->logs()->attach($userId);
                 $findBox->update(['is_active' => true]);
-            }else{
-
-                if(!$box->logs->count()){
-                    return new JsonResponse([
-                        'success'   => false
-                        ,'data'     => []
-                        ,'message'  => self::$message_success
-                    ],Response::HTTP_CREATED);
-                }
             }
-
+            $box = $boxes->with(["logs" => function($query) use ($userId, $today){
+                return $query->where(["boxes_logs.user_id" => $userId])->where('boxes_logs.created_at',"LIKE",$today."%");
+            }])->whereIdAndIsActive($id,true)->first();
             DB::commit();
             $success = true;
         } catch (\Exception $e) {

@@ -32,7 +32,8 @@ app.controller('LoginController', ['ServiceController','FactoryController','Noti
                 if (data.rolesId == 1 && w.localStorage['pathWeb']){
                     redirect(w.localStorage['pathWeb']);
                 }else{
-                    redirect(response.data.data.ruta);
+                    var path = angular.isDefined(w.localStorage['pathWeb'])? w.localStorage['pathWeb'] : response.data.data.ruta;
+                    redirect(path);
                 }
                 /*w.localStorage.removeItem('rolesId');
                 console.log(w.localStorage['rolesId']);*/
