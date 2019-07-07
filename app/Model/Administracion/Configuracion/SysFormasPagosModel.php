@@ -16,7 +16,7 @@ class SysFormasPagosModel extends Model
 
     public function orders()
     {
-        return $this->belongsTo(SysOrders::class,'box_id','id');
+        return $this->belongsTo(SysOrders::class,'payment_form_id','id');
     }
 
 }

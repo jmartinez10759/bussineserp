@@ -1,31 +1,32 @@
 <?php
-
+/**
+ * Created by PHP Storm
+ * User : jmartinez
+ * Date : 6/07/19
+ * Time : 11:09 PM
+ */
 
 namespace App\Http\Controllers\SalesOfPoint;
 
-
-use App\Facades\Ticket;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\SysBoxes;
+use App\SysOrders;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class BoxesController extends MasterController
+class SalesController extends MasterController
 {
-    private $ticket;
     /**
-     * BoxesController constructor.
+     * SalesController constructor.
      */
     public function __construct()
     {
         parent::__construct();
-        $this->ticket = new Ticket("EPSON");
     }
+
     /**
      * @access public
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -34,13 +35,13 @@ class BoxesController extends MasterController
     {
         $data = [
             'page_title' 	              => "Punto de Venta"
-            ,'title'  		              => "Cajas"
+            ,'title'  		              => "Pedidos"
         ];
-        return $this->_loadView( 'salesOfPoint.boxes', $data );
+        return $this->_loadView( 'salesOfPoint.sales', $data );
     }
 
     /**
-     * This method is for get all data boxes by company
+     * This method is for get all data sales by company
      * @access public
      * @return JsonResponse
      */
@@ -48,7 +49,7 @@ class BoxesController extends MasterController
     {
         try {
             $data = [
-                "boxes"     => $this->_boxesBelongsCompany() ,
+                "sales"     => $this->_salesBelongsCompany() ,
                 "users"     => $this->_usersBelongsCompany() ,
             ];
             return new JsonResponse([
@@ -72,10 +73,10 @@ class BoxesController extends MasterController
      * This method is for insert information in boxes
      * @access public
      * @param Request $request [Description]
-     * @param SysBoxes $boxes
+     * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function store( Request $request, SysBoxes $boxes )
+    public function store( Request $request, SysOrders $orders )
     {
         $error = null;
         DB::beginTransaction();
@@ -129,10 +130,10 @@ class BoxesController extends MasterController
      * This method is for get information the roles by companies
      * @access public
      * @param int|null $id
-     * @param SysBoxes $boxes
+     * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function show( int $id = null, SysBoxes $boxes )
+    public function show( int $id = null, SysOrders $orders )
     {
         try {
             $response = $boxes->with('companies','groups','users')->find($id);
@@ -155,58 +156,13 @@ class BoxesController extends MasterController
     }
 
     /**
-     * This method is used find box is active
-     * @param int|null $id
-     * @param int|null $userId
-     * @param SysBoxes $boxes
-     * @return JsonResponse
-     */
-    public function findActiveBox(int $id = null, int $userId = null, SysBoxes $boxes)
-    {
-        $error = null;
-        DB::beginTransaction();
-        try {
-            $today = $this->_today->format("Y-m-d");
-            $box = $boxes->with(["logs" => function($query) use ($userId, $today){
-                return $query->where(["boxes_logs.user_id" => $userId])->where('boxes_logs.created_at',"LIKE",$today."%");
-            }])->whereIdAndIsActive($id,true)->first();
-            if (is_null($box)){
-                $findBox = $boxes->find($id);
-                $findBox->logs()->attach($userId);
-                $findBox->update(['is_active' => true]);
-            }
-            $box = $boxes->with(["logs" => function($query) use ($userId, $today){
-                return $query->where(["boxes_logs.user_id" => $userId])->where('boxes_logs.created_at',"LIKE",$today."%");
-            }])->whereIdAndIsActive($id,true)->first();
-            DB::commit();
-            $success = true;
-        } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-            DB::rollback();
-        }
-
-        if ($success) {
-            return new JsonResponse([
-                'success'   => $success
-                ,'data'     => $box
-                ,'message'  => self::$message_success
-            ],Response::HTTP_CREATED);
-        }
-        return new JsonResponse([
-            'success'   => $success
-            ,'data'     => $error
-            ,'message' => self::$message_error
-        ],Response::HTTP_BAD_REQUEST);
-    }
-    /**
      * This method is for update register the roles
      * @access public
      * @param Request $request [Description]
-     * @param SysBoxes $boxes
+     * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function update( Request $request, SysBoxes $boxes )
+    public function update( Request $request, SysOrders $orders )
     {
         $error = null;
         DB::beginTransaction();
@@ -254,10 +210,10 @@ class BoxesController extends MasterController
      * This method is for destroy register the rol by companies
      * @access public
      * @param int $id [Description]
-     * @param SysBoxes $boxes
+     * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function destroy( int $id = null, SysBoxes $boxes )
+    public function destroy( int $id = null, SysOrders $orders )
     {
         $error = null;
         DB::beginTransaction();
@@ -288,69 +244,24 @@ class BoxesController extends MasterController
 
     }
 
-    /**
-     * This method is used close box and cut box
-     * @param int|null $id
-     * @param int|null $countCut
-     * @param SysBoxes $boxes
-     * @return JsonResponse
-     */
-    public function boxCut(int $id = null,int $countCut = null ,SysBoxes $boxes)
+
+    public function _salesBelongsCompany()
     {
-        try {
-            $countCut = ($countCut)? : 1;
-            $today = $this->_today->format('Y-m-d');
-            $box = $boxes->with(['orders' => function($query) use ($today,$countCut){
-                return $query->whereCount($countCut)->where('created_at','LIKE',$today.'%');
-            }])->find($id);
-            $subtotal   = number_format($box->orders->sum("subtotal"),2);
-            $iva        = number_format($box->orders->sum("iva"),2);
-            $total      = number_format($box->orders->sum("total"),2);
-            $dataPrinter = [];
-            foreach ($box->companies as $company){
-                $dataPrinter = [
-                    "rfc"               =>  $company->rfc_emisor ,
-                    "social_reason"     =>  $company->razon_social ,
-                    "logo"              =>  $company->logo ,
-                    "address"           =>  $company->calle ,
-                    "postal_code"       =>  $company->codigo,
-                    "state"             =>  $company->states->estado ,
-                    "country"           =>  $company->countries->descripcion ,
-                    "subtotal"          =>  $subtotal ,
-                    "iva"               =>  $iva ,
-                    "total"             =>  $total ,
-                    "swap"              =>  0
-                ];
-            }
-            foreach ($box->orders as $order){
-                foreach ($order->concepts as $concept ){
-                    $dataPrinter['concepts'][] = [
-                        "code"          => $concept->products->codigo ,
-                        "product"       => $concept->products->nombre ,
-                        "description"   => $concept->products->descripcion ,
-                        "quality"       => $concept->quality ,
-                        "total"         => $concept->total
-                    ];
-                }
-            }
-            $box->update(['is_active' => false]);
-            $this->ticket->printer($dataPrinter,true);
-            return new JsonResponse([
-                'success'   => TRUE
-                ,'data'     => $total
-                ,'message'  => self::$message_success
-            ],Response::HTTP_OK);
+        if (Session::get("roles_id") == 1){
 
-        } catch (\Exception $e) {
-            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-            \Log::error($error);
-            return new JsonResponse([
-                'success'   => FALSE
-                ,'data'     => $error
-                ,'message'  => self::$message_error
-            ],Response::HTTP_BAD_REQUEST);
-
+            $response = SysOrders::with('boxes','paymentsForms','paymentsMethods','status')
+                ->orderBy('id','ASC')
+                ->groupby('id')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find(Session::get('company_id'))
+                ->menusCompanies()->with('companiesMenus')
+                ->orderBy('orden','ASC')
+                ->groupby('id')
+                ->get();
         }
+        return $response;
     }
+
 
 }

@@ -585,37 +585,38 @@ abstract class MasterController extends Controller
 		$error = null;
 		DB::beginTransaction();
 		try {
-			$user = $users->whereId(Session::get('id'))->first();
-			$sessions = SysSesionesModel::whereId($user->id_bitacora)->whereIdUsers(Session::get('id'))->fisrt();
-			$beginDate  = isset($sessions->created_at) ? $sessions->created_at : timestamp();
-			$endDate    = isset($sessions->updated_at) ? $sessions->updated_at : timestamp();
-
+			$user = $users->find(Session::get('id'));
 			if ($logout) {
+                $binnacle = $user->binnacle;
+                $beginDate  = isset($binnacle->created_at) ? $binnacle->created_at : timestamp();
 				$dataLogout = [
 					'conect'        => FALSE ,
                     'disconect'     => TRUE ,
                     'updated_at'    => timestamp() ,
                     'time_conected' => time_fechas($beginDate, timestamp())
 				];
-				SysSesionesModel::whereId($user->id_bitacora)->whereIdUsers(Session::get('id'))->update($dataLogout);
-
+				$user->binnacle()->update($dataLogout);
 			} else {
-				$data = [
+                $data = [
 					'id_users'      => Session::get('id') ,
                     'ip_address'    => get_client_ip() ,
                     'user_agent'    => detect()['user_agent'] ,
                     'conect'        => TRUE ,
                     'disconect'     => FALSE
 				];
-				$binnacle = SysSesionesModel::create($data);
-				$users->whereId( Session::get('id') )->update(['id_bitacora' => $binnacle->id ]);
+                if ($user->binnacle){
+                    $binnacle = $user->binnacle->create($data);
+                }else{
+                    $binnacle = $user->binnacle()->create($data);
+                }
+                $user->update(['id_bitacora' => $binnacle->id ]);
 			}
-
 			DB::commit();
 			$success = true;
 		} catch (\Exception $e) {
 			$success = false;
 			$error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
+			\Log::error($error);
 			DB::rollback();
 		}
 
@@ -975,7 +976,7 @@ abstract class MasterController extends Controller
     {
         if( Session::get('roles_id') == 1 ){
             $response = SysUsersModel::with(
-                            'bitacora'
+                            'binnacle'
                             ,'roles'
                             ,'groups'
                             ,'companies'
@@ -987,7 +988,7 @@ abstract class MasterController extends Controller
                         ->with(
                             'roles'
                             ,'groups'
-                            ,'bitacora'
+                            ,'binnacle'
                             ,'companies'
                         )->orderBy('id','DESC')->groupby('id')->get();
         }

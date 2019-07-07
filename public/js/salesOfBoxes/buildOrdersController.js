@@ -62,8 +62,11 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     };
 
     $scope.paymentOrderSuccess = function(){
-        $scope.mount = "";
+        $scope.totalMount = $scope.total;
+        var total = $scope.totalMount.replace(',',"");
+        $scope.totalMount = total;
         $scope.insert.swap = 0;
+        $scope.mount = "";
         nf.modal("#paymentForm");
     };
 
@@ -119,9 +122,9 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     };
 
     $scope.calculateSwap = function(){
-        console.log($scope.total);
+        console.log($scope.totalMount);
         console.log($scope.mount);
-        var swap = (parseFloat($scope.mount) - parseFloat($scope.total));
+        var swap = (parseFloat($scope.mount) - parseFloat($scope.totalMount));
         $scope.insert.swap = fc.numberFormat(swap,2);
     };
 

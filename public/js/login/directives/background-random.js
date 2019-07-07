@@ -9,11 +9,11 @@ app.directive("backgroundRandom", function() {
                 'images_12.jpg', 'images_13.jpg','images_14.jpg','images_15.jpg','images_16.jpg','images_17.jpg',
                 'images_18.jpg','images_19.jpg','images_20.jpg'];
 
-            setInterval(function () {
-                $("html").css({
-                    'background': ' #FFF url(img/banner-images/' + images[Math.floor(Math.random() * images.length)] + ') top center'
-                });
-            },10000);
+            $("html").css({
+                'background': ' #FFF url(img/banner-images/' + images[Math.floor(Math.random() * images.length)] + ') top center'
+            });
+            /*setInterval(function () {
+            },10000);*/
 
         }
     }

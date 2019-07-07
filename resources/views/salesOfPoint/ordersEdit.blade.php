@@ -350,7 +350,7 @@
                                 <label for="">Total Orden </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                                    <input type="text" class="form-control" placeholder="Ingresa monto recibido" ng-model="total" ng-disabled="true">
+                                    <input type="text" class="form-control" placeholder="Ingresa monto recibido" ng-model="totalMount" ng-disabled="true">
                                 </div>
                             </div>
                             {{--<div class="col-sm-3">

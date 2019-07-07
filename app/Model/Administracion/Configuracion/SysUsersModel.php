@@ -53,6 +53,10 @@ class SysUsersModel extends Model
     {
         return $this->belongsToMany(SysBoxes::class,'boxes_logs','user_id','box_id')->withPivot("created_at");
     }
+    public function binnacle()
+    {
+        return $this->hasOne(SysSesionesModel::class,'id','id_bitacora');
+    }
 
 
 
@@ -82,10 +86,6 @@ class SysUsersModel extends Model
     public function details()
     {
       return $this->hasOne(SysPerfilUsersModel::class,'id_users','id');
-    }
-    public function bitacora()
-    {
-      return $this->hasOne(SysSesionesModel::class,'id','id_bitacora');
     }
     public function facturas()
     {

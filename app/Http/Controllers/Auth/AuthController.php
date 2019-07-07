@@ -52,11 +52,12 @@ class AuthController extends MasterController
      *This Method is for login in the dashboard
      * @access public
      * @param Request $request [description]
+     * @param SysUsersModel $users
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function authLogin( Request $request )
+    public function authLogin( Request $request, SysUsersModel $users )
     {
-        return $this->startSession( $request, new SysUsersModel );
+        return $this->startSession( $request, $users );
     }
     /**
      * This method is for finish session
@@ -65,7 +66,7 @@ class AuthController extends MasterController
      */
     public function logout()
     {
-        $this->_binnacleCreate(new SysUsersModel);
+        $this->_binnacleCreate(new SysUsersModel,true);
     	Session::flush();
     	return redirect()->route('/');
     }

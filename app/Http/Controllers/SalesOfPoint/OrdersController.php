@@ -25,7 +25,7 @@ class OrdersController extends MasterController
     public function __construct()
     {
         parent::__construct();
-        $this->ticket = new Ticket();
+        $this->ticket = new Ticket("EPSON");
     }
     /**
      * @access public
@@ -33,9 +33,6 @@ class OrdersController extends MasterController
      */
     public function index()
     {
-        $this->ticket->setTicket("Nombre Ticket");
-        $name = $this->ticket->getTicket();
-        var_export($name);die();
         $data = [
             'page_title' 	          => "Punto de Venta"
             ,'title'  		          => "Ordenes"
@@ -202,8 +199,32 @@ class OrdersController extends MasterController
             ];
             $order = $orders->find($request->get("orderId"));
             $order->update($data);
-            #aqui colocar la parte del ticket
-
+            $dataPrinter = [];
+            foreach ($order->boxes->companies as $company){
+                $dataPrinter = [
+                    "rfc"               =>  $company->rfc_emisor ,
+                    "social_reason"     =>  $company->razon_social ,
+                    "logo"              =>  $company->logo ,
+                    "address"           =>  $company->calle ,
+                    "postal_code"       =>  $company->codigo,
+                    "state"             =>  $company->states->estado ,
+                    "country"           =>  $company->countries->descripcion
+                ];
+            }
+            $dataPrinter['order']    = $order->id;
+            $dataPrinter['subtotal'] = $order->subtotal;
+            $dataPrinter['iva']      = $order->iva;
+            $dataPrinter['total']    = $order->total;
+            foreach ($order->concepts as $concept){
+                $dataPrinter['concepts'][] = [
+                    "code"          => $concept->products->codigo ,
+                    "product"       => $concept->products->nombre ,
+                    "description"   => $concept->products->descripcion ,
+                    "quality"       => $concept->quality ,
+                    "total"         => $concept->total
+                ];
+            }
+            $this->ticket->printer($dataPrinter);
             DB::commit();
             $success = true;
         } catch (\Exception $e) {

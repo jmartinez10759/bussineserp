@@ -1614,87 +1614,116 @@ Route::group(['middleware' => ['admin.only']], function() {
                 ,'as'       => 'atencion'
         ]);
 
-        #################################### SECTION SALES OF POINT #####################################
+    #################################### SECTION SALES OF POINT #####################################
 
-        Route::get('/sales/boxes', [
-            'uses'      => 'SalesOfPoint\BoxesController@index'
-            ,'as'       => 'sales.boxes'
-        ]);
+    Route::get('/sales/boxes', [
+        'uses'      => 'SalesOfPoint\BoxesController@index'
+        ,'as'       => 'sales.boxes'
+    ]);
 
-        Route::get('/boxes/all', [
-            'uses'      => 'SalesOfPoint\BoxesController@all'
-            ,'as'       => 'boxes.all'
-        ]);
+    Route::get('/boxes/all', [
+        'uses'      => 'SalesOfPoint\BoxesController@all'
+        ,'as'       => 'boxes.all'
+    ]);
 
-        Route::get('/boxes/{id}/edit', [
-            'uses'      => 'SalesOfPoint\BoxesController@show'
-            ,'as'       => 'boxes.edit'
-        ]);
-        Route::get('/boxes/{id}/edit/{userId}', [
-            'uses'      => 'SalesOfPoint\BoxesController@findActiveBox'
-            ,'as'       => 'boxes.active'
-        ]);
+    Route::get('/boxes/{id}/edit', [
+        'uses'      => 'SalesOfPoint\BoxesController@show'
+        ,'as'       => 'boxes.edit'
+    ]);
+    Route::get('/boxes/{id}/edit/{userId}', [
+        'uses'      => 'SalesOfPoint\BoxesController@findActiveBox'
+        ,'as'       => 'boxes.active'
+    ]);
 
-        Route::get('/boxes/{id}/close/{countCut}', [
-            'uses'      => 'SalesOfPoint\BoxesController@boxCut'
-            ,'as'       => 'boxes.cut'
-        ]);
+    Route::get('/boxes/{id}/close/{countCut}', [
+        'uses'      => 'SalesOfPoint\BoxesController@boxCut'
+        ,'as'       => 'boxes.cut'
+    ]);
 
-        Route::delete('/boxes/{id}/destroy', [
-            'uses'      => 'SalesOfPoint\BoxesController@destroy'
-            ,'as'       => 'boxes.destroy'
-        ]);
+    Route::delete('/boxes/{id}/destroy', [
+        'uses'      => 'SalesOfPoint\BoxesController@destroy'
+        ,'as'       => 'boxes.destroy'
+    ]);
 
-        Route::post('/boxes/register', [
-            'uses'      => 'SalesOfPoint\BoxesController@store'
-            ,'as'       => 'sales.register'
-        ]);
+    Route::post('/boxes/register', [
+        'uses'      => 'SalesOfPoint\BoxesController@store'
+        ,'as'       => 'sales.register'
+    ]);
 
-        Route::put('/boxes/update', [
-            'uses'      => 'SalesOfPoint\BoxesController@update'
-            ,'as'       => 'boxes.update'
-        ]);
+    Route::put('/boxes/update', [
+        'uses'      => 'SalesOfPoint\BoxesController@update'
+        ,'as'       => 'boxes.update'
+    ]);
 
 
-        Route::get('/sales/orders', [
-            'uses'      => 'SalesOfPoint\OrdersController@index'
-            ,'as'       => 'orders.orders'
-        ]);
+    Route::get('/sales/orders', [
+        'uses'      => 'SalesOfPoint\OrdersController@index'
+        ,'as'       => 'orders.orders'
+    ]);
 
-        Route::get('/orders/all', [
-            'uses'      => 'SalesOfPoint\OrdersController@all'
-            ,'as'       => 'orders.all'
-        ]);
+    Route::get('/orders/all', [
+        'uses'      => 'SalesOfPoint\OrdersController@all'
+        ,'as'       => 'orders.all'
+    ]);
 
-        Route::get('/orders/{id}/edit', [
-            'uses'      => 'SalesOfPoint\OrdersController@show'
-            ,'as'       => 'orders.edit'
-        ]);
+    Route::get('/orders/{id}/edit', [
+        'uses'      => 'SalesOfPoint\OrdersController@show'
+        ,'as'       => 'orders.edit'
+    ]);
 
-        Route::delete('/orders/{id}/destroy', [
-            'uses'      => 'SalesOfPoint\OrdersController@destroy'
-            ,'as'       => 'orders.destroy'
-        ]);
+    Route::delete('/orders/{id}/destroy', [
+        'uses'      => 'SalesOfPoint\OrdersController@destroy'
+        ,'as'       => 'orders.destroy'
+    ]);
 
-        Route::post('/orders/register', [
-            'uses'      => 'SalesOfPoint\OrdersController@store'
-            ,'as'       => 'orders.register'
-        ]);
+    Route::post('/orders/register', [
+        'uses'      => 'SalesOfPoint\OrdersController@store'
+        ,'as'       => 'orders.register'
+    ]);
 
-        Route::put('/orders/update', [
-            'uses'      => 'SalesOfPoint\OrdersController@update'
-            ,'as'       => 'orders.update'
-        ]);
+    Route::put('/orders/update', [
+        'uses'      => 'SalesOfPoint\OrdersController@update'
+        ,'as'       => 'orders.update'
+    ]);
 
-        Route::delete('/concept/{id}/destroy', [
-            'uses'      => 'SalesOfPoint\ConceptsController@destroy'
-            ,'as'       => 'concepts.destroy'
-        ]);
-        Route::put('/concept/update', [
-            'uses'      => 'SalesOfPoint\ConceptsController@update'
-            ,'as'       => 'concepts.update'
-        ]);
+    Route::delete('/concept/{id}/destroy', [
+        'uses'      => 'SalesOfPoint\ConceptsController@destroy'
+        ,'as'       => 'concepts.destroy'
+    ]);
+    Route::put('/concept/update', [
+        'uses'      => 'SalesOfPoint\ConceptsController@update'
+        ,'as'       => 'concepts.update'
+    ]);
 
+    Route::get('/sales/pedidos', [
+        'uses'      => 'SalesOfPoint\SalesController@index'
+        ,'as'       => 'sales.pedidos'
+    ]);
+
+    Route::get('/sales/all', [
+        'uses'      => 'SalesOfPoint\SalesController@all'
+        ,'as'       => 'sales.all'
+    ]);
+
+    Route::get('/sales/{id}/edit', [
+        'uses'      => 'SalesOfPoint\SalesController@show'
+        ,'as'       => 'sales.edit'
+    ]);
+
+    Route::delete('/sales/{id}/destroy', [
+        'uses'      => 'SalesOfPoint\SalesController@destroy'
+        ,'as'       => 'sales.destroy'
+    ]);
+
+    Route::post('/sales/register', [
+        'uses'      => 'SalesOfPoint\SalesController@store'
+        ,'as'       => 'sales.register'
+    ]);
+
+    Route::put('/sales/{id}/update', [
+        'uses'      => 'SalesOfPoint\SalesController@update'
+        ,'as'       => 'sales.update'
+    ]);
 
 
 

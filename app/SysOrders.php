@@ -38,7 +38,7 @@ class SysOrders extends Model
     }
     public function paymentsMethods()
     {
-        return $this->hasOne(SysMetodosPagosModel::class,'id','payment_form_id');
+        return $this->hasOne(SysMetodosPagosModel::class,'id','payment_method_id');
     }
     public function status()
     {

@@ -18,8 +18,9 @@ class SysSesionesModel extends Model
     ,'time_conected'
   ];
 
-  public function usuarios(){
-      return $this->belongsTo('App\Model\Administracion\Configuracion\SysUsersModel','id_bitacora','id');
+  public function users()
+  {
+      return $this->belongsTo(SysUsersModel::class,'id_bitacora','id');
   }
 
 
