@@ -10,11 +10,13 @@ namespace App\Facades;
 
 
 use Illuminate\Support\Facades\Facade;
+use File;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
+use Codedge\Fpdf\Fpdf\Fpdf;
 
 class Ticket extends Facade
 {
@@ -22,6 +24,7 @@ class Ticket extends Facade
     private $_connect;
     private $_printer;
     private $_today;
+    public  $_pdf;
 
     /**
      * Ticket constructor.
@@ -32,6 +35,7 @@ class Ticket extends Facade
     {
         $this->_printerName = $namePrinter;
         $this->_today = new \DateTime("now");
+        $this->_pdf = new FPDF($orientation='P',$unit='mm', [45,350]);
         $this->_configuration();
     }
 
@@ -47,12 +51,74 @@ class Ticket extends Facade
     }
 
     /**
-     * This method is used for print ticket
+     * This method is used generate pdf and print for ticket
      * @param array $data
      * @param bool $close
      * @return array
      */
     public function printer(array $data = [], bool $close = false)
+    {
+        #\Log::debug($data);
+        try {
+            $this->_pdf->AddPage();
+            $this->_pdf->SetFont('Arial','B',8);
+            $textypos = 5;
+            $this->_pdf->setY(2);
+            $this->_pdf->setX(2);
+            $this->_pdf->Cell(5,$textypos,$data['rfc']."-".$data['social_reason'] );
+            $this->_pdf->setX(6);
+            $this->_pdf->Cell(5,$textypos,$data['address']  );
+            $this->_pdf->setX(8);
+            $this->_pdf->Cell(5,$textypos,$data['state'].",".$data['country']." ".$data['postal_code'] );*/
+            if (!$close){
+                $this->_pdf->Cell(5,$textypos,$this->_today->format("Y-M-d H:i:s")." CHECK NO: ".$data['order'] );
+            }else{
+                $this->_pdf->Cell(5,$textypos,$this->_today->format("Y-M-d H:i:s") );
+            }
+            $this->_pdf->SetFont('Arial','',5);    //Letra Arial, negrita (Bold), tam. 20
+            $textypos+=6;
+            $this->_pdf->setX(2);
+            $this->_pdf->Cell(5,$textypos,'-------------------------------------------------------------------');
+            $textypos+=6;
+            $this->_pdf->setX(2);
+            $this->_pdf->Cell(5,$textypos,'CANTIDAD       ARTICULO                       TOTAL');
+            $off = $textypos+6;
+
+            foreach($data["concepts"] as $concept){
+                $this->_pdf->setX(2);
+                $this->_pdf->Cell(5,$off,$concept['quality']);
+                $this->_pdf->setX(6);
+                $this->_pdf->Cell(35,$off,  strtoupper(substr($concept['code']." ".$concept['product'], 0,12)) );
+                /*$this->_pdf->setX(20);
+                $this->_pdf->Cell(11,$off,  "$".number_format($pro["price"],2,".",",") ,0,0,"R");*/
+                $this->_pdf->setX(32);
+                $this->_pdf->Cell(11,$off,  "$ ".number_format($concept['total'],2,".",",") ,0,0,"R");
+                $off+=6;
+            }
+            $textypos=$off+6;
+            $this->_pdf->setX(2);
+            $this->_pdf->Cell(5,$textypos,"TOTAL: " );
+            $this->_pdf->setX(38);
+            $this->_pdf->Cell(5,$textypos,"$ ".number_format($data["total"],2,".",","),0,0,"R");
+            $this->_pdf->setX(2);
+            $this->_pdf->Cell(5,$textypos+6,'THANK YOU FOR DINING WITH US!!! ');
+            $filename= "ticket-".$data['rfc'].".pdf";
+            $dir = public_path()."/upload_file/ticket/";
+            $this->_pdf->output($dir.$filename,"F",true);
+        } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
+            \Log::error($error);
+            return ['success' => false, 'mgs' => $error];
+        }
+    }
+
+    /**
+     * This method is used for print ticket
+     * @param array $data
+     * @param bool $close
+     * @return array
+     */
+    public function printers(array $data = [], bool $close = false)
     {
         try {
             $this->_printer->setJustification(Printer::JUSTIFY_CENTER);
