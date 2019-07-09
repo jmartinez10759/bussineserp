@@ -66,10 +66,11 @@ class Ticket extends Facade
             $this->_pdf->setY(2);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textypos,$data['rfc']."-".$data['social_reason'] );
-            $this->_pdf->setX(6);
+            $this->_pdf->setX(10);
             $this->_pdf->Cell(5,$textypos,$data['address']  );
-            $this->_pdf->setX(8);
-            $this->_pdf->Cell(5,$textypos,$data['state'].",".$data['country']." ".$data['postal_code'] );*/
+            $this->_pdf->setX(15);
+            $this->_pdf->Cell(5,$textypos,$data['state'].",".$data['country']." ".$data['postal_code'] );
+            $this->_pdf->setX(20);
             if (!$close){
                 $this->_pdf->Cell(5,$textypos,$this->_today->format("Y-M-d H:i:s")." CHECK NO: ".$data['order'] );
             }else{
@@ -77,10 +78,10 @@ class Ticket extends Facade
             }
             $this->_pdf->SetFont('Arial','',5);    //Letra Arial, negrita (Bold), tam. 20
             $textypos+=6;
-            $this->_pdf->setX(2);
+            $this->_pdf->setX(25);
             $this->_pdf->Cell(5,$textypos,'-------------------------------------------------------------------');
             $textypos+=6;
-            $this->_pdf->setX(2);
+            $this->_pdf->setX(35);
             $this->_pdf->Cell(5,$textypos,'CANTIDAD       ARTICULO                       TOTAL');
             $off = $textypos+6;
 

@@ -19,6 +19,7 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
             "Nombre",
             "Descripcion",
             "Estatus",
+            "Caja",
             ""
         ];
     };
@@ -35,6 +36,7 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
                         'name'        : value.name,
                         'description' : value.description ,
                         'estatus'     : value.status ,
+                        'is_active'   : value.is_active ,
                         'btnDelete'   : ""
                     };
                 });

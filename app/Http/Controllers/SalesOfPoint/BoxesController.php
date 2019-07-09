@@ -93,13 +93,13 @@ class BoxesController extends MasterController
             $box = $boxes->find($response->id);
             if ( isset($request->companyId ) ){
                 $box->groups()->attach($request->get("groupId"),[
-                    'company_id' => $request->get("companyId") ,
-                    'user_id'  => $request->get("userId")
+                    'company_id'    => $request->get("companyId") ,
+                    'user_id'       => $request->get("userId")
                 ]);
             }else{
                 $box->groups()->attach([Session::get('group_id')],[
                     'company_id' => Session::get('company_id') ,
-                    'user_id'  => $request->get("userId")
+                    'user_id'    => $request->get("userId")
                 ]);
             }
             DB::commit();
@@ -226,8 +226,8 @@ class BoxesController extends MasterController
             if ( isset($request->companyId) && $request->companyId){
                 $box->groups()->detach();
                 $box->groups()->attach($request->get("groupId"),[
-                    'company_id' => $request->get("companyId") ,
-                    'user_id'  => $request->get("userId")
+                    'company_id'    => $request->get("companyId") ,
+                    'user_id'       => $request->get("userId")
                 ]);
             }
 

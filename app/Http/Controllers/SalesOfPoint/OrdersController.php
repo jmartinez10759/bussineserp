@@ -6,9 +6,11 @@ namespace App\Http\Controllers\SalesOfPoint;
 
 use App\Facades\Ticket;
 use App\Http\Controllers\MasterController;
+use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysFormasPagosModel;
 use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
 use App\Model\Administracion\Configuracion\SysProductosModel;
+use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\SysOrders;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -49,7 +51,7 @@ class OrdersController extends MasterController
     {
         try {
             $data = [
-                "boxes"             => $this->_boxesBelongsCompany() ,
+                "boxes"             => $this->_boxesBelongsUsers() ,
                 "products"          => $this->_productsBelongCompany() ,
                 "paymentMethod"     => SysMetodosPagosModel::whereEstatus(true)->get() ,
                 "paymentForm"       => SysFormasPagosModel::whereEstatus(true)->get()
@@ -317,6 +319,14 @@ class OrdersController extends MasterController
             ,'message' => self::$message_error
         ],Response::HTTP_BAD_REQUEST);
 
+    }
+
+    public function _boxesBelongsUsers()
+    {
+        $response = SysUsersModel::find(Session::get('id'))
+            ->boxes()->orderBy('id','DESC')->groupby('id')->get();
+
+        return $response;
     }
 
 }

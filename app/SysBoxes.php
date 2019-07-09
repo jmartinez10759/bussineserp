@@ -12,7 +12,6 @@ class SysBoxes extends Model
     public $table = "boxes";
     public $fillable = [
         'id'
-        ,'log_id'
         ,'name'
         ,'description'
         ,'status'
