@@ -6,8 +6,6 @@ namespace App\Http\Controllers\SalesOfPoint;
 
 use App\Facades\Ticket;
 use App\Http\Controllers\MasterController;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\SysBoxes;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
