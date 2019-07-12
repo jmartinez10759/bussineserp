@@ -35,7 +35,7 @@ class Ticket extends Facade
     {
         $this->_printerName = $namePrinter;
         $this->_today = new \DateTime("now");
-        $this->_pdf = new FPDF($orientation='P',$unit='mm', [45,350]);
+        $this->_pdf = new FPDF('P', 'mm', [45, 217], true, 'UTF-8', false);
         $this->_configuration();
     }
 
@@ -56,13 +56,59 @@ class Ticket extends Facade
      * @param bool $close
      * @return array
      */
-    public function printer(array $data = [], bool $close = false)
+    public function printer(array $data = [], bool $close = null )
     {
         #\Log::debug($data);
         try {
+            $this->_pdf->Company = $data['rfc']."-".$data['social_reason'];
+            $this->_pdf->SetAuthor('Jorge Martinez Quezada');
+            $this->_pdf->SetTitle("Sales of ticket");
+            $this->_pdf->NomDocumento='BOLETA ELECTRÓNICA';
+            $this->_pdf->SetFont('Helvetica', '', 12, '', true);
             $this->_pdf->AddPage();
-            $this->_pdf->SetFont('Arial','B',8);
-            $textypos = 5;
+
+            $this->_pdf->SetFont('Helvetica','B',8);
+            $this->_pdf->SetXY(2,24);
+            $this->_pdf->Cell(2, 48, "Razon Social:",0,0,'L');
+            $this->_pdf->SetFont('Helvetica','',8);
+            $this->_pdf->SetXY(20,24);
+            $this->_pdf->Cell(20, 48, $data['rfc']."-".$data['social_reason'] ,0,0,'L');
+            $this->_pdf->SetFont('Helvetica','B',10);
+
+            $this->_pdf->SetFont('Helvetica','B',8);
+            $this->_pdf->Ln(7);
+            $this->_pdf->SetXY(2,28);
+            $this->_pdf->Cell(17, 48, "Cliente:",0,0,'L');
+            $this->_pdf->SetFont('Helvetica','',8);
+            $this->_pdf->SetXY(20,28);
+            $this->_pdf->Cell(17, 48, "Publico",0,0,'L');
+            $this->_pdf->SetFont('Helvetica','B',8);
+            $this->_pdf->SetXY(2,36);
+            $this->_pdf->Cell(30, 48, "Fecha de Emisión:",0,0,'L');
+            $this->_pdf->SetFont('Helvetica','',8);
+            $this->_pdf->SetXY(30,36);
+            $this->_pdf->Cell(30, 48, $this->_today->format("Y-m-d"),0,0,'L');
+            $this->_pdf->SetFont('Helvetica','B',8);
+            $this->_pdf->SetXY(2,40);
+            $this->_pdf->Cell(30, 48, "Moneda:",0,0,'L');
+            $this->_pdf->SetFont('Helvetica','',8);
+            $this->_pdf->SetXY(30,40);
+            $this->_pdf->Cell(30, 48, 'Pesos',0,0,'L');
+            $this->_pdf->Ln(4);
+            $this->_pdf->SetX(1);
+            $this->_pdf->Cell(100,52,"------------------------------------------------------------------------------------",0,0,'L');
+            $this->_pdf->Ln();
+            $w = [8,50,60];
+            $this->_pdf->SetFont('Helvetica','B',8);
+            $header = ['CANT.','ARTICULO','TOTAL' ];
+            $this->_pdf->SetXY(2,69);
+            for($i=0;$i<count($header);$i++)
+                $this->_pdf->Cell($w[$i],7,$header[$i],0,0,'L',0);
+
+
+
+
+            /*$textypos = 5;
             $this->_pdf->setY(2);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textypos,$data['rfc']."-".$data['social_reason'] );
@@ -91,7 +137,7 @@ class Ticket extends Facade
                 $this->_pdf->setX(6);
                 $this->_pdf->Cell(35,$off,  strtoupper(substr($concept['code']." ".$concept['product'], 0,12)) );
                 /*$this->_pdf->setX(20);
-                $this->_pdf->Cell(11,$off,  "$".number_format($pro["price"],2,".",",") ,0,0,"R");*/
+                $this->_pdf->Cell(11,$off,  "$".number_format($pro["price"],2,".",",") ,0,0,"R");
                 $this->_pdf->setX(32);
                 $this->_pdf->Cell(11,$off,  "$ ".number_format($concept['total'],2,".",",") ,0,0,"R");
                 $off+=6;
@@ -102,7 +148,8 @@ class Ticket extends Facade
             $this->_pdf->setX(38);
             $this->_pdf->Cell(5,$textypos,"$ ".number_format($data["total"],2,".",","),0,0,"R");
             $this->_pdf->setX(2);
-            $this->_pdf->Cell(5,$textypos+6,'THANK YOU FOR DINING WITH US!!! ');
+            $this->_pdf->Cell(5,$textypos+6,'THANK YOU FOR DINING WITH US!!! ');*/
+
             $filename= "ticket-".$data['rfc'].".pdf";
             $dir = public_path()."/upload_file/ticket/";
             $this->_pdf->output($dir.$filename,"F",true);
