@@ -90,6 +90,8 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
         $scope.spinning = true;
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
+                let window_open =  window.open(response.data.data);
+                window_open.print();
                 nf.modal("#paymentForm",true);
                 nf.buildSweetAlert("¡Se genero la orden "+$scope.insert.orderId+"!","success");
                 $scope.constructor();
@@ -129,7 +131,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
     };
 
     $scope.boxOpen = function (boxes) {
-        const url = fc.domain(URL.url_box_show+"/"+ $scope.loginUser.userId,boxes.id);
+        const url = fc.domain(URL.url_box_show+"/"+$scope.loginUser.userId,boxes.id);
         nf.buildSweetAlertOptions("¿Apertura de Caja?", "¿Realmente desea abrir la caja?", "warning", function () {
             sc.requestHttp(url, null, 'GET', false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {
@@ -159,13 +161,15 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
             sc.requestHttp(url, null, 'GET', false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {
-                    var total = response.data.data;
+                    var total = response.data.data.total;
                     nf.buildSweetAlert("TOTAL DE VENTA DE LA CAJA "+w.localStorage['boxOpenName']+": $"+fc.numberFormat(total,2),"success",10000);
                     w.localStorage.removeItem('boxOpen');
                     w.localStorage.removeItem('boxOpenName');
                     w.localStorage.removeItem('orderId');
                     w.localStorage.removeItem('countCut');
                     nf.modal("#modal_add_register",true);
+                    let window_open =  window.open(response.data.data.path);
+                    window_open.print();
                 }
             });
 

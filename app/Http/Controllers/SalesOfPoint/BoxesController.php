@@ -105,6 +105,7 @@ class BoxesController extends MasterController
         } catch (\Exception $e) {
             $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::error($error);
             DB::rollback();
         }
 
@@ -168,10 +169,14 @@ class BoxesController extends MasterController
             $box = $boxes->with(["logs" => function($query) use ($userId, $today){
                 return $query->where(["boxes_logs.user_id" => $userId])->where('boxes_logs.created_at',"LIKE",$today."%");
             }])->whereIdAndIsActive($id,true)->first();
+
+            $findBox = $boxes->find($id);
             if (is_null($box)){
-                $findBox = $boxes->find($id);
                 $findBox->logs()->attach($userId);
                 $findBox->update(['is_active' => true]);
+            }
+            if( $findBox->logs()->count() == 0 ){
+                $findBox->logs()->attach($userId);
             }
             $box = $boxes->with(["logs" => function($query) use ($userId, $today){
                 return $query->where(["boxes_logs.user_id" => $userId])->where('boxes_logs.created_at',"LIKE",$today."%");
@@ -181,6 +186,7 @@ class BoxesController extends MasterController
         } catch (\Exception $e) {
             $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::error($error);
             DB::rollback();
         }
 
@@ -234,6 +240,7 @@ class BoxesController extends MasterController
         } catch ( \Exception $e) {
             $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::error($error);
             DB::rollback();
         }
 
@@ -268,6 +275,7 @@ class BoxesController extends MasterController
         } catch (\Exception $e) {
             $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::error($error);
             DB::rollback();
         }
 
@@ -317,25 +325,38 @@ class BoxesController extends MasterController
                     "subtotal"          =>  $subtotal ,
                     "iva"               =>  $iva ,
                     "total"             =>  $total ,
-                    "swap"              =>  0
                 ];
             }
+            $dataPrinter['caja']     = $box->name;
+            $dataPrinter['cajero']   = ( $box->logs->count() > 0 ) ? $box->logs[0]->name." ".$box->logs[0]->first_surname : "CAJERO";
             foreach ($box->orders as $order){
                 foreach ($order->concepts as $concept ){
                     $dataPrinter['concepts'][] = [
                         "code"          => $concept->products->codigo ,
                         "product"       => $concept->products->nombre ,
-                        "description"   => $concept->products->descripcion ,
+                        "price"         => $concept->products->total ,
+                        "discount"      => $concept->discount ,
                         "quality"       => $concept->quality ,
-                        "total"         => $concept->total
+                        "total"         => (double)$concept->total
                     ];
                 }
+                $dataPrinter['order']    = $order->id;
             }
+            \Log::debug($dataPrinter);
             $box->update(['is_active' => false]);
-            $this->ticket->printer($dataPrinter,true);
+            $ticket = $this->ticket->printer($dataPrinter,true);
+            $path = "";
+            if ($ticket['success']){
+                $path = $ticket['data'];
+            }
+            $sendData = [
+                "path"  => $path ,
+                "total" => $total
+            ];
+            \Log::debug($sendData);
             return new JsonResponse([
                 'success'   => TRUE
-                ,'data'     => $total
+                ,'data'     => $sendData
                 ,'message'  => self::$message_success
             ],Response::HTTP_OK);
 

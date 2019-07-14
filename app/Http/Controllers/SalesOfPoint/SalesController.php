@@ -250,7 +250,7 @@ class SalesController extends MasterController
         if (Session::get("roles_id") == 1){
 
             $response = SysOrders::with('boxes','paymentsForms','paymentsMethods','status')
-                ->orderBy('id','ASC')
+                ->orderBy('id','DESC')
                 ->groupby('id')
                 ->get();
         }else{

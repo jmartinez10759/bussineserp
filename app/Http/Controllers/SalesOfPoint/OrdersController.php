@@ -214,6 +214,8 @@ class OrdersController extends MasterController
                 ];
             }
             $dataPrinter['order']    = $order->id;
+            $dataPrinter['caja']     = $order->boxes->name;
+            $dataPrinter['cajero']   = ( $order->boxes->logs->count() > 0 ) ? $order->boxes->logs[0]->name." ".$order->boxes->logs[0]->first_surname : "CAJERO";
             $dataPrinter['subtotal'] = $order->subtotal;
             $dataPrinter['iva']      = $order->iva;
             $dataPrinter['total']    = $order->total;
@@ -221,22 +223,33 @@ class OrdersController extends MasterController
                 $dataPrinter['concepts'][] = [
                     "code"          => $concept->products->codigo ,
                     "product"       => $concept->products->nombre ,
-                    "description"   => $concept->products->descripcion ,
+                    "price"         => $concept->products->total ,
+                    "discount"      => $concept->discount ,
                     "quality"       => $concept->quality ,
                     "total"         => $concept->total
                 ];
             }
-            $this->ticket->printer($dataPrinter);
+            $ticket = $this->ticket->printer($dataPrinter);
+            $path = "";
+            if ($ticket['success']){
+                $path = $ticket['data'];
+            }
+            \Log::debug($path);
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
             $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::error($error);
             DB::rollback();
         }
 
         if ($success) {
-            return $this->show($order->id, $orders );
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => $path
+                ,'message' => self::$message_success
+            ],Response::HTTP_OK);
         }
         return new JsonResponse([
             'success'   => $success
@@ -265,6 +278,7 @@ class OrdersController extends MasterController
         } catch ( \Exception $e) {
             $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::error($error);
             DB::rollback();
         }
 
@@ -303,6 +317,7 @@ class OrdersController extends MasterController
         } catch (\Exception $e) {
             $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::error($error);
             DB::rollback();
         }
 
@@ -321,6 +336,9 @@ class OrdersController extends MasterController
 
     }
 
+    /**
+     * @return mixed
+     */
     public function _boxesBelongsUsers()
     {
         $response = SysUsersModel::find(Session::get('id'))
