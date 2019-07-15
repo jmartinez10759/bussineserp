@@ -10,6 +10,7 @@ namespace App\Http\Controllers\SalesOfPoint;
 
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
+use App\SysBoxes;
 use App\SysOrders;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -60,6 +61,7 @@ class SalesController extends MasterController
 
         } catch ( \Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            \Log::debug($error);
             return new JsonResponse([
                 "success" => FALSE ,
                 "data"    => $error ,
@@ -247,20 +249,36 @@ class SalesController extends MasterController
 
     public function _salesBelongsCompany()
     {
-        if (Session::get("roles_id") == 1){
-
-            $response = SysOrders::with('boxes','paymentsForms','paymentsMethods','status')
-                ->orderBy('id','DESC')
-                ->groupby('id')
-                ->get();
-        }else{
-            $response = SysEmpresasModel::find(Session::get('company_id'))
-                ->menusCompanies()->with('companiesMenus')
-                ->orderBy('orden','ASC')
-                ->groupby('id')
-                ->get();
+        $where = "";
+        if (Session::get("roles_id") != 1){
+            $where .= " AND e.id = ".Session::get('company_id');
         }
-        return $response;
+        $sql = "SELECT
+                   o.id ,
+                   e.razon_social ,
+                   b.name ,
+                   o.comments ,
+                   ROUND(o.subtotal,2) AS subtotal ,
+                   ROUND(o.iva,2) AS iva ,
+                   ROUND(o.total,2) AS total,
+                   ROUND(o.swap,2) AS swap,
+                   CONCAT(fg.clave,' ',fg.descripcion) AS forma_pago ,
+                   CONCAT(mp.clave,' ',mp.descripcion) as metodo_pago ,
+                   se.nombre AS status,
+                   o.created_at
+                FROM companies_boxes cb
+                JOIN sys_empresas e ON cb.company_id = e.id
+                JOIN boxes b ON cb.box_id = b.id
+                JOIN orders o ON o.box_id = b.id
+                JOIN sys_formas_pagos fg ON o.payment_form_id = fg.id
+                JOIN sys_metodos_pagos mp ON o.payment_method_id = mp.id
+                JOIN sys_estatus se ON o.status_id = se.id
+                WHERE MONTH(o.created_at ) = 7 AND YEAR(o.created_at) = 2019
+                  {$where}
+                ORDER BY o.id DESC";
+        $response = DB::select($sql);
+        \Log::debug($response);die();
+
     }
 
 

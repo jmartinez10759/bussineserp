@@ -14,45 +14,31 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
         $scope.update = {};
         $scope.fields = {};
         $scope.index();
-        $scope.register = [];
-        $scope.titles   = [
-            "Caja",
-            "Forma de Pago",
-            "Metodo de Pago",
-            "Comentarios",
-            "Subtotal",
-            "Iva",
-            "Total",
-            "Estatus",
-            ""
-        ];
+        $scope.filtro     = fc.calendar();
+        $scope.cmbAnios   = fc.selectYears().cmb_anios;
+        $scope.anio       = fc.selectYears().anio;
+        $scope.checkMonth();
     };
 
     $scope.index = function(){
         var url = fc.domain( URL.url_all );
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
-                console.log(response);
-                $scope.register = [];
-                angular.forEach(response.data.data.sales,function (value,key) {
-                    $scope.register[key] = {
-                        'id'            : value.id ,
-                        'boxes'         : value.boxes.name,
-                        'paymentForms'  : (value.payments_forms) ? value.payments_forms.descripcion : "",
-                        'paymentMethod' : (value.payments_methods) ? value.payments_methods.descripcion: "" ,
-                        'comments'      : value.comments ,
-                        'subtotal'      : value.subtotal ,
-                        'iva'           : value.iva ,
-                        'total'         : value.total ,
-                        'status'        : value.status.nombre ,
-                        'btnDelete'     : ""
-                    };
-                });
-                $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
-                $scope.cmbUsers      = response.data.data.users;
+                console.log($scope.anio);
             }
         });
 
+    };
+
+    $scope.checkMonth = function(){
+        var fecha = new Date();
+        var mes = (fecha.getMonth() +1);
+        $scope.meses = mes;
+        for(var i in $scope.filtro){
+            if ($scope.filtro[i].id == mes ) {
+                $scope.filtro[i].class = "active";
+            }
+        }
     };
 
     $scope.insertRegister = function(){

@@ -93,95 +93,6 @@ abstract class MasterController extends Controller
         #var_export($menusArray);die();
         return Menu::build_menu_tle($menusArray);
     }
-
-    /**
-     * Metodo para cargar la vista general de la platilla que se va a utilizar
-     * @access protected
-     * @param string $view [Description]
-     * @param array $parse
-     * @return void
-     */
-	/*protected function _load_view(string $view = null, array $parse = [])
-	{
-		$emails = [];
-		$response = SysUsersModel::with(['menus' => function($query){
-			$where = [
-				'sys_rol_menu.estatus' 		=> 1
-				,'sys_rol_menu.id_empresa' 	=> Session::get('id_empresa')
-				,'sys_rol_menu.id_sucursal' => Session::get('id_sucursal')
-				,'sys_rol_menu.id_rol' 		=> Session::get('id_rol')
-			];
-			return $query->where($where)->orderBy('orden', 'asc');
-
-		},'roles','details','empresas','correos'])->whereId( Session::get('id') )->first();
-
-		$parse['MENU_DESKTOP'] 		= self::menus($response);
-		self::$_titulo = (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial : "Empresa No Asignada";
-		$parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower(self::$_titulo)));
-		$parse['IMG_PATH'] 			= domain() . 'images/';
-		$parse['icon'] 				= "img/company.png";
-		$parse['anio'] 				= date('Y');
-		$parse['version'] 			= "2.0.2";
-		$parse['base_url'] 			= domain();
-		$parse['nombre_completo'] 	= Session::get('name') . " " . Session::get('first_surname');
-		$parse['desarrollo'] 		= utf8_decode(self::$_desarrollo);
-		$parse['link_desarrollo'] 	= utf8_decode(self::$_link_desarrollo);
-		$parse['welcome'] 			= "Bienvenid@";
-		$parse['photo_profile'] 	= isset($response[0]->details->foto)?$response[0]->details->foto : asset('img/profile/profile.png');
-		$parse['rol'] 				= isset($response[0]->roles[0])? $response[0]->roles[0]->perfil : "Perfil No Asignado";
-		$parse['empresa'] 			= (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
-		$parse['sucursal'] 			= (isset(SysSucursalesModel::whereId( Session::get('id_sucursal') )->first()->sucursal)) ? SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal : "Sucursal No Asignada";
-		$parse['url_previus'] 		= (Session::get('company_id') != 0 && Session::get('group_id') != 0) ? route('list.empresas') : route("/");
-
-		$parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
-		$parse['title'] 			= isset($parse['title']) 	  ? $parse['title'] : "";
-		$parse['subtitle'] 			= isset($parse['subtitle'])   ? $parse['subtitle'] : "";
-
-		Session::put(['permisos_full' =>  Session::get('permisos')]);
-
-		$eliminar       = (isset(Session::get('permisos')['DEL'])) ? Session::get('permisos')['DEL'] : true;
-		$insertar       = (isset(Session::get('permisos')['INS'])) ? Session::get('permisos')['INS'] : true;
-		$update         = (isset(Session::get('permisos')['UPD'])) ? Session::get('permisos')['UPD'] : true;
-		$select         = (isset(Session::get('permisos')['GET'])) ? Session::get('permisos')['GET'] : true;
-		$upload_files   = (isset(Session::get('permisos')['UPLF'])) ? Session::get('permisos')['UPLF'] : true;
-		$correos        = (isset(Session::get('permisos')['EMAIL'])) ? Session::get('permisos')['EMAIL'] : true;
-		$reportes       = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
-		$excel          = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
-		$modal          = (isset(Session::get('permisos')['AGR'])) ? Session::get('permisos')['AGR'] : true;
-		$notify         = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
-		$permisos       = (isset(Session::get('permisos')['PER'])) ? Session::get('permisos')['PER'] : true;
-		$email          = (isset(Session::get('permisos')['SEND'])) ? Session::get('permisos')['SEND'] : true;
-		$upload         = (isset(Session::get('permisos')['UPL'])) ? Session::get('permisos')['UPL'] : true;
-		$impresion      = (isset(Session::get('permisos')['IMP'])) ? Session::get('permisos')['IMP'] : true;
-
-		$parse['eliminar']          = (!$eliminar) ? "style=display:block;" : "style=display:none;";
-		$parse['insertar']          = (!$insertar) ? "style=display:block;" : "style=display:none;";
-		$parse['button_insertar']   = build_buttons($insertar, 'v-insert_register', 'Registrar', 'btn btn-primary', 'fa fa-save', 'id="insert"');
-		$parse['update']            = (!$update) ? "style=display:block;" : "style=display:none;";
-		$parse['button_update']     = build_buttons($update, 'v-update_register', 'Actualizar', 'btn btn-info', 'fa fa-save', 'id="insert"');
-		$parse['select']            = (!$select) ? "style=display:block;" : "style=display:none;";
-		$parse['correos']           = (!$correos) ? "style=display:block;" : "style=display:none;";
-
-		$parse['reportes']      = (!$reportes) ? "style=display:block;" : "style=display:none;";
-		$parse['seccion_reportes'] = reportes($reportes, $excel);
-		$parse['excel']         = (!$excel) ? "style=display:block;" : "style=display:none;";
-		
-		$parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
-		$parse['permisos']      = (!$permisos) ? "style=display:block;" : "style=display:none;";
-		$parse['email']         = (!$email) ? "style=display:block;" : "style=display:none;";
-		$parse['upload']        = (!$upload) ? "style=display:block;" : "style=display:none;";
-		
-		$parse['agregar']       = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
-		$parse['buscador']      = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
-
-		$parse['upload_files']  = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
-
-		$parse['modal']         = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
-		
-		return View($view, $parse);
-
-	}*/
-
     /**
      * This method is used view load with you permission
      * @param string|null $view
@@ -462,22 +373,6 @@ abstract class MasterController extends Controller
 		return $data;
 
 	}
-	/**
-	 * Metodo para obtener el conteo y la informacion de cada seccion de los correos.
-	 * @access public
-	 * @param array $data [Description]
-	 * @return array
-	 */
-	/*private static function _parse_array( $data = [] )
-	{
-		$datos = [];
-		foreach ($data as $key => $value) {
-			foreach ($value as $key => $values) {
-				$datos[] = $values;
-			}
-		}
-		return $datos;
-	}*/
 	/**
 	 * Metodo para hacer la consulta de la vacante
 	 * @access public
