@@ -15,8 +15,7 @@
         "maatwebsite/excel": "^2.0",
         "mike42/escpos-php": "^2.1",
         "niklasravnsborg/laravel-pdf": "^2.0",
-        "phpoffice/phpspreadsheet": "^1.4" ,
-	"pusher/pusher-php-server": "^4.0"
+        "pusher/pusher-php-server": "^4.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.2",

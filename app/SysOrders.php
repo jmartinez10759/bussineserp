@@ -5,7 +5,6 @@ namespace App;
 use App\Model\Administracion\Configuracion\SysEstatusModel;
 use App\Model\Administracion\Configuracion\SysFormasPagosModel;
 use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
-use App\Model\Administracion\Configuracion\SysProductosModel;
 use Illuminate\Database\Eloquent\Model;
 
 class SysOrders extends Model
