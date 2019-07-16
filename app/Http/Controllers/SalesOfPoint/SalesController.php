@@ -42,15 +42,26 @@ class SalesController extends MasterController
     }
 
     /**
-     * This method is for get all data sales by company
+     * This method is for get all data sales by company and filter year or month
      * @access public
+     * @param Request $request
+     * @param int|null $year
+     * @param int|null $month
      * @return JsonResponse
      */
-    public function all()
+    public function all(Request $request, int $year = null, int $month = null)
     {
         try {
             $data = [
-                "sales"     => $this->_salesBelongsCompany() ,
+                "user"  => $request->get("user") ,
+                "year"  => $year ,
+                "month" => $month
+            ];
+            $data = [
+                "sales"     => $this->_salesBelongsCompany($data)['response'] ,
+                "subtotal"  => $this->_salesBelongsCompany($data)['subtotal'] ,
+                "iva"       => $this->_salesBelongsCompany($data)['iva'] ,
+                "total"     => $this->_salesBelongsCompany($data)['total'] ,
                 "users"     => $this->_usersBelongsCompany() ,
             ];
             return new JsonResponse([
@@ -247,38 +258,65 @@ class SalesController extends MasterController
     }
 
 
-    public function _salesBelongsCompany()
+    /**
+     * This method is used to get information of sales
+     * @param array $data
+     * @return array
+     */
+    public function _salesBelongsCompany(array $data = [])
     {
         $where = "";
         if (Session::get("roles_id") != 1){
             $where .= " AND e.id = ".Session::get('company_id');
         }
+        if ($data['user']){
+            $where .= " AND u.id = ".$data['user'];
+        }
         $sql = "SELECT
-                   o.id ,
-                   e.razon_social ,
-                   b.name ,
-                   o.comments ,
-                   ROUND(o.subtotal,2) AS subtotal ,
-                   ROUND(o.iva,2) AS iva ,
-                   ROUND(o.total,2) AS total,
-                   ROUND(o.swap,2) AS swap,
-                   CONCAT(fg.clave,' ',fg.descripcion) AS forma_pago ,
-                   CONCAT(mp.clave,' ',mp.descripcion) as metodo_pago ,
-                   se.nombre AS status,
-                   o.created_at
+                    o.id ,
+                    e.razon_social ,
+                    CONCAT(ss.codigo,' ',ss.sucursal) AS grupo ,
+                    b.name ,
+                    o.comments ,
+                    o.file_path ,
+                    CONCAT(u.name,' ',u.first_surname,' ',u.second_surname) AS full_name ,
+                    ROUND(o.subtotal,2) AS subtotal ,
+                    ROUND(o.iva,2) AS iva ,
+                    ROUND(o.total,2) AS total,
+                    ROUND(o.swap,2) AS swap,
+                    CONCAT(fg.clave,' ',fg.descripcion) AS forma_pago ,
+                    CONCAT(mp.clave,' ',mp.descripcion) as metodo_pago ,
+                    se.id AS status_id,
+                    se.nombre AS status,
+                    o.created_at
                 FROM companies_boxes cb
-                JOIN sys_empresas e ON cb.company_id = e.id
-                JOIN boxes b ON cb.box_id = b.id
-                JOIN orders o ON o.box_id = b.id
-                JOIN sys_formas_pagos fg ON o.payment_form_id = fg.id
-                JOIN sys_metodos_pagos mp ON o.payment_method_id = mp.id
-                JOIN sys_estatus se ON o.status_id = se.id
-                WHERE MONTH(o.created_at ) = 7 AND YEAR(o.created_at) = 2019
+                     JOIN sys_empresas e ON cb.company_id = e.id
+                     JOIN sys_sucursales ss ON cb.group_id= ss.id
+                     JOIN sys_users u ON cb.user_id = u.id
+                     JOIN boxes b ON cb.box_id = b.id
+                     JOIN orders o ON o.box_id = b.id
+                     JOIN sys_formas_pagos fg ON o.payment_form_id = fg.id
+                     JOIN sys_metodos_pagos mp ON o.payment_method_id = mp.id
+                     JOIN sys_estatus se ON o.status_id = se.id
+                WHERE 
+                    MONTH(o.created_at ) = {$data['month']} AND YEAR(o.created_at) = {$data['year']}
                   {$where}
                 ORDER BY o.id DESC";
-        $response = DB::select($sql);
-        \Log::debug($response);die();
-
+            $response = DB::select($sql);
+            $data = [];
+            $subtotal   = 0;
+            $iva        = 0;
+            $total      = 0;
+            foreach ($response as $sale ){
+                $subtotal += $sale->subtotal;
+                $iva      += $sale->iva;
+                $total    += $sale->total;
+            }
+            $data['response']   = $response;
+            $data['total']      = number_format($total,2);
+            $data['subtotal']   = number_format($subtotal,2);
+            $data['iva']        = number_format($iva,2);
+            return $data;
     }
 
 

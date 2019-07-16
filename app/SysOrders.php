@@ -17,6 +17,7 @@ class SysOrders extends Model
         ,'payment_method_id'
         ,'status_id'
         ,'comments'
+        ,'file_path'
         ,'subtotal'
         ,'iva'
         ,'total'

@@ -83,3 +83,12 @@ app.directive('xeditable', ['$timeout', function ($timeout) {
     };
 
 }]);
+/**
+ * Directive to generate filter to month
+ */
+app.directive("paginationFilter",function () {
+    return {
+        restrict: 'E',
+        templateUrl: 'js/tpl/pagination-filter.html'
+    };
+});

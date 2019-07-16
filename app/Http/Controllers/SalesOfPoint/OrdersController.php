@@ -234,6 +234,7 @@ class OrdersController extends MasterController
             if ($ticket['success']){
                 $path = $ticket['data'];
             }
+            $order->update(['file_path' => $path]);
             \Log::debug($path);
             DB::commit();
             $success = true;

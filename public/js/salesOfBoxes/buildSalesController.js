@@ -1,7 +1,7 @@
 const URL = {
     url_insert            : "sales/register"
     ,url_edit             : "sales/{id}/edit"
-    ,url_all              : "sales/all"
+    ,url_all              : "sales/{year}/filter"
     ,url_update           : "sales/{id}/update"
     ,url_destroy          : "sales/{id}/destroy"
 };
@@ -14,31 +14,56 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
         $scope.update = {};
         $scope.fields = {};
         $scope.index();
-        $scope.filtro     = fc.calendar();
-        $scope.cmbAnios   = fc.selectYears().cmb_anios;
-        $scope.anio       = fc.selectYears().anio;
-        $scope.checkMonth();
     };
 
     $scope.index = function(){
-        var url = fc.domain( URL.url_all );
-        sc.requestHttp(url,null,"GET",false).then(function (response) {
+        console.log($scope.user);
+        var url = fc.domain( URL.url_all+"/"+$scope.month, $scope.year);
+        sc.requestHttp(url,{ user : $scope.user },"POST",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
-                console.log($scope.anio);
+                console.log(response);
+                $scope.cmbUsers = response.data.data.users;
+                $scope.datos    = response.data.data.sales;
+                $scope.subtotal = response.data.data.subtotal;
+                $scope.iva      = response.data.data.iva;
+                $scope.total    = response.data.data.total;
+
             }
         });
-
     };
 
-    $scope.checkMonth = function(){
-        var fecha = new Date();
-        var mes = (fecha.getMonth() +1);
-        $scope.meses = mes;
-        for(var i in $scope.filtro){
-            if ($scope.filtro[i].id == mes ) {
-                $scope.filtro[i].class = "active";
-            }
-        }
+    $scope.monthFilter = function(data){
+        for(var i in $scope.calFilter){ $scope.calFilter[i].class = "";}
+        data.class = "active";
+        $scope.month = data.id;
+        let fields = {
+            month:   $scope.month ,
+            year:    $scope.year
+        };
+        $scope.index();
+    };
+
+    $scope.yearFilter = function(year){
+        $scope.year = year;
+        var fields = {
+            month:     $scope.month,
+            year:    $scope.year
+        };
+        $scope.index();
+    };
+
+    $scope.userFilter = function(user){
+        $scope.user = user;
+        $scope.index();
+    };
+
+    $scope.ticketWatch = function(path){
+        var proof = "upload_file/ticket/2019_07_13/ticket-TEPANYAKI-184.pdf";
+        jQuery.fancybox.open({
+            'type': 'iframe' ,
+            'src': fc.domain(path) ,
+            'buttons' : ['share', 'close']
+        });
     };
 
     $scope.insertRegister = function(){

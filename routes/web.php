@@ -1700,7 +1700,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'sales.pedidos'
     ]);
 
-    Route::get('/sales/all', [
+    Route::post('/sales/{year}/filter/{month}', [
         'uses'      => 'SalesOfPoint\SalesController@all'
         ,'as'       => 'sales.all'
     ]);
