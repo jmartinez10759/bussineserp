@@ -52,7 +52,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="data in datos" id="tr_@{{ data.id }}" >
+                <tr ng-repeat="data in datos | filter: searching" id="tr_@{{ data.id }}" >
                     <td style="cursor:pointer;" ng-click="edit_register(data)" ng-bind="data.id"></td>
                     <td style="cursor:pointer;" ng-click="edit_register(data)" ng-bind="data.created_at"></td>
                     <td style="cursor:pointer;" ng-click="edit_register(data)" ng-bind="data.razon_social"></td>

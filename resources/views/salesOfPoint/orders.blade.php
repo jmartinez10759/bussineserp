@@ -25,19 +25,6 @@
 
 @stop
 @push('scripts')
-    <script src="//js.pusher.com/3.1/pusher.min.js"></script>
-    <script>
-        // Enable pusher logging - don't include this in production
-        Pusher.logToConsole = true;
-        let pusher = new Pusher('{{env('PUSHER_APP_KEY')}}', {
-            cluster: '{{env('PUSHER_APP_CLUSTER')}}',
-            encrypted: true,
-        });
-        let channel = pusher.subscribe('orders-channel');
-        channel.bind('new-order-event', nuevoPedido);
-        channel.bind('cancel-order-event', cancelarPedido);
-
-    </script>
     <script type="text/javascript" src="{{asset('js/salesOfBoxes/buildOrdersController.js')}}" ></script>
 @endpush
 

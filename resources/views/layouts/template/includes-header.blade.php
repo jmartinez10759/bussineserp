@@ -42,6 +42,8 @@
   <link rel="stylesheet" href="{{$base_url}}admintle/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jexcel/1.5.0/css/jquery.jexcel.min.css" type="text/css" />
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -154,27 +156,5 @@
        body::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
        [ng-cloak]{display: none}
   </style>
-  {{--<style type="text/css">
-    .fixed_headers{
-      width: 400px;
-      table-layout: fixed;
-      border-collapse: collapse;
-    }
 
-    .fixed_headers tbody{
-      overflow: auto;
-      height: 100px;
-    }
-
-    .fixed_headers thead {
-      background: black;
-      color:#fff;
-    }
-
-    .fixed_headers th, .fixed_headers td {
-      padding: 5px;
-      text-align: left;
-      width: 200px;
-    }
-  </style>--}}
    @stack('styles')
