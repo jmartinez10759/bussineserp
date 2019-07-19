@@ -16,8 +16,6 @@ use Codedge\Fpdf\Fpdf\Fpdf;
 class Ticket extends Facade
 {
     private $_printerName;
-    private $_connect;
-    private $_printer;
     private $_today;
     public  $_pdf;
 
@@ -129,12 +127,12 @@ class Ticket extends Facade
             $this->_pdf->Cell(5,$textYPos+6,'GRACIAS POR TU COMPRA, VUELVA PRONTO ');
 
             $filename= "ticket-".$data['rfc'].( ($close) ? "-Corte_Caja.pdf" : "-".$data['order'].".pdf");
-            $dir = "upload_file/ticket/".$this->_today->format("Y_m_d")."/";
+            $dir = "upload_file/ticket/".$this->_today->format("Y_m_d");
             if (!is_dir(public_path()."/".$dir)){
-                mkdir($dir,0777);
+                File::makeDirectory(public_path()."/".$dir,0777,true,true);
             }
-            $this->_pdf->output(public_path()."/".$dir.$filename,"F",true);
-            return ['success' => true, "data" => $dir.$filename];
+            $this->_pdf->output(public_path()."/".$dir."/".$filename,"F",true);
+            return ['success' => true, "data" => $dir."/".$filename];
 
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();

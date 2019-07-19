@@ -865,7 +865,7 @@ abstract class MasterController extends Controller
 
     /**
      * This is method is for do query
-     * @return SysUsersModel[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @return mixed
      */
     protected function _usersBelongsCompany()
     {
