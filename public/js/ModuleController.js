@@ -8,6 +8,7 @@ var app = angular.module('application',[
     "components" ,
     "stringToNumber" ,
     "html-unsafe" ,
-    "angucomplete-alt"
+    "angucomplete-alt" ,
+    "pusher-angular"
 ]);
 

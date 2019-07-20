@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\SalesOfPoint;
 
 
+use App\Events\NotificationEvents;
 use App\Facades\Ticket;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
@@ -235,6 +236,7 @@ class OrdersController extends MasterController
                 $path = $ticket['data'];
             }
             $order->update(['file_path' => $path]);
+            event(new NotificationEvents($dataPrinter));
             \Log::debug($path);
             DB::commit();
             $success = true;

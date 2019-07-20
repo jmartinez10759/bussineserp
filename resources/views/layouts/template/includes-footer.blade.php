@@ -38,7 +38,9 @@
     <!-- AdminLTE App -->
     <script src="{{$base_url}}admintle/dist/js/adminlte.min.js"></script>
     <script src="{{$base_url}}admintle/dist/js/demo.js"></script>
-
+    <!-- pusher notifications -->
+    <script src="//js.pusher.com/4.4/pusher.min.js"></script>
+    <!-- / pusher notifications -->
     <script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
     <script type="text/javascript" src="{{asset('bower_components/chosen/chosen.jquery.js')}}"></script>
@@ -53,6 +55,8 @@
      <script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
      <script type="text/javascript" src="{{asset('bower_components/angucomplete-alt/angucomplete-alt.js')}}"></script>
+     <script type="text/javascript" src="{{asset('bower_components/pusher-angular/lib/pusher-angular.min.js')}}"></script>
+
      {{--<script type="text/javascript" src="{{asset('bower_components/angular-xeditable/dist/js/xeditable.js')}}"></script>--}}
      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
     <!-- angular components-->
@@ -69,7 +73,7 @@
     <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
     <!--/ script indispensables /-->
 
- <!-- InputMask -->
+    <!-- InputMask -->
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.js')}}"></script>
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.date.extensions.js')}}"></script>
     <script src="{{asset('admintle/plugins/input-mask/jquery.inputmask.extensions.js')}}"></script>
@@ -79,7 +83,7 @@
     <script src="{{asset('admintle/plugins/timepicker/bootstrap-timepicker.min.js')}}"></script>
     <!-- Add fancyBox -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
- <!-- / Add fancyBox -->
+    <!-- / Add fancyBox -->
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
@@ -87,25 +91,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.8.3/jquery.csv.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jexcel/1.5.0/js/jquery.jexcel.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jexcel/1.5.0/css/jquery.jexcel.min.css" type="text/css" />
 
     <script type="text/javascript">
         jQuery('.sidebar-toggle').click(function(){
           var toogle = jQuery('body').hasClass('sidebar-collapse');
           $myLocalStorage.set('toogle',toogle);
         });
-        var estatus_toogle = $myLocalStorage.get('toogle');
-        if( estatus_toogle == false ){
+        var toogleStatus = $myLocalStorage.get('toogle');
+        if( toogleStatus == false ){
           jQuery('body').removeClass();
           jQuery('body').addClass('skin-blue sidebar-mini sidebar-collapse fixed');
         }
-        if( estatus_toogle == true ){
+        if( toogleStatus == true ){
           jQuery('body').removeClass();
           jQuery('body').addClass('skin-blue sidebar-mini fixed');
         }
         jQuery('.sidebar-menu').find('li a').each(function(){
-          var enlace = jQuery(this).attr('href');
-          if( enlace === location.href){
+          var link = jQuery(this).attr('href');
+          if( link === location.href){
             if( jQuery(this).parent().parent().hasClass('treeview-menu') ){
               jQuery(this).parent().parent().parent().addClass('active');
             }
@@ -127,7 +130,7 @@
         jQuery('.fecha').datepicker( {format: 'yyyy-mm-dd' ,autoclose: true ,pickTime: false, pickTime: false, autoclose: true, language: 'es'});
     </script>
 
-    <!-- script desarrollador -->
+    <!-- script developer -->
       @stack('scripts')
       <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
       <script type="text/javascript" src="{{asset('js/directives/directives-master.js')}}"></script>

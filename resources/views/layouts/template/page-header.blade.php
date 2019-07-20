@@ -51,13 +51,12 @@
                 </ul>
               </li>
               <!-- Notifications: style can be found in dropdown.less -->
-              <!-- <li class="dropdown notifications-menu" {{ $notify }} > -->
               <li class="dropdown notifications-menu" >
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
                   <span class="label label-primary notify" ng-if="notificaciones.length > 0">.</span>
                   <span class="label label-primary " ng-if="notificaciones.length == 0">.</span>
-                  <span class="label label-warning">@{{ notificaciones.length }}</span>
+                  <span class="label label-warning" ng-bind="notificaciones.length"></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header" ng-if="notificaciones.length > 0">Tu Tienes @{{ notificaciones.length }} Notificaciones</li>
@@ -68,16 +67,12 @@
                     <ul class="menu">
 
                       <li ng-repeat="notify in notificaciones ">
-                          <a ng-click="users_notify( notify.id )" style="cursor:pointer;">
+                          <a ng-click="notifyDetails(notify.id)" style="cursor:pointer;">
                             <h6>
-                              <i class="fa fa-bell-o text-blue" ng-bind="notify.portal"></i>
+                              <i class="fa fa-bell-o text-blue" ng-bind="notify.title"></i>
                             </h6>
-                            <small><p ng-bind="notify.mensaje"></p></small>
-                            <small class="pull-right"> 
-                              <i class="fa fa-clock-o"> 
-                                @{{time_fechas(notify.created_at)}}
-                              </i>
-                            </small>
+                            <small><p ng-bind="notify.message"></p></small>
+                            <small class="pull-right"><i class="fa fa-clock-o" ng-bind="timeDate(notify.created_at)"></i></small>
                           </a>
                         </li>
 

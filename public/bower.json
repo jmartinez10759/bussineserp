@@ -40,7 +40,8 @@
     "angular-fancybox-plus": "^1.0.3",
     "angular-fixed-table-header": "^0.2.1",
     "angucomplete-alt": "^3.0.0",
-    "angular-xeditable": "^0.10.0"
+    "angular-xeditable": "^0.10.0",
+    "pusher-angular": "^1.0.0"
   },
   "resolutions": {
     "angular": "1.7.5",

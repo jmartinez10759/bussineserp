@@ -15,7 +15,7 @@
 
 }]);*/
 
-app.controller('ApplicationController', ['$scope','ServiceController','$http','$rootScope','FactoryController',"NotificationsFactory",'$window','$location',function( $scope,sc,$http,rs,fc,nf,w,l ){
+app.controller('ApplicationController', ['$scope','ServiceController','$http','$rootScope','FactoryController',"NotificationsFactory",'$window','$location','$pusher',function( $scope,sc,$http,rs,fc,nf,w,l,$pusher ){
 
 	rs.$on("services", function(){
 	    $scope.services();
@@ -36,6 +36,7 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 	  $scope.cmbAnios   = fc.selectYears().cmb_anios;
 	  $scope.year       = fc.selectYears().anio;
 	  $scope.checkMonth();
+	  $scope.notificationEvent();
 	};
 
 	$scope.services = function(){
@@ -66,6 +67,29 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 				$scope.calFilter[i].class = "active";
 			}
 		}
+	};
+
+	$scope.notifyDetails = function(notifyId) {
+		alert(notifyId);
+	};
+
+	$scope.timeDate = function(date){
+		return fc.timeDate(date);
+	};
+
+	$scope.notificationEvent = function(){
+		Pusher.logToConsole = true;
+		var client = new Pusher("a9721493e8adefe5f824", {
+			cluster: "us2" ,
+			encrypted: true
+		});
+		var pusher = $pusher(client);
+		let channel = pusher.subscribe('notifications');
+		// Bind a function to a Event (the full Laravel class)
+		channel.bind('notification-event', function(data) {
+				$scope.notificaciones = {id: 1, title: "Nueva Notificacion",message:"Se creo una nueva orden"};
+				console.log($scope.notificaciones);
+		});
 	};
 
 	/*$scope.monthFilter = function(data){

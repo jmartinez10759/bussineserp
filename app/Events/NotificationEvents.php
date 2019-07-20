@@ -4,7 +4,9 @@ namespace App\Events;
 
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\SysNotifications;
+use App\SysOrders;
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Notifications\Notification;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,24 +14,20 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class NotificationEvents implements ShouldBroadcast
+class NotificationEvents extends Notification implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $notification;
-
-    public $company;
+    public $message;
 
     /**
      * Create a new event instance.
      *
-     * @param SysNotifications $notifications
-     * @param SysEmpresasModel $company
+     * @param array $data
      */
-    public function __construct( SysNotifications $notifications, SysEmpresasModel $company )
+    public function __construct( array $data = [] )
     {
-        $this->notification = $notifications;
-        $this->company = $company;
+        $this->message = "Se genero el pedido N° {$data['order']} con exito";
     }
 
     /**
@@ -41,4 +39,10 @@ class NotificationEvents implements ShouldBroadcast
     {
         return new PrivateChannel('notifications');
     }
+
+    public function broadcastAs()
+    {
+        return 'notification-event';
+    }
+
 }
