@@ -244,6 +244,7 @@ class SucursalesController extends MasterController
         Session::put(['company_id' => $request->get("id_empresa")]);
         $companies = SysEmpresasModel::find($request->get("id_empresa"));
         $groups = $companies->groups()->where([
+            "estatus" => true ,
             "sys_users_pivot.user_id"    => Session::get("id") ,
             "sys_users_pivot.company_id" => $request->get("id_empresa")
         ])->groupBy('id')->get();
@@ -275,7 +276,9 @@ class SucursalesController extends MasterController
               "sys_users_menus.company_id"  => Session::get("company_id") ,
               "sys_users_menus.group_id"    => $groupId
           ])->get();
-          $sessions['roles_id'] = isset($roles->id)? $roles->id: "";
+          $sessions['roles_id']     = isset($roles->id)? $roles->id: "";
+          $sessions['company_id']   = Session::get("company_id");
+          $sessions['user_id']      = $user->id;
           $pathWeb = self::dataSession( $menus );
           $session = array_merge($sessions,$pathWeb);
             if( count($menus) < 1 ){

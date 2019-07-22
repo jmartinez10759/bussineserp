@@ -5,9 +5,9 @@ namespace App\Http\Controllers\SalesOfPoint;
 
 
 use App\Events\NotificationEvents;
+use App\Facades\Notification;
 use App\Facades\Ticket;
 use App\Http\Controllers\MasterController;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysFormasPagosModel;
 use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
 use App\Model\Administracion\Configuracion\SysProductosModel;
@@ -22,6 +22,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class OrdersController extends MasterController
 {
     public $ticket;
+
+    private $_notify;
     /**
      * OrdersController constructor.
      */
@@ -29,6 +31,7 @@ class OrdersController extends MasterController
     {
         parent::__construct();
         $this->ticket = new Ticket("EPSON");
+        $this->_notify = new Notification();
     }
     /**
      * @access public
@@ -236,8 +239,14 @@ class OrdersController extends MasterController
                 $path = $ticket['data'];
             }
             $order->update(['file_path' => $path]);
-            event(new NotificationEvents($dataPrinter));
+            $notify = $this->_notify->creating(
+                "Pedido generado con exito" ,
+                "Se genero el pedido N°{$dataPrinter['order']} con exito" ,
+                "sales/pedidos" ,
+                [1,3,12]
+            );
             \Log::debug($path);
+            event(new NotificationEvents($notify));
             DB::commit();
             $success = true;
         } catch (\Exception $e) {

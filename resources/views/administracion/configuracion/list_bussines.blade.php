@@ -169,6 +169,9 @@
         <!-- jQuery -->
         <script type="text/javascript" src="{{asset('templates/vendors/jquery/dist/jquery.min.js')}}"></script>
         <!-- Bootstrap -->
+        <!-- pusher notifications -->
+        <script src="//js.pusher.com/4.4/pusher.min.js"></script>
+        <!-- / pusher notifications -->
         <script type="text/javascript" src="{{asset('templates/vendors/bootstrap/dist/js/bootstrap.min.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
@@ -184,6 +187,7 @@
         <script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
         <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
         <script type="text/javascript" src="{{asset('bower_components/angucomplete-alt/angucomplete-alt.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/pusher-angular/lib/pusher-angular.min.js')}}"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
 
         <!-- script indispensables -->

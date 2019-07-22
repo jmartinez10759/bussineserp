@@ -14,23 +14,14 @@ class SysNotifications extends Model
         'id'
         ,'title'
         ,'message'
+        ,'module'
         ,'status'
     ];
 
-    public function companies()
-    {
-        return $this->belongsToMany(SysEmpresasModel::class,'companies_notifications','company_id','notify_id')
-                    ->withPivot('group_id','user_id');
-    }
-    public function groups()
-    {
-        return $this->belongsToMany(SysSucursalesModel::class,'companies_notifications','group_id','notify_id')
-            ->withPivot('company_id','user_id');
-    }
     public function users()
     {
-        return $this->belongsToMany(SysUsersModel::class,'companies_notifications','user_id','notify_id')
-            ->withPivot('group_id','company_id');
+        return $this->belongsToMany(SysUsersModel::class,'users_notifications','notify_id','user_id')
+            ->withPivot('company_id','group_id');
     }
 
 }

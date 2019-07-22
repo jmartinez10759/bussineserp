@@ -41,7 +41,7 @@ class Ticket extends Facade
         try {
             $this->_pdf->SetAuthor('Jorge Martinez Quezada');
             $this->_pdf->SetTitle("Sales of ticket");
-            $this->_pdf->SetFont('Helvetica', 'B', 8, '', true);
+            $this->_pdf->SetFont('Helvetica', 'B', 10, '', true);
             $this->_pdf->AddPage();
             $textYPos = 5;
             $this->_pdf->setY(2);
@@ -51,14 +51,14 @@ class Ticket extends Facade
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,"RFC. ".$data['rfc'],false,false,"L");
             $textYPos += 6;
-            $this->_pdf->SetFont('Arial','B',2.5);
+            $this->_pdf->SetFont('Arial','B',2.6);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,utf8_decode($data['address']." ".$data['state'].", ".$data['country'].", C.P: ".$data['postal_code']),false,false,"L" );
             $textYPos += 6;
             $this->_pdf->SetFont('Arial','',5);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'-------------------------------------------------------------------');
-            $this->_pdf->SetFont('Arial','',4);
+            $this->_pdf->SetFont('Arial','',4.3);
             $textYPos += 4;
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,"Cajero: ". strtolower($data['cajero']) ,false,false,"L" );
@@ -79,7 +79,7 @@ class Ticket extends Facade
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'-------------------------------------------------------------------');
             $textYPos +=6;
-            $this->_pdf->SetFont('Arial','',4);
+            $this->_pdf->SetFont('Arial','',4.3);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'#    PRODUCT                 PRICE       DISCOUNT     TOTAL');
             $off = $textYPos+6;
@@ -113,17 +113,17 @@ class Ticket extends Facade
             $textYPos += 6;
             $this->_pdf->Cell(5,$textYPos,"IVA(16%): " );
             $this->_pdf->setX(38);
-            $this->_pdf->Cell(5,$textYPos,"$ ".format_currency($data['iva']),0,0,"R");
+            $this->_pdf->Cell(5,$textYPos,format_currency($data['iva']),0,0,"R");
             $this->_pdf->setX(2);
             $textYPos += 6;
             $this->_pdf->Cell(5,$textYPos,"TOTAL: " );
             $this->_pdf->setX(38);
-            $this->_pdf->Cell(5,$textYPos,"$ ".format_currency($data['total']),0,0,"R");
+            $this->_pdf->Cell(5,$textYPos,format_currency($data['total']),0,0,"R");
             $this->_pdf->setX(2);
             $textYPos +=12;
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'-------------------------------------------------------------------');
-            $this->_pdf->SetFont('Arial','',4);
+            $this->_pdf->SetFont('Arial','',4.3);
             $this->_pdf->Cell(5,$textYPos+6,'GRACIAS POR TU COMPRA, VUELVA PRONTO ');
 
             $filename= "ticket-".$data['rfc'].( ($close) ? "-Corte_Caja.pdf" : "-".$data['order'].".pdf");

@@ -37,10 +37,19 @@ app.controller('BusinessListController', ['ServiceController','FactoryController
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             if (sc.validateSessionStatus(response)){
                 w.localStorage['rolesId'] = response.data.data.roles_id;
-                if (w.localStorage['rolesId'] != 1 && w.localStorage['pathWeb']){
-                    redirect(fc.domain(w.localStorage['pathWeb']));
+                w.localStorage['data'] = JSON.stringify({
+                    "userId" : response.data.data.user_id ,
+                    "rolesId" : response.data.data.roles_id ,
+                    "companyId" : response.data.data.company_id ,
+                    "groupId" : response.data.data.group_id
+                });
+                var data = JSON.parse(w.localStorage['data']);
+                w.localStorage['skin'] = "skin-black";
+                if (data.rolesId == 1 && w.localStorage['pathWeb']){
+                    redirect(fc.domain(w.localStorage['pathWeb'] ) );
                 }else{
-                    redirect( fc.domain( response.data.data.ruta ) );
+                    var path = response.data.data.ruta;
+                    redirect( fc.domain(path) );
                 }
             }
         });

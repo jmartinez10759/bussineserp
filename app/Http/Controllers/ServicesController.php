@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysNotificacionesModel;
+use App\SysNotifications;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -59,9 +59,9 @@ class ServicesController extends MasterController
                 }
             }
             if( Session::get('roles_id') != 1){
-			    $notification = $user->notificaciones()->orderBy('id','desc')->get();
+			    $notification = $user->notifications()->orderBy('id','desc')->get();
 			} else{
-			    $notification = SysNotificacionesModel::orderBy('id','desc')->get();
+			    $notification = SysNotifications::orderBy('id','desc')->get();
 			}
 	        $data = [
 	        	'notification' => $notification

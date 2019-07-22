@@ -1295,7 +1295,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as' => 'notificaciones.update'
     ]);
 
-    Route::delete('/notificaciones/destroy', [
+    Route::delete('/notifications/{id}/destroy', [
         'uses' => 'Administracion\NotificationController@destroy'
         ,'as' => 'notificaciones.destroy'
     ]);
