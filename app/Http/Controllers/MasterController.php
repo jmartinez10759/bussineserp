@@ -172,8 +172,10 @@ abstract class MasterController extends Controller
             $response = $users->where($where)->first();
             $conditions['api_token'] = ( $response ) ? $response->api_token : NULL;
             $user = $users::with(['menus' => function( $query ){
-					return $query->groupby('id');
+                return $query->groupby('id');
 			},'companies','groups','roles'])->where( $conditions )->first();
+            $companies  = $user->companies()->where(['estatus' => true])->groupBy('id')->get();
+            $groups     = $user->groups()->where(['estatus' => true])->groupBy('id')->get();
 
             if ( password_verify($request->password, $user->password) ) {
                 $session = [];
@@ -183,7 +185,7 @@ abstract class MasterController extends Controller
                         $session[$value] = $user->$value;
                     }
                 }
-				if ( count( $user->companies ) > 1 || count($user->groups) > 1 ) {
+				if ( $companies->count() > 1 || $groups->count() > 1 ) {
 					Session::put( $session );
 					$this->_binnacleCreate($users);
 					$session['ruta'] = 'list/companies';
@@ -220,6 +222,7 @@ abstract class MasterController extends Controller
             ],Response::HTTP_BAD_REQUEST);
 		} catch ( \Exception $e) {
 			$error = $e->getFile() . " " . $e->getMessage() . " " . $e->getLine();
+			\Log::debug($error);
             return new JsonResponse([
                 "success"   => FALSE ,
                 "data"      => $error ,

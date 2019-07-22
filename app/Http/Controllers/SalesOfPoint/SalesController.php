@@ -254,7 +254,7 @@ class SalesController extends MasterController
     {
         $where = "";
         if (Session::get("roles_id") != 1){
-            $where .= " AND e.id = ".Session::get('company_id');
+            $where .= " AND e.id = ".Session::get('company_id')." AND ss.id = ".Session::get('group_id');
         }
         if ($data['user']){
             $where .= " AND u.id = ".$data['user'];
