@@ -30,10 +30,10 @@ app.controller('LoginController', ['ServiceController','FactoryController','Noti
                 var data = JSON.parse(w.localStorage['data']);
                 w.localStorage['skin'] = "skin-black";
                 if (data.rolesId == 1 && w.localStorage['pathWeb']){
-                    redirect(w.localStorage['pathWeb']);
+                    redirect( fc.domain(w.localStorage['pathWeb']));
                 }else{
-                    var path = angular.isDefined(w.localStorage['pathWeb'])? w.localStorage['pathWeb'] : response.data.data.ruta;
-                    redirect(path);
+                    var path = response.data.data.ruta;
+                    redirect( fc.domain(path) );
                 }
                 /*w.localStorage.removeItem('rolesId');
                 console.log(w.localStorage['rolesId']);*/

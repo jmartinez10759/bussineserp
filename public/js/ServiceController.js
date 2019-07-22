@@ -1,8 +1,11 @@
-app.service('ServiceController',["$http","NotificationsFactory", "FactoryController","$timeout","$location","$window",function (http,nf,fc,time,l,w) {
+app.service('ServiceController',["$http","NotificationsFactory", "FactoryController","$timeout","$location","$window","$pusher",function (http,nf,fc,time,l,w,p) {
 
     function ServiceController() {
 
     };
+
+    ServiceController.prototype.pusherKey       = "a9721493e8adefe5f824";
+    ServiceController.prototype.pusherClouster  = "us2";
 
     ServiceController.prototype.requestHttp = function ( url, fields, methods,headers ) {
         return http({
@@ -65,6 +68,15 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
             }
         }
         return response;
+    };
+
+    ServiceController.prototype.pusher = function () {
+        Pusher.logToConsole = true;
+        var client = new Pusher(this.pusherKey, {
+            cluster: this.pusherClouster ,
+            encrypted: true
+        });
+        return p(client);
     };
 
     return new ServiceController();

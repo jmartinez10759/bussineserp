@@ -58,7 +58,6 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
     };
 
     $scope.ticketWatch = function(path){
-        var proof = "upload_file/ticket/2019_07_13/ticket-TEPANYAKI-184.pdf";
         jQuery.fancybox.open({
             'type': 'iframe' ,
             'src': fc.domain(path) ,
@@ -66,17 +65,33 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
         });
     };
 
-    $scope.insertRegister = function(){
-        var url     = fc.domain(  URL.url_insert );
-        var fields  = $scope.insert;
-        $scope.spinning = true;
-        sc.requestHttp(url, fields, 'POST', false).then(function (response) {
+    $scope.takeOrder = function(id){
+        var url = fc.domain(URL.url_update,id);
+        var fields = {
+            status_id: 9 ,
+            user_id: $scope.loginUser.userId
+        };
+        sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                nf.toastSuccess(response.data.message, nf.titleRegisterSuccess);
-                nf.modal("#modal_add_register",true);
-                $scope.constructor();
+                nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                nf.trEffect(id);
+                $scope.index();
             }
-            $scope.spinning = false;
+        });
+
+    };
+
+    $scope.closeOrder = function(id){
+        var url = fc.domain(URL.url_update,id);
+        var fields = {
+            status_id: 7
+        };
+        sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
+            if (sc.validateSessionStatus(response)) {
+                nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                nf.trEffect(id);
+                $scope.index();
+            }
         });
 
     };
@@ -96,26 +111,26 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
         });
     };
 
-    $scope.editRegister = function( id ){
-        var url = fc.domain(URL.url_edit,id);
+    $scope.editRegister = function( entry ){
+        var url = fc.domain(URL.url_edit,entry.id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
-            var datos = ['id', 'name', 'description', 'status',"companies",'groups','users'];
-            $scope.update = sc.mapObject(response.data.data, datos, true);
-            $scope.update.companyId = angular.isDefined($scope.update.companies[0])?$scope.update.companies[0].id : "";
-            $scope.update.userId    = angular.isDefined($scope.update.users[0])?$scope.update.users[0].id : "";
-            $scope.getGroupByCompany($scope.update.companyId);
-            $scope.update.groupId    = angular.isDefined($scope.update.groups[0])?$scope.update.groups[0].id : "";
+            //console.log(response.data.data.concepts);
+            $scope.update = response.data.data.concepts;
             console.log($scope.update);
             nf.modal("#modal_edit_register");
         });
     };
 
-    $scope.destroyRegister = function( id ){
-        var url = fc.domain( URL.url_destroy,id );
-        nf.buildSweetAlertOptions("¿Borrar Registro?", "¿Realmente desea eliminar el registro?", "warning", function () {
-            sc.requestHttp(url, null, "DELETE", false).then(function (response) {
+    $scope.cancelOrders = function( id ){
+        var url = fc.domain(URL.url_update,id);
+        var fields = {
+            status_id: 4
+        };
+        nf.buildSweetAlertOptions("¿Cancelar Pedido?", "¿Realmente desea cancelar el pedido?", "warning", function () {
+            sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
                 if (sc.validateSessionStatus(response)) {
-                    nf.toastSuccess(response.data.message, nf.titleMgsSuccess);
+                    nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                    nf.trEffect(id);
                     $scope.index();
                 }
             });

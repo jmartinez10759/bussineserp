@@ -9,7 +9,6 @@
 namespace App\Http\Controllers\SalesOfPoint;
 
 use App\Http\Controllers\MasterController;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\SysBoxes;
 use App\SysOrders;
 use Illuminate\Http\Request;
@@ -140,7 +139,7 @@ class SalesController extends MasterController
     }
 
     /**
-     * This method is for get information the roles by companies
+     * This method is for get information the orders by companies
      * @access public
      * @param int|null $id
      * @param SysOrders $orders
@@ -149,7 +148,9 @@ class SalesController extends MasterController
     public function show( int $id = null, SysOrders $orders )
     {
         try {
-            $response = $boxes->with('companies','groups','users')->find($id);
+            $response = $orders->with(['concepts' => function($query){
+                return $query->with('products');
+            }])->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
@@ -169,47 +170,33 @@ class SalesController extends MasterController
     }
 
     /**
-     * This method is for update register the roles
+     * This method is for update register the orders
      * @access public
      * @param Request $request [Description]
+     * @param int|null $id
      * @param SysOrders $orders
      * @return JsonResponse
      */
-    public function update( Request $request, SysOrders $orders )
+    public function update( Request $request, int $id = null ,SysOrders $orders )
     {
         $error = null;
         DB::beginTransaction();
         try {
-            $data = array_filter($request->all(), function ($key) use ($request){
-                if($key != "companyId" && $key != "groupId" && $key != "userId"){
-                    $data[$key] = $request->$key;
-                    if ($request->$key == 0){
-                        $data[$key] = "0";
-                    }
-                    return $data;
-                }
-            },ARRAY_FILTER_USE_KEY);
-
-            $box = $boxes->find($request->get('id'));
-            $box->update($data);
-            if ( isset($request->companyId) && $request->companyId){
-                $box->groups()->detach();
-                $box->groups()->attach($request->get("groupId"),[
-                    'company_id' => $request->get("companyId") ,
-                    'user_id'  => $request->get("userId")
-                ]);
-            }
+            $order = $orders->find($id);
+            $order->update($request->all());
+            \Log::debug($order);
 
             DB::commit();
             $success = true;
         } catch ( \Exception $e) {
             $success = false;
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::debug($error);
             DB::rollback();
         }
 
         if ($success) {
-            return $this->show( $request->get("id"), new SysBoxes );
+            return $this->show( $id , $orders );
         }
         return new JsonResponse([
             'success'   => FALSE
@@ -280,6 +267,7 @@ class SalesController extends MasterController
                     o.comments ,
                     o.file_path ,
                     CONCAT(u.name,' ',u.first_surname,' ',u.second_surname) AS full_name ,
+                    CONCAT(su.name,' ',su.first_surname,' ',su.second_surname) AS kitchen ,
                     ROUND(o.subtotal,2) AS subtotal ,
                     ROUND(o.iva,2) AS iva ,
                     ROUND(o.total,2) AS total,
@@ -295,6 +283,7 @@ class SalesController extends MasterController
                      JOIN sys_users u ON cb.user_id = u.id
                      JOIN boxes b ON cb.box_id = b.id
                      JOIN orders o ON o.box_id = b.id
+                     LEFT JOIN sys_users su ON o.user_id = su.id
                      JOIN sys_formas_pagos fg ON o.payment_form_id = fg.id
                      JOIN sys_metodos_pagos mp ON o.payment_method_id = mp.id
                      JOIN sys_estatus se ON o.status_id = se.id

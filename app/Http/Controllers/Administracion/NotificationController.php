@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers\Administracion;
 
+use App\SysNotifications;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 
 use App\Model\Administracion\Configuracion\SysNotificacionesModel;
 use App\Model\Administracion\Configuracion\SysRolesNotificacionesModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class NotificationController extends MasterController
 {
-    #se crea las propiedades
-    private $_tabla_model;
 
-    public function __construct(){
-          parent::__construct();
-          $this->_tabla_model = "";
+    /**
+     * NotificationController constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
     }
     /**
      *Metodo para obtener la vista y cargar los datos
@@ -25,8 +29,8 @@ class NotificationController extends MasterController
      *@param Request $request [Description]
      *@return void
      */
-    public function index(){
-
+    public function index()
+    {
         $data = [
           'page_title' 	        => ""
           ,'title'  		        => ""
@@ -123,31 +127,41 @@ class NotificationController extends MasterController
       return $this->show_error(6, $error, self::$message_error );
 
     }
+
     /**
      * Metodo para borrar el registro
      * @access public
-     * @param Request $request [Description]
+     * @param int|null $id
      * @return void
      */
-      public function destroy( Request $request ){
-
+      public function destroy( int $id = null )
+      {
           $error = null;
           DB::beginTransaction();
           try {
-
-
+              SysNotifications::where(['id' => $id])->delete();
             DB::commit();
             $success = true;
           } catch (\Exception $e) {
               $success = false;
               $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              \Log::debug($error);
               DB::rollback();
           }
-
           if ($success) {
-            return $this->_message_success( 201, $response , self::$message_success );
+              return new JsonResponse([
+                  'success'   => $success
+                  ,'data'     => $id
+                  ,'message' => self::$message_success
+              ],Response::HTTP_OK);
           }
-          return $this->show_error(6, $error, self::$message_error );
+
+          return new JsonResponse([
+              'success'   => $success
+              ,'data'     => $error
+              ,'message' => self::$message_error
+          ],Response::HTTP_BAD_REQUEST);
+
 
       }
 

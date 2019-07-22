@@ -51,7 +51,7 @@
                 </ul>
               </li>
               <!-- Notifications: style can be found in dropdown.less -->
-              <li class="dropdown notifications-menu" >
+              <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
                   <span class="label label-primary notify" ng-if="notificaciones.length > 0">.</span>
@@ -67,7 +67,7 @@
                     <ul class="menu">
 
                       <li ng-repeat="notify in notificaciones ">
-                          <a ng-click="notifyDetails(notify.id)" style="cursor:pointer;">
+                          <a ng-click="notifyDetails(notify)" style="cursor:pointer;">
                             <h6>
                               <i class="fa fa-bell-o text-blue" ng-bind="notify.title"></i>
                             </h6>

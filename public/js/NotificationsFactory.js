@@ -4,6 +4,7 @@ app.factory("NotificationsFactory",["sweetAlert","toastr","swangular", function 
     function NotificationsFactory() {
         this.alert = sweetAlert.swal;
         this.swangular = swangular.open;
+        this.toastr = toastr;
         this.checkType = function(type) {
             return type === 'success' ? "¡Éxito!" :
                 (type === "error" ? "¡Error!" :
@@ -56,20 +57,24 @@ app.factory("NotificationsFactory",["sweetAlert","toastr","swangular", function 
         });
     };
 
-    NotificationsFactory.prototype.toastError = function(msg,title) {
-        toastr.error(msg,title);
+    NotificationsFactory.prototype.toastError = function(msg,title,options = {}) {
+        options['closeButton'] = true;
+        this.toastr.error(msg,title,options);
     };
 
-    NotificationsFactory.prototype.toastSuccess = function(msg, title) {
-        toastr.success(msg, title);
+    NotificationsFactory.prototype.toastSuccess = function(msg, title,options = {}) {
+        options['closeButton'] = true;
+        this.toastr.success(msg, title,options);
     };
 
-    NotificationsFactory.prototype.toastInfo = function(msg, title) {
-        toastr.info(msg,title);
+    NotificationsFactory.prototype.toastInfo = function(msg, title,options = {}) {
+        options['closeButton'] = true;
+        this.toastr.info(msg,title,options);
     };
 
-    NotificationsFactory.prototype.toastWarning = function(msg, title) {
-        toastr.warning(msg,title);
+    NotificationsFactory.prototype.toastWarning = function(msg, title,options = {}) {
+        options['closeButton'] = true;
+        this.toastr.warning(msg,title,options);
     };
 
     NotificationsFactory.prototype.modal = function (identifier,hide) {

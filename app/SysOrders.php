@@ -5,6 +5,7 @@ namespace App;
 use App\Model\Administracion\Configuracion\SysEstatusModel;
 use App\Model\Administracion\Configuracion\SysFormasPagosModel;
 use App\Model\Administracion\Configuracion\SysMetodosPagosModel;
+use App\Model\Administracion\Configuracion\SysUsersModel;
 use Illuminate\Database\Eloquent\Model;
 
 class SysOrders extends Model
@@ -16,6 +17,7 @@ class SysOrders extends Model
         ,'payment_form_id'
         ,'payment_method_id'
         ,'status_id'
+        ,'user_id'
         ,'comments'
         ,'file_path'
         ,'subtotal'
@@ -44,5 +46,10 @@ class SysOrders extends Model
     {
         return $this->hasOne(SysEstatusModel::class,'id','status_id');
     }
+    public function kitchen()
+    {
+        return $this->hasOne(SysUsersModel::class,'id','user_id');
+    }
+
 
 }

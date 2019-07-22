@@ -69,8 +69,13 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 		}
 	};
 
-	$scope.notifyDetails = function(notifyId) {
-		alert(notifyId);
+	$scope.notifyDetails = function(notify) {
+        var url = fc.domain("notifications/{id}/destroy",notify.id);
+        sc.requestHttp(url, null, 'DELETE', false).then(function (response) {
+            if (sc.validateSessionStatus(response)) {
+                redirect(fc.domain(notify.module));
+            }
+        });
 	};
 
 	$scope.timeDate = function(date){
@@ -78,92 +83,21 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 	};
 
 	$scope.notificationEvent = function(){
-		Pusher.logToConsole = true;
-		var client = new Pusher("a9721493e8adefe5f824", {
-			cluster: "us2" ,
-			encrypted: true
-		});
-		var pusher = $pusher(client);
-		let channel = pusher.subscribe('notifications');
+		var channel = sc.pusher().subscribe('notifications');
 		// Bind a function to a Event (the full Laravel class)
 		channel.bind('notification-event', function(data) {
-				$scope.notificaciones = {id: 1, title: "Nueva Notificacion",message:"Se creo una nueva orden"};
-				console.log($scope.notificaciones);
+			$scope.services();
+			if($scope.loginUser.rolesId == 3 || $scope.loginUser.rolesId == 12){
+                nf.toastInfo(data.message,data.title,{
+                	timeOut: 0 ,
+					extendedTimeOut : 0 ,
+					tapToDismiss: false
+				});
+            }
+
 		});
 	};
 
-	/*$scope.monthFilter = function(data){
-		for(var i in $scope.calFilter){ $scope.calFilter[i].class = "";}
-		data.class = "active";
-		$scope.month = data.id;
-		let fields = {
-			month:   $scope.month ,
-			year:    $scope.year
-		};
-		console.log(fields);
-	};
 
-	$scope.yearFilter = function(year){
-		$scope.year = year;
-		var fields = {
-			month:     $scope.month,
-			year:    $scope.year
-		};
-		console.log(fields);
-	};*/
-
-
-	/*$scope.update_notify = function(){
-
-	    var url      = domain('api/sistema/token');
-	    var fields   = { email: "jorge.martinez@burolaboralmexico.com" };
-	    jQuery('#modal_notificaciones').modal('hide');
-
-	    MasterController.method_master(url, fields, 'post')
-	    .then( response => {
-	        var headers = {
-	           usuario: response.data.result[0].email, token: response.data.result[0].api_token
-	        };
-	        var uri = domain('api/sistema/notification');
-	        var data = {id:  $scope.update.id };
-	        MasterController.method_master(uri, data, 'delete', headers)
-	        .then(response => {
-	            $scope.services();
-	        }).catch(error => {
-	            toastr.error(error, "Ocurrio un Error");
-	        });
-	    }).catch(error => {
-	        toastr.error(error, "Ocurrio un Error");
-	    });
-
-	}
-	$scope.time_fechas = function( fecha ){
-		return masterservice.time_fechas(fecha);
-	}
-	$scope.users_notify = function( id ){
-
-	  	var url = domain('notificaciones/edit');
-	  	var fields = { id : id };
-		  	MasterController.request_http(url,fields,'get',$http, false )
-		      .then(function( response ){
-		          //not remove function this is  verify the session
-		            if(masterservice.session_status( response )){return;};
-
-		            $scope.update.id 	  = response.data.result.id; 
-		            $scope.update.portal  = response.data.result.portal;
-		            $scope.update.titulo  = response.data.result.titulo;
-		            $scope.update.mensaje = response.data.result.mensaje;
-		            console.log($scope.update);
-				  	jQuery('#modal_notificaciones').modal({
-				      keyboard: false, backdrop: "static"
-				    });	
-
-		      }).catch(function( error ){
-		        loading(true);
-		        console.error( error );
-		        masterservice.session_status_error( error );
-		      });
-
-	}*/
 
 }]);

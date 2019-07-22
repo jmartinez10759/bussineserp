@@ -95,6 +95,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
                 nf.modal("#paymentForm",true);
                 nf.buildSweetAlert("¡Se genero la orden "+$scope.insert.orderId+"!","success");
                 $scope.constructor();
+                $scope.notificationEvent();
                 w.localStorage.removeItem("orderId");
             }
             $scope.spinning = false;

@@ -3,6 +3,7 @@
 namespace App\Model\Administracion\Configuracion;
 
 use App\SysBoxes;
+use App\SysNotifications;
 use Illuminate\Database\Eloquent\Model;
 
 class SysUsersModel extends Model
@@ -57,6 +58,11 @@ class SysUsersModel extends Model
     {
         return $this->hasOne(SysSesionesModel::class,'id','id_bitacora');
     }
+    public function notifications()
+    {
+        return $this->belongsToMany(SysNotifications::class,'users_notifications','user_id','notify_id')
+            ->withPivot('company_id','group_id');
+    }
 
 
 
@@ -110,10 +116,6 @@ class SysUsersModel extends Model
     public function plantillas()
     {
       return $this->belongsToMany('App\Model\Administracion\Correos\SysTemplatesModel','sys_users_templates','id_users','id_template');
-    }
-    public function notificaciones()
-    {
-      return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_users','id_notificacion')->withPivot('estatus');
     }
 
 
