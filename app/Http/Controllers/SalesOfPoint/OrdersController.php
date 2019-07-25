@@ -112,7 +112,7 @@ class OrdersController extends MasterController
             $order->concepts()->create([
                 "order_id"          => $order->id ,
                 "product_id"        => $request->get("productId") ,
-                "quality"           => 1 ,
+                "quantity"          => 1 ,
                 "discount"          => 0 ,
                 "price"             => $product->total ,
                 "total"             => $product->total
@@ -218,18 +218,20 @@ class OrdersController extends MasterController
                 ];
             }
             $dataPrinter['order']    = $order->id;
+            $dataPrinter['status']   = $order->status_id;
             $dataPrinter['caja']     = $order->boxes->name;
             $dataPrinter['cajero']   = ( $order->boxes->logs->count() > 0 ) ? $order->boxes->logs[0]->name." ".$order->boxes->logs[0]->first_surname : "CAJERO";
             $dataPrinter['subtotal'] = $order->subtotal;
             $dataPrinter['iva']      = $order->iva;
             $dataPrinter['total']    = $order->total;
+            $dataPrinter['concepts'] = [];
             foreach ($order->concepts as $concept){
                 $dataPrinter['concepts'][] = [
                     "code"          => $concept->products->codigo ,
                     "product"       => $concept->products->nombre ,
                     "price"         => $concept->products->total ,
                     "discount"      => $concept->discount ,
-                    "quality"       => $concept->quality ,
+                    "quantity"      => $concept->quantity ,
                     "total"         => $concept->total
                 ];
             }

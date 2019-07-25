@@ -12,7 +12,7 @@ class SysConcepts extends Model
         'id'
         ,'order_id'
         ,'product_id'
-        ,'quality'
+        ,'quantity'
         ,'discount'
         ,'price'
         ,'total'

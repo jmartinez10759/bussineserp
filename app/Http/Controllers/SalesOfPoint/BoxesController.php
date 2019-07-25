@@ -304,14 +304,14 @@ class BoxesController extends MasterController
     public function boxCut(int $id = null,int $countCut = null ,SysBoxes $boxes)
     {
         try {
-            $countCut = ($countCut)? : 1;
+            $countCut = (!$countCut)? 1: $countCut;
             $today = $this->_today->format('Y-m-d');
             $box = $boxes->with(['orders' => function($query) use ($today,$countCut){
                 return $query->whereCount($countCut)->where('created_at','LIKE',$today.'%');
             }])->find($id);
-            $subtotal   = number_format($box->orders->sum("subtotal"),2);
-            $iva        = number_format($box->orders->sum("iva"),2);
-            $total      = number_format($box->orders->sum("total"),2);
+            $subtotal   = number_format($box->orders()->where('status_id','!=' ,4)->sum("subtotal"),2);
+            $iva        = number_format($box->orders()->where('status_id','!=' ,4)->sum("iva"),2);
+            $total      = number_format($box->orders()->where('status_id','!=' ,4)->sum("total"),2);
             $dataPrinter = [];
             foreach ($box->companies as $company){
                 $dataPrinter = [
@@ -329,20 +329,25 @@ class BoxesController extends MasterController
             }
             $dataPrinter['caja']     = $box->name;
             $dataPrinter['cajero']   = ( $box->logs->count() > 0 ) ? $box->logs[0]->name." ".$box->logs[0]->first_surname : "CAJERO";
-            foreach ($box->orders as $order){
-                foreach ($order->concepts as $concept ){
-                    $dataPrinter['concepts'][] = [
-                        "code"          => $concept->products->codigo ,
-                        "product"       => $concept->products->nombre ,
-                        "price"         => $concept->products->total ,
-                        "discount"      => $concept->discount ,
-                        "quality"       => $concept->quality ,
-                        "total"         => (double)$concept->total
-                    ];
+            $dataPrinter['concepts'] = [];
+            if ($box->orders->count() > 0){
+                foreach ($box->orders as $order){
+                    foreach ($order->concepts as $concept ){
+                        $dataPrinter['concepts'][] = [
+                            "code"          => $concept->products->codigo ,
+                            "product"       => $concept->products->nombre ,
+                            "price"         => $concept->products->total ,
+                            "discount"      => $concept->discount ,
+                            "quantity"      => $concept->quality ,
+                            "total"         => (double)$concept->total
+                        ];
+                    }
+                    $dataPrinter['order']    = $order->id;
+                    $dataPrinter['status']   = $order->status_id;
                 }
-                $dataPrinter['order']    = $order->id;
             }
             \Log::debug($dataPrinter);
+            var_export($dataPrinter);die();
             $box->update(['is_active' => false]);
             $ticket = $this->ticket->printer($dataPrinter,true);
             $path = "";

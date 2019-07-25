@@ -37,11 +37,11 @@ abstract class MasterController extends Controller
 	public static $_client;
 	public $_tipo_user;
 	public static $_domain = "";
-	protected $tipo = "application/json";
+	protected $tipo             = "application/json";
 	public $_http;
-	protected static $_titulo = "Empresa No Asignada";
-	protected static $_desarrollo = "";
-	protected static $_link_desarrollo = "";
+	protected $_title           = "Empresa No Asignada";
+	protected $_development     = "Global Liegyn Solutions";
+	protected $_linkDevelopment = "";
 	public static $_model;
 	protected static $message_success;
 	protected static $message_error;
@@ -70,9 +70,12 @@ abstract class MasterController extends Controller
      * @param bool $method
      * @return json [description]
      */
-	protected static function endpoint($url = false, $headers = [], $data = [], $method = false)
+	protected static function endpoint($url = false,$headers = [],$data = [], $method = false)
 	{
-		$response = self::$_client->$method($url, ['headers' => $headers, 'body' => json_encode($data)]);
+		$response = self::$_client->$method($url,[
+		    'headers'   => $headers,
+            'body'      => json_encode($data)
+        ]);
 		return json_decode($response->getBody());
 	}
     /**
@@ -101,10 +104,6 @@ abstract class MasterController extends Controller
      */
     protected function _loadView(string $view = null, array $parse = [] )
     {
-        /*var_export(Session::all());die();
-        if( Session::get('roles_id') != 1 && Session::get('permisos')['GET'] ){
-            return view('errors.error');
-        }*/
         $users = SysUsersModel::find( Session::get('id') );
         $company = $users->companies()->find(Session::get('company_id'));
         $groups  = $users->groups()->find(Session::get('group_id'));
@@ -116,16 +115,16 @@ abstract class MasterController extends Controller
         ])->whereEstatus(TRUE)->orderBy('orden','ASC')->get();
 
         $parse['MENU_DESKTOP'] 		= $this->_loadMenus($menus);
-        self::$_titulo              = (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
-        $parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower(self::$_titulo)));
+        $this->_title              = (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
+        $parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower($this->_title)));
         $parse['IMG_PATH'] 			= domain() . 'images/';
         $parse['icon'] 				= "img/company.png";
         $parse['anio'] 				= date('Y');
-        $parse['version'] 			= "2.0.2";
+        $parse['version'] 			= "1.2";
         $parse['base_url'] 			= domain();
         $parse['nombre_completo'] 	= Session::get('name') . " " . Session::get('first_surname');
-        $parse['desarrollo'] 		= utf8_decode(self::$_desarrollo);
-        $parse['link_desarrollo'] 	= utf8_decode(self::$_link_desarrollo);
+        $parse['desarrollo'] 		= utf8_decode($this->_development);
+        $parse['link_desarrollo'] 	= utf8_decode($this->_linkDevelopment);
         $parse['welcome'] 			= "Bienvenid@";
         $parse['photo_profile'] 	= isset($users->details)?$users->details->foto : asset('img/profile/profile.png');
         $parse['rol'] 				= isset($users->roles[0])? $users->roles[0]->perfil : "Perfil No Asignado";
@@ -139,11 +138,10 @@ abstract class MasterController extends Controller
 
         $upload_files   = (isset(Session::get('permisos')['UPLF'])) ? Session::get('permisos')['UPLF'] : true;
         $notify         = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
-        $reportes       = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
+        $reports        = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
         $excel          = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
-        #$modal          = (isset(Session::get('permisos')['AGR'])) ? Session::get('permisos')['AGR'] : true;
 
-        $parse['seccion_reportes'] = reportes($reportes, $excel);
+        $parse['seccion_reportes'] = reportes($reports, $excel);
         $parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
         $parse['upload_files']  = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
 

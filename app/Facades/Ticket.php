@@ -57,7 +57,7 @@ class Ticket extends Facade
             $textYPos += 6;
             $this->_pdf->SetFont('Arial','',5);
             $this->_pdf->setX(2);
-            $this->_pdf->Cell(5,$textYPos,'-------------------------------------------------------------------');
+            $this->_pdf->Cell(5,$textYPos,'-----------------------------------------------------------------------');
             $this->_pdf->SetFont('Arial','',4.3);
             $textYPos += 4;
             $this->_pdf->setX(2);
@@ -77,24 +77,31 @@ class Ticket extends Facade
             }
             $textYPos +=6;
             $this->_pdf->setX(2);
-            $this->_pdf->Cell(5,$textYPos,'-------------------------------------------------------------------');
+            $this->_pdf->Cell(5,$textYPos,'-----------------------------------------------------------------------');
             $textYPos +=6;
             $this->_pdf->SetFont('Arial','',4.3);
             $this->_pdf->setX(2);
-            $this->_pdf->Cell(5,$textYPos,'#    PRODUCT                 PRICE       DISCOUNT     TOTAL');
+            $this->_pdf->Cell(5,$textYPos,'#    PRODUCT              PRICE       DISCOUNT     TOTAL');
             $off = $textYPos+6;
+            $isCancel   = ($data['status'] == 4 )? "C ": "";
 
             foreach($data['concepts'] as $product){
+                $quantity   = (!$product["quantity"])? 0 : $product["quantity"];
+                $product    = (!$product["product"])? "": strtoupper(substr($product["product"], 0,12)) ;
+                $price      = (!$product["price"])? format_currency(0) : ($data['status'] == 4) ? format_currency($product["price"],2,"$ -"): format_currency($product["price"]);
+                $discount   = (!$product["discount"])? "0%" : $product["discount"]."%";
+                $total      = (!$product["total"])? format_currency(0 ): ($data['status'] == 4) ? format_currency($product["total"],2,"$ -"): format_currency($product["total"]) ;
+
                 $this->_pdf->setX(2);
-                $this->_pdf->Cell(5,$off,$product["quality"]);
+                $this->_pdf->Cell(5,$off,$isCancel+$quantity);
                 $this->_pdf->setX(4);
-                $this->_pdf->Cell(35,$off,  strtoupper(substr($product["product"], 0,12)) );
+                $this->_pdf->Cell(35,$off,  $product );
                 $this->_pdf->setX(14);
-                $this->_pdf->Cell(11,$off,  "$".number_format($product["price"],2,".",",") ,0,0,"R");
+                $this->_pdf->Cell(11,$off,  $price ,0,0,"R");
                 $this->_pdf->setX(20);
-                $this->_pdf->Cell(11,$off, $product["discount"]."%" ,0,0,"R");
+                $this->_pdf->Cell(11,$off, $discount ,0,0,"R");
                 $this->_pdf->setX(30);
-                $this->_pdf->Cell(11,$off,  "$ ".number_format($product["total"],2,".",",") ,0,0,"R");
+                $this->_pdf->Cell(11,$off,  $total,0,0,"R");
                 $off+=6;
             }
             $textYPos = $off + 6;
@@ -103,7 +110,7 @@ class Ticket extends Facade
             $this->_pdf->SetFont('Arial','',5);
             $textYPos += 6;
             $this->_pdf->setX(2);
-            $this->_pdf->Cell(5,$textYPos,'-------------------------------------------------------------------');
+            $this->_pdf->Cell(5,$textYPos,'-----------------------------------------------------------------------');
             $this->_pdf->setX(2);
             $textYPos += 6;
             $this->_pdf->Cell(5,$textYPos,"SUBTOTAL: " );
