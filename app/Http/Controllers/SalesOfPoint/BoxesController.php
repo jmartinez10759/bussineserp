@@ -322,9 +322,9 @@ class BoxesController extends MasterController
                     "postal_code"       =>  $company->codigo,
                     "state"             =>  $company->states->estado ,
                     "country"           =>  $company->countries->descripcion ,
-                    "subtotal"          =>  $subtotal ,
-                    "iva"               =>  $iva ,
-                    "total"             =>  $total ,
+                    "subtotal"          =>  (double)$subtotal ,
+                    "iva"               =>  (double)$iva ,
+                    "total"             =>  (double)$total ,
                 ];
             }
             $dataPrinter['caja']     = $box->name;
@@ -336,18 +336,18 @@ class BoxesController extends MasterController
                         $dataPrinter['concepts'][] = [
                             "code"          => $concept->products->codigo ,
                             "product"       => $concept->products->nombre ,
-                            "price"         => $concept->products->total ,
+                            "price"         => (double)$concept->products->total ,
                             "discount"      => $concept->discount ,
-                            "quantity"      => $concept->quality ,
-                            "total"         => (double)$concept->total
+                            "quantity"      => $concept->quantity ,
+                            "total"         => (double)$concept->total ,
+                            "order"         => $order->id ,
+                            "status"        => $order->status_id ,
                         ];
                     }
-                    $dataPrinter['order']    = $order->id;
-                    $dataPrinter['status']   = $order->status_id;
                 }
             }
             \Log::debug($dataPrinter);
-            var_export($dataPrinter);die();
+            #var_export($dataPrinter);die();
             $box->update(['is_active' => false]);
             $ticket = $this->ticket->printer($dataPrinter,true);
             $path = "";

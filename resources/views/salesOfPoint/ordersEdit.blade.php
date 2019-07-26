@@ -234,7 +234,7 @@
                                                                 <td style="cursor:pointer;" ng-bind="item.products.nombre"></td>
                                                                 <td style="cursor:pointer;" ng-bind="item.price | currency:$ "></td>
                                                                 <td style="cursor:pointer;">
-                                                                    <xeditable ng-model="item.quality" placeholder="Cantidad" title="Cantidad" />
+                                                                    <xeditable ng-model="item.quantity" placeholder="Cantidad" title="Cantidad" />
                                                                 </td>
                                                                 <td style="cursor:pointer;">
                                                                     <xeditable ng-model="item.discount" placeholder="Descuento %" title="Descuento" /> %
@@ -325,8 +325,6 @@
         </div>
     </div>
 </div>
-
-
 
 
 <!-- modal para pago -->

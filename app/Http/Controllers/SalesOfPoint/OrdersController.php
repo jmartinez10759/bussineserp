@@ -218,7 +218,6 @@ class OrdersController extends MasterController
                 ];
             }
             $dataPrinter['order']    = $order->id;
-            $dataPrinter['status']   = $order->status_id;
             $dataPrinter['caja']     = $order->boxes->name;
             $dataPrinter['cajero']   = ( $order->boxes->logs->count() > 0 ) ? $order->boxes->logs[0]->name." ".$order->boxes->logs[0]->first_surname : "CAJERO";
             $dataPrinter['subtotal'] = $order->subtotal;
@@ -229,12 +228,14 @@ class OrdersController extends MasterController
                 $dataPrinter['concepts'][] = [
                     "code"          => $concept->products->codigo ,
                     "product"       => $concept->products->nombre ,
-                    "price"         => $concept->products->total ,
+                    "price"         => (double)$concept->products->total ,
                     "discount"      => $concept->discount ,
                     "quantity"      => $concept->quantity ,
-                    "total"         => $concept->total
+                    "total"         => (double)$concept->total ,
+                    "status"        => $order->status_id
                 ];
             }
+            \Log::debug($dataPrinter);
             $ticket = $this->ticket->printer($dataPrinter);
             $path = "";
             if ($ticket['success']){
@@ -243,7 +244,7 @@ class OrdersController extends MasterController
             $order->update(['file_path' => $path]);
             $notify = $this->_notify->creating(
                 "Pedido generado con exito" ,
-                "Se genero el pedido N°{$dataPrinter['order']} con exito" ,
+                "Se genero el pedido N°{$order->id} con exito" ,
                 "sales/pedidos" ,
                 [1,3,12]
             );

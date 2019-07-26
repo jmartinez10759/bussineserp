@@ -172,7 +172,7 @@ class ConceptsController extends MasterController
                         $data[$key] = $values;
                     }
                 }
-                $total = $data['quality'] * $data['price'];
+                $total = $data['quantity'] * $data['price'];
                 $totalDiscount = $total * $data['discount'] / 100;
                 $data['total'] = ($total - $totalDiscount );
                 $concept = $concepts->find($data['id']);
