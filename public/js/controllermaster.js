@@ -98,6 +98,30 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 		});
 	};
 
+	/*$scope.downloadReportPDF = function () {
+		$scope.downloadPDF();
+	};*/
+
+	$scope.reportCsv = function (fields) {
+		let columns  = (angular.isDefined(fields.columnas))? fields.columnas : [];
+		/*let title    = (angular.isDefined(fields.titulo))? fields.titulo : "";*/
+		let data    = (angular.isDefined(fields.datos))? fields.datos : {};
+
+		jQuery('#csv').jexcel({
+			data			: data ,
+			colHeaders 		: columns ,
+			colWidths  		: [ 150, 150, 400, 150,150, 150, 150 ] ,
+			csvHeaders 		: true ,
+			tableOverflow 	: true ,
+			tableHeight		: '50px'
+		});
+		jQuery.fancybox.open({
+			'type': 'inline' ,
+			'src': "#contentCsv" ,
+			'buttons' : ['share', 'close']
+		});
+	};
+
 
 
 }]);

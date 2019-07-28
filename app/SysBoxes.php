@@ -40,5 +40,9 @@ class SysBoxes extends Model
     {
         return $this->belongsToMany(SysUsersModel::class,'boxes_logs','box_id','user_id')->withPivot("created_at");
     }
+    public function cuts()
+    {
+        return $this->hasMany(SysCuts::class,'box_id','id');
+    }
 
 }

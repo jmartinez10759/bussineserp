@@ -228,12 +228,15 @@ class OrdersController extends MasterController
                 $dataPrinter['concepts'][] = [
                     "code"          => $concept->products->codigo ,
                     "product"       => $concept->products->nombre ,
-                    "price"         => (double)$concept->products->total ,
+                    "price"         => $concept->products->total ,
                     "discount"      => $concept->discount ,
                     "quantity"      => $concept->quantity ,
-                    "total"         => (double)$concept->total ,
+                    "total"         => $concept->total ,
                     "status"        => $order->status_id
                 ];
+                $stock = ($concept->products->stock - $concept->quantity );
+                /*Update stock the products */
+                $concept->products()->update(['stock' => $stock]);
             }
             \Log::debug($dataPrinter);
             $ticket = $this->ticket->printer($dataPrinter);
@@ -263,7 +266,7 @@ class OrdersController extends MasterController
             return new JsonResponse([
                 'success'   => $success
                 ,'data'     => $path
-                ,'message' => self::$message_success
+                ,'message'  => self::$message_success
             ],Response::HTTP_OK);
         }
         return new JsonResponse([

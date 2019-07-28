@@ -1,12 +1,12 @@
 const URL = {
-    url_insert            : "sales/register"
-    ,url_edit             : "sales/{id}/edit"
-    ,url_all              : "sales/{year}/filter"
-    ,url_update           : "sales/{id}/update"
-    ,url_destroy          : "sales/{id}/destroy"
+    url_insert            : "cuts/register"
+    ,url_edit             : "cuts/{id}/edit"
+    ,url_all              : "cuts/{year}/filter"
+    ,url_update           : "cuts/{id}/update"
+    ,url_destroy          : "cuts/{id}/destroy"
 };
 
-app.controller('SalesController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
+app.controller('CutsController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
     $scope.constructor = function(){
         $scope.datos  = [];
@@ -23,7 +23,7 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
             if (sc.validateSessionStatus(response)){
                 console.log(response);
                 $scope.cmbUsers = response.data.data.users;
-                $scope.datos    = response.data.data.sales;
+                $scope.datos    = response.data.data.cuts;
                 $scope.subtotal = response.data.data.subtotal;
                 $scope.iva      = response.data.data.iva;
                 $scope.total    = response.data.data.total;
@@ -65,7 +65,7 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
         });
     };
 
-    $scope.takeOrder = function(id){
+    /*$scope.takeOrder = function(id){
         var url = fc.domain(URL.url_update,id);
         var fields = {
             status_id: 9 ,
@@ -94,7 +94,7 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
             }
         });
 
-    };
+    };*/
 
     /*$scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
@@ -111,7 +111,7 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
         });
     };*/
 
-    $scope.editRegister = function( entry ){
+    /*$scope.editRegister = function( entry ){
         var url = fc.domain(URL.url_edit,entry.id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             //console.log(response.data.data.concepts);
@@ -119,9 +119,9 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
             console.log($scope.update);
             nf.modal("#modal_edit_register");
         });
-    };
+    };*/
 
-    $scope.cancelOrders = function( id ){
+    /*$scope.cancelOrders = function( id ){
         var url = fc.domain(URL.url_update,id);
         var fields = {
             status_id: 4
@@ -136,7 +136,7 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
             });
         }, null, "SI", "NO");
 
-    };
+    };*/
 
     $scope.downloadReportPDF = function(){
         var register = $scope.datos;

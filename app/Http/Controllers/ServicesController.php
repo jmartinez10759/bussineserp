@@ -59,9 +59,9 @@ class ServicesController extends MasterController
                 }
             }
             if( Session::get('roles_id') != 1){
-			    $notification = $user->notifications()->orderBy('id','desc')->get();
+			    $notification = $user->notifications()->orderBy('id','desc')->groupBy('id')->get();
 			} else{
-			    $notification = SysNotifications::orderBy('id','desc')->get();
+			    $notification = SysNotifications::orderBy('id','desc')->groupBy('id')->get();
 			}
 	        $data = [
 	        	'notification' => $notification

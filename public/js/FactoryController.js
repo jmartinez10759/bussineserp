@@ -210,6 +210,28 @@ app.factory('FactoryController',['$http', function (http) {
         return amount_parts.join('.');
     };
 
+    FactoryController.prototype.reportPdf = function (fields) {
+        const pdf = new jsPDF( {orientation: 'landscape'});
+        const columns  = (angular.isDefined(fields.columnas))? fields.columnas : [];
+        const title    = (angular.isDefined(fields.titulo))? fields.titulo : "";
+        const data     = (angular.isDefined(fields.datos))? fields.datos : {};
+
+        for (var i = 0; i < data.length; i++) {
+            pdf.text(20,20,title+" "+data[i][0][0]);
+            pdf.autoTable( columns,data[i], options );
+            pdf.addPage();
+        }
+        jQuery.fancybox.open({
+            'type': 'iframe' ,
+            'src': pdf.output('datauristring') ,
+            'buttons' : ['share', 'close']
+        });
+    };
+
+    FactoryController.prototype.reportCsv = function () {
+
+    };
+
     return new FactoryController();
 
 }]);

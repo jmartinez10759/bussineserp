@@ -47,6 +47,18 @@
             <!-- end section loader -->
             @yield('content')
 
+            <div class="pull-right">
+                <div ng-if="permisos.PER">
+                    <button type="button" class="btn btn-default" title="Descargar PDF" ng-click="downloadReportPDF()">
+                        <i class="fa fa-file-pdf-o"></i>
+                    </button>
+                    <button type="button" class="btn btn-default" title="Descargar EXL" ng-click="downloadReportEXL()">
+                        <i class="fa fa-file-excel-o"></i>
+                    </button>
+                </div>
+            </div>
+
+
             <div class="" id="seccion_upload" style="display:none;">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -58,7 +70,7 @@
                         </div>
                         <div class="modal-footer">
                             <div class="btn-toolbar pull-right">
-                                <button type="button" class="btn btn-danger" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
+                                <button type="button" class="btn btn-danger btn" data-fancybox-close> <i class="fa fa-times-circle"></i> Cancelar</button>
                             </div>
                         </div>
 
@@ -66,7 +78,7 @@
                 </div>
             </div>
 
-            <div id="modal_notificaciones" class="modal fade">
+            {{--<div id="modal_notificaciones" class="modal fade">
               <div class="modal-dialog">
                   <div class="modal-content">
                       <div class="modal-header">
@@ -120,7 +132,7 @@
                   </div>
               </div>
             
-            </div>
+            </div>--}}
 
             
         </div>

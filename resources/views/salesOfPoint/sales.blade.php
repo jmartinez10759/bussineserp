@@ -82,7 +82,7 @@
                             <button type="button" class="btn btn-primary btn-sm" title="Visualizar Ticket" ng-click="ticketWatch(data.file_path)" ng-disabled="(data.file_path)? false: true">
                                 <i class="fa fa-eye"></i>
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm" title="Cancelar Pedido" ng-click="cancelOrders(data.id)"ng-disabled="(data.status_id == 4)? true :false">
+                            <button type="button" class="btn btn-danger btn-sm" title="Cancelar Pedido" ng-click="cancelOrders(data.id)"ng-disabled="(data.status_id == 4 || data.status_id == 7)? true :false">
                                 <i class="fa fa-times-circle"></i>
                             </button>
                         </td>
@@ -135,7 +135,7 @@
                             <span class="label label-danger" ng-if="data.status_id == 4" ng-bind="data.status"></span>
                         </td>
                         <td class="text-center" style="cursor:pointer;">
-                            <button type="button" class="btn btn-success btn-sm" title="Tomar Orden" ng-click="takeOrder(data.id)" ng-disabled="(data.status_id == 9 || data.status_id == 4 || data.status_id == 7l) ? true: false">
+                            <button type="button" class="btn btn-success btn-sm" title="Tomar Orden" ng-click="takeOrder(data.id)" ng-disabled="(data.status_id == 9 || data.status_id == 4 || data.status_id == 7) ? true: false">
                                 <i class="glyphicon glyphicon-ok"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-sm" title="Cerrar Orden" ng-click="closeOrder(data.id)" ng-disabled="(data.status_id == 7 || data.status_id == 6 || data.status_id == 4) ? true: false">

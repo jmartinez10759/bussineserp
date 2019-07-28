@@ -244,7 +244,6 @@ class SalesController extends MasterController
 
     }
 
-
     /**
      * This method is used to get information of sales
      * @param array $data
@@ -297,14 +296,16 @@ class SalesController extends MasterController
             $iva        = 0;
             $total      = 0;
             foreach ($response as $sale ){
-                $subtotal += $sale->subtotal;
-                $iva      += $sale->iva;
-                $total    += $sale->total;
+                if ($sale->status_id != 4 ){
+                    $subtotal += $sale->subtotal;
+                    $iva      += $sale->iva;
+                    $total    += $sale->total;
+                }
             }
             $data['response']   = $response;
-            $data['total']      = number_format($total,2);
-            $data['subtotal']   = number_format($subtotal,2);
-            $data['iva']        = number_format($iva,2);
+            $data['total']      = number_format($total,2,'.',',');
+            $data['subtotal']   = number_format($subtotal,2,'.',',');
+            $data['iva']        = number_format($iva,2,'.',',');
             return $data;
     }
 

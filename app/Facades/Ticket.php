@@ -86,7 +86,7 @@ class Ticket extends Facade
             $off = $textYPos+6;
 
             foreach($data['concepts'] as $product){
-                $isCancel   = (isset($product['status']) && $product['status'] == 4 )? "C ": "";
+                $isCancel   = ($product['status'] == 4 )? "C": "";
                 $quantity   = (!$product["quantity"])? 0 : $product["quantity"];
                 $products   = (!$product["product"])? "": strtoupper(substr($product["product"], 0,12)) ;
                 $price      = (!$product["price"] )? format_currency(0) : ($product['status'] == 4) ? format_currency($product["price"],2,"-$"): format_currency($product["price"]);
@@ -94,7 +94,7 @@ class Ticket extends Facade
                 $total      = (!$product["total"])? format_currency(0 ): ($product['status'] == 4) ? format_currency($product["total"],2,"-$"): format_currency($product["total"]) ;
 
                 $this->_pdf->setX(2);
-                $this->_pdf->Cell(5,$off,$isCancel.$quantity);
+                $this->_pdf->Cell(5,$off, $quantity);
                 $this->_pdf->setX(4);
                 $this->_pdf->Cell(35,$off,  $products );
                 $this->_pdf->setX(14);
@@ -102,7 +102,7 @@ class Ticket extends Facade
                 $this->_pdf->setX(20);
                 $this->_pdf->Cell(11,$off, $discount ,0,0,"R");
                 $this->_pdf->setX(30);
-                $this->_pdf->Cell(11,$off,  $total,0,0,"R");
+                $this->_pdf->Cell(11,$off,  $total." ".$isCancel,0,0,"R");
                 $off+=6;
             }
             $textYPos = $off + 6;
@@ -133,9 +133,9 @@ class Ticket extends Facade
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'-------------------------------------------------------------------');
             $this->_pdf->SetFont('Arial','',4.3);
-            $this->_pdf->Cell(5,$textYPos+6,'GRACIAS POR TU COMPRA, VUELVA PRONTO ');
+            $this->_pdf->Cell(5,$textYPos+5,'GRACIAS POR TU COMPRA, VUELVA PRONTO ');
 
-            $filename= "ticket-".$data['rfc'].( ($close) ? "-Corte_Caja.pdf" : "-".$data['order'].".pdf");
+            $filename= "ticket-".$data['rfc'].( ($close) ? "-cut_{$data['cut']}_box.pdf" : "-".$data['order'].".pdf");
             $dir = "upload_file/ticket/".$this->_today->format("Y_m_d");
             if (!is_dir(public_path()."/".$dir)){
                 File::makeDirectory(public_path()."/".$dir,0777,true,true);

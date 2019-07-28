@@ -7,6 +7,7 @@ namespace App\Http\Controllers\SalesOfPoint;
 use App\Facades\Ticket;
 use App\Http\Controllers\MasterController;
 use App\SysBoxes;
+use App\SysCuts;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -309,9 +310,18 @@ class BoxesController extends MasterController
             $box = $boxes->with(['orders' => function($query) use ($today,$countCut){
                 return $query->whereCount($countCut)->where('created_at','LIKE',$today.'%');
             }])->find($id);
-            $subtotal   = number_format($box->orders()->where('status_id','!=' ,4)->sum("subtotal"),2);
-            $iva        = number_format($box->orders()->where('status_id','!=' ,4)->sum("iva"),2);
-            $total      = number_format($box->orders()->where('status_id','!=' ,4)->sum("total"),2);
+            $subtotal   = $box->orders()
+                ->whereCount($countCut)
+                ->where('created_at','LIKE',$today.'%')
+                ->where('status_id','!=' ,4)->sum("subtotal");
+            $iva        = $box->orders()
+                ->whereCount($countCut)
+                ->where('created_at','LIKE',$today.'%')
+                ->where('status_id','!=' ,4)->sum("iva");
+            $total      = $box->orders()
+                ->whereCount($countCut)
+                ->where('created_at','LIKE',$today.'%')
+                ->where('status_id','!=' ,4)->sum("total");
             $dataPrinter = [];
             foreach ($box->companies as $company){
                 $dataPrinter = [
@@ -322,12 +332,13 @@ class BoxesController extends MasterController
                     "postal_code"       =>  $company->codigo,
                     "state"             =>  $company->states->estado ,
                     "country"           =>  $company->countries->descripcion ,
-                    "subtotal"          =>  (double)$subtotal ,
-                    "iva"               =>  (double)$iva ,
-                    "total"             =>  (double)$total ,
+                    "subtotal"          =>  $subtotal ,
+                    "iva"               =>  $iva ,
+                    "total"             =>  $total ,
                 ];
             }
             $dataPrinter['caja']     = $box->name;
+            $dataPrinter['cut']    = $countCut;
             $dataPrinter['cajero']   = ( $box->logs->count() > 0 ) ? $box->logs[0]->name." ".$box->logs[0]->first_surname : "CAJERO";
             $dataPrinter['concepts'] = [];
             if ($box->orders->count() > 0){
@@ -336,10 +347,10 @@ class BoxesController extends MasterController
                         $dataPrinter['concepts'][] = [
                             "code"          => $concept->products->codigo ,
                             "product"       => $concept->products->nombre ,
-                            "price"         => (double)$concept->products->total ,
+                            "price"         => $concept->products->total ,
                             "discount"      => $concept->discount ,
                             "quantity"      => $concept->quantity ,
-                            "total"         => (double)$concept->total ,
+                            "total"         => $concept->total ,
                             "order"         => $order->id ,
                             "status"        => $order->status_id ,
                         ];
@@ -347,13 +358,21 @@ class BoxesController extends MasterController
                 }
             }
             \Log::debug($dataPrinter);
-            #var_export($dataPrinter);die();
             $box->update(['is_active' => false]);
             $ticket = $this->ticket->printer($dataPrinter,true);
             $path = "";
             if ($ticket['success']){
                 $path = $ticket['data'];
             }
+            SysCuts::create([
+                "box_id"    => $box->id ,
+                "n_cuts"    => $countCut ,
+                "n_orders"  => $box->orders->count(),
+                "subtotal"  => $subtotal ,
+                "iva"       => $iva ,
+                "total"     => $total ,
+                "file_path" => $path
+            ]);
             $sendData = [
                 "path"  => $path ,
                 "total" => $total

@@ -174,7 +174,6 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
                 }
             });
 
-
         }, null, "SI", "NO");
     };
 

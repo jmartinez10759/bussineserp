@@ -1725,6 +1725,35 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as'       => 'sales.update'
     ]);
 
+    Route::get('/sales/cuts', [
+        'uses'      => 'SalesOfPoint\CutsController@index'
+        ,'as'       => 'sales.cuts'
+    ]);
+
+    Route::post('/cuts/{year}/filter/{month}', [
+        'uses'      => 'SalesOfPoint\CutsController@all'
+        ,'as'       => 'cuts.all'
+    ]);
+
+    Route::get('/cuts/{id}/edit', [
+        'uses'      => 'SalesOfPoint\CutsController@show'
+        ,'as'       => 'cuts.edit'
+    ]);
+
+    Route::delete('/cuts/{id}/destroy', [
+        'uses'      => 'SalesOfPoint\CutsController@destroy'
+        ,'as'       => 'cuts.destroy'
+    ]);
+
+    Route::post('/cuts/register', [
+        'uses'      => 'SalesOfPoint\CutsController@store'
+        ,'as'       => 'cuts.register'
+    ]);
+
+    Route::put('/cuts/{id}/update', [
+        'uses'      => 'SalesOfPoint\CutsController@update'
+        ,'as'       => 'cuts.update'
+    ]);
 
 
 
