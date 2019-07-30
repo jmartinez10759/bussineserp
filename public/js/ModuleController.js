@@ -9,6 +9,7 @@ var app = angular.module('application',[
     "stringToNumber" ,
     "html-unsafe" ,
     "angucomplete-alt" ,
-    "pusher-angular"
+    "pusher-angular" ,
+    "ui.bootstrap"
 ]);
 
