@@ -27,7 +27,41 @@ app.controller('SalesController', ['ServiceController','FactoryController','Noti
                 $scope.subtotal = response.data.data.subtotal;
                 $scope.iva      = response.data.data.iva;
                 $scope.total    = response.data.data.total;
+                /*angular.element(document).ready( function () {
+                    dTable = $('#datatable');
+                    dTable.DataTable({
+                        /!*fnInitComplete: function(a, t) {
+                                var l = jQuery(this).parents(".dataTables_wrapper").eq(0);
+                                l.find(".dataTables_length").addClass("input-field"), l.find(".dataTables_length label select").prependTo(l.find(".dataTables_length")), l.find(".dataTables_length select").material_select(), l.find(".dataTables_filter").addClass("input-field"), l.find(".dataTables_filter").addClass("without-search-bar"), l.find(".dataTables_filter label input").prependTo(l.find(".dataTables_filter"))
+                            },*!/
+                        "language": {
+                            "lengthMenu": "Mostrar _MENU_",
 
+                            "zeroRecords": "Sin Registros",
+                            "info": "Página _PAGE_ de _PAGES_",
+                            "infoEmpty": "Sin Registros",
+                            "infoFiltered": "(Resultado de _MAX_ registros)",
+                            'search': 'Búsqueda'
+                        },
+                        "searching": false,
+                        "scrollX": false,
+                        "responsive": true,
+                        "details": true,
+                        "dom": "<'row no-gutter'\t<'col s12 m2'l>\t<'col s12 offset-m6 m4'f>><''tr><'row no-gutter'\t<'col s12 m4'i>\t<'col s12 m8'p>>",
+                        "iDisplayLength": 10,
+                        "bFilter": false,
+                        "aaSorting": [[0, "asc"]],
+                        fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                            /!*if ( aData[0] % 2 == 1 ){
+                                jQuery('td', nRow).css('background-color', '#ffffff');
+                            }else {
+                                jQuery('td', nRow).css('background-color', '#eeeeee');
+                            }
+                            jQuery('td', nRow).css('border-left', '1px solid #dddddd');
+                            jQuery('td', nRow).css('font-size', '12px');*!/
+                        }
+                    });
+                });*/
             }
         });
     };

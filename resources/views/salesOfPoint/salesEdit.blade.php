@@ -19,7 +19,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="data in update" id="tr_@{{ update.id }}">
-                                <td ng-bind="data.quality"></td>
+                                <td ng-bind="data.quantity"></td>
                                 <td ng-bind="data.products.codigo"></td>
                                 <td ng-bind="data.products.nombre"></td>
                                 <td ng-bind="data.products.descripcion"></td>

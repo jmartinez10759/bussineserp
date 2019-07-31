@@ -194,42 +194,42 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
 
     $scope.fileUpload = function(update){
 
-      var upload_url = domain( URL.url_upload );
-      var identificador = {
-        div_content   : 'div_dropzone_file_productos',
-        div_dropzone  : 'dropzone_xlsx_file_productos',
+      var uploadUrl = fc.domain( URL.url_upload );
+      var identify = {
+        div_content   : 'fileProducts',
+        div_dropzone  : 'dropzoneFileProducts',
         file_name     : 'file'
       };
-      var message = "Dar Clíc aquí o arrastrar archivo";
-      $scope.update.logo = "";
-      upload_file({'nombre': 'producto_'+$scope.update.id },upload_url,message,1,identificador,'.png',function( request ){
-          if(update){
-            $scope.update.logo = domain(request.result);
-            var html = '';
-            html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
-            jQuery('#imagen_edit').html("");        
-            jQuery('#imagen_edit').html(html);        
-          }else{
-            $scope.insert.logo = domain(request.result);
-            var html = '';
-            html = '<img class="img-responsive" src="'+$scope.insert.logo+'" height="268px" width="200px">'
-            jQuery('#imagen').html("");        
-            jQuery('#imagen').html(html);        
-            
-          }
-          jQuery.fancybox.close({
+        var message = "Dar Clíc aquí o arrastrar archivo";
+        $scope.update.logo = "";
+        uploadFile({'name': 'products_'+$scope.update.id },uploadUrl,message,1,identify,'.png, .jpg',function( request ){
+            console.log(request.data);
+            var image = request.data[0]+"?version="+Math.random();
+            if(update){
+                $scope.update.logo = image;
+                console.log($scope.update.logo);
+                /*var html = '';
+                html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
+                jQuery('#imagen_edit').html("");
+                jQuery('#imagen_edit').html(html);        */
+            }else{
+                $scope.insert.logo = image;
+                /*var html = '';
+                html = '<img class="img-responsive" src="'+$scope.insert.logo+'" height="268px" width="200px">'
+                jQuery('#imagen').html("");
+                jQuery('#imagen').html(html);*/
+            }
+              jQuery.fancybox.close({
+                  'type'      : 'inline'
+                  ,'src'      : "#upload_file"
+                  ,'modal'    : true
+              });
+      });
+          jQuery.fancybox.open({
               'type'      : 'inline'
               ,'src'      : "#upload_file"
               ,'modal'    : true
           });
-      });
-
-      jQuery.fancybox.open({
-          'type'      : 'inline'
-          ,'src'      : "#upload_file"
-          ,'modal'    : true
-      });
-
     }
 
 }]);

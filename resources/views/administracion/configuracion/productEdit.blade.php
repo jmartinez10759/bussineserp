@@ -497,7 +497,7 @@
                 <h3> Subir Imagen </h3>
             </div>
             <div class="modal-body">
-                <div id="div_dropzone_file_productos"></div> 
+                <div id="fileProducts"></div>
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">

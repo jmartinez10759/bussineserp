@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Administracion\Configuracion;
+use App\Facades\Upload;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
@@ -55,158 +57,139 @@ use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
 use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
 use App\Model\Development\SysProyectosModel;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class UploadController extends MasterController
 {
-    #se crea las propiedades
-    public $_tabla_model;
 
-    public function __construct(){
+    /**
+     * UploadController constructor.
+     */
+    public function __construct()
+    {
         parent::__construct();
         $this->index();
     }
+
     /**
      *Metodo para obtener la vista y cargar los datos
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * @access public
+     * @return void
      */
     public function index(){
 
         switch ( $this->show() ) {
                 case "Roles":
-                $this->_tabla_model = new SysRolesModel;
+                $this->_entity = new SysRolesModel;
             break;
                 case 'Clientes':
-                $this->_tabla_model = new SysClientesModel;
+                $this->_entity = new SysClientesModel;
             break;
                 case 'Acciones':
-                $this->_tabla_model = new SysAccionesModel;
+                $this->_entity = new SysAccionesModel;
             break;
                 case 'Empresas':
-                $this->_tabla_model = new SysEmpresasModel;
+                $this->_entity = new SysEmpresasModel;
             break;
                 case 'Estatus':
-                $this->_tabla_model = new SysEstatusModel;
+                $this->_entity = new SysEstatusModel;
             break;
                 case 'Formaspagos':
-                $this->_tabla_model = new SysFormasPagosModel;
+                $this->_entity = new SysFormasPagosModel;
             break;
                 case 'Menus':
-                $this->_tabla_model = new SysMenuModel;
+                $this->_entity = new SysMenuModel;
             break;
                 case 'Metodospagos':
-                $this->_tabla_model = new SysMetodosPagosModel;
+                $this->_entity = new SysMetodosPagosModel;
             break;
                 case 'Notificaciones':
-                $this->_tabla_model = new SysNotificacionesModel;
+                $this->_entity = new SysNotificacionesModel;
             break;
                 case 'Productos':
-                $this->_tabla_model = new SysProductosModel;
+                $this->_entity = new SysProductosModel;
             break;
                 case 'Skills':
-                $this->_tabla_model = new SysSkillsModel;
+                $this->_entity = new SysSkillsModel;
             break;
                  case 'Sucursales':
-                $this->_tabla_model = new SysSucursalesModel;
+                $this->_entity = new SysSucursalesModel;
             break;
                  case 'Usuarios':
-                $this->_tabla_model = new SysUsersModel;
+                $this->_entity = new SysUsersModel;
             break;
                  case 'Conceptos':
-                $this->_tabla_model = new SysConceptosModel;
+                $this->_entity = new SysConceptosModel;
             break;
                  case 'Facturacion':
-                $this->_tabla_model = new SysFacturacionModel;
+                $this->_entity = new SysFacturacionModel;
             break;
                case "Contactos": 
-                $this->_tabla_model = new SysContactosModel; 
+                $this->_entity = new SysContactosModel;
             break;
                case "Planes": 
-                $this->_tabla_model = new SysPlanesModel; 
+                $this->_entity = new SysPlanesModel;
             break;
                case "Cuentas": 
-                $this->_tabla_model = new SysCuentasModel; 
+                $this->_entity = new SysCuentasModel;
             break;
                case "Proveedores": 
-                $this->_tabla_model = new SysProveedoresModel; 
+                $this->_entity = new SysProveedoresModel;
             break;
                case "Pedidos": 
-                $this->_tabla_model = new SysPedidosModel; 
+                $this->_entity = new SysPedidosModel;
             break;
                case "Monedas": 
-                $this->_tabla_model = new SysMonedasModel; 
+                $this->_entity = new SysMonedasModel;
             break;
                case "Almacenes": 
-                $this->_tabla_model = new SysAlmacenesModel; 
+                $this->_entity = new SysAlmacenesModel;
             break;
                case "Tiposcomprobantes": 
-                $this->_tabla_model = new SysTiposComprobantesModel; 
+                $this->_entity = new SysTiposComprobantesModel;
             break;
                case "Unidadesmedidas": 
-                $this->_tabla_model = new SysUnidadesMedidasModel; 
+                $this->_entity = new SysUnidadesMedidasModel;
             break;
                case "Cotizacion": 
-                $this->_tabla_model = new SysCotizacionModel; 
+                $this->_entity = new SysCotizacionModel;
             break;
                case "Facturaciones": 
-                $this->_tabla_model = new SysFacturacionesModel; 
+                $this->_entity = new SysFacturacionesModel;
             break;
                case "Regimenfiscal": 
-                $this->_tabla_model = new SysRegimenFiscalModel; 
+                $this->_entity = new SysRegimenFiscalModel;
             break;
                case "Usocfdi": 
-                $this->_tabla_model = new SysUsoCfdiModel; 
+                $this->_entity = new SysUsoCfdiModel;
             break;
                case "Tipofactor": 
-                $this->_tabla_model = new SysTipoFactorModel; 
+                $this->_entity = new SysTipoFactorModel;
             break;
                case "Tasa": 
-                $this->_tabla_model = new SysTasaModel; 
+                $this->_entity = new SysTasaModel;
             break;
                case "Impuesto": 
-                $this->_tabla_model = new SysImpuestoModel; 
+                $this->_entity = new SysImpuestoModel;
             break;
                case "Claveprodservicio": 
-                $this->_tabla_model = new SysClaveProdServicioModel; 
+                $this->_entity = new SysClaveProdServicioModel;
             break;
                case "Pais": 
-                $this->_tabla_model = new SysPaisModel; 
+                $this->_entity = new SysPaisModel;
             break;
                case "Codigopostal": 
-                $this->_tabla_model = new SysCodigoPostalModel; 
+                $this->_entity = new SysCodigoPostalModel;
             break;
                case "Servicioscomerciales": 
-                $this->_tabla_model = new SysServiciosComercialesModel; 
+                $this->_entity = new SysServiciosComercialesModel;
             break;
                case "Categoriasproductos": 
-                $this->_tabla_model = new SysCategoriasProductosModel; 
+                $this->_entity = new SysCategoriasProductosModel;
             break;
                case "Proyectos": 
-                $this->_tabla_model = new SysProyectosModel; 
+                $this->_entity = new SysProyectosModel;
             break;
 
 
@@ -235,37 +218,7 @@ class UploadController extends MasterController
         return $modelo;
 
     }
-    /**
-     *Metodo para
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public static function store( Request $request){
 
-
-
-    }
-    /**
-     *Metodo para la actualizacion de los registros
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public static function update( Request $request){
-
-
-    }
-    /**
-     *Metodo para borrar el registro
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public static function destroy( Request $request ){
-
-
-    }
     /**
      * Metodo subir los catalogos e insertar la informacion
      * @access public
@@ -274,7 +227,7 @@ class UploadController extends MasterController
      */
      public function upload_catalogos( Request $request ){
          try { 
-             $response = self::upload_file_catalogos(new Request( $request->all() ),false, $this->_tabla_model);
+             $response = self::upload_file_catalogos(new Request( $request->all() ),false, $this->_entity);
              if($response->success == false){
                 return $this->show_error(6, $response->result , $response->message );    
              }
@@ -285,26 +238,43 @@ class UploadController extends MasterController
          }
 
      }
+
     /**
-     * Metodo para subir los archivos.
+     * This method make upload file to server
      * @access public
      * @param Request $request [Description]
-     * @return void
+     * @return JsonResponse
      */
-     public function uploads_files( Request $request ){
+     public function uploadsFiles( Request $request )
+     {
          try {
-             $ruta = isset($request->ruta) ? $request->ruta : "upload_file/archivos/";
-             $base64 =  isset($request->base64) ? $request->base64 : false;
-             //debuger( $ruta );
-             $response = self::upload_file( $request ,$base64 , $ruta );
-             #debuger($response['file']);
-             if($response['file'][0]->success == false){
-                return $this->show_error(6, $response['file'][0]->result , $response['file'][0]->message );    
+             $path      = isset($request->ruta) ? $request->get("ruta") : "upload_file/files/";
+             $base64    =  isset($request->base64) ? $request->get("base64") : false;
+             $upload    = new Upload($path);
+             $responseFile  = $upload->uploadFile( $request );
+
+             if ($responseFile['success']){
+                 return new JsonResponse([
+                     'success'   => true
+                     ,'data'     => $responseFile['path']
+                     ,'message'  => self::$message_success
+                 ],Response::HTTP_OK);
              }
-             return $this->_message_success( 201, $response['file'][0]->result , $response['file'][0]->message );
+             return new JsonResponse([
+                 'success'   => false
+                 ,'data'     => ""
+                 ,'message'  => self::$message_error
+             ],Response::HTTP_BAD_REQUEST);
+
          } catch (\Exception $e) {
              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-             return $this->show_error(6, $error, self::$message_error );
+             \Log::debug($error);
+             return new JsonResponse([
+                 'success'   => FALSE
+                 ,'data'     => $error
+                 ,'message'  => self::$message_error
+             ],Response::HTTP_BAD_REQUEST);
+
          }
 
      }

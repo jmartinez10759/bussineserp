@@ -381,7 +381,7 @@ abstract class MasterController extends Controller
 	 * @param boolean $encode_64  [Description]
 	 * @return void
 	 */
-	public static function upload_file($request, $encode_64 = false, $directorio = false)
+	/*public static function upload_file($request, $encode_64 = false, $directorio = false)
 	{
 		$files = $request->file('file');
 		$archivo = [];
@@ -395,17 +395,12 @@ abstract class MasterController extends Controller
 					case 'pdf':
 						$file = "application";
 						break;
-					case 'png':
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
 						$file = "image";
 						break;
-					case 'jpg':
-						$file = "image";
-						break;
-					case 'jpeg':
-						$file = "image";
-						break;
-				}
-				//$archivo['file'][] = addslashes($imagedata);
+                }
 				$archivo['file'][] = 'data:' . $file . '/' . $extension . ';base64,' . base64_encode($imagedata);;
 			} else {
 				$upload = new Upload;
@@ -416,7 +411,7 @@ abstract class MasterController extends Controller
 
 		}
 		return $archivo;
-	}
+	}*/
 	/**
 	 * Carga y manda a llamar un facades para leer la informacion e insertar la informacion en sus respectivas tablas
 	 * @access public

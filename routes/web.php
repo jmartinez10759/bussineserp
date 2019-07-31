@@ -908,7 +908,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
     Route::post('/upload/files', [
-        'uses'      => 'Administracion\Configuracion\UploadController@uploads_files'
+        'uses'      => 'Administracion\Configuracion\UploadController@uploadsFiles'
         ,'as'       => 'upload.files'
     ]);
 

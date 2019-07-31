@@ -10,6 +10,7 @@ namespace App\Http\Controllers\SalesOfPoint;
 
 
 use App\Http\Controllers\MasterController;
+use App\SysCuts;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -78,6 +79,36 @@ class CutsController extends MasterController
                 "data"    => $error ,
                 "message" => self::$message_error
             ],Response::HTTP_BAD_REQUEST);
+        }
+
+    }
+
+    /**
+     * This method is for get information the roles by companies
+     * @access public
+     * @param int|null $id
+     * @param SysCuts $cuts
+     * @return JsonResponse
+     */
+    public function show( int $id = null, SysCuts $cuts )
+    {
+        try {
+            $cut = $cuts->with('boxes')->find($id);
+            $orders = $cut->boxes;
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $cut
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+
         }
 
     }

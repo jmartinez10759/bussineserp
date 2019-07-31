@@ -795,14 +795,16 @@ function clear_values_select( arreglo ) {
 }
 /**
  *Funcion para la carga de archivos al servidor por medio de dropzone
- *@param id [type] [description]
- *@param url [type][description]
- *@param maxfile [type][description]
- *@param type_file [type][description]
+ *@param fields
+ *@param pathUrl
+ *@param messages
+ *@param maxFile
+ *@param ids
+ *@param typeFile
  *@param methods [type][description]
  *@return void
  */
-upload_file = function (fields, path_url, messages, maxfile, ids, type_file, methods) {
+uploadFile = function (fields, pathUrl, messages, maxFile, ids, typeFile, methods) {
     var message = (messages != "") ? messages : "Dar Clic aquí o arrastrar archivo";
     jQuery('#modal_dialog').css('width', '60%');
     Dropzone.autoDiscover = false;
@@ -810,15 +812,15 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
         var jsonResponse;
         jQuery("#" + ids['div_dropzone']).dropzone({
             uploadMultiple: true,
-            url: path_url,
-            maxFiles: maxfile,
+            url: pathUrl,
+            maxFiles: maxFile,
             paramName: "file",
             timeout: 7200000, /*milliseconds*/
             maxFilesize: 256,
             //chunking : true,
             forceChunking: true,
             createImageThumbnails: true,
-            acceptedFiles: type_file,
+            acceptedFiles: typeFile,
             dictDefaultMessage: message,
             dictFallbackMessage: "No se pudo subir el archivo, favor de verificar",
             dictFileTooBig: "Archivo demasiado grande, intente cargar otro archivo",
@@ -844,7 +846,6 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
 //                        toastr.error( jsonRequest.message, '¡No se Cargo Correctamente!' );
 //                   }
                 methods(datos);
-
             },
             accept: function (file, done) {
                 if (file.name == "imagen.jpg") { done("Archivo Incorrecto"); } else { done(); }

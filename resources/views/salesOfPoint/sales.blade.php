@@ -36,23 +36,23 @@
 
             </form>
 
-            <div class="table-responsive">
-                <table class="table table-striped table-responsive highlight table-hover table-container" id="datatable">
+            <div class="table-responsive" >
+                <table class="table table-striped highlight table-hover table-container" id="datatable">
                     <thead>
-                    <tr style="background-color: #337ab7; color: #ffffff;">
-                        <th>N° Orden</th>
-                        <th>Fecha</th>
-                        <th>Empresa</th>
-                        <th>Grupo</th>
-                        <th>Cajero</th>
-                        <th>Cocinero</th>
-                        <th>Forma de Pago</th>
-                        <th>Estatus</th>
-                        <th class="text-right">Subtotal</th>
-                        <th class="text-right">Iva</th>
-                        <th class="text-right">Total</th>
-                        <th class="text-right"></th>
-                    </tr>
+                        <tr style="background-color: #337ab7; color: #ffffff;">
+                            <th>N° Orden</th>
+                            <th>Fecha</th>
+                            <th>Empresa</th>
+                            <th>Grupo</th>
+                            <th>Cajero</th>
+                            <th>Cocinero</th>
+                            <th>Forma de Pago</th>
+                            <th>Estatus</th>
+                            <th class="text-right">Subtotal</th>
+                            <th class="text-right">Iva</th>
+                            <th class="text-right">Total</th>
+                            <th class="text-right"></th>
+                        </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="data in datos | filter: searching" id="tr_@{{ data.id }}" >
@@ -117,6 +117,7 @@
                         <th>Cocinero</th>
                         <th>Empresa</th>
                         <th>Grupo</th>
+                        <th>Comentarios</th>
                         <th>Estatus</th>
                         <th class="text-right"></th>
                     </tr>
@@ -128,6 +129,7 @@
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.kitchen"></td>
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.razon_social"></td>
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.grupo"></td>
+                        <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.comments"></td>
                         <td style="cursor:pointer;" ng-click="editRegister(data)" >
                             <span class="label label-warning" ng-if="data.status_id == 6" ng-bind="data.status"></span>
                             <span class="label label-success" ng-if="data.status_id == 9" ng-bind="data.status"></span>

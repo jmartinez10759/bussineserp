@@ -39,32 +39,34 @@ class Upload extends Facade
     {
       ini_set('memory_limit', '-1');
       set_time_limit(0);
-      $files = $request->get("file");
+      $files = $request->file;
       try {
           $pathFile = [];
-          $updatePath = "";
+          $updatePath = [];
         for ($i=0; $i < count( $files ) ; $i++) {
             $contentFiles      	= file_get_contents($files[$i]);
             $name_temp    	    = $files[$i]->getClientOriginalName();
             $ext      		    = strtolower($files[$i]->getClientOriginalExtension());
             $type 			    = $files[$i]->getMimeType();
             $types              = explode('/', $type);
-            $contentFiles       = (isset($request->nombre))? $request->get("name").".".$types[1] : $name_temp;
+            $contentFiles       = (isset($request->name))? $request->get("name").".".$types[1] : $name_temp;
 
             $path               = $this->_mainDirectory."/".$this->_directory;
             $pathFile[]         = $path.$contentFiles;
-            $updatePath         = $this->_directory.$contentFiles;
+            $updatePath[]       = $this->_directory.$contentFiles;
             File::makeDirectory($path, 0777, true, true);
             $files[$i]->move($path,$contentFiles);
         }
           \Log::debug($updatePath);
-        return json_to_object(message(true,$updatePath,"Los archivos se subieron correctamente"));
+        return [
+            'path' => $updatePath ,
+            'success' => true
+        ];
       } catch ( \Exception $e) {
           $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
           \Log::debug($error);
-          return json_to_object(message(false,$error,"Ocurrio Un Error al Subir el Archivo"));
+          return ['success' => false ];
       }
-
 
     }
   /**

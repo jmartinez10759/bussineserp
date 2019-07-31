@@ -7,7 +7,7 @@ app.directive("imageLoad",function () {
         scope: {
             imageLogo: '=image'
         },
-        templateUrl: 'js/tpl/image-load.html'
+        templateUrl: 'js/tpl/image-load.html?version='+Math.random()
     };
 });
 /**
@@ -16,7 +16,7 @@ app.directive("imageLoad",function () {
 app.directive("tableDashboard",function () {
     return {
         restrict: 'E',
-        templateUrl: 'js/tpl/table-dashboard.html'
+        templateUrl: 'js/tpl/table-dashboard.html?version='+Math.random()
     };
 });
 /**
@@ -30,7 +30,7 @@ app.directive("buttonUpdate",function () {
             permission: '=permission' ,
             spinning: '=spinning'
         },
-        templateUrl: 'js/tpl/button-update.html'
+        templateUrl: 'js/tpl/button-update.html?version='+Math.random()
     };
 });
 /**
@@ -44,7 +44,7 @@ app.directive("buttonRegister",function () {
             permission: '=permission' ,
             spinning: '=spinning'
         },
-        templateUrl: 'js/tpl/button-register.html'
+        templateUrl: 'js/tpl/button-register.html?version='+Math.random()
     };
 });
 /**
@@ -89,6 +89,6 @@ app.directive('xeditable', ['$timeout', function ($timeout) {
 app.directive("paginationFilter",function () {
     return {
         restrict: 'E',
-        templateUrl: 'js/tpl/pagination-filter.html'
+        templateUrl: 'js/tpl/pagination-filter.html?version='+Math.random()
     };
 });

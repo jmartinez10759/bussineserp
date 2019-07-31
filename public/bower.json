@@ -42,7 +42,7 @@
     "angucomplete-alt": "^3.0.0",
     "angular-xeditable": "^0.10.0",
     "pusher-angular": "^1.0.0",
-    "angular-ui-utils": "^3.0.0"
+    "angular-ui-utils": "bower"
   },
   "resolutions": {
     "angular": "1.7.5",

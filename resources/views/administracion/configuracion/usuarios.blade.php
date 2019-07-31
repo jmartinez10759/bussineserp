@@ -3,8 +3,8 @@
 @push('styles')
 @endpush
 <div ng-controller="UsuarioController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
-  <div class="table-responsive table-container" >
-    <table class="table table-striped table-responsive highlight table-hover" id="datatable">
+  <div class="table-responsive " >
+    <table class="table table-striped highlight table-hover table-container" id="datatable">
       <thead>
       <tr style="background-color: #337ab7; color: #ffffff;">
         <th>Nombre Completo</th>
