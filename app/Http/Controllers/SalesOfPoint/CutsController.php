@@ -93,16 +93,21 @@ class CutsController extends MasterController
     public function show( int $id = null, SysCuts $cuts )
     {
         try {
-            $cut = $cuts->with('boxes')->find($id);
-            $orders = $cut->boxes;
+            $cut    = $cuts->with('boxes')->find($id);
+            $boxes  = $cut->boxes()->with("orders")->first();
+            $orders = $boxes->orders()->where([
+                'count' => $cut->n_cuts
+            ])->where('created_at','LIKE',$cut->created_at.'%')->get();
+            \Log::debug($orders);die();
             return new JsonResponse([
                 'success'   => TRUE
-                ,'data'     => $cut
+                ,'data'     => $orders
                 ,'message'  => self::$message_success
             ],Response::HTTP_OK);
 
         } catch (\Exception $e) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::debug($error);
             return new JsonResponse([
                 'success'   => FALSE
                 ,'data'     => $error

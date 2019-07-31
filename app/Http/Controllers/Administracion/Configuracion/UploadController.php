@@ -62,6 +62,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UploadController extends MasterController
 {
+    /**
+     * @var Entity
+     */
+    private $_entity;
 
     /**
      * UploadController constructor.
@@ -73,12 +77,12 @@ class UploadController extends MasterController
     }
 
     /**
-     *Metodo para obtener la vista y cargar los datos
+     * This method instance in the construct for initialize the entity
      * @access public
      * @return void
      */
-    public function index(){
-
+    public function index()
+    {
         switch ( $this->show() ) {
                 case "Roles":
                 $this->_entity = new SysRolesModel;
@@ -200,22 +204,23 @@ class UploadController extends MasterController
         }
         
     }
+
     /**
-     *Metodo para realizar la consulta por medio de su id
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * This method is used get parse url
+     * @access public
+     * @return void
      */
-    public static function show(){
-        
+    public function show()
+    {
         $urls = explode("/",parse_domain()->urls);
+        $model = "";
          if( count($urls) > 2){
-             $modelo = ucwords($urls[2]);
+             $model = ucwords($urls[2]);
          }
          if( count($urls) > 1 && count($urls) < 2){
-             $modelo = ucwords($urls[1]);
+             $model = ucwords($urls[1]);
          }
-        return $modelo;
+        return $model;
 
     }
 

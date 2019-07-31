@@ -6,7 +6,7 @@
 }
 .table-container > tbody {
     display:block;
-    height:250px;
+    height:350px;
     overflow:auto;
 }
 .table-container > thead, tbody tr {
@@ -20,8 +20,8 @@
 .table-container > table {
     width:400px;
 }
-tbody::-webkit-scrollbar {width: 5px;background-color: #F5F5F5;}
-tbody::-webkit-scrollbar-track {border-radius: 10px;background: rgba(0,0,0,0.1);border: 1px solid #ccc;}
-tbody::-webkit-scrollbar-thumb {border-radius: 10px;background: linear-gradient(left, #fff, #e4e4e4);border: 1px solid #aaa;}
-tbody::-webkit-scrollbar-thumb:hover { background: #fff; }
-tbody::-webkit-scrollbar-thumb:active { background: linear-gradient(left, #22ADD4, #1E98BA);}
+.table-container > tbody::-webkit-scrollbar {width: 5px;background-color: #F5F5F5;}
+.table-container > tbody::-webkit-scrollbar-track {border-radius: 10px;background: rgba(0,0,0,0.1);border: 1px solid #ccc;}
+.table-container > tbody::-webkit-scrollbar-thumb {border-radius: 10px;background: linear-gradient(left, #fff, #e4e4e4);border: 1px solid #aaa;}
+.table-container > tbody::-webkit-scrollbar-thumb:hover { background: #fff; }
+.table-container > tbody::-webkit-scrollbar-thumb:active { background: linear-gradient(left, #22ADD4, #1E98BA);}

@@ -65,37 +65,6 @@ app.controller('CutsController', ['ServiceController','FactoryController','Notif
         });
     };
 
-    /*$scope.takeOrder = function(id){
-        var url = fc.domain(URL.url_update,id);
-        var fields = {
-            status_id: 9 ,
-            user_id: $scope.loginUser.userId
-        };
-        sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
-            if (sc.validateSessionStatus(response)) {
-                nf.toastInfo(response.data.message, nf.titleMgsSuccess);
-                nf.trEffect(id);
-                $scope.index();
-            }
-        });
-
-    };
-
-    $scope.closeOrder = function(id){
-        var url = fc.domain(URL.url_update,id);
-        var fields = {
-            status_id: 7
-        };
-        sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
-            if (sc.validateSessionStatus(response)) {
-                nf.toastInfo(response.data.message, nf.titleMgsSuccess);
-                nf.trEffect(id);
-                $scope.index();
-            }
-        });
-
-    };*/
-
     /*$scope.updateRegister = function(){
         let url = fc.domain(URL.url_update);
         var fields = sc.mapObject($scope.update, ['companies_roles'], false);
@@ -111,7 +80,7 @@ app.controller('CutsController', ['ServiceController','FactoryController','Notif
         });
     };*/
 
-    /*$scope.editRegister = function( entry ){
+    $scope.editRegister = function( entry ){
         var url = fc.domain(URL.url_edit,entry.id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
             //console.log(response.data.data.concepts);
@@ -119,7 +88,7 @@ app.controller('CutsController', ['ServiceController','FactoryController','Notif
             console.log($scope.update);
             nf.modal("#modal_edit_register");
         });
-    };*/
+    };
 
     /*$scope.cancelOrders = function( id ){
         var url = fc.domain(URL.url_update,id);
