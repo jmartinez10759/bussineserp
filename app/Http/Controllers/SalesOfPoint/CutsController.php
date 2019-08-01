@@ -26,6 +26,7 @@ class CutsController extends MasterController
     public function __construct()
     {
         parent::__construct();
+
     }
 
     /**
@@ -94,14 +95,18 @@ class CutsController extends MasterController
     {
         try {
             $cut    = $cuts->with('boxes')->find($id);
+            $date   = new \DateTime($cut->created_at);
+            $date   = $date->format("Y-m-d");
             $boxes  = $cut->boxes()->with("orders")->first();
-            $orders = $boxes->orders()->where([
-                'count' => $cut->n_cuts
-            ])->where('created_at','LIKE',$cut->created_at.'%')->get();
-            \Log::debug($orders);die();
+            $orders = $boxes->orders()->with('concepts')->whereCount($cut->n_cuts)->where('created_at','LIKE',$date.'%')->get();
+            $data = [
+                "cut"    => $cut ,
+                "orders" => $orders
+            ];
+            \Log::debug($data);
             return new JsonResponse([
                 'success'   => TRUE
-                ,'data'     => $orders
+                ,'data'     => $data
                 ,'message'  => self::$message_success
             ],Response::HTTP_OK);
 

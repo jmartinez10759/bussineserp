@@ -129,17 +129,20 @@ class NotificationController extends MasterController
     }
 
     /**
-     * Metodo para borrar el registro
+     * This method make the delete register and relations
      * @access public
      * @param int|null $id
-     * @return void
+     * @param SysNotifications $notifications
+     * @return JsonResponse
      */
-      public function destroy( int $id = null )
+      public function destroy( int $id = null, SysNotifications $notifications )
       {
           $error = null;
           DB::beginTransaction();
           try {
-              SysNotifications::where(['id' => $id])->delete();
+              $notify = $notifications->with('users')->find($id);
+              $notify->users()->delete();
+              $notify->delete();
             DB::commit();
             $success = true;
           } catch (\Exception $e) {

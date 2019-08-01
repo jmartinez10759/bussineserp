@@ -21,7 +21,6 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 	    $scope.services();
 	});
 	$scope.constructor = function(){
-	  $scope.services();
 	  $scope.notificaciones = {};
 	  $scope.correos = {};
 	  $scope.permisos = {};
@@ -37,6 +36,7 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 	  $scope.year       = fc.selectYears().anio;
 	  $scope.checkMonth();
 	  $scope.notificationEvent();
+	  $scope.services();
 	};
 
 	$scope.services = function(){
@@ -93,9 +93,17 @@ app.controller('ApplicationController', ['$scope','ServiceController','$http','$
 					extendedTimeOut : 0 ,
 					tapToDismiss: false
 				});
+                $scope.songNotifications();
             }
 
 		});
+	};
+
+	$scope.songNotifications = function(){
+		var audioElement = document.createElement('audio');
+		audioElement.setAttribute('src', 'audio/messenger-tono-mensaje-.mp3');
+		audioElement.setAttribute('loop','');
+		audioElement.play();
 	};
 
 	/*$scope.downloadReportPDF = function () {

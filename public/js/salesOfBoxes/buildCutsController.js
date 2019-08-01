@@ -83,8 +83,7 @@ app.controller('CutsController', ['ServiceController','FactoryController','Notif
     $scope.editRegister = function( entry ){
         var url = fc.domain(URL.url_edit,entry.id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
-            //console.log(response.data.data.concepts);
-            $scope.update = response.data.data.concepts;
+            $scope.update = response.data.data.orders;
             console.log($scope.update);
             nf.modal("#modal_edit_register");
         });

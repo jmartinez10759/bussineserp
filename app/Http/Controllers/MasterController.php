@@ -172,6 +172,13 @@ abstract class MasterController extends Controller
             $user = $users::with(['menus' => function( $query ){
                 return $query->groupby('id');
 			},'companies','groups','roles'])->where( $conditions )->first();
+            if ( $user->companies == null ) {
+                return new JsonResponse([
+                    "success"   => false ,
+                    "data"      => $user->companies ,
+                    "message"   => "¡No tiene asignada empresa, favor de contactar al administrador!"
+                ],Response::HTTP_BAD_REQUEST);
+            }
             $companies  = $user->companies()->where(['estatus' => true])->groupBy('id')->get();
             $groups     = $user->groups()->where(['estatus' => true])->groupBy('id')->get();
 
