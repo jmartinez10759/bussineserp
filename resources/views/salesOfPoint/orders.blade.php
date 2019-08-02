@@ -14,7 +14,7 @@
                 <div class="thumbnail">
                     <a ng-click="boxOpen(boxes)" style="cursor: pointer;">
                         <h4 ng-bind="boxes.name"></h4>
-                        <p><small ng-bind="'MONTO INICIAL: $'+boxes.init_mount.toLocaleString()"></small></p>
+                        <p><small >MONTO INICIAL: @{{ boxes.init_mount | currency : "$" : 2 }}</small></p>
                         <hr>
                         <div class="caption">
                             <small>

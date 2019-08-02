@@ -41,7 +41,7 @@ class Ticket extends Facade
         try {
             $this->_pdf->SetAuthor('Jorge Martinez Quezada');
             $this->_pdf->SetTitle("Sales of ticket");
-            $this->_pdf->SetFont('Helvetica', 'B', 10, '', true);
+            $this->_pdf->SetFont('Helvetica', 'B', 7, '', true);
             $this->_pdf->AddPage();
             $textYPos = 5;
             $this->_pdf->setY(2);
@@ -49,16 +49,17 @@ class Ticket extends Facade
             $this->_pdf->Cell(5,$textYPos,$data['social_reason'],false,false,"L");
             $textYPos += 6;
             $this->_pdf->setX(2);
-            $this->_pdf->Cell(5,$textYPos,"RFC. ".$data['rfc'],false,false,"L");
+            $this->_pdf->SetFont('Helvetica', 'B', 5, '', true);
+            $this->_pdf->Cell(5,$textYPos,"RFC ".$data['rfc'],false,false,"L");
             $textYPos += 6;
-            $this->_pdf->SetFont('Arial','B',2.6);
+            $this->_pdf->SetFont('Arial','B',2.5);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,utf8_decode($data['address']." ".$data['state'].", ".$data['country'].", C.P: ".$data['postal_code']),false,false,"L" );
             $textYPos += 6;
             $this->_pdf->SetFont('Arial','',5);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'-----------------------------------------------------------------------');
-            $this->_pdf->SetFont('Arial','',4.3);
+            $this->_pdf->SetFont('Arial','',4);
             $textYPos += 4;
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,"Cajero: ". strtolower($data['cajero']) ,false,false,"L" );
@@ -75,12 +76,16 @@ class Ticket extends Facade
                 $this->_pdf->Cell(5,$textYPos,"No. Orden: ". $orders ,false,false,"L" );
             }else{
                 $this->_pdf->Cell(5,$textYPos,"No. Orden: ". "Corte de Caja" ,false,false,"L" );
+                $textYPos += 4;
+                $this->_pdf->setX(2);
+                $this->_pdf->Cell(5,$textYPos,"Monto Inicial: ". "$ " ,false,false,"L" );
             }
             $textYPos +=6;
+            $this->_pdf->SetFont('Arial','',5);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'-----------------------------------------------------------------------');
             $textYPos +=6;
-            $this->_pdf->SetFont('Arial','',4.3);
+            $this->_pdf->SetFont('Arial','',4);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'#    PRODUCT              PRICE       DISCOUNT     TOTAL');
             $off = $textYPos+6;
@@ -132,8 +137,8 @@ class Ticket extends Facade
             $this->_pdf->SetFont('Arial','',5);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'-------------------------------------------------------------------');
-            $this->_pdf->SetFont('Arial','',4.3);
-            $this->_pdf->Cell(5,$textYPos+5,'GRACIAS POR TU COMPRA, VUELVA PRONTO ');
+            $this->_pdf->SetFont('Arial','',4);
+            $this->_pdf->Cell(5,$textYPos+4,'GRACIAS POR TU COMPRA, VUELVA PRONTO ');
 
             $filename= "ticket-".$data['rfc'].( ($close) ? "-cut_{$data['cut']}_box.pdf" : "-".$data['order'].".pdf");
             $dir = "upload_file/ticket/".$this->_today->format("Y_m_d");

@@ -334,11 +334,11 @@ class BoxesController extends MasterController
                     "country"           =>  $company->countries->descripcion ,
                     "subtotal"          =>  $subtotal ,
                     "iva"               =>  $iva ,
-                    "total"             =>  $total ,
+                    "total"             =>  ($total + $box->init_mount) ,
                 ];
             }
             $dataPrinter['caja']     = $box->name;
-            $dataPrinter['cut']    = $countCut;
+            $dataPrinter['cut']      = $countCut;
             $dataPrinter['cajero']   = ( $box->logs->count() > 0 ) ? $box->logs[0]->name." ".$box->logs[0]->first_surname : "CAJERO";
             $dataPrinter['concepts'] = [];
             if ($box->orders->count() > 0){

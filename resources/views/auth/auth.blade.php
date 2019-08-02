@@ -25,11 +25,11 @@
         <div class="col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
             <div class="login-box clearfix animated flipInY">
                 <div class="page-icon animated bounceInDown imagen">
-                    <img src="{{asset('img/company.png')}}" class="img-responsive" alt="icon">
+                    {{--<img src="{{asset('img/company.png')}}" class="img-responsive" alt="icon">--}}
+                    <img src="{{asset('img/companies/tepanyaky_company.jpeg')}}" class="img-responsive" alt="icon">
                 </div>
                 <div class="login-logo animated bounceInDown">
-                    {{--<a href="#"><img width="35%" src="{{asset('img/company.png')}}" alt="Company Logo"/></a>--}}
-                    <a href="#"><img width="35%" src="" alt="Company Logo"/></a>
+                    {{--<a href="#"><img width="36%" src="{{asset('img/companies/tepanyaky_company.jpeg')}}" alt="Company Logo"/></a>--}}
                 </div>
                 <hr/>
 
