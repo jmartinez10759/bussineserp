@@ -27,6 +27,16 @@
                             <textarea class="form-control" ng-model="insert.description" capitalize></textarea>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <div class="control-label">
+                            <label class="col-sm-3 control-label">Monto Inicial <font color="red" size="3">*</font></label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="insert.init_mount">
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <div class="control-label">
                             <label class="col-sm-3 control-label">Asignar </label>
@@ -124,6 +134,15 @@
                         </div>
                         <div class="col-sm-6">
                             <textarea class="form-control" ng-model="update.description" capitalize></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label">
+                            <label class="col-sm-3 control-label">Monto Inicial <font color="red" size="3">*</font></label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="update.init_mount">
                         </div>
                     </div>
 

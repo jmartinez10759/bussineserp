@@ -50,10 +50,12 @@
                   <!-- <li class="footer"><a href="#">See All Messages</a></li> -->
                 </ul>
               </li>
+              {{--<div ng-if="notificaciones.length > 0">
+                <audio autoplay loop>
+                  <source src="audio/messenger-tono-mensaje-.mp3">
+                </audio>
+              </div>--}}
               <!-- Notifications: style can be found in dropdown.less -->
-              <audio ng-if="notificaciones.length > 0" autoplay loop>
-                <source src="audio/messenger-tono-mensaje-.mp3">
-              </audio>
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>

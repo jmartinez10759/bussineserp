@@ -18,6 +18,7 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
         $scope.titles   = [
             "Nombre",
             "Descripcion",
+            "Monto Inicial",
             "Estatus",
             "Caja",
             ""
@@ -35,6 +36,7 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
                         'id'          : value.id ,
                         'name'        : value.name,
                         'description' : value.description ,
+                        'mount'       : '$'+fc.numberFormat(value.init_mount,2) ,
                         'estatus'     : value.status ,
                         'is_active'   : value.is_active ,
                         'btnDelete'   : ""
@@ -80,7 +82,7 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
     $scope.editRegister = function( id ){
         var url = fc.domain(URL.url_edit,id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
-            var datos = ['id', 'name', 'description', 'status',"companies",'groups','users'];
+            var datos = ['id', 'name', 'description','init_mount','status',"companies",'groups','users'];
             $scope.update = sc.mapObject(response.data.data, datos, true);
             $scope.update.companyId = angular.isDefined($scope.update.companies[0])?$scope.update.companies[0].id : "";
             $scope.update.userId    = angular.isDefined($scope.update.users[0])?$scope.update.users[0].id : "";

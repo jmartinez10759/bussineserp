@@ -12,6 +12,7 @@ class SysCuts extends Model
         ,'box_id'
         ,'n_cuts'
         ,'n_orders'
+        ,'discount'
         ,'subtotal'
         ,'iva'
         ,'total'

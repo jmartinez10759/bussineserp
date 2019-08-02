@@ -141,7 +141,7 @@ class NotificationController extends MasterController
           DB::beginTransaction();
           try {
               $notify = $notifications->with('users')->find($id);
-              $notify->users()->delete();
+              $notify->users()->detach();
               $notify->delete();
             DB::commit();
             $success = true;
