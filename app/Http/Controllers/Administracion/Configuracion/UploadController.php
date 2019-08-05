@@ -253,7 +253,7 @@ class UploadController extends MasterController
      public function uploadsFiles( Request $request )
      {
          try {
-             $path      = isset($request->ruta) ? $request->get("ruta") : "upload_file/files/";
+             $path      = isset($request->path) ? $request->get("path") : "upload_file/files/";
              $base64    =  isset($request->base64) ? $request->get("base64") : false;
              $upload    = new Upload($path);
              $responseFile  = $upload->uploadFile( $request );

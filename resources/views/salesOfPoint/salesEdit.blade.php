@@ -14,7 +14,7 @@
                                 <th>Cantidad</th>
                                 <th>Codigo</th>
                                 <th>Nombre</th>
-                                <th>Descripcion</th>
+                                <th>Comentarios</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -22,7 +22,7 @@
                                 <td ng-bind="data.quantity"></td>
                                 <td ng-bind="data.products.codigo"></td>
                                 <td ng-bind="data.products.nombre"></td>
-                                <td ng-bind="data.products.descripcion"></td>
+                                <td ng-bind="data.comments"></td>
                             </tr>
                         </tbody>
                     </table>

@@ -490,7 +490,7 @@
     </div>
 </div>
 
-<div class="" id="upload_file" style="display:none;">
+<div class="modal fade" id="upload_file" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -501,7 +501,7 @@
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
-                    <button type="button" class="btn btn-danger" data-fancybox-close>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true" >
                         <i class="fa fa-times-circle"></i> Cerrar
                     </button>
                 </div>

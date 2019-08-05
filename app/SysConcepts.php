@@ -16,6 +16,7 @@ class SysConcepts extends Model
         ,'discount'
         ,'price'
         ,'total'
+        ,'comments'
     ];
     public function orders()
     {

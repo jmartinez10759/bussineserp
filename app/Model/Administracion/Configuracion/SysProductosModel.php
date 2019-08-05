@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SysProductosModel extends Model
 {
-      public $table = "sys_productos";
+      public $table = "products";
       public $fillable = [
         'id'
         ,'id_categoria'
@@ -29,11 +29,11 @@ class SysProductosModel extends Model
       ];
     public function companies()
     {
-        return $this->belongsToMany(SysEmpresasModel::class, 'sys_companies_products', 'product_id', 'company_id')->withPivot('group_id');;
+        return $this->belongsToMany(SysEmpresasModel::class, 'companies_products', 'product_id', 'company_id')->withPivot('group_id');;
     }
     public function groups()
     {
-        return $this->belongsToMany(SysSucursalesModel::class, 'sys_companies_products', 'product_id', 'group_id')->withPivot('company_id');;
+        return $this->belongsToMany(SysSucursalesModel::class, 'companies_products', 'product_id', 'group_id')->withPivot('company_id');;
     }
     public function categories()
     {
@@ -71,10 +71,10 @@ class SysProductosModel extends Model
     {
       return $this->belongsToMany(SysProveedoresModel::class,'sys_proveedores_productos','id_producto','id_proveedor');
     }
-    public function conceptos()
+    /*public function conceptos()
     {
       return $this->belongsTo('App\Model\Ventas\SysConceptosPedidosModel', 'id', 'id_producto');
-    }
+    }*/
     public function concepts()
     {
         return $this->belongsTo(SysConcepts::class,'product_id','id');

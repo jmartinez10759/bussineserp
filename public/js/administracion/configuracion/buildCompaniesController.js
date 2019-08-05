@@ -7,6 +7,7 @@ const URL = {
     ,url_country          : "edit/{countryId}/country"
     ,url_state            : "edit/{stateId}/state"
     ,url_code             : "edit/{code}/code"
+    ,url_upload          : 'upload/files'
 };
 app.controller('CompaniesController', ['ServiceController','FactoryController','NotificationsFactory','$scope', function( sc,fc,nf,$scope ) {
 
@@ -77,7 +78,7 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
 
     };
 
-    $scope.updateRegister = function(){
+    $scope.updateRegister = function(upload){
         var url = fc.domain(URL.url_update);
         var fields = sc.mapObject($scope.update, [
             'comerciales',
@@ -92,8 +93,10 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
         }
         sc.requestHttp(url, fields, 'PUT', false).then(function (response) {
             if (sc.validateSessionStatus(response)) {
-                nf.toastInfo(response.data.message, nf.titleMgsSuccess);
-                nf.modal("#modal_edit_register",true);
+                if (!upload){
+                    nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                    nf.modal("#modal_edit_register",true);
+                }
                 nf.trEffect($scope.update.id);
                 $scope.index();
             }
@@ -164,5 +167,32 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
         }
     };
 
+    $scope.fileUpload = function(update){
+
+        var uploadUrl = fc.domain( URL.url_upload );
+        var identify = {
+            div_content   : 'fileCompany',
+            div_dropzone  : 'dropzoneFileCompanies',
+            file_name     : 'file'
+        };
+        var message = "Dar Clíc aquí o arrastrar archivo";
+        uploadFile({
+            name: 'company_'+$scope.update.id ,
+            path : 'upload_file/files/companies/'
+        },uploadUrl,message,1,identify,'.png, .jpg, .jpeg',function( request ){
+            console.log(request.data);
+            var image = request.data[0]+"?version="+Math.random();
+            if(update){
+                $scope.update.logo = image;
+                console.log($scope.update.logo);
+            }else{
+                $scope.insert.logo = image;
+                console.log($scope.insert.logo);
+            }
+            $scope.updateRegister(true);
+            nf.modal("#upload_file",true);
+        });
+        nf.modal("#upload_file");
+    }
 
 }]);

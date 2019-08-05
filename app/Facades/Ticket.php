@@ -75,25 +75,26 @@ class Ticket extends Facade
                 $orders     = (isset($data['order']) ) ? $data['order'] : "";
                 $this->_pdf->Cell(5,$textYPos,"No. Orden: ". $orders ,false,false,"L" );
             }else{
+                $mountStart = (isset($data['init_mount']) ) ? $data['init_mount'] : "";
                 $this->_pdf->Cell(5,$textYPos,"No. Orden: ". "Corte de Caja" ,false,false,"L" );
                 $textYPos += 4;
                 $this->_pdf->setX(2);
-                $this->_pdf->Cell(5,$textYPos,"Monto Inicial: ". "$ " ,false,false,"L" );
+                $this->_pdf->Cell(5,$textYPos,"Monto Inicial: ". format_currency($mountStart) ,false,false,"L" );
             }
             $textYPos +=6;
             $this->_pdf->SetFont('Arial','',5);
             $this->_pdf->setX(2);
             $this->_pdf->Cell(5,$textYPos,'-----------------------------------------------------------------------');
             $textYPos +=6;
-            $this->_pdf->SetFont('Arial','',4);
+            $this->_pdf->SetFont('Arial','',3);
             $this->_pdf->setX(2);
-            $this->_pdf->Cell(5,$textYPos,'#    PRODUCT              PRICE       DISCOUNT     TOTAL');
+            $this->_pdf->Cell(5,$textYPos,'#    PRODUCT                       PRICE        DISCOUNT       TOTAL');
             $off = $textYPos+6;
 
             foreach($data['concepts'] as $product){
                 $isCancel   = ($product['status'] == 4 )? "C": "";
                 $quantity   = (!$product["quantity"])? 0 : $product["quantity"];
-                $products   = (!$product["product"])? "": strtoupper(substr($product["product"], 0,12)) ;
+                $products   = (!$product["product"])? "": strtoupper(substr($product["product"], 0,15)) ;
                 $price      = (!$product["price"] )? format_currency(0) : ($product['status'] == 4) ? format_currency($product["price"],2,"-$"): format_currency($product["price"]);
                 $discount   = (!$product["discount"])? "0%" : $product["discount"]."%";
                 $total      = (!$product["total"])? format_currency(0 ): ($product['status'] == 4) ? format_currency($product["total"],2,"-$"): format_currency($product["total"]) ;
@@ -124,7 +125,7 @@ class Ticket extends Facade
             $this->_pdf->Cell(5,$textYPos,format_currency($data['subtotal']),0,0,"R");
             $this->_pdf->setX(2);
             $textYPos += 6;
-            $this->_pdf->Cell(5,$textYPos,"IVA(16%): " );
+            $this->_pdf->Cell(5,$textYPos,($data['iva'] !== "0.0000") ?"IVA(16%): " : "IVA(0%): ");
             $this->_pdf->setX(38);
             $this->_pdf->Cell(5,$textYPos,format_currency($data['iva']),0,0,"R");
             $this->_pdf->setX(2);
@@ -133,6 +134,14 @@ class Ticket extends Facade
             $this->_pdf->setX(38);
             $this->_pdf->Cell(5,$textYPos,format_currency($data['total']),0,0,"R");
             $this->_pdf->setX(2);
+            if ($close){
+                $totales = (isset($data['totales']) )? $data['totales'] : 0;
+                $textYPos += 6;
+                $this->_pdf->Cell(5,$textYPos,"TOTAL + MONTO : " );
+                $this->_pdf->setX(38);
+                $this->_pdf->Cell(5,$textYPos,format_currency($totales),0,0,"R");
+                $this->_pdf->setX(2);
+            }
             $textYPos +=12;
             $this->_pdf->SetFont('Arial','',5);
             $this->_pdf->setX(2);
@@ -145,6 +154,7 @@ class Ticket extends Facade
             if (!is_dir(public_path()."/".$dir)){
                 File::makeDirectory(public_path()."/".$dir,0777,true,true);
             }
+            /*I get a purchase ticket */
             $this->_pdf->output(public_path()."/".$dir."/".$filename,"F",true);
             return ['success' => true, "data" => $dir."/".$filename];
 

@@ -21,6 +21,7 @@ class SysEmpresasModel extends Model
     ,'id_regimen_fiscal'
     ,'id_servicio_comercial'
     ,'telefono'
+    ,'iva'
     ,'logo'
     ,'estatus'
   ];
@@ -67,7 +68,7 @@ class SysEmpresasModel extends Model
     }
     public function products()
     {
-        return $this->belongsToMany(SysProductosModel::class, 'sys_companies_products', 'company_id', 'product_id');
+        return $this->belongsToMany(SysProductosModel::class, 'companies_products', 'company_id', 'product_id');
     }
     public function regimenes()
     {

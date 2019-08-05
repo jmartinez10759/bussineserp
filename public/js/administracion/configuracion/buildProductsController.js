@@ -19,7 +19,7 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
         $scope.index();
         $scope.register = [];
         $scope.titles   = [
-            "Categorias",
+            "Imagen",
             "Codigo Producto",
             "Unidad de Medida",
             "Producto",
@@ -40,7 +40,7 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
                 angular.forEach(response.data.data.products,function (value,key) {
                     $scope.register[key] = {
                         'id'        : value.id ,
-                        'categories': (value.categories) ? value.categories.nombre : '' ,
+                        'image'     : (value.logo) ? value.logo : '' ,
                         'keys'      : value.codigo ,
                         'units'     : (value.units)? value.units.clave+' - '+value.units.descripcion : '' ,
                         'products'  : value.nombre ,
@@ -84,7 +84,7 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
         }
     };
 
-    $scope.updateRegister = function(){
+    $scope.updateRegister = function(upload){
         var url = fc.domain( URL.url_update );
         var fields = $scope.update;
         var validation = {
@@ -97,10 +97,12 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
           $scope.spinning = true;
           sc.requestHttp(url,fields,"PUT",false).then(function (response) {
               if (sc.validateSessionStatus(response)){
-                  nf.toastInfo(response.data.message, nf.titleMgsSuccess);
-                  nf.modal("#modal_edit_register",true);
-                  nf.trEffect($scope.update.id);
-                  $scope.index();
+                    if (!upload){
+                        nf.toastInfo(response.data.message, nf.titleMgsSuccess);
+                        nf.modal("#modal_edit_register",true);
+                    }
+                    nf.trEffect($scope.update.id);
+                    $scope.index();
               }
               $scope.spinning = false;
           });
@@ -193,7 +195,6 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
     };
 
     $scope.fileUpload = function(update){
-
       var uploadUrl = fc.domain( URL.url_upload );
       var identify = {
         div_content   : 'fileProducts',
@@ -201,35 +202,24 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
         file_name     : 'file'
       };
         var message = "Dar Clíc aquí o arrastrar archivo";
-        $scope.update.logo = "";
-        uploadFile({'name': 'products_'+$scope.update.id },uploadUrl,message,1,identify,'.png, .jpg',function( request ){
+        uploadFile({
+            name: 'products_'+$scope.update.id ,
+            path : 'upload_file/files/products/'
+        },uploadUrl,message,1,identify,'.png, .jpg, .jpeg',function( request ){
             console.log(request.data);
             var image = request.data[0]+"?version="+Math.random();
             if(update){
                 $scope.update.logo = image;
                 console.log($scope.update.logo);
-                /*var html = '';
-                html = '<img class="img-responsive" src="'+$scope.update.logo+'?'+Math.random()+'" height="268px" width="200px">'
-                jQuery('#imagen_edit').html("");
-                jQuery('#imagen_edit').html(html);        */
             }else{
                 $scope.insert.logo = image;
-                /*var html = '';
-                html = '<img class="img-responsive" src="'+$scope.insert.logo+'" height="268px" width="200px">'
-                jQuery('#imagen').html("");
-                jQuery('#imagen').html(html);*/
+                console.log($scope.insert.logo);
             }
-              jQuery.fancybox.close({
-                  'type'      : 'inline'
-                  ,'src'      : "#upload_file"
-                  ,'modal'    : true
-              });
-      });
-          jQuery.fancybox.open({
-              'type'      : 'inline'
-              ,'src'      : "#upload_file"
-              ,'modal'    : true
-          });
-    }
+            $scope.updateRegister(true);
+            nf.modal("#upload_file",true);
+        });
+        nf.modal("#upload_file");
+
+    };
 
 }]);

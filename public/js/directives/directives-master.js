@@ -58,7 +58,8 @@ app.directive('xeditable', ['$timeout', function ($timeout) {
         scope: {
             ngModel: '=',
             placeholder: '@',
-            title: '@'
+            title: '@' ,
+            type:'@'
         },
         replace: true,
         template: "<a class='editable' href='javascript:;' data-type='text' data-placement='right'>{{ngModel}}</a>",

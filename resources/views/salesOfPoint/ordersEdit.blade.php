@@ -224,6 +224,7 @@
                                                                 <th>Precio</th>
                                                                 <th>Cantidad</th>
                                                                 <th>% Descuento</th>
+                                                                <th>Comentarios</th>
                                                                 <th>Total</th>
                                                                 <th></th>
                                                             </tr>
@@ -240,6 +241,9 @@
                                                                 </td>
                                                                 <td style="cursor:pointer;">
                                                                     <xeditable ng-model="item.discount" placeholder="Descuento %" title="Descuento" /> %
+                                                                </td>
+                                                                <td style="cursor:pointer;">
+                                                                    <xeditable ng-model="item.comments" placeholder="Comentarios" title="Comentarios" />
                                                                 </td>
                                                                 <td style="cursor:pointer;" ng-bind="item.total | currency:$ "></td>
                                                                 <td class="text-center">
@@ -266,7 +270,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td>
-                                                                    <h3 ng-bind="'Iva (16%):'"></h3>
+                                                                    <h3 ng-bind="'Iva ('+companyLogger.iva+'%):'"></h3>
                                                                 </td>
                                                                 <td>
                                                                     <h3 ng-bind="(iva)? '$ '+iva: '$ 0.00'"></h3>
@@ -366,7 +370,7 @@
                                 <label for="">Monto Recibido</label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                                    <input type="number" class="form-control" placeholder="Ingresa monto recibido" ng-model="mount" ng-keyup="calculateSwap()">
+                                    <input type="number" class="form-control" placeholder="Ingresa monto recibido" ng-model="mount" ng-keyup="calculateSwap()" min="0">
                                 </div>
                             </div>
                             <div class="col-sm-3">

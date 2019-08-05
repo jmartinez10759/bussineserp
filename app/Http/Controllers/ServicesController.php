@@ -64,10 +64,11 @@ class ServicesController extends MasterController
 			    $notification = SysNotifications::orderBy('id','desc')->groupBy('id')->get();
 			}
 	        $data = [
-	        	'notification' => $notification
-				,'correos'	   => $mails
-				,'companies'   => SysEmpresasModel::whereEstatus(1)->get()
-				,'pathWeb'     => $menuText
+	        	'notification'  => $notification
+				,'correos'	    => $mails
+				,'companies'    => SysEmpresasModel::whereEstatus(1)->get()
+				,'companyLogger'=> SysEmpresasModel::whereId(Session::get("company_id"))->first()
+				,'pathWeb'      => $menuText
 			];
 			$datos = array_merge($data,$permissionMenu);
             return new JsonResponse([

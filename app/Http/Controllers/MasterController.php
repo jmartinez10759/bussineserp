@@ -40,13 +40,12 @@ abstract class MasterController extends Controller
 	protected $tipo             = "application/json";
 	public $_http;
 	protected $_title           = "Empresa No Asignada";
-	protected $_development     = "Global Liegyn Solutions";
+	protected $_development     = "Globalenglysolutions";
 	protected $_linkDevelopment = "";
 	public static $_model;
 	protected static $message_success;
 	protected static $message_error;
 	protected static $ssl_ruta = [];
-	protected $permisos_full = [];
 
 	protected $_today;
 
@@ -137,12 +136,12 @@ abstract class MasterController extends Controller
         $parse['subtitle'] 			= isset($parse['subtitle'])   ? $parse['subtitle'] : "";
 
         $upload_files   = (isset(Session::get('permisos')['UPLF'])) ? Session::get('permisos')['UPLF'] : true;
-        $notify         = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
-        $reports        = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
-        $excel          = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
+        #$notify         = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
+        #$reports        = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
+        #$excel          = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
 
-        $parse['seccion_reportes'] = reportes($reports, $excel);
-        $parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
+        #$parse['seccion_reportes'] = reportes($reports, $excel);
+        #$parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
         $parse['upload_files']  = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
 
         return View($view, $parse);

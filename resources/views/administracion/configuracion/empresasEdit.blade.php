@@ -158,7 +158,12 @@
 
                                             <div class="form-group">
 
-                                                <label class="col-sm-2 control-label">Estatus</label>
+                                                <label for="iva" class="col-sm-2 control-label">Iva</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" placeholder="" ng-model="insert.iva">
+                                                </div>
+
+                                                <label for="estatus" class="col-sm-2 control-label">Estatus</label>
                                                 <div class="col-sm-4">
                                                     <select class="form-control"
                                                             chosen
@@ -170,6 +175,7 @@
                                                 </div>
 
                                             </div>
+
 
                                         </div>
                                         <!-- /.tab-pane -->
@@ -295,7 +301,7 @@
                                             <div class="form-group">
                                                 <label class="col-sm-2 control-label">Codigo Postal: </label>
                                                 <div class="col-sm-4">
-                                                    <input type="number" class="form-control" placeholder="" ng-model="update.codigo" ng-keyup="actionCodePostal(update.codigo,true)">
+                                                    <input type="number" class="form-control" placeholder="" ng-model="update.codigo" ng-keyup="actionCodePostal(update.codigo,true)" min="0">
                                                 </div>
 
                                                 <label for="country" class="col-sm-2 control-label">Pais: </label>
@@ -369,6 +375,11 @@
 
                                             <div class="form-group">
 
+                                                <label for="iva" class="col-sm-2 control-label">Iva</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" placeholder="" ng-model="update.iva">
+                                                </div>
+
                                                 <label for="estatus" class="col-sm-2 control-label">Estatus</label>
                                                 <div class="col-sm-4">
                                                     <select class="form-control"
@@ -379,13 +390,15 @@
                                                         <option value="">--Seleccione Opcion--</option>
                                                     </select>
                                                 </div>
-                                                <div class="pull-right">
 
-                                                    <button type="button" class="btn btn-warning" ng-click="uploadFile()" ng-if="permisos.UPL">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="pull-left">
+                                                    <button type="button" class="btn btn-warning" ng-click="fileUpload(true)" ng-if="permisos.UPL">
                                                         <i class="fa fa-upload"></i> Cargar Logo
                                                     </button>
                                                 </div>
-
                                             </div>
 
 
@@ -419,7 +432,7 @@
                 <h3> Cargar Logo Empresa </h3>
             </div>
             <div class="modal-body">
-                <div id="div_dropzone_file_empresas"></div> 
+                <div id="fileCompany"></div>
             </div>
             <div class="modal-footer">
                 <div class="btn-toolbar pull-right">
@@ -432,4 +445,5 @@
         </div>
     </div>
 </div>
+
 

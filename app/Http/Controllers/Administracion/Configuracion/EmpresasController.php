@@ -60,6 +60,7 @@ class EmpresasController extends MasterController
 
           } catch (\Exception $e) {
               $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              \Log::debug($error);
               return new JsonResponse([
                   "success" => FALSE ,
                   "data"    => $error ,
@@ -115,6 +116,7 @@ class EmpresasController extends MasterController
           } catch (\Exception $e) {
               $success = false;
               $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              \Log::debug($error);
               DB::rollback();
           }
 
@@ -152,6 +154,7 @@ class EmpresasController extends MasterController
 
           } catch (\Exception $e) {
               $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+              \Log::debug($error);
               return new JsonResponse([
                   'success'   => FALSE
                   ,'data'     => $error
@@ -213,11 +216,12 @@ class EmpresasController extends MasterController
           } catch (\Exception $e) {
             $success = false;
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              \Log::debug($error);
             DB::rollback();
           }
 
           if ($success) {
-              return $this->show( $request->get("id"), new SysEmpresasModel );
+              return $this->show( $request->get("id"), $companies );
           }
           return new JsonResponse([
               'success'   => FALSE

@@ -8,7 +8,10 @@
         </thead>
         <tbody>
             <tr ng-repeat="data in datos.register | filter: searching" id="tr_{{data.id}}">
-                <td style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key != 'id' && key != 'estatus' && key != 'btnDelete' && key != 'is_active'" ng-bind="value"></td>
+                <td style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key == 'image' && key != 'id' && key != 'estatus' && key != 'btnDelete' && key != 'is_active'" >
+                    <img src="{{value}}" class="img-responsive">
+                </td>
+                <td style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key != 'id' && key != 'estatus' && key != 'btnDelete' && key != 'is_active' && key != 'image'"  ng-bind="value"></td>
                 <td style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key == 'estatus'">
                     <span class="label label-success" ng-if="value== 1">Activo</span>
                     <span class="label label-danger" ng-if="value == 0">Inactivo</span>

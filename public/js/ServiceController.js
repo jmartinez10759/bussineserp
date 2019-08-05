@@ -47,6 +47,7 @@ app.service('ServiceController',["$http","NotificationsFactory", "FactoryControl
             scope.permisos 		    = response.data.data.permisos;
             w.localStorage['pathWeb']= response.data.data.pathWeb;
             scope.rootCmbCompanies  = response.data.data.companies;
+            scope.companyLogger     = response.data.data.companyLogger;
             scope.cmbEstatusRoot    = [{id:0 ,descripcion:"Inactivo"}, {id:1, descripcion:"Activo"}];
             scope.loader = false;
         });

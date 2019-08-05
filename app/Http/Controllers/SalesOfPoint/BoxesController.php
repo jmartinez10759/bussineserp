@@ -334,7 +334,9 @@ class BoxesController extends MasterController
                     "country"           =>  $company->countries->descripcion ,
                     "subtotal"          =>  $subtotal ,
                     "iva"               =>  $iva ,
-                    "total"             =>  ($total + $box->init_mount) ,
+                    "total"             =>  $total ,
+                    "init_mount"        =>  $box->init_mount ,
+                    "totales"           =>  ($total + $box->init_mount)
                 ];
             }
             $dataPrinter['caja']     = $box->name;

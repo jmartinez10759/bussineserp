@@ -127,7 +127,6 @@ class OrdersController extends MasterController
         }
 
         if ($success) {
-
             return $this->show($order->id, $orders );
         }
         return new JsonResponse([
@@ -150,9 +149,11 @@ class OrdersController extends MasterController
         try {
             $response = $orders->with(['concepts' => function($query){
                 return $query->with('products');
-            }])->find($id);
+            },'boxes'])->find($id);
+            $boxes      = $response->boxes()->with('companies')->first();
+            $companies  = $boxes->companies()->first();
             $subtotal = $response->concepts->sum("total");
-            $iva      = $subtotal * 16 / 100;
+            $iva      = $subtotal * $companies->iva / 100;
             $total    = ($iva + $subtotal);
             $data = [
                 "order"     => $response ,
@@ -167,6 +168,7 @@ class OrdersController extends MasterController
                 "total"     => $total
             ]), $orders);
 
+            \Log::debug($data);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $data
@@ -175,6 +177,7 @@ class OrdersController extends MasterController
 
         } catch (\Exception $e) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::debug($error);
             return new JsonResponse([
                 'success'   => FALSE
                 ,'data'     => $error
