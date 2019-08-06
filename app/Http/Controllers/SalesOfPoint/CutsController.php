@@ -64,6 +64,7 @@ class CutsController extends MasterController
                 "subtotal"  => $this->_cutsBelongsCompany($data)['subtotal'] ,
                 "iva"       => $this->_cutsBelongsCompany($data)['iva'] ,
                 "total"     => $this->_cutsBelongsCompany($data)['total'] ,
+                "mount"     => $this->_cutsBelongsCompany($data)['mount'] ,
                 "users"     => $this->_usersBelongsCompany() ,
             ];
             return new JsonResponse([
@@ -146,9 +147,11 @@ class CutsController extends MasterController
                 ROUND(c.total,2) AS total,
                 c.file_path ,
                 b.name AS caja ,
+                b.init_mount AS mount_start ,
                 e.razon_social ,
                 CONCAT(ss.codigo,' ',ss.sucursal) AS grupo ,
                 CONCAT(u.name,' ',u.first_surname,' ',u.second_surname) AS full_name ,
+                ROUND(SUM(c.total + b.init_mount),2 ) AS mount_total ,
                 c.created_at
             FROM companies_boxes cb
                      JOIN sys_empresas e ON cb.company_id = e.id
@@ -159,20 +162,22 @@ class CutsController extends MasterController
                 WHERE 
                     MONTH(c.created_at ) = {$data['month']} AND YEAR(c.created_at) = {$data['year']}
                   {$where}
-                ORDER BY c.id DESC";
+                GROUP BY id, ORDER BY c.id DESC";
         $response = DB::select($sql);
         $data = [];
-        $subtotal= $iva = $total = 0;
+        $subtotal= $iva = $total = $mountInit = 0;
 
         foreach ($response as $cut ){
-            $subtotal += $cut->subtotal;
-            $iva      += $cut->iva;
-            $total    += $cut->total;
+            $subtotal  += $cut->subtotal;
+            $iva       += $cut->iva;
+            $total     += $cut->total;
+            $mountInit += $cut->mount_start;
         }
         $data['response']   = $response;
         $data['total']      = number_format($total,2,'.',',');
         $data['subtotal']   = number_format($subtotal,2,'.',',');
         $data['iva']        = number_format($iva,2,'.',',');
+        $data['mount']      = number_format($mountInit,2,'.',',');
         return $data;
     }
 

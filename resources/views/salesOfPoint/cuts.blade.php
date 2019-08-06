@@ -49,6 +49,8 @@
                         <th class="text-right">Subtotal</th>
                         <th class="text-right">Iva</th>
                         <th class="text-right">Total</th>
+                        <th class="text-right">Monto Inicial</th>
+                        <th class="text-right">Monto Total</th>
                         <th class="text-right"></th>
                     </tr>
                     </thead>
@@ -61,15 +63,10 @@
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.created_at"></td>
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.caja"></td>
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.n_orders"></td>
-                        <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            $ @{{ data.subtotal.toLocaleString() }}
-                        </td>
-                        <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            $ @{{  data.iva.toLocaleString() }}
-                        </td>
-                        <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            $ @{{  data.total.toLocaleString() }}
-                        </td>
+                        <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.subtotal | currency:$"></td>
+                        <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.iva | currency:$"></td>
+                        <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.total | currency:$"></td>
+                        <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.mount_start | currency:$"></td>
                         <td class="text-center">
                             <button type="button" class="btn btn-primary btn-sm" title="Visualizar Ticket" ng-click="ticketWatch(data.file_path)" ng-disabled="(data.file_path)? false: true">
                                 <i class="fa fa-eye"></i>
@@ -91,6 +88,9 @@
                         </td>
                         <td style="background-color:#eee" class="text-right">
                             TOTAL: <strong>$ @{{ total }} </strong>
+                        </td>
+                        <td style="background-color:#eee" class="text-right">
+                            TOTAL: <strong>$ @{{ mount }} </strong>
                         </td>
                     </tr>
                 </table>

@@ -47,7 +47,7 @@
                                                 <label for="producto" class="col-sm-2 control-label">Teléfono:</label>
 
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" placeholder="Lada + número" ng-model="insert.telefono" maxlength="15">
+                                                    <input type="text" class="form-control" placeholder="Lada + número" ng-model="insert.telefono" minlength="15" maxlength="15" ng-pattern="/^(?:[0-9]\d*|\d)$/">
                                                 </div>
 
                                                 <label for="modelo" class="col-sm-2 control-label">Correo:<font size="3" color="red">* </font></label>
@@ -73,7 +73,7 @@
                                             <div class="form-group">
                                                 <label for="producto" class="col-sm-2 control-label">RFC: <font size="3" color="red">* </font> </label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" placeholder="" ng-model="insert.rfc_emisor" capitalize>
+                                                    <input type="text" class="form-control" placeholder="" ng-model="insert.rfc_emisor" capitalize ng-pattern="/^([a-zA-Z\u00f1\u00d1]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])([a-zA-Z\u00f1\u00d1]|[0-9]){2}([A]|[0-9]){1})?$/">
                                                 </div>
                                                 <label for="modelo" class="col-sm-2 control-label">Calle y Número: </label>
                                                 <div class="col-sm-4">
@@ -265,7 +265,7 @@
                                                 <label for="producto" class="col-sm-2 control-label">Teléfono:</label>
 
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" placeholder="Lada + número" ng-model="update.telefono" maxlength="15" >
+                                                    <input type="text" class="form-control" placeholder="Lada + número" ng-model="update.telefono" minlength="15" maxlength="15" ng-pattern="/^(?:[0-9]\d*|\d)$/">
                                                 </div>
                                                 <label for="modelo" class="col-sm-2 control-label">Correo:<font size="3" color="red">* </font></label>
                                                 <div class="col-sm-4">
@@ -290,7 +290,7 @@
                                             <div class="form-group">
                                                 <label class="col-sm-2 control-label">RFC: <font size="3" color="red">* </font> </label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" placeholder="" ng-model="update.rfc_emisor" capitalize>
+                                                    <input type="text" class="form-control" placeholder="Ingresa RFC" ng-model="update.rfc_emisor" capitalize ng-pattern="/^([a-zA-Z\u00f1\u00d1]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])([a-zA-Z\u00f1\u00d1]|[0-9]){2}([A]|[0-9]){1})?$/">
                                                 </div>
                                                 <label for="modelo" class="col-sm-2 control-label">Calle y Número: </label>
                                                 <div class="col-sm-4">

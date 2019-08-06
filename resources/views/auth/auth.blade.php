@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <!-- obtengo la ruta de mi proyecto -->
+        <!-- get path of the project -->
         <meta name="ruta-general" content="{{ $_SERVER['PHP_SELF'] }}">
         <link rel="icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
         <link rel="shortcut icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
