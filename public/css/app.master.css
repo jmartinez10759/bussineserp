@@ -11,11 +11,11 @@
 @import url("../bower_components/dropzone/downloads/css/basic.css");
 @import url("../bower_components/dropzone/downloads/css/dropzone.css");
 @import url("../bower_components/angucomplete-alt/angucomplete-alt.css");
-@import url("../bower_components/angular-bootstrap/ui-bootstrap-csp.css");
+/*@import url("../bower_components/angular-bootstrap/ui-bootstrap-csp.css");*/
 
 /*Developer stylesheets*/
 @import url("../css/list.css");
-@import url("../css/table.fixed.css");
+/*@import url("../css/table.fixed.css");*/
 @import url("../css/modal.screen.css");
 @import url("../css/checkbox/switch.css");
 @import url("../css/checkbox/checkbox.css");

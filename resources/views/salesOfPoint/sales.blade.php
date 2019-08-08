@@ -37,7 +37,7 @@
             </form>
 
             <div class="table-responsive" >
-                <table class="table table-striped highlight table-hover table-container" id="datatable">
+                <table class="table table-striped highlight table-hover" id="datatable">
                     <thead>
                         <tr style="background-color: #337ab7; color: #ffffff;">
                             <th>N° Orden</th>
@@ -56,14 +56,14 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="data in datos | filter: searching" id="tr_@{{ data.id }}" >
-                        <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.id"></td>
-                        <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.created_at"></td>
-                        <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.razon_social"></td>
-                        <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.grupo"></td>
-                        <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.full_name"></td>
-                        <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.kitchen"></td>
-                        <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.forma_pago"></td>
-                        <td style="cursor:pointer;" ng-click="editRegister(data)" >
+                        <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.id"></td>
+                        <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.created_at"></td>
+                        <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.razon_social"></td>
+                        <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.grupo"></td>
+                        <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.full_name"></td>
+                        <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.kitchen"></td>
+                        <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.forma_pago"></td>
+                        <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" >
                             <span class="label label-warning" ng-if="data.status_id == 6" ng-bind="data.status"></span>
                             <span class="label label-success" ng-if="data.status_id == 9" ng-bind="data.status"></span>
                             <span class="label label-primary" ng-if="data.status_id == 7" ng-bind="data.status"></span>
@@ -85,6 +85,7 @@
                             <button type="button" class="btn btn-danger btn-sm" title="Cancelar Pedido" ng-click="cancelOrders(data.id)"ng-disabled="(data.status_id == 4 || data.status_id == 7)? true :false">
                                 <i class="fa fa-times-circle"></i>
                             </button>
+
                         </td>
                     </tr>
                     </tbody>

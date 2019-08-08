@@ -18,6 +18,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use function foo\func;
 
 class OrdersController extends MasterController
 {
@@ -363,8 +364,10 @@ class OrdersController extends MasterController
     public function _boxesBelongsUsers()
     {
         $response = SysUsersModel::find(Session::get('id'))
-            ->boxes()->orderBy('id','DESC')->groupby('id')->get();
-
+                    ->boxes()->with('orders')
+                    ->orderBy('id','DESC')
+                    ->groupby('id')
+                    ->get();
         return $response;
     }
 

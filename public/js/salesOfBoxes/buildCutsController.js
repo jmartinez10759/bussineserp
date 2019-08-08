@@ -27,6 +27,7 @@ app.controller('CutsController', ['ServiceController','FactoryController','Notif
                 $scope.subtotal = response.data.data.subtotal;
                 $scope.iva      = response.data.data.iva;
                 $scope.total    = response.data.data.total;
+                $scope.mount    = response.data.data.mount;
 
             }
         });

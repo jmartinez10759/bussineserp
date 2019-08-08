@@ -104,6 +104,7 @@
 <script type="text/javascript" src="{{asset('bower_components/angucomplete-alt/angucomplete-alt.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/pusher-angular/lib/pusher-angular.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('bower_components/angular-smart-table/dist/smart-table.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/angular-ui-utils/index.js')}}"></script>
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>

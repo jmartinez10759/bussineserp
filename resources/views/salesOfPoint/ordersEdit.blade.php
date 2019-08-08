@@ -297,7 +297,10 @@
                                                             <button type="button" class="btn btn-warning btn-sm" ng-click="paymentOrderCancel()" ng-disabled="payment">
                                                                 <i class="fa fa-times-circle"></i> Cancelar Pago
                                                             </button>
-                                                            <button type= "button" class="btn btn-success btn-sm" ng-click="paymentOrderSuccess()" ng-disabled="payment">
+                                                            <button type= "button" class="btn btn-success btn-sm" ng-click="paymentOrderSuccess()" ng-if="concepts.length > 0">
+                                                                <span><i class="glyphicon glyphicon-usd"></i> </span> Realizar Pago
+                                                            </button>
+                                                            <button type= "button" class="btn btn-success btn-sm" ng-click="paymentOrderSuccess()" ng-disabled="true" ng-if="concepts.length < 1">
                                                                 <span><i class="glyphicon glyphicon-usd"></i> </span> Realizar Pago
                                                             </button>
                                                         </div>

@@ -67,6 +67,7 @@ class CutsController extends MasterController
                 "mount"     => $this->_cutsBelongsCompany($data)['mount'] ,
                 "users"     => $this->_usersBelongsCompany() ,
             ];
+            \Log::debug($data);
             return new JsonResponse([
                 "success" => TRUE ,
                 "data"    => $data ,
@@ -162,22 +163,23 @@ class CutsController extends MasterController
                 WHERE 
                     MONTH(c.created_at ) = {$data['month']} AND YEAR(c.created_at) = {$data['year']}
                   {$where}
-                GROUP BY id, ORDER BY c.id DESC";
+                GROUP BY c.id ORDER BY c.id DESC";
         $response = DB::select($sql);
         $data = [];
-        $subtotal= $iva = $total = $mountInit = 0;
+        $subtotal= $iva = $total = $mountTotal = 0;
 
         foreach ($response as $cut ){
             $subtotal  += $cut->subtotal;
             $iva       += $cut->iva;
             $total     += $cut->total;
-            $mountInit += $cut->mount_start;
+            $mountTotal += $cut->mount_total;
         }
         $data['response']   = $response;
         $data['total']      = number_format($total,2,'.',',');
         $data['subtotal']   = number_format($subtotal,2,'.',',');
         $data['iva']        = number_format($iva,2,'.',',');
-        $data['mount']      = number_format($mountInit,2,'.',',');
+        $data['mount']      = number_format($mountTotal,2,'.',',');
+
         return $data;
     }
 

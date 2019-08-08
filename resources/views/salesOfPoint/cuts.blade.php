@@ -67,6 +67,7 @@
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.iva | currency:$"></td>
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.total | currency:$"></td>
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.mount_start | currency:$"></td>
+                        <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.mount_total | currency:$"></td>
                         <td class="text-center">
                             <button type="button" class="btn btn-primary btn-sm" title="Visualizar Ticket" ng-click="ticketWatch(data.file_path)" ng-disabled="(data.file_path)? false: true">
                                 <i class="fa fa-eye"></i>
@@ -90,7 +91,7 @@
                             TOTAL: <strong>$ @{{ total }} </strong>
                         </td>
                         <td style="background-color:#eee" class="text-right">
-                            TOTAL: <strong>$ @{{ mount }} </strong>
+                            MONTO TOTAL: <strong>$ @{{ mount }} </strong>
                         </td>
                     </tr>
                 </table>
