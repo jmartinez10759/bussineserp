@@ -363,12 +363,38 @@ class OrdersController extends MasterController
      */
     public function _boxesBelongsUsers()
     {
-        $response = SysUsersModel::find(Session::get('id'))
+        $boxes = SysUsersModel::find(Session::get('id'))
                     ->boxes()->with('orders')
                     ->orderBy('id','DESC')
                     ->groupby('id')
                     ->get();
+        $response = [];
+        foreach ($boxes as $box){
+            $response[] = [
+                'id'            => $box->id ,
+                'name'          => $box->name ,
+                'description'   => $box->description ,
+                'status'        => $box->status ,
+                'is_active'     => $box->is_active ,
+                'init_mount'    => $box->init_mount ,
+                'mount_today'   => $this->_getMountToday($box) ,
+            ];
+        }
         return $response;
+    }
+
+    /**
+     * This method is uses make the total orders
+     * @param $box
+     * @return int|string
+     */
+    private function _getMountToday($box)
+    {
+        $total = $box->init_mount;
+        foreach ($box->orders as $orders){
+            $total +=  $orders->total;
+        }
+        return $total;
     }
 
 }

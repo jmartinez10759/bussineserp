@@ -14,7 +14,7 @@
                 <div class="thumbnail">
                     <a ng-click="boxOpen(boxes)" style="cursor: pointer;">
                         <h4 ng-bind="boxes.name"></h4>
-                        <p><small >MONTO INICIAL: @{{ boxes.init_mount | currency : "$" : 2 }}</small></p>
+                        <p><small >MONTO AL DIA: @{{ boxes.mount_today | currency : "$" : 2 }}</small></p>
                         <hr>
                         <div class="caption">
                             <small>
