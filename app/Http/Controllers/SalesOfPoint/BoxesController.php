@@ -8,6 +8,7 @@ use App\Facades\Ticket;
 use App\Http\Controllers\MasterController;
 use App\SysBoxes;
 use App\SysCuts;
+use App\SysExtract;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -135,7 +136,7 @@ class BoxesController extends MasterController
     public function show( int $id = null, SysBoxes $boxes )
     {
         try {
-            $response = $boxes->with('companies','groups','users')->find($id);
+            $response = $boxes->with('companies','groups','users','extracts')->find($id);
             return new JsonResponse([
                 'success'   => TRUE
                 ,'data'     => $response
@@ -144,6 +145,7 @@ class BoxesController extends MasterController
 
         } catch (\Exception $e) {
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            \Log::debug($error);
             return new JsonResponse([
                 'success'   => FALSE
                 ,'data'     => $error
@@ -204,20 +206,22 @@ class BoxesController extends MasterController
             ,'message' => self::$message_error
         ],Response::HTTP_BAD_REQUEST);
     }
+
     /**
      * This method is for update register the roles
      * @access public
      * @param Request $request [Description]
      * @param SysBoxes $boxes
+     * @param SysExtract $extracts
      * @return JsonResponse
      */
-    public function update( Request $request, SysBoxes $boxes )
+    public function update( Request $request, SysBoxes $boxes, SysExtract $extracts )
     {
         $error = null;
         DB::beginTransaction();
         try {
             $data = array_filter($request->all(), function ($key) use ($request){
-                if($key != "companyId" && $key != "groupId" && $key != "userId"){
+                if($key != "companyId" && $key != "groupId" && $key != "userId" && $key != "is_extract" && $key != "extract"){
                     $data[$key] = $request->$key;
                     if ($request->$key == 0){
                         $data[$key] = "0";
@@ -226,6 +230,7 @@ class BoxesController extends MasterController
                 }
             },ARRAY_FILTER_USE_KEY);
 
+            \Log::debug($data);
             $box = $boxes->find($request->get('id'));
             $box->update($data);
             if ( isset($request->companyId) && $request->companyId){
@@ -233,6 +238,14 @@ class BoxesController extends MasterController
                 $box->groups()->attach($request->get("groupId"),[
                     'company_id'    => $request->get("companyId") ,
                     'user_id'       => $request->get("userId")
+                ]);
+            }
+            if ( isset($request->is_extract) && $request->is_extract){
+                \Log::debug(sprintf("Retiro es: %s", $request->is_extract) );
+                $extracts->create([
+                    'box_id'        => $box->id ,
+                    'user_id'       => $request->get("userId") ,
+                    'extract'       => $request->get("extract")
                 ]);
             }
 
@@ -367,13 +380,14 @@ class BoxesController extends MasterController
                 $path = $ticket['data'];
             }
             SysCuts::create([
-                "box_id"    => $box->id ,
-                "n_cuts"    => $countCut ,
-                "n_orders"  => $box->orders->count(),
-                "subtotal"  => $subtotal ,
-                "iva"       => $iva ,
-                "total"     => $total ,
-                "file_path" => $path
+                "box_id"          => $box->id ,
+                "n_cuts"          => $countCut ,
+                "n_orders"        => $box->orders->count(),
+                "subtotal"        => $subtotal ,
+                "iva"             => $iva ,
+                "total"           => $total ,
+                "mount_total"     => $dataPrinter['totales'] ,
+                "file_path"       => $path
             ]);
             $sendData = [
                 "path"  => $path ,

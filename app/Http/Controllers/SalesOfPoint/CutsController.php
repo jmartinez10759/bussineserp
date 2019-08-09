@@ -169,9 +169,9 @@ class CutsController extends MasterController
         $subtotal= $iva = $total = $mountTotal = 0;
 
         foreach ($response as $cut ){
-            $subtotal  += $cut->subtotal;
-            $iva       += $cut->iva;
-            $total     += $cut->total;
+            $subtotal   += $cut->subtotal;
+            $iva        += $cut->iva;
+            $total      += $cut->total;
             $mountTotal += $cut->mount_total;
         }
         $data['response']   = $response;

@@ -3,6 +3,7 @@
 namespace App\Model\Administracion\Configuracion;
 
 use App\SysBoxes;
+use App\SysExtract;
 use App\SysNotifications;
 use Illuminate\Database\Eloquent\Model;
 
@@ -62,6 +63,10 @@ class SysUsersModel extends Model
     {
         return $this->belongsToMany(SysNotifications::class,'users_notifications','user_id','notify_id')
             ->withPivot('company_id','group_id');
+    }
+    public function extracts()
+    {
+        return $this->hasMany(SysExtract::class,'user_id','id');
     }
 
 

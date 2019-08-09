@@ -70,13 +70,13 @@
                             <span class="label label-danger" ng-if="data.status_id == 4" ng-bind="data.status"></span>
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            $ @{{ data.subtotal.toLocaleString() }}
+                            @{{ data.subtotal | currency:'$':2 }}
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            $ @{{  data.iva.toLocaleString() }}
+                            @{{  data.iva | currency:'$':2 }}
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            $ @{{  data.total.toLocaleString() }}
+                            @{{  data.total | currency:'$':2 }}
                         </td>
                         <td class="text-center">
                             <button type="button" class="btn btn-primary btn-sm" title="Visualizar Ticket" ng-click="ticketWatch(data.file_path)" ng-disabled="(data.file_path)? false: true">

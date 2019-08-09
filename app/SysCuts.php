@@ -16,6 +16,7 @@ class SysCuts extends Model
         ,'subtotal'
         ,'iva'
         ,'total'
+        ,'mount_total'
         ,'file_path'
     ];
 

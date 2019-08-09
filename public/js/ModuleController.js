@@ -10,7 +10,6 @@ var app = angular.module('application',[
     "html-unsafe" ,
     "angucomplete-alt" ,
     "pusher-angular" ,
-    "ui.bootstrap" ,
     "smart-table"
 ]);
 

@@ -42,7 +42,8 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
                         'btnDelete'   : ""
                     };
                 });
-                $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
+                /*$scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};*/
+                $scope.datos         = response.data.data.boxes;
                 $scope.cmbUsers      = response.data.data.users;
             }
         });
@@ -79,17 +80,21 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
         });
     };
 
-    $scope.editRegister = function( id ){
+    $scope.editRegister = function( id, is_extract){
         var url = fc.domain(URL.url_edit,id);
         sc.requestHttp(url,null,"GET",false).then(function (response) {
-            var datos = ['id', 'name', 'description','init_mount','status',"companies",'groups','users'];
+            var datos = ['id', 'name', 'description','init_mount','status',"companies",'groups','users','extracts'];
             $scope.update = sc.mapObject(response.data.data, datos, true);
             $scope.update.companyId = angular.isDefined($scope.update.companies[0])?$scope.update.companies[0].id : "";
             $scope.update.userId    = angular.isDefined($scope.update.users[0])?$scope.update.users[0].id : "";
             $scope.getGroupByCompany($scope.update.companyId);
             $scope.update.groupId    = angular.isDefined($scope.update.groups[0])?$scope.update.groups[0].id : "";
             console.log($scope.update);
-            nf.modal("#modal_edit_register");
+            if (is_extract){
+                nf.modal("#extracts");
+            }else {
+                nf.modal("#modal_edit_register");
+            }
         });
     };
 

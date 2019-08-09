@@ -45,5 +45,9 @@ class SysBoxes extends Model
     {
         return $this->hasMany(SysCuts::class,'box_id','id');
     }
+    public function extracts()
+    {
+        return $this->hasMany(SysExtract::class,'box_id','id');
+    }
 
 }

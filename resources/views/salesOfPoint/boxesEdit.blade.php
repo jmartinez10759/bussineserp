@@ -133,7 +133,7 @@
                             <label class="col-sm-3 control-label">Descripcion <font color="red" size="3">*</font></label>
                         </div>
                         <div class="col-sm-6">
-                            <textarea class="form-control" ng-model="update.description" capitalize></textarea>
+                            <textarea class="form-control" ng-model="update.description" capitalize cols="25"></textarea>
                         </div>
                     </div>
 
@@ -142,7 +142,28 @@
                             <label class="col-sm-3 control-label">Monto Inicial <font color="red" size="3">*</font></label>
                         </div>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" ng-model="update.init_mount">
+                            <input type="text" class="form-control" ng-model="update.init_mount" >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label">
+                            <label class="col-sm-3 control-label">¿Retira efectivo?</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="material-switch pull-left">
+                                <input id="is_extract" type="checkbox" ng-model="update.is_extract" />
+                                <label for="is_extract" class="label-success small"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-if="update.is_extract">
+                        <div class="control-label">
+                            <label class="col-sm-3 control-label">¿Monto a Retirar?</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="update.extract">
                         </div>
                     </div>
 
@@ -216,5 +237,49 @@
             </div>
 
         </div>
+    </div>
+</div>
+
+
+
+<!-- Extract -->
+<div id="extracts" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Retiros realizados</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped ">
+                        <thead style="background-color: #337ab7; color: #ffffff;">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Monto</th>
+                                <th>Motivos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="data in update.extracts">
+                                <td ng-bind="data.created_at"></td>
+                                <td ng-bind="data.extract | currency:$:2"></td>
+                                <td ng-bind=""></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">
+                    <i class="fa fa-times-circle"></i> Cerrar
+                </button>
+            </div>
+        </div>
+
     </div>
 </div>

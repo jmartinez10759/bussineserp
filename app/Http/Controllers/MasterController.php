@@ -941,7 +941,7 @@ abstract class MasterController extends Controller
     protected function _boxesBelongsCompany()
     {
         if( Session::get('roles_id') == 1 ){
-            $response = SysBoxes::with('companies')
+            $response = SysBoxes::with('companies','extracts')
                 ->orderBy('id','DESC')
                 ->groupby('id')
                 ->get();
