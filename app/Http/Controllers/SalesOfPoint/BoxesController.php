@@ -51,16 +51,18 @@ class BoxesController extends MasterController
                 "boxes"     => $this->_boxesBelongsCompany() ,
                 "users"     => $this->_usersBelongsCompany() ,
             ];
+            \Log::debug($data);
             return new JsonResponse([
-                "success" => TRUE ,
+                "success" => true ,
                 "data"    => $data ,
                 "message" => self::$message_success
             ],Response::HTTP_OK);
 
         } catch ( \Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            \Log::debug($error);
             return new JsonResponse([
-                "success" => FALSE ,
+                "success" => false ,
                 "data"    => $error ,
                 "message" => self::$message_error
             ],Response::HTTP_BAD_REQUEST);
@@ -136,9 +138,11 @@ class BoxesController extends MasterController
     public function show( int $id = null, SysBoxes $boxes )
     {
         try {
-            $response = $boxes->with('companies','groups','users','extracts')->find($id);
+            $response = $boxes->with(['companies','groups','users','extracts','logs' => function($query){
+                return $query->where('boxes_logs.created_at','LIKE',$this->_today->format('Y-m-d').'%');
+            }])->find($id);
             return new JsonResponse([
-                'success'   => TRUE
+                'success'   => true
                 ,'data'     => $response
                 ,'message'  => self::$message_success
             ],Response::HTTP_OK);
@@ -147,7 +151,7 @@ class BoxesController extends MasterController
             $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
             \Log::debug($error);
             return new JsonResponse([
-                'success'   => FALSE
+                'success'   => false
                 ,'data'     => $error
                 ,'message'  => self::$message_error
             ],Response::HTTP_BAD_REQUEST);
@@ -241,11 +245,12 @@ class BoxesController extends MasterController
                 ]);
             }
             if ( isset($request->is_extract) && $request->is_extract){
-                \Log::debug(sprintf("Retiro es: %s", $request->is_extract) );
+                \Log::debug(sprintf("Insert in extract: %s", $request->is_extract) );
                 $extracts->create([
                     'box_id'        => $box->id ,
                     'user_id'       => $request->get("userId") ,
-                    'extract'       => $request->get("extract")
+                    'extract'       => $request->get("extract"),
+                    'motives'       => $request->get("motives")
                 ]);
             }
 
@@ -259,10 +264,10 @@ class BoxesController extends MasterController
         }
 
         if ($success) {
-            return $this->show( $request->get("id"), new SysBoxes );
+            return $this->show( $request->get("id"), $boxes );
         }
         return new JsonResponse([
-            'success'   => FALSE
+            'success'   => $success
             ,'data'     => $error
             ,'message'  => self::$message_error
         ],Response::HTTP_BAD_REQUEST);
@@ -283,6 +288,7 @@ class BoxesController extends MasterController
         try {
             $box = $boxes->find($id);
             $box->groups()->detach();
+            $box->extracts()->detach();
             $box->delete();
             DB::commit();
             $success = true;
@@ -335,6 +341,10 @@ class BoxesController extends MasterController
                 ->whereCount($countCut)
                 ->where('created_at','LIKE',$today.'%')
                 ->where('status_id','!=' ,4)->sum("total");
+            $extract    = $box->extracts()
+                ->where('created_at','LIKE',$today.'%')
+                ->sum('extract');
+
             $dataPrinter = [];
             foreach ($box->companies as $company){
                 $dataPrinter = [
@@ -349,7 +359,9 @@ class BoxesController extends MasterController
                     "iva"               =>  $iva ,
                     "total"             =>  $total ,
                     "init_mount"        =>  $box->init_mount ,
-                    "totales"           =>  ($total + $box->init_mount)
+                    "extract"           =>  $extract,
+                    #"n_extract"         =>  $box->extracts()->where('created_at','LIKE',$today.'%')->count() ,
+                    "totales"           =>  ( ($total + $box->init_mount) - $extract)
                 ];
             }
             $dataPrinter['caja']     = $box->name;

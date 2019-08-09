@@ -31,6 +31,7 @@ use App\Model\Administracion\Configuracion\SysNotificacionesModel;
 use App\Model\Administracion\Configuracion\SysProveedoresModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use function foo\func;
 
 abstract class MasterController extends Controller
 {
@@ -941,14 +942,17 @@ abstract class MasterController extends Controller
     protected function _boxesBelongsCompany()
     {
         if( Session::get('roles_id') == 1 ){
-            $response = SysBoxes::with('companies','extracts')
-                ->orderBy('id','DESC')
+            $response = SysBoxes::with(['companies','extracts','logs' => function($query){
+                    return $query->where('boxes_logs.created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                }])->orderBy('id','DESC')
                 ->groupby('id')
                 ->get();
         }else{
             $response = SysEmpresasModel::find(Session::get('company_id'))
-                ->boxes()->with('companies')->orderBy('id','DESC')
-                ->groupby('id')->get();
+                        ->boxes()->with(['companies','extracts','logs' => function($query){
+                                return $query->where('boxes_logs.created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                        }])->orderBy('id','DESC')
+                        ->groupby('id')->get();
         }
         return $response;
     }

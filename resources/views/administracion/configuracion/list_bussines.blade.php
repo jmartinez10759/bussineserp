@@ -194,13 +194,13 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
 
         <!-- script indispensables -->
-        <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/TitleSystem.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/ModuleController.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/FactoryController.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/NotificationsFactory.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/ServiceController.js')}}"></script>
-        <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/ApplicationController.js')}}"></script>
         <!--/ script indispensables /-->
         <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
         <!-- script desarrollador -->

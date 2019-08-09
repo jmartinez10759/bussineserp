@@ -20,6 +20,16 @@ app.directive("tableDashboard",function () {
     };
 });
 /**
+ * Directive to generate pagination the table
+ */
+app.directive("tablePagination",function () {
+    return {
+        restrict: 'E',
+        templateUrl: 'js/tpl/table-pagination.html?version='+Math.random()
+    };
+});
+
+/**
  * Directive to generate button update
  */
 app.directive("buttonUpdate",function () {

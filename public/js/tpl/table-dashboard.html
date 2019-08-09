@@ -7,7 +7,7 @@
         </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="data in datos.register | filter: searching" id="tr_{{data.id}}">
+            <tr ng-repeat="data in datos.register | filter: searching | startFromGrid: currentPage * pageSize | limitTo: pageSize" id="tr_{{data.id}}">
                 <td class="col-sm-1" style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key == 'image' && key != 'id' && key != 'estatus' && key != 'btnDelete' && key != 'is_active'" >
                     <img src="{{value}}" class="img-responsive">
                 </td>

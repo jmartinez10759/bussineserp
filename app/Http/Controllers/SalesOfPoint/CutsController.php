@@ -146,13 +146,13 @@ class CutsController extends MasterController
                 ROUND(c.subtotal,2) AS subtotal ,
                 ROUND(c.iva,2) AS iva ,
                 ROUND(c.total,2) AS total,
+                ROUND(c.mount_total,2 ) AS mount_total ,
                 c.file_path ,
                 b.name AS caja ,
-                b.init_mount AS mount_start ,
+                ROUND(b.init_mount,2) AS mount_start ,
                 e.razon_social ,
                 CONCAT(ss.codigo,' ',ss.sucursal) AS grupo ,
                 CONCAT(u.name,' ',u.first_surname,' ',u.second_surname) AS full_name ,
-                ROUND(SUM(c.total + b.init_mount),2 ) AS mount_total ,
                 c.created_at
             FROM companies_boxes cb
                      JOIN sys_empresas e ON cb.company_id = e.id

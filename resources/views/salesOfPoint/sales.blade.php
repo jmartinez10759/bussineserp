@@ -55,7 +55,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="data in datos | filter: searching" id="tr_@{{ data.id }}" >
+                    <tr ng-repeat="data in datos  | filter: searching | startFromGrid: currentPage * pageSize | limitTo: pageSize" id="tr_@{{ data.id }}" >
                         <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.id"></td>
                         <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.created_at"></td>
                         <td class="col-sm-1" style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.razon_social"></td>
@@ -90,6 +90,8 @@
                     </tr>
                     </tbody>
                 </table>
+                <table-pagination></table-pagination>
+
                 <table class="table">
                     <tr>
                         <td style="background-color:#eee" class="text-right">

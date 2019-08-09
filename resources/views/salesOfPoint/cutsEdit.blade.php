@@ -21,9 +21,9 @@
                             <tr ng-repeat="data in update" id="tr_@{{ update.id }}">
                                 <td ng-bind="data.id"></td>
                                 <td ng-bind="data.comments"></td>
-                                <td ng-bind="'$ '+data.subtotal.toLocaleString()"></td>
-                                <td ng-bind="'$ '+data.iva.toLocaleString()"></td>
-                                <td ng-bind="'$ '+data.total.toLocaleString()"></td>
+                                <td ng-bind="data.subtotal | currency:$:2"></td>
+                                <td ng-bind="data.iva | currency:$:2"></td>
+                                <td ng-bind="data.total | currency:$:2"></td>
                             </tr>
                         </tbody>
                     </table>

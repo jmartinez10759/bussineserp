@@ -13,6 +13,7 @@ class SysExtract extends Model
         ,'box_id'
         ,'user_id'
         ,'extract'
+        ,'motives'
     ];
 
     public function boxes()

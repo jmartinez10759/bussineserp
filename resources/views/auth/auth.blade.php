@@ -117,7 +117,7 @@
 <script type="text/javascript" src="{{asset('js/FactoryController.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/NotificationsFactory.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/ServiceController.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/ApplicationController.js')}}"></script>
 <!-- script developer-->
 <script type="text/javascript" src="{{asset('js/login/buildLoginController.js')}}"></script>
 <!--load directives-->

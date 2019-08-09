@@ -364,8 +364,9 @@ class OrdersController extends MasterController
     public function _boxesBelongsUsers()
     {
         $boxes = SysUsersModel::find(Session::get('id'))
-                    ->boxes()->with('orders')
-                    ->orderBy('id','DESC')
+                    ->boxes()->with(['orders' => function($query){
+                            return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                    }])->orderBy('id','DESC')
                     ->groupby('id')
                     ->get();
         $response = [];
@@ -392,6 +393,7 @@ class OrdersController extends MasterController
     {
         $total = $box->init_mount;
         foreach ($box->orders as $orders){
+            if ($orders->created)
             $total +=  $orders->total;
         }
         return $total;

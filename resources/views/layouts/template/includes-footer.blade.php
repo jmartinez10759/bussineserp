@@ -66,14 +66,14 @@
     {{--<script type="text/javascript" src="{{asset('bower_components/angular-fixed-table-header/src/fixed-table-header.min.js')}}"></script>--}}
     <script src="{{asset('js/angular-bootstrap-select.min.js')}}"></script>
     <!-- script indispensables -->
-    <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/TitleSystem.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
 
     <script type="text/javascript" src="{{asset('js/ModuleController.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/FactoryController.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/NotificationsFactory.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/ServiceController.js')}}"></script>
-    <script type="text/javascript" src="{{asset('js/controllermaster.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/ApplicationController.js')}}"></script>
     <!--/ script indispensables /-->
 
     <!-- InputMask -->

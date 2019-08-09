@@ -167,6 +167,15 @@
                         </div>
                     </div>
 
+                    <div class="form-group" ng-if="update.is_extract">
+                        <div class="control-label">
+                            <label class="col-sm-3 control-label">¿Algun motivos?</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <textarea class="form-control" ng-model="update.motives" capitalize></textarea>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <div class="control-label">
                             <label class="col-sm-3 control-label">Asignar </label>
@@ -245,7 +254,6 @@
 <!-- Extract -->
 <div id="extracts" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -266,12 +274,11 @@
                             <tr ng-repeat="data in update.extracts">
                                 <td ng-bind="data.created_at"></td>
                                 <td ng-bind="data.extract | currency:$:2"></td>
-                                <td ng-bind=""></td>
+                                <td ng-bind="data.motives"></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
 
             </div>
             <div class="modal-footer">
