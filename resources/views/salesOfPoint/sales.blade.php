@@ -70,13 +70,13 @@
                             <span class="label label-danger" ng-if="data.status_id == 4" ng-bind="data.status"></span>
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            @{{ data.subtotal | currency:'$':2 }}
+                            @{{ data.subtotal | currency:$:2 }}
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            @{{  data.iva | currency:'$':2 }}
+                            @{{  data.iva | currency:$:2 }}
                         </td>
                         <td class="text-right" style="cursor:pointer;" ng-click="editRegister(data)">
-                            @{{  data.total | currency:'$':2 }}
+                            @{{  data.total | currency:$:2 }}
                         </td>
                         <td class="text-center">
                             <button type="button" class="btn btn-primary btn-sm" title="Visualizar Ticket" ng-click="ticketWatch(data.file_path)" ng-disabled="(data.file_path)? false: true">
@@ -126,7 +126,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="data in datos | filter: searching" id="tr_@{{ data.id }}" >
+                    <tr ng-repeat="data in datos | filter: searching | startFromGrid: currentPage * pageSize | limitTo: pageSize" id="tr_@{{ data.id }}" >
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.id"></td>
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.created_at"></td>
                         <td style="cursor:pointer;" ng-click="editRegister(data)" ng-bind="data.kitchen"></td>
@@ -150,6 +150,8 @@
                     </tr>
                     </tbody>
                 </table>
+                <table-pagination></table-pagination>
+
             </div>
 
         </div>
