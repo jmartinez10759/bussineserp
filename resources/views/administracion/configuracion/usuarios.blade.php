@@ -3,7 +3,7 @@
 @push('styles')
 @endpush
 <div ng-controller="UsuarioController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
-  <div class="table-responsive " >
+  <div class="table-responsive" >
     <table class="table table-striped highlight table-hover table-container" id="datatable">
       <thead>
       <tr style="background-color: #337ab7; color: #ffffff;">
@@ -18,7 +18,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr ng-repeat="data in datos | filter: searching" id="tr_@{{data.id}}">
+      <tr ng-repeat="data in datos | filter: searching | startFromGrid: currentPage * pageSize | limitTo: pageSize" id="tr_@{{data.id}}">
         <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.name+' '+ data.first_surname+' '+data.second_surname"></td>
         <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.username" title="@{{ data.email }}"></td>
         <td style="cursor: pointer;" ng-click="editRegister(data)">
@@ -26,7 +26,7 @@
         </td>
         <td style="cursor: pointer;" ng-click="editRegister(data)">
             <span class="label label-primary" ng-if="data.binnacle.conect == 1">Conectado</span>
-            <span class="label label-warning" ng-if="data.binnacle.conect  == 0">Desconectado</span>
+            <span class="label label-danger" ng-if="data.binnacle.conect  == 0">Desconectado</span>
         </td>
           <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.binnacle.time_conected" ></td>
           <td style="cursor: pointer;" ng-click="editRegister(data)" ng-bind="data.binnacle.created_at" ></td>
@@ -47,6 +47,7 @@
 
       </tbody>
     </table>
+    <table-pagination></table-pagination>
   </div>
 
   @include('administracion.configuracion.usersEdit')

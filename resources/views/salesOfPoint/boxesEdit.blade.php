@@ -169,7 +169,7 @@
 
                     <div class="form-group" ng-if="update.is_extract">
                         <div class="control-label">
-                            <label class="col-sm-3 control-label">¿Algun motivos?</label>
+                            <label class="col-sm-3 control-label">¿Algun motivo?</label>
                         </div>
                         <div class="col-sm-6">
                             <textarea class="form-control" ng-model="update.motives" capitalize></textarea>

@@ -90,8 +90,6 @@
                     </tr>
                     </tbody>
                 </table>
-                <table-pagination></table-pagination>
-
                 <table class="table">
                     <tr>
                         <td style="background-color:#eee" class="text-right">
@@ -105,6 +103,9 @@
                         </td>
                     </tr>
                 </table>
+
+                <table-pagination></table-pagination>
+
             </div>
 
         </div>

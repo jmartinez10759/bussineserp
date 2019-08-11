@@ -231,7 +231,7 @@
                                                             </thead>
                                                             <tbody>
                                                             <tr ng-repeat="item in concepts" id="tr_@{{concept.id}}">
-                                                                <td style="cursor:pointer;" >
+                                                                <td style="cursor:pointer;"  class="col-sm-1">
                                                                     <image-load image="item.products.logo"></image-load>
                                                                 </td>
                                                                 <td style="cursor:pointer;" ng-bind="item.products.nombre"></td>

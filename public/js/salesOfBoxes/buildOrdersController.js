@@ -133,7 +133,7 @@ app.controller('OrdersController', ['ServiceController','FactoryController','Not
 
     $scope.boxOpen = function (boxes) {
         const url = fc.domain(URL.url_box_show+"/"+$scope.loginUser.userId,boxes.id);
-        if (boxes.is_active == true){
+        if (boxes.is_active == true && angular.isDefined(w.localStorage['orderId'])){
             w.localStorage['boxOpen']      = boxes.id;
             w.localStorage['boxOpenName']  = boxes.name;
             $scope.boxName = boxes.name;

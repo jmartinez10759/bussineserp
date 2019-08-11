@@ -38,6 +38,7 @@ app.controller('RolesController', ['ServiceController','FactoryController','Noti
                     };
                 });
                 $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
+                $scope.configPagePagination($scope.register);
             }
         });
 

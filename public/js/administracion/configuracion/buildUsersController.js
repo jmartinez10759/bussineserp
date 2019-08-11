@@ -34,6 +34,7 @@ app.controller('UsuarioController', ['ServiceController','FactoryController','No
                 $scope.cmbCompanies = response.data.data.companies;
                 $scope.cmbRoles = response.data.data.roles;
                 $scope.cmbGroupsEdit = response.data.data.groups;
+                $scope.configPagePagination($scope.datos);
             }
         });
     };

@@ -55,6 +55,7 @@ app.controller('CompaniesController', ['ServiceController','FactoryController','
                 $scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};
                 $scope.cmbTradeService  = response.data.data.tradeService;
                 $scope.cmbTaxRegime     = response.data.data.taxRegime;
+                $scope.configPagePagination($scope.register);
             }
         });
     };

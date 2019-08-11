@@ -41,7 +41,7 @@ abstract class MasterController extends Controller
 	protected $tipo             = "application/json";
 	public $_http;
 	protected $_title           = "Empresa No Asignada";
-	protected $_development     = "Globalenglysolutions";
+	protected $_development     = "Engly Solutions";
 	protected $_linkDevelopment = "";
 	public static $_model;
 	protected static $message_success;
@@ -381,44 +381,7 @@ abstract class MasterController extends Controller
 		return $data;
 
 	}
-	/**
-	 * Metodo para hacer la consulta de la vacante
-	 * @access public
-	 * @param string $request [Description]
-	 * @param boolean $encode_64  [Description]
-	 * @return void
-	 */
-	/*public static function upload_file($request, $encode_64 = false, $directorio = false)
-	{
-		$files = $request->file('file');
-		$archivo = [];
-		for ($i = 0; $i < count($files); $i++) {
-			
-			if ($encode_64) {
-				$imagedata = file_get_contents($files[$i]);
-				$nombre_temp = $files[$i]->getClientOriginalName();
-				$extension = strtolower($files[$i]->getClientOriginalExtension());
-				switch ($extension) {
-					case 'pdf':
-						$file = "application";
-						break;
-                    case 'jpg':
-                    case 'jpeg':
-                    case 'png':
-						$file = "image";
-						break;
-                }
-				$archivo['file'][] = 'data:' . $file . '/' . $extension . ';base64,' . base64_encode($imagedata);;
-			} else {
-				$upload = new Upload;
-				$upload->directorio = (isset($directorio) && $directorio != "") ? $directorio : "upload_file/catalogos/";
-				$archivo['file'][] = $upload->upload_file(new Request( $request->all() ));
-			}
 
-
-		}
-		return $archivo;
-	}*/
 	/**
 	 * Carga y manda a llamar un facades para leer la informacion e insertar la informacion en sus respectivas tablas
 	 * @access public
@@ -937,24 +900,61 @@ abstract class MasterController extends Controller
 
     /**
      * This method is used boxes get by companies
-     * @return void
+     * @return array
      */
     protected function _boxesBelongsCompany()
     {
         if( Session::get('roles_id') == 1 ){
-            $response = SysBoxes::with(['companies','extracts','logs' => function($query){
+            $boxes = SysBoxes::with(['companies','groups',
+                'extracts' => function($query){
+                    return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                },'logs' => function($query){
                     return $query->where('boxes_logs.created_at','LIKE',$this->_today->format('Y-m-d').'%');
-                }])->orderBy('id','DESC')
-                ->groupby('id')
-                ->get();
+                },'orders' => function($query){
+                    return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                }])->orderBy('id','DESC')->groupby('id')->get();
         }else{
-            $response = SysEmpresasModel::find(Session::get('company_id'))
-                        ->boxes()->with(['companies','extracts','logs' => function($query){
-                                return $query->where('boxes_logs.created_at','LIKE',$this->_today->format('Y-m-d').'%');
-                        }])->orderBy('id','DESC')
-                        ->groupby('id')->get();
+            $boxes = SysEmpresasModel::find(Session::get('company_id'))
+                        ->boxes()->with(['companies','groups',
+                        'extracts' => function($query){
+                            return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                        },'logs' => function($query){
+                            return $query->where('boxes_logs.created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                        },'orders' => function($query){
+                            return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                        }])->orderBy('id','DESC')->groupby('id')->get();
+        }
+        $response = [];
+        foreach ($boxes as $box){
+            $response[] = [
+                'id'            => $box->id ,
+                'name'          => $box->name ,
+                'description'   => $box->description ,
+                'status'        => $box->status ,
+                'is_active'     => $box->is_active ,
+                'init_mount'    => $box->init_mount ,
+                'companies'     => ($box->companies()->count() > 0)? $box->companies[0]->razon_social : '',
+                'groups'        => ($box->groups()->count() > 0)? $box->groups[0]->sucursal : '',
+                'mount_today'   => $this->_getMountToday($box) ,
+            ];
         }
         return $response;
+    }
+
+    /**
+     * This method is uses make the total orders
+     * @param $box
+     * @return int|string
+     */
+    private function _getMountToday($box)
+    {
+        $total   =  $box->init_mount;
+        $extract =  $box->extracts()->sum('extract');
+        foreach ($box->orders as $orders){
+            $total +=  $orders->total;
+        }
+
+        return ($total - $extract);
     }
 
     /**

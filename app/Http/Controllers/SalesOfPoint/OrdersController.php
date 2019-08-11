@@ -364,7 +364,9 @@ class OrdersController extends MasterController
     public function _boxesBelongsUsers()
     {
         $boxes = SysUsersModel::find(Session::get('id'))
-                    ->boxes()->with(['orders' => function($query){
+                    ->boxes()->with(['companies','groups','extracts' => function($query){
+                            return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                    },'orders' => function($query){
                             return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
                     }])->orderBy('id','DESC')
                     ->groupby('id')
@@ -378,6 +380,8 @@ class OrdersController extends MasterController
                 'status'        => $box->status ,
                 'is_active'     => $box->is_active ,
                 'init_mount'    => $box->init_mount ,
+                'companies'     => ($box->companies()->count() > 0)? $box->companies[0]->razon_social : '',
+                'groups'        => ($box->groups()->count() > 0)? $box->groups[0]->sucursal : '',
                 'mount_today'   => $this->_getMountToday($box) ,
             ];
         }
@@ -391,12 +395,13 @@ class OrdersController extends MasterController
      */
     private function _getMountToday($box)
     {
-        $total = $box->init_mount;
+        $total   =  $box->init_mount;
+        $extract =  $box->extracts()->sum('extract');
         foreach ($box->orders as $orders){
-            if ($orders->created)
             $total +=  $orders->total;
         }
-        return $total;
+
+        return ($total - $extract);
     }
 
 }

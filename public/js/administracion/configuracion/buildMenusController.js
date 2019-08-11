@@ -45,6 +45,7 @@ app.controller('MenusController', ['ServiceController','FactoryController','Noti
                     };
                 });
                 scope.datos         = {"titles" : scope.titles, "register" : scope.register};
+                scope.configPagePagination(scope.register);
                 scope.cmbTypeMenus = response.data.data.cmbMenus
             }
         });

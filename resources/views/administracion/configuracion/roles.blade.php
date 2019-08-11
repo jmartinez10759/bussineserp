@@ -4,6 +4,7 @@
 @endpush
 <div ng-controller="RolesController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
 	<table-dashboard></table-dashboard>
+	<table-pagination></table-pagination>
 	@include('administracion.configuracion.rolesEdit')
 </div>
 @stop

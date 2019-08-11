@@ -95,6 +95,8 @@
                         </td>
                     </tr>
                 </table>
+                <table-pagination></table-pagination>
+
             </div>
 
         @include('salesOfPoint.cutsEdit')

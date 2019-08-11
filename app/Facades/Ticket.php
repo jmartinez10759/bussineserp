@@ -78,7 +78,7 @@ class Ticket extends Facade
                 $mountStart = (isset($data['init_mount']) ) ? $data['init_mount'] : "";
                 $this->_pdf->Cell(2,$textYPos,"No. Orden: ". "Corte de Caja" ,false,false,"L" );
                 $textYPos += 4;
-                #$this->_pdf->setX(1);
+                $this->_pdf->setX(1);
                 $this->_pdf->Cell(2,$textYPos,"Monto Inicial: ". format_currency($mountStart) ,false,false,"L" );
             }
             $textYPos +=6;
@@ -86,9 +86,9 @@ class Ticket extends Facade
             $this->_pdf->setX(1);
             $this->_pdf->Cell(2,$textYPos,'-----------------------------------------------------------------------');
             $textYPos +=6;
-            $this->_pdf->SetFont('Helvetica','',3.5);
+            $this->_pdf->SetFont('Helvetica','B',3.5);
             $this->_pdf->setX(1);
-            $this->_pdf->Cell(2,$textYPos,'#    PRODUCT                   PRICE       DISCOUNT       TOTAL');
+            $this->_pdf->Cell(2,$textYPos,'#   PRODUCT                   PRICE       DISCOUNT       TOTAL');
             $off = $textYPos+6;
 
             foreach($data['concepts'] as $product){

@@ -45,6 +45,7 @@ app.controller('BoxesController', ['ServiceController','FactoryController','Noti
                 /*$scope.datos         = {"titles" : $scope.titles, "register" : $scope.register};*/
                 $scope.datos         = response.data.data.boxes;
                 $scope.cmbUsers      = response.data.data.users;
+                $scope.configPagePagination($scope.datos);
             }
         });
 

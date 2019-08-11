@@ -42,6 +42,7 @@ app.controller('GroupsController', ['ServiceController','FactoryController','Not
                     };
                 });
                 $scope.datos = {"titles" : $scope.titles, "register" : $scope.register};
+                $scope.configPagePagination($scope.register);
             }
         });
     };

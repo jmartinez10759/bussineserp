@@ -17,6 +17,7 @@ class SysBoxes extends Model
         ,'status'
         ,'is_active'
         ,'init_mount'
+        ,'mount_total'
     ];
     public function companies()
     {
