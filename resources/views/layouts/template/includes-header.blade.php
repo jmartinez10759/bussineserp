@@ -7,16 +7,16 @@
   <meta http-equiv="Pragma" content="no-cache">
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <!-- obtengo la ruta de mi proyecto -->
   <meta name="ruta-general" content="{{ $_SERVER['PHP_SELF'] }}">
-  <link rel="icon" href="{{asset( $icon )}}" type="image/x-icon" />
-  <link rel="shortcut icon" href="{{asset( $icon )}}" type="image/x-icon" />
-   <title>{!! $APPTITLE !!} </title>
+  <link rel="icon" href="@{{companyLogger.logo}}" type="image/x-icon" />
+  <link rel="shortcut icon" href="@{{companyLogger.logo}}" type="image/x-icon" />
+  <title>{!! $APPTITLE !!} </title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> -->
+  <!-- Styles -->
+  <link type="text/css" rel="stylesheet" href="{{ asset('css/app.master.css')}}" />
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
@@ -36,17 +36,14 @@
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
   <!-- Daterange picker -->
   <link rel="stylesheet" href="{{$base_url}}admintle/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- datetimepicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.4/css/bootstrap-datetimepicker.min.css">
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="{{$base_url}}admintle/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css"> -->
-  <!-- <link data-require="chosen@*" data-semver="1.0.0" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.min.css" /> -->
-  <link data-require="chosen@*" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-chosen@1.4.2/bootstrap-chosen.css">
-  <!-- Styles -->
-  <link type="text/css" rel="stylesheet" href="{{ asset('css/sweetalert.css')}}" />
-  <link type="text/css" rel="stylesheet" href="{{ asset('css/toastr.css')}}" />
-  <link type="text/css" rel="stylesheet" href="{{ asset('css/dropzone.css')}}" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jexcel/1.5.0/css/jquery.jexcel.min.css" type="text/css" />
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -55,7 +52,7 @@
   <![endif]-->
   <base href="{{ $_SERVER['PHP_SELF'] }}" />
   <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  {{--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">--}}
  <style type="text/css">
     .scroll {width: 100%;display:block;}
     .scroll thead { display: inline-block; width: 100%;}
@@ -157,40 +154,7 @@
       .slimScrollDiv section::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
        body{display:block;width: 100%;overflow: auto;height: 350px;}
        body::-webkit-scrollbar {width: 4px;background-color: #F5F5F5;}
-       [v-cloak]{display: none}
        [ng-cloak]{display: none}
-       .loader {
-            position: fixed;
-            left: 0px;
-            top: 0px;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            background: url('img/loading04.gif') 50% 50% no-repeat rgb(249,249,249);
-            opacity: .8;
-        }
   </style>
-  <style type="text/css">
-    .fixed_headers{
-      width: 400px;
-      table-layout: fixed;
-      border-collapse: collapse;
-    }
 
-    .fixed_headers tbody{
-      overflow: auto;
-      height: 100px;
-    }
-
-    .fixed_headers thead {
-      background: black;
-      color:#fff;
-    }
-
-    .fixed_headers th, .fixed_headers td {
-      padding: 5px;
-      text-align: left;
-      width: 200px;
-    }
-  </style>
    @stack('styles')

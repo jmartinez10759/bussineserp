@@ -1,0 +1,7 @@
+<ul class="pagination pagination-sm">
+    <li ng-repeat="filter in calFilter" class="{{filter.class}}" >
+        <a style="cursor: pointer" ng-click="monthFilter(filter)">
+            {{filter.nombre}}
+        </a>
+    </li>
+</ul>

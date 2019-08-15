@@ -21,10 +21,10 @@ class SysPaisModel extends Model
   {
     return $this->belongsTo( SysEmpresasModel::class,'id_country','id');
   }
-  public function estados()
+  /*public function states()
   {
-    return $this->hasMany( SysEstadosModel::class ,'country_id','id');
-  }
+    return $this->belongsTo( SysEstadosModel::class ,'id','idCountry');
+  }*/
 
 
 }

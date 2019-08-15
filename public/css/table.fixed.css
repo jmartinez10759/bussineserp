@@ -1,0 +1,27 @@
+.table-container {
+    padding:20px;
+}
+.table-container > table ,tr td{
+    border:1px solid white;
+}
+.table-container > tbody {
+    display:block;
+    height:350px;
+    overflow:auto;
+}
+.table-container > thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;/* even columns width , fix width of table too*/
+}
+.table-container > thead {
+    width: calc( 100% - 1em )/* scrollbar is average 1em/16px width, remove it from thead width */
+}
+.table-container > table {
+    width:400px;
+}
+.table-container > tbody::-webkit-scrollbar {width: 5px;background-color: #F5F5F5;}
+.table-container > tbody::-webkit-scrollbar-track {border-radius: 10px;background: rgba(0,0,0,0.1);border: 1px solid #ccc;}
+.table-container > tbody::-webkit-scrollbar-thumb {border-radius: 10px;background: linear-gradient(left, #fff, #e4e4e4);border: 1px solid #aaa;}
+.table-container > tbody::-webkit-scrollbar-thumb:hover { background: #fff; }
+.table-container > tbody::-webkit-scrollbar-thumb:active { background: linear-gradient(left, #22ADD4, #1E98BA);}

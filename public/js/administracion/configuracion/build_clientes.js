@@ -21,8 +21,9 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){
         $scope.datos  = [];
+        $scope.contact  = {  id_study : 1 };
         $scope.insert = {
-          estatus: 0 ,id_country: 151 ,id_servicio_comercial: null, id_study : 1
+          estatus: 0 ,id_country: 151 ,id_servicio_comercial: 1
         };
         $scope.update         = {};
         $scope.comments       = {};
@@ -30,6 +31,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
         $scope.archivos       = {};
         $scope.edit           = {};
         $scope.fields         = {};
+        $scope.activities     = {};
         $scope.readonly = true;
         $scope.active_detalles = "";
         $scope.active_contactos = "active";
@@ -83,7 +85,7 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
             return;
         }
         var url = domain( URL.url_insert );
-        var fields = $scope.insert;
+        var fields = { cliente: $scope.insert };
         jQuery.fancybox.close({
             'type'      : 'inline'
             ,'src'      : "#modal_add_register"
@@ -106,50 +108,51 @@ app.controller('ClientesController', function( masterservice, $scope, $http, $lo
     $scope.insert_register_contacto = function(){
 
         var validacion = {
-           'CORREO'          : $scope.insert.correo
-          ,'NOMBRE CONTACTO' : $scope.insert.contacto
-          ,'TELEFONO'        : $scope.insert.telefono
+           'CORREO'          : $scope.contact.correo
+          ,'NOMBRE CONTACTO' : $scope.contact.contacto
+          ,'TELEFONO'        : $scope.contact.telefono
         };
         if(validaciones_fields(validacion)){return;}
-        if( !emailValidate( $scope.insert.correo ) ){  
+        if( !emailValidate( $scope.contact.correo ) ){  
             toastr.error("Correo Incorrecto","Ocurrio un error, favor de verificar");
             return;
         }
           var url = domain( URL.url_insert );
-          var fields = $scope.insert;
+          var fields = { contactos : $scope.contact, cliente : $scope.insert };
         
         MasterController.request_http(url,fields,'post',$http, false )
-        .then(function( response ){
-            //not remove function this is  verify the session
-            if(masterservice.session_status( response )){return;};
-            
-             $scope.active_contactos = "";
-             $scope.active_detalles  = "active";
-            buildSweetAlertOptions("¡Detalles de Facturación!","¿Desea capturar los Detalles de Facturación?",function(){
-                 
-                  toastr.success( response.data.message , title );
-                  console.log($scope.active_detalles);
-                  console.log($scope.active_contactos);
-                  /*$scope.insert = {};
-                  $scope.insert.estatus  = 0;*/
+          .then(function( response ){
+              //not remove function this is  verify the session
+              if(masterservice.session_status( response )){return;};
+              
+               $scope.active_contactos = "";
+               $scope.active_detalles  = "active";
+              buildSweetAlertOptions("¡Detalles de Facturación!","¿Desea capturar los Detalles de Facturación?",function(){
+                   
+                    toastr.success( response.data.message , title );
+                    $scope.contact = {};
+                    $scope.insert.id = response.data.result.id;
+                    $scope.insert.estatus  = 0;
+                    $scope.index();
+
+
+              },"warning",true,["SI","NO"],function(){
+                  $scope.active_contactos = "active";
+                  $scope.active_detalles  = "";
+                  $scope.insert = {};
+                  $scope.contact = {};
+                  $scope.insert.estatus  = 0;
                   $scope.index();
+                  jQuery.fancybox.close({
+                      'type'      : 'inline'
+                      ,'src'      : "#modal_add_register"
+                      ,'modal'    : true
+                  });      
+              });
 
-            },"warning",true,["SI","NO"],function(){
-                $scope.active_contactos = "active";
-                $scope.active_detalles  = "";
-                $scope.insert = {};
-                $scope.insert.estatus  = 0;
-                $scope.index();
-                jQuery.fancybox.close({
-                    'type'      : 'inline'
-                    ,'src'      : "#modal_add_register"
-                    ,'modal'    : true
-                });      
-            });
-
-        }).catch(function( error ){
-           masterservice.session_status_error(error);
-        });
+          }).catch(function( error ){
+             masterservice.session_status_error(error);
+          });
 
     }
     $scope.update_register = function( dblclick = false ){

@@ -3,136 +3,130 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysMenuModel;
-use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MenuController extends MasterController
 {
-    private static $_tabla_model;
-
-    public function __construct(){
-      parent::__construct();
-      self::$_tabla_model = new SysMenuModel;
+    public function __construct()
+    {
+       parent::__construct();
     }
-  /**
-   *Metodo para pintar la vista y cargar la informacion principal del menu
-   *@access public
-   *@return void
-   */
-   public function index(){
 
-       $response = $this->_consulta_menus( new SysUsersModel);
-         $registros = [];
-         $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
-         foreach ($response as $respuesta) {
-           $id['id'] = $respuesta->id;
-           $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit', 'title="Editar"' );
-           $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash ','title="Borrar"'.$eliminar);
-           $registros[] = [
-              $respuesta->id
-             ,self::menu_padre( $respuesta )
-             ,$respuesta->texto
-             ,$respuesta->link
-             ,$respuesta->tipo
-             ,$respuesta->icon
-             ,$respuesta->orden
-             ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-             ,$editar
-             ,$borrar
-           ];
-         }
-
-         $titulos = [
-           'id'
-           ,'Menú Padre'
-           ,'Nombre Menu'
-           ,'Url'
-           ,'Tipo'
-           ,'Icono'
-           ,'Orden'
-           ,'Estatus'
-           ,''
-           ,''
-         ];
-         $table = [
-           'titulos' 		    => $titulos
-           ,'registros' 	    => $registros
-           ,'id' 			    => "datatable"
-           ,'class'             => "fixed_header"
-         ];
-
-         $data = [
-      			'page_title' 	      => "Configuración"
-      			,'title'  		      => "Menus"
-      			,'subtitle' 	      => "Creación de Menus"
-      			,'data_table'  	      =>  data_table($table)
-      			,'titulo_modal'       => "Crear Menú"
-      			,'titulo_modal_edit'  => "Actualizar Menus"
-      			,'campo_1' 		      => 'Menú'
-      			,'campo_2' 		      => 'Tipo'
-      			,'campo_3' 		      => 'Menú Padre'
-      			,'campo_4' 		      => 'Url'
-      			,'campo_5' 		      => 'Icono'
-      			,'campo_6' 		      => 'Estatus'
-      			,'campo_7' 		      => 'Posición'
-      		];
-          #debuger($data);
-  		 return self::_load_view( 'administracion.configuracion.menu', $data );
-
-   }
-
- /**
-  *Metodo para pintar la vista y cargar la informacion principal del menu
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public static function tipo( Request $request ){
-      $response = self::$_tabla_model::where( $request->all() )->get();
-      $data = ['tipo_menu' => $response];
-      return message(true, $data ,self::$message_success);
-  }
-
-  /**
-   *Metodo para pintar la vista y cargar la informacion principal del menu
-   *@access public
-   *@param Request $request [Description]
-   *@return void
-   */
-   public function store( Request $request ){
-     
-      $error = null;
-      DB::beginTransaction();
-      try {
-        $response = SysMenuModel::create( $request->all() );
-        if( Session::get('id_rol') != 1){
-            $data = [
-                'id_rol'  => Session::get('id_rol')
-                ,'id_users'  => Session::get('id')
-                  ,'id_empresa'  => Session::get('id_empresa')
-                  ,'id_sucursal'   => Session::get('id_sucursal')
-                    ,'id_menu'        => $response->id
-                    ,'id_permiso'       => 5
-                      ,'estatus'            => 1
-            ];
-            
-            SysRolMenuModel::create($data);
-        }
-        $data_admin = [
-            'id_rol'  => 1
-            ,'id_users'  => 1
-              ,'id_empresa'  => 0
-              ,'id_sucursal'   => 0
-                ,'id_menu'        => $response->id
-                ,'id_permiso'       => 5
-                  ,'estatus'           => 1
+    /**
+     *This method is for load the view in the template
+     * @access public
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index()
+    {
+     $data = [
+            'page_title' 	      => "Configuración"
+            ,'title'  		      => "Menus"
+            ,'subtitle' 	      => "Creación de Menus"
+            ,'titulo_modal'       => "Crear Menú"
+            ,'titulo_modal_edit'  => "Actualizar Menus"
+            ,'campo_1' 		      => 'Menú'
+            ,'campo_2' 		      => 'Tipo'
+            ,'campo_3' 		      => 'Menú Padre'
+            ,'campo_4' 		      => 'Url'
+            ,'campo_5' 		      => 'Icono'
+            ,'campo_6' 		      => 'Estatus'
+            ,'campo_7' 		      => 'Posición'
         ];
-        SysRolMenuModel::create($data_admin);
+     return $this->_loadView( 'administracion.configuracion.menu', $data );
+    }
+
+    /**
+     * This method is for get information of the menu belong to company
+     * @access public
+     * @param int|null $id
+     * @param SysMenuModel $menus
+     * @return JsonResponse
+     */
+    public function show( int $id = null , SysMenuModel $menus )
+    {
+        try {
+            $response = $menus->with('companiesMenus')->find($id);
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $response
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+
+        }
+
+    }
+
+    /**
+     * This method is for get all data menus by company
+     * @access public
+     * @return JsonResponse
+     */
+    public function all()
+    {
+       try {
+           $data = [
+               "menus"        => $this->_menusBelongsCompany() ,
+               "cmbMenus"     => SysMenuModel::whereTipo("PADRE")->get() ,
+           ];
+           return new JsonResponse([
+               "success" => TRUE ,
+               "data"    => $data ,
+               "message" => self::$message_success
+           ],Response::HTTP_OK);
+
+       } catch ( \Exception $e) {
+           $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+           return new JsonResponse([
+               "success" => FALSE ,
+               "data"    => $error ,
+               "message" => self::$message_error
+           ],Response::HTTP_BAD_REQUEST);
+       }
+    }
+
+    /**
+     * This method is for insert information of menus by companies
+     * @access public
+     * @param Request $request [Description]
+     * @param SysMenuModel $menus
+     * @return JsonResponse
+     */
+   public function store( Request $request, SysMenuModel $menus )
+   {
+      $error = null;
+      DB::beginTransaction();
+      try {
+          $data = array_filter($request->all(), function ($key) use ($request){
+              if($key != "companyId"){
+                  $data[$key] = $request->$key;
+                  if ($request->$key == 0){
+                      $data[$key] = "0";
+                  }
+                  return $data;
+              }
+          },ARRAY_FILTER_USE_KEY);
+
+        $response = $menus->create($data);
+        $menu = $menus->find($response->id);
+        if ( isset($request->companyId ) && Session::get('roles_id') == 1 ){
+            $menu->companiesMenus()->sync($request->get("companyId"));
+        }else{
+            $menu->companiesMenus()->sync([Session::get('company_id')]);
+        }
 
         DB::commit();
         $success = true;
@@ -142,26 +136,88 @@ class MenuController extends MasterController
         DB::rollback();
       }
 
-      if ($success) {
-        return $this->_message_success(201, $response, self::$message_success);
-      }
-      return $this->show_error(6, $error, self::$message_error);
+       if ($success) {
+           return new JsonResponse([
+               "success" => TRUE ,
+               "data"    => $menu ,
+               "message" => self::$message_success
+           ],Response::HTTP_CREATED);
+       }
+       return new JsonResponse([
+           "success" => FALSE ,
+           "data"    => $error ,
+           "message" => self::$message_error
+       ],Response::HTTP_BAD_REQUEST);
 
    }
 
-   /**
-    *Metodo para pintar la vista y cargar la informacion principal del menu
-    *@access public
-    *@param  $id [Description]
-    *@return void
-    */
-    public function destroy( Request $request ){
-
+    /**
+     * This method is use for delete register
+     * @access public
+     * @param int $id [Description]
+     * @param SysMenuModel $menus
+     * @return JsonResponse
+     */
+    public function destroy( int $id = null, SysMenuModel $menus )
+    {
       $error = null;
       DB::beginTransaction();
       try {
-          $response = SysMenuModel::where(['id' => $request->id])->delete();
-            SysRolMenuModel::where(['id_menu' => $request->id])->delete();
+          $menu = $menus->find($id);
+          $menu->companiesMenus()->detach($id);
+          $menu->companies()->detach($id);
+          $menu->delete();
+        DB::commit();
+        $success = true;
+
+      } catch (\Exception $e) {
+        $success = false;
+        $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+        DB::rollback();
+      }
+      if ($success) {
+          return new JsonResponse([
+              "success" => $success ,
+              "data"    =>  $id ,
+              "message" => self::$message_success
+          ],Response::HTTP_OK);
+      }
+        return new JsonResponse([
+            "success" => $success ,
+            "data"    => $error ,
+            "message" => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
+
+    }
+
+    /**
+     * This method is for assign menus to companies and update register
+     * @access public
+     * @param Request $request [Description]
+     * @param SysMenuModel $menus
+     * @return JsonResponse
+     */
+    public function update( Request $request, SysMenuModel $menus )
+    {
+      $error = null;
+      DB::beginTransaction();
+      try {
+          $data = array_filter($request->all(), function ($key) use ($request){
+              if($key != "companyId"){
+                  $data[$key] = $request->$key;
+                  if ($request->$key == 0){
+                      $data[$key] = "0";
+                  }
+                  return $data;
+              }
+          },ARRAY_FILTER_USE_KEY);
+
+          $menus->whereId($request->get("id"))->update($data);
+          if ( isset($request->companyId) && $request->companyId ){
+              $menu = $menus->find($request->get("id"));
+              $menu->companiesMenus()->sync($request->get("companyId"));
+          }
+
         DB::commit();
         $success = true;
       } catch (\Exception $e) {
@@ -171,66 +227,14 @@ class MenuController extends MasterController
       }
 
       if ($success) {
-        return $this->_message_success(201, $response, self::$message_success);
+          return $this->show( $request->get("id"), new SysMenuModel);
       }
-      return $this->show_error(6, $error, self::$message_error);
+        return new JsonResponse([
+            "success" => FALSE ,
+            "data"    => $error ,
+            "message" => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
 
-    }
-    /**
-     *Metodo para realizar la consulta por medio de su id
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public function show( Request $request ){
-      
-      try {
-        $response = SysMenuModel::where(['id' => $request->id])->get();        
-        return $this->_message_success(201, $response[0], self::$message_success);
-      } catch (\Exception $e) {
-        $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-        return $this->show_error(6, $error, self::$message_error);
-      }
-
-    }
-    /**
-     *Metodo para la actualizacion de los registros
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public function update( Request $request){
-      $error = null;
-      DB::beginTransaction();
-      try {
-        SysMenuModel::where(['id' => $request->id])->update($request->all());
-          $response = SysMenuModel::where(['id' => $request->id])->get();
-        DB::commit();
-        $success = true;
-      } catch (\Exception $e) {
-        $success = false;
-        $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-        DB::rollback();
-      }
-
-      if ($success) {
-        return $this->_message_success(201, $response, self::$message_success);
-      }
-      return $this->show_error(6, $error, self::$message_error);
-
-    }
-    /**
-     *Metodo para la actualizacion de los registros
-     *@access public
-     *@param Request $request [Description]
-     *@return void
-     */
-    public static function menu_padre( $request ){
-        $response = SysMenuModel::where(['id' => $request->id_padre])->get();
-        if( count($response) ){
-          return $response[0]->texto;
-        }
-        return "";
     }
 
 }

@@ -13,29 +13,54 @@ class SysRolesModel extends Model
         ,'clave_corta'
         ,'estatus'
     ];
-
-    public function menus(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysMenuModel','sys_rol_menu','id_rol','id_menu');
+    public function companies()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_users_pivot','roles_id','company_id');
+    }
+    public function groups()
+    {
+        return $this->belongsToMany(SysSucursalesModel::class,'sys_users_pivot','roles_id','group_id');
+    }
+    public function users()
+    {
+        return $this->belongsToMany(SysUsersModel::class,'sys_users_pivot','roles_id','user_id');
+    }
+    public function menus()
+    {
+        return $this->belongsToMany(SysMenuModel::class,'sys_users_menus','roles_id','menu_id');
+    }
+    public function permission()
+    {
+        return $this->belongsToMany('App\SysPermission','sys_permission_menus','roles_id','permission_id');
     }
 
-    public function empresas(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_users_roles','id_rol','id_empresa');
+    public function groupsRoles()
+    {
+        return $this->belongsToMany(SysSucursalesModel::class,'sys_groups_roles','roles_id','group_id');
+    }
+    public function companiesRoles()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_roles','roles_id','company_id');
     }
 
-    public function sucursales(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_users_roles','id_rol','id_sucursal');
+    /*public function usersCompanies()
+    {
+        return $this->belongsToMany(SysUsersModel::class,'sys_companies_users','roles_id','user_id');
+    }*/
+    /*public function menusCompanies()
+    {
+        return $this->belongsToMany(SysMenuModel::class,'sys_companies_menus','roles_id','menu_id');
     }
+    public function permissionCompanies()
+    {
+        return $this->belongsToMany('App\SysPermission','sys_companies_permission','roles_id','permission_id');
+    }*/
 
-    public function permisos(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysAccionesModel','sys_rol_menu','id_rol','id_permiso');
-    }
 
-    public function usuarios(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_users_roles','id_rol','id_users');
-    }
 
-    public function notificaciones(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysNotificacionesModel','sys_rol_notificaciones','id_rol','id_notificacion');
+    public function notificaciones()
+    {
+        return $this->belongsToMany(SysNotificacionesModel::class,'sys_rol_notificaciones','id_rol','id_notificacion'); 
     }
 
 }

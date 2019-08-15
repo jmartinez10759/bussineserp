@@ -2,6 +2,7 @@
 
 namespace App\Model\Administracion\Configuracion;
 
+use App\SysBoxes;
 use Illuminate\Database\Eloquent\Model;
 
 class SysSucursalesModel extends Model
@@ -18,27 +19,47 @@ class SysSucursalesModel extends Model
     ,'estatus'
   ];
 
-  public function menus()
-  {
-    return $this->belongsToMany(SysMenuModel::class,'sys_rol_menu','id_sucursal','id_menu');
-  }
-  public function empresas()
-  {
-    return $this->belongsToMany(SysEmpresasModel::class,'sys_empresas_sucursales','id_sucursal','id_empresa');
-  }
-  public function roles()
-  {
-    return $this->belongsToMany(SysRolesModel::class,'sys_users_roles','id_sucursal','id_rol');
-  }
-  public function permisos()
-  {
-    return $this->belongsToMany(SysAccionesModel::class,'sys_rol_menu','id_sucursal','id_permiso');
-  }
-  public function usuarios()
-  {
-    return $this->belongsToMany(SysUsersModel::class,'sys_users_roles','id_sucursal','id_users');
-  }
-  public function estados()
+    public function companies()
+      {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_users_pivot','group_id','company_id');
+      }
+    public function users()
+      {
+        return $this->belongsToMany(SysUsersModel::class,'sys_users_pivot','group_id','user_id');
+      }
+      public function roles()
+      {
+          return $this->belongsToMany(SysRolesModel::class,'sys_users_pivot','group_id','roles_id');
+      }
+    public function menus()
+    {
+        return $this->belongsToMany(SysMenuModel::class,'sys_users_menus','group_id','menu_id');
+    }
+    public function permission()
+    {
+        return $this->belongsToMany('App\SysPermission' ,'sys_permission_menus','group_id','permission_id');
+    }
+
+    public function rolesGroups()
+    {
+        return $this->belongsToMany(SysSucursalesModel::class,'sys_groups_roles','group_id','roles_id');
+    }
+    public function companiesGroups()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_groups','group_id','company_id');
+    }
+    //relationship section boxes
+    public function boxes()
+    {
+        return $this->belongsToMany(SysBoxes::class,'companies_boxes','group_id','box_id')
+            ->withPivot("company_id","user_id");
+    }
+
+
+
+
+
+    public function estados()
   {
     return $this->hasOne(SysEstadosModel::class,'id_estado','id');
   }

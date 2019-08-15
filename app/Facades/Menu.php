@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Facade;
 class Menu extends Facade
 {
 
-  /**
-   *Metodo donde crea la estrutura del menu
-   *@access public
-   *@param array $data [description]
-   *@return array
-   */
-    public static function build_menu( $data = array() ){
-
+    /**
+     *Metodo donde crea la estrutura del menu
+     * @access public
+     * @param array $data [description]
+     * @return string
+     */
+    public static function build_menu( $data = array() )
+    {
             $menu = "";
             $submenu = "";
             foreach ($data as $menus) {
@@ -33,15 +33,16 @@ class Menu extends Facade
             return $menu;
 
       }
-  /**
-   *Metodo para crear el seubmenu de cada menu padre
-   *@access private
-   *@param array data [description]
-   *@param integer id_menu [description]
-   *@return [type] [description]
-   */
-    private static function _submenus( $data= array(), $id_menu = false ){
 
+    /**
+     * This method is used created submenus
+     * @access private
+     * @param array data [description]
+     * @param bool $id_menu
+     * @return bool|string [type] [description]
+     */
+    private static function _submenus( $data= array(), $id_menu = false )
+    {
         if ($id_menu && $data) {
             $submenus = "";
             foreach ($data as $submenu) {
@@ -53,14 +54,15 @@ class Menu extends Facade
         }
         return false;
     }
-    /**
-   *Metodo donde crea la estrutura del menu
-   *@access public
-   *@param array $data [description]
-   *@return array
-   */
-    public static function build_menu_tle( $data = array() ){
 
+    /**
+     *Metodo donde crea la estrutura del menu
+     * @access public
+     * @param array $data [description]
+     * @return string
+     */
+    public static function build_menu_tle( $data = array() )
+    {
           $menu = "";
           $submenu = "";
           foreach ($data as $menus) {
@@ -93,15 +95,16 @@ class Menu extends Facade
           return $menu;
 
     }
-  /**
-   *Metodo para crear el seubmenu de cada menu padre
-   *@access private
-   *@param array data [description]
-   *@param integer id_menu [description]
-   *@return [type] [description]
-   */
-    private static function _submenus_tle( $data= array(), $id_menu = false ){
 
+    /**
+     *Metodo para crear el seubmenu de cada menu padre
+     * @access private
+     * @param array data [description]
+     * @param bool $id_menu
+     * @return bool|string [type] [description]
+     */
+    private static function _submenus_tle( $data= array(), $id_menu = false )
+    {
         if ($id_menu && $data) {
             $submenus = "";
             foreach ($data as $submenu) {

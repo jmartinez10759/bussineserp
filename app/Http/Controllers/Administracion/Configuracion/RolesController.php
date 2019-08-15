@@ -3,141 +3,97 @@
 namespace App\Http\Controllers\Administracion\Configuracion;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysRolesModel;
-use App\Model\Administracion\Configuracion\SysUsersRolesModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RolesController extends MasterController
 {
-      private $_tabla_model;
-
-      public function __construct(){
-        parent::__construct();
-        $this->_tabla_model = new SysRolesModel;
-      }
     /**
-     *Metodo para pintar la vista y cargar la informacion principal del menu
-     *@access public
-     *@return void
+     * RolesController constructor.
      */
-     public function index(){
-           if( Session::get('permisos')['GET'] ){
-              return view('errors.error');
-           }
-         $response = (Session::get('id_rol') == 1 )? $this->_tabla_model::get() : $this->_consulta( $this->_tabla_model,[],[],['id' => Session::get('id_empresa')],false );
-         #debuger($response);
-         $registros = [];
-         $eliminar = (Session::get('permisos')['DEL'] == false)? 'style="display:block" ': 'style="display:none" ';
-         foreach ($response as $respuesta) {
-             $id['id'] = $respuesta->id;
-             $editar = build_acciones_usuario($id,'v-editar','Editar','btn btn-primary','fa fa-edit');
-             $borrar = build_acciones_usuario($id,'v-destroy','Borrar','btn btn-danger','fa fa-trash','title="Borrar" '.$eliminar);
-             $registros[] = [
-                $respuesta->id
-               ,$respuesta->perfil
-               ,$respuesta->clave_corta
-               ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-               ,$editar
-               ,$borrar
-             ];
-           }
-           $titulos = [ 'id','Nombre Rol','Clave Corta','Estatus','',''];
-           $table = [
-             'titulos' 		      => $titulos
-             ,'registros' 	      => $registros
-             ,'id' 			      => "datatable"
-             ,'class'             => "fixed_header"
-           ];
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-           $data = [
-             'page_title' 	            => "Configuracion"
-             ,'title'  		            => "Roles"
-             ,'subtitle' 	            => "Creacion de Roles"
-             ,'data_table'  	        =>  data_table($table)
-             ,'titulo_modal'            => "Registro de Roles"
-             ,'titulo_modal_edit'       => "Actualacion de Roles"
-             ,'campo_1' 		        => 'Nombre Rol'
-             ,'campo_2' 		        => 'Clave Corta'
-             ,'campo_3' 		        => 'Estatus'
-           ];
-            #debuger($data);
-         return self::_load_view( 'administracion.configuracion.roles', $data );
+    /**
+     * @access public
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+     public function index()
+     {
+       $data = [
+         'page_title' 	              => "Configuración"
+         ,'title'  		              => "Roles"
+         ,'titulo_modal'              => "Agregar Registro"
+         ,'campo_1' 		          => 'Perfil'
+         ,'campo_2' 		          => 'Clave Corta'
+         ,'campo_3' 		          => 'Estatus'
+       ];
+       return $this->_loadView( 'administracion.configuracion.roles', $data );
+     }
+
+    /**
+     * This method is for get all data roles by company
+     * @access public
+     * @return JsonResponse
+     */
+     public function all()
+     {
+        try {
+          $data = [
+              "roles"     => $this->_rolesBelongsCompany() ,
+          ];
+            return new JsonResponse([
+                "success" => TRUE ,
+                "data"    => $data ,
+                "message" => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch ( \Exception $e) {
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            return new JsonResponse([
+                "success" => FALSE ,
+                "data"    => $error ,
+                "message" => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+        }
 
      }
-     /**
-      *Metodo para
-      *@access public
-      *@param Request $request [Description]
-      *@return void
-      */
-     public function store( Request $request){
-        #debuger($request->all());
+
+    /**
+     * This method is for insert information in roles
+     * @access public
+     * @param Request $request [Description]
+     * @param SysRolesModel $roles
+     * @return JsonResponse
+     */
+     public function store( Request $request, SysRolesModel $roles )
+     {
         $error = null;
         DB::beginTransaction();
         try {
-            $response = SysRolesModel::create( $request->all() );
-            if( Session::get('id_rol') != 1 ){
-                $data = [
-                  'id_users'      => 0 
-                  ,'id_rol'       => $response->id
-                  ,'id_empresa'   => Session::get('id_empresa')
-                  ,'id_sucursal'  => Session::get('id_sucursal')
-                ];
-                SysUsersRolesModel::create($data);
-            }
-
-          DB::commit();
-          $success = true;
-        } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-          DB::rollback();
-        }
-
-        if ($success) {
-          return $this->_message_success(201, $response, self::$message_success);
-        }
-        return $this->show_error(6, $error, self::$message_error);
-
-     }
-     /**
-      *Metodo para realizar la consulta por medio de su id
-      *@access public
-      *@param Request $request [Description]
-      *@return void
-      */
-     public function show( Request $request ){
-        try {
-            $response = SysRolesModel::with('empresas')->where(['estatus' => 1, 'id' => $request->id ])->get();
-          return $this->_message_success(201, $response[0], self::$message_success);
-        } catch (\Exception $e) {
-          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-          return $this->show_error(6, $error, self::$message_error);
-        }
-
-     }
-     /**
-      *Metodo para la actualizacion de los registros
-      *@access public
-      *@param Request $request [Description]
-      *@return void
-      */
-     public function update( Request $request){
-        
-        $error = null;
-        DB::beginTransaction();
-        try {
-            $data = [];
-            foreach ( $request->all() as $key => $value ) {
-                if ( !in_array($key,['empresas'])) {
-                    $data[$key] = $value;
+            $data = array_filter($request->all(), function ($key) use ($request){
+                if($key != "companyId"){
+                    $data[$key] = $request->$key;
+                    if ($request->$key == 0){
+                        $data[$key] = "0";
+                    }
+                    return $data;
                 }
+            },ARRAY_FILTER_USE_KEY);
+
+            $response = $roles->create($data);
+            $rol = $roles->find($response->id);
+            if ( isset($request->companyId ) ){
+                $rol->companiesRoles()->sync($request->get("companyId"));
+            }else{
+                $rol->companiesRoles()->sync([Session::get('company_id')]);
             }
-            #debuger($data);
-           SysRolesModel::where(['estatus' => 1, 'id' => $request->id])->update($data);
-            $response = SysRolesModel::where(['id' => $request->id])->get();
           DB::commit();
           $success = true;
         } catch (\Exception $e) {
@@ -147,24 +103,112 @@ class RolesController extends MasterController
         }
 
         if ($success) {
-          return $this->_message_success(201, $response, self::$message_success);
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => $response
+                ,'message' => self::$message_success
+            ],Response::HTTP_CREATED);
         }
-        return $this->show_error(6, $error, self::$message_error);
+         return new JsonResponse([
+             'success'   => $success
+             ,'data'     => $error
+             ,'message' => self::$message_error
+         ],Response::HTTP_BAD_REQUEST);
 
      }
-     /**
-      *Metodo para borrar el registro
-      *@access public
-      *@param $id [Description]
-      *@return void
-      */
-     public function destroy( Request $request ){
 
+    /**
+     * This method is for get information the roles by companies
+     * @access public
+     * @param int|null $id
+     * @param SysRolesModel $roles
+     * @return JsonResponse
+     */
+     public function show( int $id = null, SysRolesModel $roles )
+     {
+        try {
+          $response = $roles->with('companiesRoles','groupsRoles')->find($id);
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $response
+                ,'message'  => self::$message_success
+            ],Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+
+        }
+
+     }
+
+    /**
+     * This method is for update register the roles
+     * @access public
+     * @param Request $request [Description]
+     * @param SysRolesModel $roles
+     * @return JsonResponse
+     */
+     public function update( Request $request, SysRolesModel $roles )
+     {
         $error = null;
         DB::beginTransaction();
         try {
-            $response = SysRolesModel::where(['id' => $request->id_rol ])->delete();
-            SysUsersRolesModel::where(['id_rol' => $request->id_rol])->delete();
+            $data = array_filter($request->all(), function ($key) use ($request){
+                if($key != "companyId"){
+                    $data[$key] = $request->$key;
+                    if ($request->$key == 0){
+                        $data[$key] = "0";
+                    }
+                    return $data;
+                }
+            },ARRAY_FILTER_USE_KEY);
+
+            $roles->whereId($request->get('id'))->update($data);
+            if ( isset($request->companyId) && $request->companyId){
+                $rol = $roles->find($request->get('id'));
+                $rol->companiesRoles()->sync($request->get("companyId"));
+            }
+
+            DB::commit();
+          $success = true;
+        } catch ( \Exception $e) {
+          $success = false;
+          $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+          DB::rollback();
+        }
+
+        if ($success) {
+           return $this->show( $request->get("id"), new SysRolesModel );
+        }
+         return new JsonResponse([
+             'success'   => FALSE
+             ,'data'     => $error
+             ,'message'  => self::$message_error
+         ],Response::HTTP_BAD_REQUEST);
+
+     }
+
+    /**
+     * This method is for destroy register the rol by companies
+     * @access public
+     * @param int $id [Description]
+     * @param SysRolesModel $roles
+     * @return JsonResponse
+     */
+     public function destroy( int $id = null, SysRolesModel $roles )
+     {
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $rol = $roles->find($id);
+            $rol->companiesRoles()->detach();
+            $rol->companies()->detach();
+            $rol->delete();
           DB::commit();
           $success = true;
         } catch (\Exception $e) {
@@ -174,9 +218,17 @@ class RolesController extends MasterController
         }
 
         if ($success) {
-          return $this->_message_success(201, $response, self::$message_success);
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => []
+                ,'message' => self::$message_success
+            ],Response::HTTP_OK);
         }
-        return $this->show_error(6, $error, self::$message_error);
+         return new JsonResponse([
+             'success'   => $success
+             ,'data'     => $error
+             ,'message' => self::$message_error
+         ],Response::HTTP_BAD_REQUEST);
 
      }
 

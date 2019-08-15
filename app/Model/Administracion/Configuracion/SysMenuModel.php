@@ -18,24 +18,32 @@ class SysMenuModel extends Model
         ,'icon'
     ];
 
-    public function usuarios(){
-      return $this->belongsToMany('App\Model\Administracion\Configuracion\SysUsersModel','sys_rol_menu','id_menu','id_users')->withPivot(['estatus']);
+    public function users()
+    {
+      return $this->belongsToMany(SysUsersModel::class,'sys_users_menus','menu_id','user_id');
+    }
+    public function roles()
+    {
+        return $this->belongsToMany(SysRolesModel::class,'sys_users_menus','menu_id','roles_id');
+    }
+    public function companies()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_users_menus','menu_id','company_id');
+    }
+    public function groups()
+    {
+        return $this->belongsToMany(SysSucursalesModel::class,'sys_users_menus','menu_id','group_id');
+    }
+    public function permission()
+    {
+        return $this->belongsToMany('App\SysPermission','sys_permission_menus','menu_id','permission_id');
+    }
+    public function companiesMenus()
+    {
+        return $this->belongsToMany(SysEmpresasModel::class,'sys_companies_menus','menu_id','company_id');
     }
 
-    public function empresas(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysEmpresasModel','sys_rol_menu','id_menu','id_empresa')->withPivot(['estatus']);
-    }
-    public function sucursales(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysSucursalesModel','sys_rol_menu','id_menu','id_sucursal')->withPivot(['estatus']);
-    }
 
-    public function permisos(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysAccionesModel','sys_rol_menu','id_menu','id_permiso')->withPivot(['estatus']);
-    }
-
-    public function roles(){
-        return $this->belongsToMany('App\Model\Administracion\Configuracion\SysRolesModel','sys_rol_menu','id_menu','id_rol')->withPivot(['estatus']);
-    }
 
 
 

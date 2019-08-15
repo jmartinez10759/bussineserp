@@ -124,7 +124,7 @@
       	<script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
       	<!-- script master vue -->
-        <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/TitleSystem.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/administrador/configuracion/build_list_sucursales.js')}}"></script>
     </body>
 </html>

@@ -1,10 +1,10 @@
 const URL = {
-url_insert  : "pais/register"
-,url_update   : "pais/update"
-,url_edit     : "pais/edit"
-,url_destroy  : "pais/destroy"
-,url_all      : "pais/all"
-,redireccion  : "configuracion/pais"
+  url_insert  : "pais/register"
+  ,url_update   : "pais/update"
+  ,url_edit     : "pais/edit"
+  ,url_destroy  : "pais/destroy"
+  ,url_all      : "pais/all"
+  ,redireccion  : "configuracion/pais"
 }
 
 /*app.filter('filter', ['$sce', ( $sce ) => {
@@ -12,21 +12,6 @@ url_insert  : "pais/register"
       return $sce.trustAsHtml(html);
     };
 }]);*/
-/*app.config(function( $routeProvider ) {
-    $routeProvider
-    .when("/paises", {
-        templateUrl : "/template_ng/table_paises.html",
-        controller : "PaisesController"
-    })
-    .when("/london", {
-        template : "<h1> Bienvenidos 2</h1>",
-        //controller : "londonCtrl"
-    })
-    .when("/paris", {
-        templateUrl : "paris.htm",
-        controller : "parisCtrl"
-    });
-});*/
 app.controller('PaisesController', function(masterservice, $scope, $http, $location ) {
     /*se declaran las propiedades dentro del controller*/
     $scope.constructor = function(){

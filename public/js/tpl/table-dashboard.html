@@ -1,0 +1,32 @@
+<div class="table-responsive">
+    <table class="table table-striped highlight table-hover" id="datatable">
+        <thead>
+        <tr style="background-color: #337ab7; color: #ffffff;">
+            <th ng-repeat="header in datos.titles" ng-bind="header" ng-if="header"></th>
+            <th ng-repeat="header in datos.titles" ng-bind="header" ng-if="!header"></th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="data in datos.register | filter: searching | startFromGrid: currentPage * pageSize | limitTo: pageSize" id="tr_{{data.id}}">
+                <td class="col-sm-1" style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key == 'image' && key != 'id' && key != 'estatus' && key != 'btnDelete' && key != 'is_active'" >
+                    <img src="{{value}}" class="img-responsive">
+                </td>
+                <td style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key != 'id' && key != 'estatus' && key != 'btnDelete' && key != 'is_active' && key != 'image'"  ng-bind="value"></td>
+                <td style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key == 'estatus'">
+                    <span class="label label-success" ng-if="value== 1">Activo</span>
+                    <span class="label label-danger" ng-if="value == 0">Inactivo</span>
+                </td>
+                <td style="cursor:pointer;"  ng-click="editRegister(data.id)" ng-repeat="(key, value ) in data" ng-if="key == 'is_active'">
+                    <span class="label label-success" ng-if="value== 1">Abierta</span>
+                    <span class="label label-danger" ng-if="value == 0">Cerrada</span>
+                </td>
+                <td class="text-center" ng-repeat="(key, value ) in data" ng-if="key =='btnDelete'">
+                    <button type="button" class="btn btn-danger btn-sm" ng-click="destroyRegister(data.id)" title="Eliminar Registro" ng-if="permisos.DEL" >
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </button>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\Administracion\Configuracion\SysProductosModel;
+use App\Model\Administracion\Configuracion\SysRolesModel;
+use App\SysBoxes;
 use PDF;
 use DOMDocument;
 use App\Facades\Menu;
 use GuzzleHttp\Client;
 use App\Facades\Upload;
-use App\Model\MasterModel;
 use Codedge\Fpdf\Fpdf\Fpdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,428 +23,225 @@ use App\Model\Administracion\Correos\SysUsersCorreosModel;
 use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
 use App\Model\Administracion\Configuracion\SysEstadosModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use App\Model\Administracion\Configuracion\SysSesionesModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
 use App\Model\Administracion\Configuracion\SysSucursalesModel;
 use App\Model\Administracion\Correos\SysCategoriasCorreosModel;
 use App\Model\Administracion\Configuracion\SysNotificacionesModel;
 use App\Model\Administracion\Configuracion\SysProveedoresModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use function foo\func;
 
 abstract class MasterController extends Controller
 {
 	public static $_client;
 	public $_tipo_user;
 	public static $_domain = "";
-	protected $tipo = "application/json";
+	protected $tipo             = "application/json";
 	public $_http;
-	protected static $_titulo = "Empresa No Asignada";
-	protected static $_desarrollo = "";
-	protected static $_link_desarrollo = "";
+	protected $_title           = "Empresa No Asignada";
+	protected $_development     = "Engly Solutions";
+	protected $_linkDevelopment = "";
 	public static $_model;
 	protected static $message_success;
 	protected static $message_error;
 	protected static $ssl_ruta = [];
 
+	protected $_today;
+
 	public function __construct()
 	{
-      #self::$ssl_ruta = ["verify" => $_SERVER['DOCUMENT_ROOT']. "/cacert.pem"];
-		self::$ssl_ruta = ["verify" => false];
 		self::$_client = new Client(self::$ssl_ruta);
 		self::$_domain = domain();
-		self::$_model = new MasterModel();
-		self::$message_success = "¡Transacción Exitosa!";
-		self::$message_error = "¡Ocurrio un error, favor de verificar!";
-		$this->middleware('permisos.menus', ['except' => ['load_lista_sucursal', 'lista', 'lista_sucursal', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code'] ] );
+		self::$message_success  = "¡Transacción Exitosa!";
+		self::$message_error    = "¡Ocurrio un error, favor de verificar!";
+		$this->_today = new \DateTime('now');
+		$this->middleware('permisos.menus', ['except' => ['listCompanies', 'listGroup', 'loadCompanies', 'portal', 'showLogin', 'authLogin', 'logout', 'verify_code'] ] );
 		$this->middleware('permisos.rutas', ['only' => ['index']]);
 	}
-	/**
-	 * Metodo general para consumir endpoint utilizando una clase de laravel
-	 * @access protected
-	 * @param  url [description]
-	 * @param  header [description]
-	 * @param  data [description]
-	 * @return json [description]
-	 */
-	protected static function endpoint($url = false, $headers = [], $data = [], $method = false)
+
+    /**
+     * Metodo general para consumir endpoint utilizando una clase de laravel
+     * @access protected
+     * @param bool $url
+     * @param array $headers
+     * @param array $data
+     * @param bool $method
+     * @return json [description]
+     */
+	protected static function endpoint($url = false,$headers = [],$data = [], $method = false)
 	{
-		$response = self::$_client->$method($url, ['headers' => $headers, 'body' => json_encode($data)]);
-		$zonerStatusCode = $response->getStatusCode();
+		$response = self::$_client->$method($url,[
+		    'headers'   => $headers,
+            'body'      => json_encode($data)
+        ]);
 		return json_decode($response->getBody());
 	}
-	/**
-	 *Metodo donde muestra el mensaje de success
-	 *@access protected
-	 *@param integer $code [Envia la clave de codigo.]
-	 *@param array $data [envia la informacion correcta ]
-	 *@return json
-	 */
-	protected function _message_success($code = false, $data = [], $message = false)
+    /**
+     * This method is for load all menus of users
+     * @param array $response
+     * @param bool $status
+     * @return array
+     */
+    protected function _loadMenus($response = [], bool $status = false)
+    {
+        $menusArray = [];
+        for ($j = 0; $j < count($response); $j++) {
+            $menusArray[] = ($response[$j]);
+        }
+        if ($status) {
+            return $menusArray;
+        }
+        #var_export($menusArray);die();
+        return Menu::build_menu_tle($menusArray);
+    }
+    /**
+     * This method is used view load with you permission
+     * @param string|null $view
+     * @param array $parse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    protected function _loadView(string $view = null, array $parse = [] )
+    {
+        $users = SysUsersModel::find( Session::get('id') );
+        $company = $users->companies()->find(Session::get('company_id'));
+        $groups  = $users->groups()->find(Session::get('group_id'));
+        $menus = $users->menus()->where([
+            "sys_users_menus.user_id"    =>  $users->id ,
+            "sys_users_menus.roles_id"   =>  Session::get("roles_id") ,
+            "sys_users_menus.company_id" =>  Session::get("company_id") ,
+            "sys_users_menus.group_id"   =>  Session::get("group_id") ,
+        ])->whereEstatus(TRUE)->orderBy('orden','ASC')->get();
+
+        $parse['MENU_DESKTOP'] 		= $this->_loadMenus($menus);
+        $this->_title              = (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
+        $parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower($this->_title)));
+        $parse['IMG_PATH'] 			= domain() . 'images/';
+        $parse['icon'] 				= "img/company.png";
+        $parse['anio'] 				= date('Y');
+        $parse['version'] 			= "1.2";
+        $parse['base_url'] 			= domain();
+        $parse['nombre_completo'] 	= Session::get('name') . " " . Session::get('first_surname');
+        $parse['desarrollo'] 		= utf8_decode($this->_development);
+        $parse['link_desarrollo'] 	= utf8_decode($this->_linkDevelopment);
+        $parse['welcome'] 			= "Bienvenid@";
+        $parse['photo_profile'] 	= isset($users->details)?$users->details->foto : asset('img/profile/profile.png');
+        $parse['rol'] 				= isset($users->roles[0])? $users->roles[0]->perfil : "Perfil No Asignado";
+        $parse['empresa'] 			= (isset($company->nombre_comercial) )? $company->nombre_comercial: "Empresa no asignada";
+        $parse['sucursal'] 			= (isset($groups->sucursal))?$groups->sucursal : "Sucursal no asignada";
+        $parse['url_previus'] 		= (Session::get('company_id') != 0 && Session::get('group_id') != 0) ? route('list.empresas') : route("/");
+
+        $parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
+        $parse['title'] 			= isset($parse['title']) 	  ? $parse['title'] : "";
+        $parse['subtitle'] 			= isset($parse['subtitle'])   ? $parse['subtitle'] : "";
+
+        $upload_files   = (isset(Session::get('permisos')['UPLF'])) ? Session::get('permisos')['UPLF'] : true;
+        #$notify         = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
+        #$reports        = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
+        #$excel          = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
+
+        #$parse['seccion_reportes'] = reportes($reports, $excel);
+        #$parse['notify']        = (!$notify) ? "style=display:block;" : "style=display:none;";
+        $parse['upload_files']  = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
+
+        return View($view, $parse);
+    }
+
+    /**
+     * This method is used for login session for system.
+     * @access public
+     * @param Request $request
+     * @param SysUsersModel $users
+     * @return JsonResponse
+     */
+	public function startSession(  Request $request , SysUsersModel $users )
 	{
-		$code = ($code) ? $code : 200;
-		$datos = [
-			"success" => true,
-			"message" => ($message) ? $message : "Transacción exitosa",
-			"code" => "SYS-" . $code . "-" . $this->setCabecera($code),
-			"result" => $data
-		];
-		return response()->json($datos, $code);
-	}
-	/**
-	 *Metodo para establecer si se realizo con exito la peticion
-	 *@access private
-	 *@param $codigo [description]
-	 *@return string [description]
-	 */
-	private function get_status_message($codigo = false)
-	{
-		$estado = array(
-			200 => 'OK',
-			201 => 'Created',
-			202 => 'Accepted',
-			204 => 'No Content',
-			301 => 'Moved Permanently',
-			302 => 'Found',
-			303 => 'See Other',
-			304 => 'Not Modified',
-			400 => 'Bad Request',
-			401 => 'Unauthorized',
-			403 => 'Forbidden',
-			404 => 'Not Found',
-			405 => 'Method Not Allowed',
-			409 => 'Conflict',
-			412 => 'Precondition Failed',
-			500 => 'Internal Server Error'
-		);
-		return ($estado[$codigo]) ? $estado[$codigo] : $estado[500];
-	}
-	/**
-	 *Se crea un metodo para mostrar los errores dependinedo la accion a realizar
-	 *@access protected
-	 *@param integer $id [ Coloca el indice para mandar el error que corresponde. ]
-	 *@param array $datos [ Envia la informacion para pintar el error. ]
-	 *@return string $errores
-	 */
-	protected function show_error($id = false, $datos = [], $message = false)
-	{
-
-		switch ($id) {
-			case 0:
-				$codigo = 401;
-				break;
-			case 1:
-				$codigo = 409;
-				break;
-			case 2:
-				$codigo = 500;
-				break;
-			case 3:
-				$codigo = 412;
-				break;
-			case 4:
-				$codigo = 400;
-				break;
-			case 5:
-				$codigo = 400;
-				break;
-			case 6:
-												#$codigo = 304;
-				$codigo = 400;
-				break;
-		}
-
-		$errors = [
-			#0
-			[
-				'success' => false,
-				'message' => ($message) ? $message : "Acceso Denegado",
-				'code' => "SYS-" . $codigo . "-" . $this->setCabecera($codigo),
-				'error' => ['description' => "No tiene permisos para realizar esta acción"],
-				'result' => $datos
-			],
-			#1
-			[
-				'success' => false,
-				'message' => ($message) ? $message : "Error en la transacción",
-				'code' => "SYS-" . $codigo . "-" . $this->setCabecera($codigo),
-				'error' => ['description' => "Token expiro, favor de verificar"],
-				'result' => $datos
-
-			],
-			#2
-			[
-				'success' => false,
-				'message' => ($message) ? $message : "Petición Incorrecta",
-				'code' => "SYS-" . $codigo . "-" . $this->setCabecera($codigo),
-				'error' => ['description' => "El Servicio de Internet es Incorrecto"],
-				'result' => $datos
-			],
-			#3
-			[
-				'success' => false,
-				'message' => ($message) ? $message : "Registros ingresados incorrectos",
-				'code' => "SYS-" . $codigo . "-" . $this->setCabecera($codigo),
-				'error' => ['description' => "Verificar los campos solicitados."],
-				'result' => $datos
-
-			],
-			#4
-			[
-				'success' => false,
-				'message' => ($message) ? $message : "Sin Registros",
-				'code' => "SYS-" . $codigo . "-" . $this->setCabecera($codigo),
-				'error' => ['description' => "No se encontro ningún registro"],
-				'result' => $datos
-			],
-			#5
-			[
-				'success' => false,
-				'message' => ($message) ? $message : "Sin Registros",
-				'code' => "SYS-" . $codigo . "-" . $this->setCabecera($codigo),
-				'error' => ['description' => "Ingrese datos para poder realizar la acción"],
-				'result' => $datos
-			],
-			#6
-			[
-				'success' => false,
-				'message' => ($message) ? $message : "Error en la Transacción",
-				'code' => "SYS-" . $codigo . "-" . $this->setCabecera($codigo),
-				'error' => ['description' => "Ocurrio un error en el registro solicitado"],
-				'result' => $datos
-			]
-
-		];
-		return response()->json($errors[$id], $codigo);
-	}
-	/**
-	 * Se crea un metodo en el cual se establece el formato en el que se enviara la informacion del REST
-	 * @access protected
-	 * @param $codigo int [description]
-	 * @return void
-	 */
-	protected function setCabecera($codigo)
-	{
-		header("HTTP/1.0 " . $codigo . " " . $this->get_status_message($codigo));
-		header("Content-Type:" . $this->tipo);
-		header("status:" . $codigo);
-		return $this->get_status_message($codigo);
-	}
-	/**
-	 * Metodo para mandar a cargar el menu dependiendo el rol desempeÃ±ado por el usuario
-	 * @access public
-	 * @param array $data [ Description ]
-	 * @return void
-	 */
-	protected static function menus( $response, $estatus = false)
-	{
-		$menus_array = [];
-		$permisos = [];
-		for ($i = 0; $i < count($response); $i++) {
-			for ($j = 0; $j < count($response[$i]->menus); $j++) {
-				if ($response[$i]->menus[$j]->pivot->estatus == 1) {
-					$menus_array[] = ($response[$i]->menus[$j]);
-				}
-			}
-		}
-
-		if ($estatus) {
-			return $menus_array;
-		}
-		return Menu::build_menu_tle($menus_array);
-        #return Menu::build_menu( $menus_array );
-
-	}
-	/**
-	 * Metodo para cargar la vista general de la platilla que se va a utilizar
-	 * @access protected
-	 * @param string $view [Description]
-	 * @param array  $data [Description]
-	 * @return void
-	 */
-	protected function _load_view($view = false, $parse = [])
-	{
-		$emails = [];
-		$response = SysUsersModel::with(['menus' => function($query){
-			$where = [
-				'sys_rol_menu.estatus' 		=> 1
-				,'sys_rol_menu.id_empresa' 	=> Session::get('id_empresa')
-				,'sys_rol_menu.id_sucursal' => Session::get('id_sucursal')
-				,'sys_rol_menu.id_rol' 		=> Session::get('id_rol')
-			];
-			return $query->where($where)->orderBy('orden', 'asc');
-
-		},'roles','details','empresas','correos'])->whereId( Session::get('id') )->get();
-		$by_users = $response[0]->correos()
-								//->where(['estatus_recibidos' => 1, 'estatus_vistos' => 0])
-								->whereEstatus_recibidosAndEstatus_vistos(1,0)
-								->orderBy('id','desc')
-								->get();
-		#debuger($by_users);
-
-		if( Session::get('id_rol') != 1){
-			$users = SysUsersModel::with(['notificaciones'])->whereId( Session::get('id') )->first();
-			$notificaciones = $users->notificaciones()->get();
-		}else{
-			$notificaciones = SysNotificacionesModel::all();
-		}
-
-		$parse['MENU_DESKTOP'] 		= self::menus($response);
-		self::$_titulo = (isset(SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial)) ? SysEmpresasModel::whereId( Session::get('id_empresa') )->first()->nombre_comercial : "Empresa No Asignada";
-		$parse['APPTITLE'] 			= utf8_decode(ucwords(strtolower(self::$_titulo)));
-		$parse['IMG_PATH'] 			= domain() . 'images/';
-		$parse['icon'] 				= "img/login/buro_laboral.ico";
-		$parse['anio'] 				= date('Y');
-		$parse['version'] 			= "2.0.1";
-		$parse['base_url'] 			= domain();
-		$parse['nombre_completo'] 	= Session::get('name') . " " . Session::get('first_surname');
-		$parse['desarrollo'] 		= utf8_decode(self::$_desarrollo);
-		$parse['link_desarrollo'] 	= utf8_decode(self::$_link_desarrollo);
-		$parse['welcome'] 			= "Bienvenid@";
-		$parse['photo_profile'] 	= isset($response[0]->details->foto)?$response[0]->details->foto : asset('img/profile/profile.png');
-		$parse['rol'] 				= isset($response[0]->roles[0])? $response[0]->roles[0]->perfil : "Perfil No Asignado";
-		$parse['empresa'] 			= (isset(SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial)) ? SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get()[0]->nombre_comercial : "Empresa No Asignada";
-		$parse['sucursal'] 			= (isset(SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal)) ? SysSucursalesModel::where(['id' => Session::get('id_sucursal')])->get()[0]->sucursal : "Sucursal No Asignada";
-		$parse['url_previus'] 		= (Session::get('id_empresa') != 0 && Session::get('id_sucursal') != 0) ? route('list.empresas') : route("/");
-
-		$parse['page_title'] 		= isset($parse['page_title']) ? $parse['page_title'] : " ";
-		$parse['title'] 			= isset($parse['title']) ? $parse['title'] : "";
-		$parse['subtitle'] 			= isset($parse['subtitle']) ? $parse['subtitle'] : "";
-		
-		$parse['count_correo'] 			= count( $by_users );
-		$parse['efect_notify_correo'] 	= (count($by_users) > 0) ? "notify" : "";
-		$parse['efect_notify'] 			= (count($notificaciones) > 0) ? "notify" : "";
-		$parse['count_notify'] 			= count($notificaciones);
-		$parse['notifications'] 		= $notificaciones;
-		
-		$parse['emails'] 				= $by_users;
-		#$parse['permisos']        = Session::get('permisos');
-		$eliminar = (isset(Session::get('permisos')['DEL'])) ? Session::get('permisos')['DEL'] : true;
-		$insertar = (isset(Session::get('permisos')['INS'])) ? Session::get('permisos')['INS'] : true;
-		$update = (isset(Session::get('permisos')['UPD'])) ? Session::get('permisos')['UPD'] : true;
-		$select = (isset(Session::get('permisos')['GET'])) ? Session::get('permisos')['GET'] : true;
-		$upload_files = (isset(Session::get('permisos')['UPLF'])) ? Session::get('permisos')['UPLF'] : true;
-		$correos = (isset(Session::get('permisos')['EMAIL'])) ? Session::get('permisos')['EMAIL'] : true;
-		$reportes = (isset(Session::get('permisos')['PDF'])) ? Session::get('permisos')['PDF'] : true;
-		$excel = (isset(Session::get('permisos')['EXL'])) ? Session::get('permisos')['EXL'] : true;
-		$modal = (isset(Session::get('permisos')['AGR'])) ? Session::get('permisos')['AGR'] : true;
-		$notify = (isset(Session::get('permisos')['NTF'])) ? Session::get('permisos')['NTF'] : true;
-		$permisos = (isset(Session::get('permisos')['PER'])) ? Session::get('permisos')['PER'] : true;
-		$email = (isset(Session::get('permisos')['SEND'])) ? Session::get('permisos')['SEND'] : true;
-		$upload = (isset(Session::get('permisos')['UPL'])) ? Session::get('permisos')['UPL'] : true;
-		$impresion = (isset(Session::get('permisos')['IMP'])) ? Session::get('permisos')['IMP'] : true;
-		#debuger(build_buttons($insertar,'v-insert_register','Registrar','btn btn-success', 'fa fa-save','id="destroy"'));
-		$parse['eliminar'] = (!$eliminar) ? "style=display:block;" : "style=display:none;";
-		$parse['insertar'] = (!$insertar) ? "style=display:block;" : "style=display:none;";
-		$parse['button_insertar'] = build_buttons($insertar, 'v-insert_register', 'Registrar', 'btn btn-primary', 'fa fa-save', 'id="insert"');
-		$parse['update'] = (!$update) ? "style=display:block;" : "style=display:none;";
-		$parse['button_update'] = build_buttons($update, 'v-update_register', 'Actualizar', 'btn btn-info', 'fa fa-save', 'id="insert"');
-		$parse['select'] = (!$select) ? "style=display:block;" : "style=display:none;";
-		$parse['correos'] = (!$correos) ? "style=display:block;" : "style=display:none;";
-
-		$parse['reportes'] = (!$reportes) ? "style=display:block;" : "style=display:none;";
-		$parse['seccion_reportes'] = reportes($reportes, $excel);
-		$parse['excel'] = (!$excel) ? "style=display:block;" : "style=display:none;";
-		
-		$parse['notify'] = (!$notify) ? "style=display:block;" : "style=display:none;";
-		$parse['permisos'] = (!$permisos) ? "style=display:block;" : "style=display:none;";
-		$parse['email'] = (!$email) ? "style=display:block;" : "style=display:none;";
-		$parse['upload'] = (!$upload) ? "style=display:block;" : "style=display:none;";
-		
-		$parse['agregar'] = (isset($parse['agregar'])) ? "#" . $parse['agregar'] : "#modal_add_register";
-		$parse['buscador'] = (isset($parse['buscador'])) ? "#" . $parse['buscador'] : "#datatable";
-		#$parse['upload_files'] = (!$upload_files) ? "style=display:block;" : "style=display:none;";
-		$parse['upload_files'] = build_buttons($upload_files, 'upload_files_general()', 'Cargar Catalogos', 'btn btn-warning' ,'fa fa-upload', '');
-
-		$parse['modal'] = build_buttons($modal, 'register_modal_general("'.$parse['agregar'].'")', 'Agregar','btn btn-success','fa fa-plus-circle', 'id="modal_general"');
-		
-		return View($view, $parse);
-
-	}
-	/**
-	 * Metodo para realizar la consulta de la session.
-	 * @access public
-	 * @param $where array [description]
-	 * @return void
-	 */
-	public function inicio_session($where, $tabla_model)
-	{
-
 		$error = null;
 		try {
-			$condicion = [];
-			if (isset($where->email) && isset($where->password)) {
-				$condicion['email'] = $where->email;
-				$condicion['password'] = $where->password;
-				$condicion['confirmed'] = true;
+			$conditions = [];
+			if ( isset( $request->email ) && isset( $request->password ) ) {
+				$conditions     = ( filter_var( $request->email, FILTER_VALIDATE_EMAIL ) )? ['email' => $request->email ]: ['username' => $request->email];
+				$conditions['confirmed'] = TRUE;
 			}
-			$datos = ['api_token' => str_random(50)];
-			$where = ['email' => $where->email];
-			$response = self::$_model::update_model($where, $datos, $tabla_model);
-			$condicion['api_token'] = ($response) ? $response[0]->api_token : null;
+			$information = ['api_token' => str_random(50)];
+			$where = ( filter_var( $request->email, FILTER_VALIDATE_EMAIL  ) )? ['email' => $request->email ]: ['username' => $request->email ];
+			$users::where( $where )->update($information);
+            $response = $users->where($where)->first();
+            $conditions['api_token'] = ( $response ) ? $response->api_token : NULL;
+            $user = $users::with(['menus' => function( $query ){
+                return $query->groupby('id');
+			},'companies','groups','roles'])->where( $conditions )->first();
+            if ( $user->companies == null ) {
+                return new JsonResponse([
+                    "success"   => false ,
+                    "data"      => $user->companies ,
+                    "message"   => "¡No tiene asignada empresa, favor de contactar al administrador!"
+                ],Response::HTTP_BAD_REQUEST);
+            }
+            $companies  = $user->companies()->where(['estatus' => true])->groupBy('id')->get();
+            $groups     = $user->groups()->where(['estatus' => true])->groupBy('id')->get();
 
-			$consulta = $tabla_model::with(['menus' => function($query){
-					return $query->where(['sys_rol_menu.estatus' => 1])->groupby('id');
-			},'empresas','sucursales','roles'])->where($condicion)->get();
-			
-			#debuger(count($consulta[0]->sucursales));
-			/*$consulta = $tabla_model::with(['menus' => function ($query) {
-				return $query->where(['sys_rol_menu.estatus' => 1])->groupBy('sys_rol_menu.id_users', 'sys_rol_menu.id_menu', 'sys_rol_menu.estatus');
-
-			}, 'roles' => function ($query) {
-				return $query->where(['sys_roles.estatus' => 1])->groupBy('sys_users_roles.id_users', 'sys_users_roles.id_rol');
-			}, 'empresas' => function ($query) {
-				return $query->where(['sys_empresas.estatus' => 1])->groupBy('id_users', 'id', 'nombre_comercial');
-			}, 'sucursales' => function ($query) {
-				return $query->groupby('id');
-			}])->where($condicion)->get();*/
-        	#debuger($consulta[0]->menus);
-			if (count($consulta) > 0) {
-				$usuarios = data_march($consulta);
-				$session = [];
-				$keys = ['password', 'remember_token', 'confirmed_code'];
-				foreach ($usuarios[0] as $key => $value) {
-					if (!in_array($key, $keys)) {
-						$session[$key] = $value;
-					}
+            if ( password_verify($request->password, $user->password) ) {
+                $session = [];
+                $keys = ['password', 'remember_token', 'confirmed_code'];
+                foreach ($user->fillable as $key => $value) {
+                    if (!in_array($value, $keys)) {
+                        $session[$value] = $user->$value;
+                    }
+                }
+				if ( $companies->count() > 1 || $groups->count() > 1 ) {
+					Session::put( $session );
+					$this->_binnacleCreate($users);
+					$session['ruta'] = 'list/companies';
+					return new JsonResponse([
+					    "success"   => TRUE ,
+					    "data"      => $session ,
+                        "message"   => "¡Usuario Inicio Sesión Correctamente!"
+                    ],Response::HTTP_OK);
 				}
-				foreach ($consulta as $response) {
-					$empresas = $response->empresas;
-				}
-          #se realiza la consulta a la tabla ralacional.
-				if (count($empresas) > 1) {
-					Session::put($session);
-					self::_bitacora();
-					$session['ruta'] = 'list/empresas';
-					return $this->_message_success(200, $session, '¡Usuario inicio Sesion Correctamente!');
-				}
-				$sessions['id_empresa'] = isset($consulta[0]->empresas[0]->id) ? $consulta[0]->empresas[0]->id : 0;
-				$sessions['id_sucursal'] = isset($consulta[0]->sucursales[0]->id) ? $consulta[0]->sucursales[0]->id : 0;
-				$sessions['id_rol'] = isset($consulta[0]->roles[0]->id) ? $consulta[0]->roles[0]->id : "";
-				$ruta = self::data_session($consulta[0]->menus);
-				$sesiones = array_merge($sessions, $ruta);
-				if (count($consulta[0]->menus) < 1) {
-					return $this->show_error(6, $sesiones, '¡No cuenta con permisos necesarios, favor de contactar al administrador!');
-				}
-				Session::put(array_merge($session, $sesiones));
-				self::_bitacora();
-				return $this->_message_success(200, array_merge($session, $sesiones), '¡Usuario inicio Sesion Correctamente!');
+				$sessions['company_id']  = isset( $user->companies[0]->id) ? $user->companies[0]->id : 0;
+				$sessions['group_id']    = isset( $user->groups[0]->id) ? $user->groups[0]->id : 0;
+				$sessions['roles_id']    = isset( $user->roles[0]->id) ? $user->roles[0]->id : "";
+                $path       = self::dataSession( $user->menus );
+                $sesiones   = array_merge($sessions, $path);
+                if ( count($user->menus) < 1 ) {
+                    return new JsonResponse([
+                        "success"   => FALSE ,
+                        "data"      => $sesiones ,
+                        "message"   => "¡No cuenta con permisos necesarios, favor de contactar al administrador!"
+                    ],Response::HTTP_BAD_REQUEST);
+                }
+                Session::put( array_merge( $session, $sesiones ) );
+                $this->_binnacleCreate($users);
+                return new JsonResponse([
+                    "success"   => TRUE ,
+                    "data"      => array_merge( $session, $sesiones ) ,
+                    "message"   => "¡Usuario Inicio Sesión Correctamente!"
+                ],Response::HTTP_OK);
 			}
-			$success = true;
-			return $this->show_error(6, $consulta, '¡Por favor verificar la información ingresada!');
-		} catch (\Exception $e) {
-			$success = false;
+            return new JsonResponse([
+                "success"   => FALSE ,
+                "data"      => $user ,
+                "message"   => "¡Por favor verificar la información ingresada!"
+            ],Response::HTTP_BAD_REQUEST);
+		} catch ( \Exception $e) {
 			$error = $e->getFile() . " " . $e->getMessage() . " " . $e->getLine();
-			return $this->show_error(6, $error);
-        #$error = $e->getFile()." ".$e->getMessage()." ".$e->getLine();
+			\Log::debug($error);
+            return new JsonResponse([
+                "success"   => FALSE ,
+                "data"      => $error ,
+                "message"   => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
 		}
 
 	}
-	/**
-	 * Metodo Donde se realizan las consultas necesarias para cargar los datos del correo.
-	 * @access public
-	 * @param $where array [description]
-	 * @return void
-	 */
+
+    /**
+     * Metodo Donde se realizan las consultas necesarias para cargar los datos del correo.
+     * @access public
+     * @return array
+     */
 	public static function page_mail()
 	{
 		$ruta_validate = substr(parse_domain()->uri, 1);
@@ -491,16 +290,16 @@ abstract class MasterController extends Controller
 		$ruta_validate = substr(parse_domain()->urls, 1);
 		$recibidos = $papelera = $destacados = $enviados = $borradores = $etiquetas = [];
 		$categorias = SysCategoriasModel::where(['estatus' => 1, 'id_users' => Session::get('id')])->get();
-		$response_correo = SysUsersModel::with('correos','plantillas')->where(['id' => Session::get('id')])->get();
+		$response_correo = SysUsersModel::with(['correos','plantillas'])->whereId( Session::get('id') )->first();
 		/*se realiza la consulta de los correos recibidos*/
-		$recibidos = $response_correo[0]->correos()
+		$recibidos = $response_correo->correos()
 										->with(['categorias'])
 										->where(['estatus_recibidos' => 1])
 										->where(['estatus_papelera' => 0])
 										->orderby('created_at','desc')
 										->get();
 		/*se utiliza esta consulta para realizar el conteo de recibidos*/										
-		$recibidos_conteo = $response_correo[0]->correos()
+		$recibidos_conteo = $response_correo->correos()
 										->with(['categorias'])
 										->where(['estatus_recibidos' => 1])
 										->where(['estatus_vistos' => 0])
@@ -508,7 +307,7 @@ abstract class MasterController extends Controller
 										->get();
 		#debuger($recibidos);
 		/*se realiza la consulta para los correos enviados*/
-		$enviados  = $response_correo[0]->correos()
+		$enviados  = $response_correo->correos()
 										->with(['categorias'])
 										->where(['estatus_enviados' => 1])
 										->where(['estatus_papelera' => 0])
@@ -516,20 +315,20 @@ abstract class MasterController extends Controller
 										->get();
 
 		/*se realiza la consulta de los datos de los correos enviados a la papelera*/
-		$papelera  = $response_correo[0]->correos()
+		$papelera  = $response_correo->correos()
 										->with(['categorias'])
 										->where(['estatus_papelera' => 1])
 										->orderby('created_at','desc')
 										->get();
 		/*se realiza la consulta de los datos de los correos destacados*/
-		$destacados  = $response_correo[0]->correos()
+		$destacados  = $response_correo->correos()
 										  ->with(['categorias'])
 										  ->where(['estatus_destacados' => 1])
 										  ->where(['estatus_papelera' => 0])
 										  ->orderby('created_at','desc')
 										  ->get();
 		/*se realiza la consulta de los datos de los correos borradores*/
-		$borradores  = $response_correo[0]->correos()
+		$borradores  = $response_correo->correos()
 										  ->with(['categorias'])
 										  ->where(['estatus_borradores' => 1])
 										  ->where(['estatus_papelera' => 0])
@@ -582,65 +381,7 @@ abstract class MasterController extends Controller
 		return $data;
 
 	}
-	/**
-	 * Metodo para obtener el conteo y la informacion de cada seccion de los correos.
-	 * @access public
-	 * @param array $data [Description]
-	 * @return array
-	 */
-	private static function _parse_array($data = [])
-	{
-		$datos = [];
-		foreach ($data as $key => $value) {
-			foreach ($value as $key => $values) {
-				$datos[] = $values;
-			}
-		}
-		return $datos;
-	}
-	/**
-	 * Metodo para hacer la consulta de la vacante
-	 * @access public
-	 * @param string $request [Description]
-	 * @param boolean $encode_64  [Description]
-	 * @return void
-	 */
-	public static function upload_file($request, $encode_64 = false, $directorio = false)
-	{
-		$files = $request->file('file');
-		$archivo = [];
-		for ($i = 0; $i < count($files); $i++) {
-			
-			if ($encode_64) {
-				$imagedata = file_get_contents($files[$i]);
-				$nombre_temp = $files[$i]->getClientOriginalName();
-				$extension = strtolower($files[$i]->getClientOriginalExtension());
-				switch ($extension) {
-					case 'pdf':
-						$file = "application";
-						break;
-					case 'png':
-						$file = "image";
-						break;
-					case 'jpg':
-						$file = "image";
-						break;
-					case 'jpeg':
-						$file = "image";
-						break;
-				}
-				//$archivo['file'][] = addslashes($imagedata);
-				$archivo['file'][] = 'data:' . $file . '/' . $extension . ';base64,' . base64_encode($imagedata);;
-			} else {
-				$upload = new Upload;
-				$upload->directorio = (isset($directorio) && $directorio != "") ? $directorio : "upload_file/catalogos/";
-				$archivo['file'][] = $upload->upload_file(new Request( $request->all() ));
-			}
 
-
-		}
-		return $archivo;
-	}
 	/**
 	 * Carga y manda a llamar un facades para leer la informacion e insertar la informacion en sus respectivas tablas
 	 * @access public
@@ -648,7 +389,7 @@ abstract class MasterController extends Controller
 	 * @param boolean nombre tabla a insertar  [Description]
 	 * @return void
 	 */
-	public static function upload_file_catalogos(Request $request, $directorio, $models = false)
+	public static function upload_file_catalogos(Request $request, $directorio, $models = null)
 	{
 		try {
 			$upload = new Upload;
@@ -670,66 +411,73 @@ abstract class MasterController extends Controller
 		}
 
 	}
-	/**
-	 *Metodo para hacer la consulta para los menus
-	 *@access public
-	 *@param string $request [Description]
-	 *@return void
-	 */
-	public static function data_session($request)
+
+    /**
+     * This method is used get for menus the user by group
+     * @access public
+     * @param string $request [Description]
+     * @return array
+     */
+	public static function dataSession( $request )
 	{
-         #debuger($request);
 		$session = [];
-		if (count($request) > 0) {
-			foreach ($request as $rutas) {
-				if (isset($rutas->link) && $rutas->link != "") {
-					$session['ruta'] = $rutas->link;
+		if ($request) {
+			foreach ($request as $path ) {
+				if (isset( $path->link ) && $path->link != "") {
+					$session['ruta'] = $path->link;
 					break;
 				}
 			}
-
 		} else {
 			$session['ruta'] = 'failed/error';
 		}
 		return $session;
 	}
-	/**
-	 *Metodo para hacer la consulta de la vacante
-	 *@access private
-	 *@return void
-	 */
-	protected static function _bitacora($logout = false)
+
+    /**
+     *This method is used for created user binnacle
+     * @access protected
+     * @param bool $logout
+     * @param SysUsersModel $users
+     * @return void
+     */
+	protected function _binnacleCreate( SysUsersModel $users, bool $logout = false )
 	{
-  		 #se realiza una transaccion
 		$error = null;
 		DB::beginTransaction();
 		try {
-			$users = SysUsersModel::where(['id' => Session::get('id')])->get();
-			$where = ['id' => $users[0]->id_bitacora, 'id_users' => Session::get('id')];
-			$sesiones = SysSesionesModel::where($where)->get();
-			$fecha_inicio = isset($sesiones[0]->created_at) ? $sesiones[0]->created_at : timestamp();
-			$fecha_final = isset($sesiones[0]->updated_at) ? $sesiones[0]->updated_at : timestamp();
-
+			$user = $users->find(Session::get('id'));
 			if ($logout) {
-				$data_logout = [
-					'conect' => 0, 'disconect' => 1, 'updated_at' => timestamp(), 'time_conected' => time_fechas($fecha_inicio, timestamp())
+                $binnacle = $user->binnacle;
+                $beginDate  = isset($binnacle->created_at) ? $binnacle->created_at : timestamp();
+				$dataLogout = [
+					'conect'        => FALSE ,
+                    'disconect'     => TRUE ,
+                    'updated_at'    => timestamp() ,
+                    'time_conected' => time_fechas($beginDate, timestamp())
 				];
-				SysSesionesModel::where($where)->update($data_logout);
-
+				$user->binnacle()->update($dataLogout);
 			} else {
-				$data = [
-					'id_users' => Session::get('id'), 'ip_address' => get_client_ip(), 'user_agent' => detect()['user_agent'], 'conect' => 1, 'disconect' => 0
+                $data = [
+					'id_users'      => Session::get('id') ,
+                    'ip_address'    => get_client_ip() ,
+                    'user_agent'    => detect()['user_agent'] ,
+                    'conect'        => TRUE ,
+                    'disconect'     => FALSE
 				];
-				$bitacora = SysSesionesModel::create($data);
-  				 #debuger($bitacora);
-				SysUsersModel::where(['id' => Session::get('id')])->update(['id_bitacora' => $bitacora->id]);
+                if ($user->binnacle){
+                    $binnacle = $user->binnacle->create($data);
+                }else{
+                    $binnacle = $user->binnacle()->create($data);
+                }
+                $user->update(['id_bitacora' => $binnacle->id ]);
 			}
-
 			DB::commit();
 			$success = true;
 		} catch (\Exception $e) {
 			$success = false;
-			$error = $e->getMessage();
+			$error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
+			\Log::error($error);
 			DB::rollback();
 		}
 
@@ -747,9 +495,7 @@ abstract class MasterController extends Controller
 	 */
 	protected static function _validateXml($xml_path = false)
 	{
-
 		if (!empty($xml_path)) {
-
 			$data = self::_load_file_xml($xml_path);
 			$texto = $data['texto'];
 			$xml = $data['object'];
@@ -878,9 +624,7 @@ abstract class MasterController extends Controller
 	 */
 	protected static function _load_file_xml($xml_path = false)
 	{
-
 		if (!empty($xml_path)) {
-
 			$texto = file_get_contents($xml_path);
 			if (substr($texto, 0, 3) == pack("CCC", 0xef, 0xbb, 0xbf)) {
 				$texto = substr($texto, 3);
@@ -908,15 +652,15 @@ abstract class MasterController extends Controller
 		return false;
 
 	}
-	/**
-	 * Metodo para realizar los reportes de las facturas.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	public static function reporte_general($filtros = [])
-	{
 
+    /**
+     * Metodo para realizar los reportes de las facturas.
+     * @access public
+     * @param array $filtros
+     * @return array
+     */
+	public static function reporte_general( $filtros = [] )
+	{
 		$fecha_actual = date('Y-m-d');
 		$fecha_actual = explode('-', $fecha_actual);
 		$anio = isset($fecha_actual[0]) ? $fecha_actual[0] : "";
@@ -1008,114 +752,220 @@ abstract class MasterController extends Controller
 		return $response;
 
 	}
-	/**
-	 * Metodo para obtener los registros de los productos por empresa.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	protected function _consulta($table_model, $with = [], $where = [], $where_pivot = [],$method = false, $with_pivot = [])
-	{
-		$response = $table_model::with(['empresas' => function ($query) use ($where_pivot, $with_pivot) {
-			return $query->with($with_pivot)->where($where_pivot)->get();
-		}])->with($with)->where($where)->orderby('id', 'desc')->get();
-		$request = [];		
-		foreach ($response as $respuesta) {
-			if (count($respuesta->empresas) > 0) {
-				if ($method) {
-					$request = $respuesta->$method;
-				} else {
-					$request[] = $respuesta;
-				}
-			}
-		}
-		#debuger($response);
-		return $request;
-	
-	}
-	/**
-	 * Metodo para obtener los registros de los productos por empresa.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	protected function _consulta_employes($table_model, $with = [])
-	{
-        #SysUsersModel
-		$response = $table_model::with(['empresas' => function ($query) {
-			if (Session::get('id_rol') != 1) {
-				return $query->where(['sys_empresas.estatus' => 1, 'id' => Session::get('id_empresa')])->groupby('id');
-			}
-		}])->with($with)->where(['id' => Session::get('id')])->orderby('id', 'desc')->get();
-		$request = [];
-		foreach ($response as $respuesta) {
-			if (count($respuesta->empresas) > 0) {
-				$request = $respuesta->empresas;
-			}
-		}
-		return $request;
 
-	}
-	/**
-	 * Metodo para obtener los registros de los menus de esa empresa.
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	protected function _consulta_menus($table_model)
-	{
-        #SysUsersModel
-		$usuarios = $table_model::with(['menus' => function ($query) {
-			$where = [
-				'sys_rol_menu.estatus' => 1, 'sys_rol_menu.id_empresa' => Session::get('id_empresa'), 'sys_rol_menu.id_sucursal' => Session::get('id_sucursal'), 'sys_rol_menu.id_rol' => Session::get('id_rol')
-			];
-			return $query->where($where)->groupby('id')->orderBy('orden', 'asc')->get();
-		}])->where(['id' => Session::get('id')])->get();
-		$response = [];
-		foreach ($usuarios as $menu) {
-			$response = $menu->menus;
-		}
-		return $response;
-	}
-	/**
-	 * Metodo para obtener la validacion de la consulta
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	protected function _validate_consulta( $table_model, $with = [],$where = [],$where_pivot = [],$where_admin = [],$method= false )
-	{
-		if( Session::get('id_rol') == 1 ){
-        	return $table_model::with(['empresas'])->with($with)->where($where_admin)->orderBy('id','desc')->get();
-        }if( Session::get('id_rol') == 3 ){
-        	return $this->_consulta($table_model,$with,$where,$where_pivot, $method );
-        }else if( Session::get('id_rol') != 3 && Session::get('id_rol') != 1){
-            
+    /**
+     * @return mixed
+     */
+    protected function _menusBelongsCompany()
+    {
+        if (Session::get("roles_id") == 1){
+
+            $response = SysMenuModel::with('companiesMenus')
+                ->orderBy('orden','ASC')
+                ->groupby('id')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find(Session::get('company_id'))
+                ->menusCompanies()->with('companiesMenus')
+                ->orderBy('orden','ASC')
+                ->groupby('id')
+                ->get();
+        }
+        return $response;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function _actionByCompanies()
+    {
+        $user = SysUsersModel::find(Session::get('id'));
+        return $user->permission()->where([
+            "status"       => TRUE
+            ,"sys_permission_menus.company_id"  => Session::get('company_id')
+            ,"sys_permission_menus.group_id"    => Session::get('group_id')
+            ,"sys_permission_menus.roles_id"    => Session::get('roles_id')
+        ])->groupby('id')->orderby('id','ASC')->get();
+
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function _groupsBelongsCompanies()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $response = SysSucursalesModel::with('companiesGroups')
+                ->orderBy('id','DESC')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find( Session::get('company_id') )
+                ->groupsCompanies()->with('companiesGroups','rolesGroups')
+                ->orderBy('id','DESC')
+                ->groupby('id')
+                ->get();
+        }
+        return $response;
+    }
+
+    /**
+     * This method is for get roles by companies
+     * @access public
+     * @return void
+     */
+    protected function _rolesBelongsCompany()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $response = SysRolesModel::with('companiesRoles','groupsRoles')
+                        ->orderBy('id','DESC')
+                        ->get();
+        }else{
+            $response = SysEmpresasModel::find( Session::get('company_id') )
+                        ->rolesCompanies()->with('companiesRoles','groupsRoles')
+                        ->orderBy('id','DESC')
+                        ->groupby('id')
+                        ->get();
+        }
+        return $response;
+    }
+
+    /**
+     * This is method is for do query
+     * @return mixed
+     */
+    protected function _usersBelongsCompany()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $response = SysUsersModel::with(
+                            'binnacle'
+                            ,'roles'
+                            ,'groups'
+                            ,'companies'
+                        )->orderBy('id','DESC')
+                        ->groupby('id')->get();
+        }else{
+            $response = SysEmpresasModel::find(Session::get('company_id'))
+                        ->users()
+                        ->with(
+                            'roles'
+                            ,'groups'
+                            ,'binnacle'
+                            ,'companies'
+                        )->orderBy('id','DESC')->groupby('id')->get();
+        }
+        return $response;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function _companyBelongsUsers()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $response = SysEmpresasModel::with("comerciales","postalCode","regimenes","states","countries","contacts" )
+                        ->orderBy('id','DESC')->get();
+        }else{
+            $user = SysUsersModel::find(Session::get("id"));
+            $response = $user->companies()
+                            ->with("comerciales","postalCode","regimenes","states","countries","contacts" )
+                            ->orderBy('id','DESC')->groupby('id')->get();
+        }
+        return $response;
+    }
+
+    /**
+     * this method is used load products by company
+     * @access public
+     * @return void
+     */
+    protected function _productsBelongCompany()
+    {
+        if( Session::get('roles_id') == 1 ){
+
+            $response = SysProductosModel::with('units','categories','companies',"groups")
+                ->orderBy('id','DESC')
+                ->groupby('id')
+                ->get();
+        }else{
+            $response = SysEmpresasModel::find(Session::get("company_id"))
+                ->products()
+                ->with('units','categories','companies',"groups")
+                ->orderBy('id','DESC')
+                ->groupby('id')
+                ->get();
+        }
+        return $response;
+
+    }
+
+    /**
+     * This method is used boxes get by companies
+     * @return array
+     */
+    protected function _boxesBelongsCompany()
+    {
+        if( Session::get('roles_id') == 1 ){
+            $boxes = SysBoxes::with(['companies','groups',
+                'extracts' => function($query){
+                    return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                },'logs' => function($query){
+                    return $query->where('boxes_logs.created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                },'orders' => function($query){
+                    return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                }])->orderBy('id','DESC')->groupby('id')->get();
+        }else{
+            $boxes = SysEmpresasModel::find(Session::get('company_id'))
+                        ->boxes()->with(['companies','groups',
+                        'extracts' => function($query){
+                            return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                        },'logs' => function($query){
+                            return $query->where('boxes_logs.created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                        },'orders' => function($query){
+                            return $query->where('created_at','LIKE',$this->_today->format('Y-m-d').'%');
+                        }])->orderBy('id','DESC')->groupby('id')->get();
+        }
+        $response = [];
+        foreach ($boxes as $box){
+            $response[] = [
+                'id'            => $box->id ,
+                'name'          => $box->name ,
+                'description'   => $box->description ,
+                'status'        => $box->status ,
+                'is_active'     => $box->is_active ,
+                'init_mount'    => $box->init_mount ,
+                'companies'     => ($box->companies()->count() > 0)? $box->companies[0]->razon_social : '',
+                'groups'        => ($box->groups()->count() > 0)? $box->groups[0]->sucursal : '',
+                'mount_today'   => $this->_getMountToday($box) ,
+            ];
+        }
+        return $response;
+    }
+
+    /**
+     * This method is uses make the total orders
+     * @param $box
+     * @return int|string
+     */
+    private function _getMountToday($box)
+    {
+        $total   =  $box->init_mount;
+        $extract =  $box->extracts()->sum('extract');
+        foreach ($box->orders as $orders){
+            $total +=  $orders->total;
         }
 
-	}
-	/**
-	 * Metodo para obtener los catalogos de cada empresas
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	protected function _catalogos_bussines( $table_model, $with = [], $where = [], $where_pivot = [] )
-	{
-		if( Session::get('id_rol') == 1 ){
-        	return $table_model::with($with)->orderBy('id','desc')->get();
-        }if( Session::get('id_rol') != 1 ){
-        	return $this->_consulta($table_model,$with,$where,$where_pivot, false );
-        }
+        return ($total - $extract);
+    }
 
-	}
-	/**
-	 * Metodo para cargar la platilla de forma general para la generacion de las cotizaciones/ pedidos
-	 * @access public
-	 * @param Request $request [Description]
-	 * @return void
-	 */
-	protected function _plantillas( $request, $correo = false ){
+    /**
+     * Metodo para cargar la platilla de forma general para la generacion de las cotizaciones/ pedidos
+     * @access public
+     * @param Request $request [Description]
+     * @param bool $correo
+     * @return void
+     */
+	protected function _plantillas( $request, $correo = false )
+    {
 		#debuger($request);
 		$pdf = PDF::loadView('plantillas.reportes', $request );
 		if (!$correo) {

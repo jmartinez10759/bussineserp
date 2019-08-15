@@ -6,367 +6,386 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
-use App\Model\Administracion\Configuracion\SysPaisModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysEstadosModel;
 use App\Model\Administracion\Configuracion\SysEmpresasModel;
-use App\Model\Administracion\Configuracion\SysContactosModel;
-use App\Model\Administracion\Configuracion\SysSucursalesModel;
-use App\Model\Administracion\Configuracion\SysTipoFactorModel;
-use App\Model\Administracion\Configuracion\SysCodigoPostalModel;
 use App\Model\Administracion\Configuracion\SysRegimenFiscalModel;
-use App\Model\Administracion\Configuracion\SysContactosSistemasModel;
-use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
-use App\Model\Administracion\Configuracion\SysEmpresasSucursalesModel;
 use App\Model\Administracion\Configuracion\SysServiciosComercialesModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmpresasController extends MasterController
 {
-    #se crea las propiedades
-    private $_tabla_model;
-
-    public function __construct(){
+    /**
+     * EmpresasController constructor.
+     */
+    public function __construct()
+    {
         parent::__construct();
-        $this->_tabla_model = new SysEmpresasModel;
     }
-/**
- *Metodo para pintar la vista y cargar la informacion principal del menu
- *@access public
- *@return void
- */
-  public function index(){
 
-    if( Session::get('permisos')['GET'] ){
-      return view('errors.error');
-    }    
-    $response_sucursales = SysSucursalesModel::where(['estatus' => 1 ])->groupby('id')->get();
-
-   foreach ($response_sucursales as $respuesta) {
-     $id['id'] = $respuesta->id;
-     $checkbox = build_actions_icons($id,'id_sucursal= "'.$respuesta->id.'" ','check_sucursales');
-     $registros_sucursales[] = [
-        $respuesta->id
-       ,$respuesta->codigo
-       ,$respuesta->sucursal
-       ,$checkbox
-     ];
-   }
-
-   $titulos = [ 'id','Codigo','Sucursal',''];
-   $table_sucursales = [
-     'titulos'        => $titulos
-     ,'registros'     => $registros_sucursales
-     ,'id'            => "data_table_sucursales"
-   ];
-
-
-   $data = [
-     'page_title'               =>  "Configuración"
-     ,'title'                   =>  "Empresas"
-     ,'data_table'              =>  "data_table(table)"
-     ,'data_table_sucursales'   =>  data_table($table_sucursales)
-   ];
-    #debuger($data);
-    return self::_load_view( 'administracion.configuracion.empresas', $data );
-  
-  }
-  /**
-  *Metodo para realizar la consulta por medio de su id
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public function all( Request $request ){    
-   try {
-        $response = ( Session::get('id_rol') == 1 )? 
-        $this->_tabla_model::with(['contactos','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])->orderby('id','desc')->get()
-        :$this->_consulta(new SysUsersModel,[],[],['id' => Session::get('id_empresa')],'empresas',['contactos','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion']);
-
-        $data = [
-          'response'                 => $response  
-          ,'paises'                  => SysPaisModel::get()
-          ,'servicio_comercial'      => SysServiciosComercialesModel::get()
-          ,'regimen_fiscal'          => SysRegimenFiscalModel::get()
-        ];
-
-        return $this->_message_success( 200, $data , self::$message_success );
-      } catch (\Exception $e) {
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          return $this->show_error(6, $error, self::$message_error );
+    /**
+     * This method is used load for view companies
+     * @access public
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+      public function index()
+      {
+           $data = [
+             'page_title'               =>  "Configuración"
+             ,'title'                   =>  "Empresas"
+           ];
+           return $this->_loadView( 'administracion.configuracion.empresas', $data );
       }
 
-  }
- /**
-  *Metodo para
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public function store( Request $request){
-       #debuger($request->all());
-       $error = null;
+    /**
+     * This method is used for load information data
+     * @access public
+     * @return JsonResponse
+     */
+      public function all()
+      {
+          try {
+            $data = [
+              'companies'          => $this->_companyBelongsUsers(),
+              'tradeService'       => SysServiciosComercialesModel::get() ,
+              'taxRegime'          => SysRegimenFiscalModel::get() ,
+            ];
+
+              return new JsonResponse([
+                  "success" => TRUE ,
+                  "data"    => $data ,
+                  "message" => self::$message_success
+              ], Response::HTTP_OK);
+
+
+          } catch (\Exception $e) {
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              \Log::debug($error);
+              return new JsonResponse([
+                  "success" => FALSE ,
+                  "data"    => $error ,
+                  "message" => self::$message_error
+              ], Response::HTTP_BAD_REQUEST);
+          }
+
+      }
+
+    /**
+     *This method is used for insert data information
+     * @access public
+     * @param Request $request [Description]
+     * @param SysEmpresasModel $companies
+     * @return JsonResponse
+     */
+      public function store( Request $request, SysEmpresasModel $companies )
+      {
+          $error = null;
           DB::beginTransaction();
           try {
-              $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-              $string_data_empresa = [];
-              $string_data_contactos = [];
+              $stringKeyContacts = [ 'contacto','departamento','telefono', 'correo' ];
+              $stringDataCompany = [];
+              $stringDataContact = [];
               foreach( $request->all() as $key => $value ){
-                  if( in_array( $key, $string_key_contactos) ){
+                  if( in_array( $key, $stringKeyContacts) ){
                       if( $key == 'contacto' ){
-                          $string_data_contactos['nombre_completo'] = strtoupper($value);
+                          $stringDataContact['nombre_completo'] = strtoupper($value);
                       }else{
                           if($key != "correo"){
-                            $string_data_contactos[$key] = strtoupper($value);
+                              $stringDataContact[$key] = strtoupper($value);
                           }else{
-                            $string_data_contactos[$key] = $value;
+                              $stringDataContact[$key] = strtolower($value);
                           }
                       }
                   };
-                  if( !in_array( $key, $string_key_contactos) ){
+                  if( !in_array( $key, $stringKeyContacts) && $key != "contacts"){
                       if($key == "logo"){
-                        $string_data_empresa[$key] = (trim($value));
+                          $stringDataCompany[$key] = (trim($value));
                       }else{
-                        $string_data_empresa[$key] = strtoupper($value);
+                          $stringDataCompany[$key] = strtoupper($value);
                       }
                   };
-                  
-              }
-             $response = $this->_tabla_model::create( $string_data_empresa );
-             $response_contactos = SysContactosModel::create($string_data_contactos);
-              $data = [
-                  'id_empresa'      => $response->id
-                  ,'id_contacto'    => $response_contactos->id
-              ];
-             SysContactosSistemasModel::create($data);   
 
-          DB::commit();
-          $success = true;
+              }
+              $response = $companies->create($stringDataCompany);
+              $company = $companies->find($response->id);
+              $contacts = $company->contacts()->create($stringDataContact);
+              $company->contacts()->sync($contacts->id);
+
+              DB::commit();
+              $success = true;
           } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          DB::rollback();
+              $success = false;
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              \Log::debug($error);
+              DB::rollback();
           }
 
           if ($success) {
-          return $this->_message_success( 201, $response , self::$message_success );
+              return new JsonResponse([
+                  'success'   => TRUE
+                  ,'data'     => $company
+                  ,'message'  => self::$message_success
+              ], Response::HTTP_OK);
           }
-          return $this->show_error(6, $error, self::$message_error );
+          return new JsonResponse([
+              'success'   => FALSE
+              ,'data'     => $error
+              ,'message'  => self::$message_error
+          ], Response::HTTP_BAD_REQUEST);
 
-  }
- /**
-  *Metodo para realizar la consulta por medio de su id
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public function show( Request $request ){
-
-      try {
-        $where = ['id' => $request->id];
-        $response = SysEmpresasModel::with( ['contactos' => function($query){
-            return $query->where(['sys_contactos.estatus' => 1])->get();
-        },'sucursales' => function( $query ){
-            return $query->where(['sys_empresas_sucursales.estatus' => 1])->groupby('id_sucursal')->get();
-        },'clientes','comerciales:id,nombre','codigos:id,codigo_postal','regimenes:id,clave,descripcion'])
-        ->where( $where )->groupby('id')->get();
-        return $this->_message_success( 200, $response[0] , self::$message_success );
-      } catch (\Exception $e) {
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          return $this->show_error(6, $error, self::$message_error );
       }
 
-  }
- /**
-  *Metodo para la actualizacion de los registros
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public function update( Request $request){
-      #debuger($request->all());
-      $error = null;
-      DB::beginTransaction();
-      try {
-              $string_key_contactos = [ 'contacto','departamento','telefono', 'correo' ];
-              $string_key_empresas = [ 'contacto','departamento','telefono', 'correo','contactos' ];
-              $string_data_empresa = [];
-              $string_data_contactos = [];
-              foreach( $request->all() as $key => $value ){
-                  if( in_array( $key, $string_key_contactos) ){
-                      if( $key == 'contacto' ){
-                          $string_data_contactos['nombre_completo'] = strtoupper($value);
-                      }else{
-                          if($key != "correo"){
-                            $string_data_contactos[$key] = strtoupper($value);
-                          }else{
-                            $string_data_contactos[$key] = strtolower($value);
-                          }
-                      }
-                  };
-                  if( !in_array( $key, $string_key_empresas) ){
-                      if($key == "logo"){
-                        $string_data_empresa[$key] = (trim($value));
-                      }else{
-                        $string_data_empresa[$key] = strtoupper($value);
-                      }
-                  };
-                  
-              }
-           $this->_tabla_model::where(['id' => $request->id] )->update( $string_data_empresa );
-          if( count($request->contactos) > 0){
-             SysContactosModel::where(['id' => $request->contactos[0]['id'] ])->update($string_data_contactos);
-          }else{
-              $response_contactos = SysContactosModel::create($string_data_contactos);
-              $data = [
-                  'id_empresa'      => $request->id
-                  ,'id_contacto'    => $response_contactos->id
-              ];
-             SysContactosSistemasModel::create($data);   
-              
+    /**
+     * this method is used ger for information by  company id
+     * @access public
+     * @param int|null $id
+     * @param SysEmpresasModel $companies
+     * @return JsonResponse
+     */
+      public function show( int $id = null , SysEmpresasModel $companies )
+      {
+          try {
+              $response = $companies->with("comerciales","postalCode","regimenes","states","countries","contacts" )->find($id);
+              return new JsonResponse([
+                  'success'   => TRUE
+                  ,'data'     => $response
+                  ,'message'  => self::$message_success
+              ],Response::HTTP_OK);
+
+          } catch (\Exception $e) {
+              $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+              \Log::debug($error);
+              return new JsonResponse([
+                  'success'   => FALSE
+                  ,'data'     => $error
+                  ,'message'  => self::$message_error
+              ],Response::HTTP_BAD_REQUEST);
+
           }
-          
-      DB::commit();
-      $success = true;
-      } catch (\Exception $e) {
-      $success = false;
-      $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-      DB::rollback();
+
       }
 
-      if ($success) {
-      return $this->_message_success( 201, $success , self::$message_success );
-      }
-      return $this->show_error(6, $error, self::$message_error );
-
-  }
- /**
-  *Metodo para borrar el registro
-  *@access public
-  *@param $id [Description]
-  *@return void
-  */
-  public function destroy(Request $request ){
-      
-      $error = null;
+    /**
+     * This method is used update for register information of companies
+     * @access public
+     * @param Request $request [Description]
+     * @param SysEmpresasModel $companies
+     * @return JsonResponse
+     */
+      public function update( Request $request, SysEmpresasModel $companies )
+      {
+          $error = null;
           DB::beginTransaction();
-          try {  
-              $response = SysEmpresasSucursalesModel::where(['id_empresa' => $request->id])->get(); 
-              if( count($response) > 0){
-                  for($i = 0; $i < count($response); $i++){
-                      SysContactosModel::where(['id' => $response[$i]->id_contacto])->delete();
-                  }
+          try {
+              $stringKeyContacts = [ 'contacto','departamento','telefono', 'correo' ];
+              $stringDataCompany = [];
+              $stringDataContact = [];
+              foreach( $request->all() as $key => $value ){
+                  if( in_array( $key, $stringKeyContacts) ){
+                      if( $key == 'contacto' ){
+                          $stringDataContact['nombre_completo'] = strtoupper($value);
+                      }else{
+                          if($key != "correo"){
+                              $stringDataContact[$key] = strtoupper($value);
+                          }else{
+                              $stringDataContact[$key] = strtolower($value);
+                          }
+                      }
+                  };
+                  if( !in_array( $key, $stringKeyContacts) && $key != "contacts"){
+                      if($key == "logo"){
+                          $stringDataCompany[$key] = (trim($value));
+                      }else{
+                          $stringDataCompany[$key] = strtoupper($value);
+                      }
+                  };
+
               }
-              $this->_tabla_model::where(['id' => $request->id])->delete();
-              SysEmpresasSucursalesModel::where(['id_empresa' => $request->id])->delete();
-              SysContactosSistemasModel::where(['id_empresa' => $request->id])->delete();
-          DB::commit();
-          $success = true;
+              $companies->whereId($request->get("id"))->update($stringDataCompany);
+              $company = $companies->find($request->get("id"));
+
+              if( count($request->get("contacts") ) > 0 ){
+                  $company->contacts()->whereId($request->contacts[0]['id'])->update($stringDataContact);
+              }else{
+                  $contacts = $company->contacts()->create($stringDataContact);
+                  $company->contacts()->sync($contacts->id);
+              }
+
+            DB::commit();
+            $success = true;
           } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          DB::rollback();
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              \Log::debug($error);
+            DB::rollback();
           }
 
           if ($success) {
-          return $this->_message_success( 200, $response , self::$message_success );
+              return $this->show( $request->get("id"), $companies );
           }
-          return $this->show_error(6, $error, self::$message_error );
+          return new JsonResponse([
+              'success'   => FALSE
+              ,'data'     => $error
+              ,'message'  => self::$message_error
+          ], Response::HTTP_BAD_REQUEST);
 
-  }
- /**
-  * Metodo para seleccionar si es que tiene mas de 1 empresa ese usuario.
-  * @access public
-  * @return void
-  */
-  public static function lista(){
-        $data['titulo'] = "LISTADO DE EMPRESAS";
-        $data['titulo_sucusales'] = "LISTADO DE SUCURSALES";
-        return view('administracion.configuracion.list_bussines',$data);
-  
-  }
+      }
 
-  public static function load_empresa(){
-
+    /**
+     * this method is used register delete of company
+     * @access public
+     * @param int $id [Description]
+     * @param SysEmpresasModel $companies
+     * @return JsonResponse
+     */
+    public function destroy(int $id = null, SysEmpresasModel $companies )
+    {
+        $error = null;
+        DB::beginTransaction();
         try {
-          $response = SysUsersModel::with(['empresas' => function( $query ) {
-            return $query->where(['sys_empresas.estatus' => 1])->groupBy('id_users','id','nombre_comercial');
-          }])->where(['id' => Session::get('id')])->get();
-          foreach ($response as $request ) {
-            $empresas = $request->empresas;
-          }
-          return message(true,$empresas,self::$message_success);
+              $company = $companies->find($id);
+              $company->users()->detach();
+              $company->menus()->detach();
+              $company->permission()->detach();
+              $company->contacts()->detach();
+              $company->products()->detach();
+              $company->groupsCompanies()->detach();
+              $company->rolesCompanies()->detach();
+              $company->menusCompanies()->detach();
+              $company->permissionCompanies()->detach();
+              $company->delete();
 
-        } catch (Exception $e) {
-          return message(false,$e->getMessage(),self::$message_error);
+            DB::commit();
+              $success = true;
+        } catch (\Exception $e) {
+              $success = false;
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              DB::rollback();
         }
-  
-  }
- /**
-  *Metodo obtener los datos de las sucursales de cada empresa..
-  *@access public
-  *@param Request $request [Description]
-  *@return void
-  */
-  public static function show_rel_sucursal( Request $request ){
-        $empresa = [];
-        if( !isset($request->id_empresa) || in_array( 0,$request->id_empresa) ){
-            $empresa['sucursales'] = ['id' => 0];              
-            return message(true,$empresa,"¡Se cargo correctamente las sucursales!");
+
+        if ($success) {
+            return new JsonResponse([
+                'success'   => $success
+                ,'data'     => []
+                ,'message' => self::$message_success
+            ],Response::HTTP_OK);
         }
+        return new JsonResponse([
+            'success'   => $success
+            ,'data'     => $error
+            ,'message' => self::$message_error
+        ],Response::HTTP_BAD_REQUEST);
+
+
+    }
+     /**
+      * This method is used load for companies
+      * @access public
+      * @return void
+      */
+     public function listCompanies()
+      {
+          $data['titulo'] = "LISTADO DE EMPRESAS";
+          $data['titulo_sucusales'] = "LISTADO DE SUCURSALES";
+          return view('administracion.configuracion.list_bussines',$data);
+      }
+
+    /**
+     * @return JsonResponse
+     */
+    public function loadCompanies()
+    {
+        try {
+          $user = SysUsersModel::find(Session::get('id') );
+          $companies = $user->companies()->whereEstatus(TRUE)->groupby("id")->get();
+          return new JsonResponse([
+              "success" => TRUE ,
+              "data"    => $companies ,
+              "message" => self::$message_success
+          ],Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            $error = $e->getMessage()." ".$e->getFile()." ".$e->getLine();
+            return new JsonResponse([
+                "success" => TRUE ,
+                "data"    => $error ,
+                "message" => self::$message_error
+            ],Response::HTTP_BAD_REQUEST);
+        }
+
+    }
+
+    /**
+     * This method is used get for the between relations company and group
+     * @access public
+     * @param Request $request [Description]
+     * @return JsonResponse
+     */
+    public function findRelGroups( Request $request )
+    {
         $response = [];
-        foreach ($request->id_empresa as $key => $value) {
-            $response[] = SysEmpresasModel::with(['sucursales' => function($query){
-               return $query->groupby('id');
-            }])->where(['id' => $value])->groupby('id')->get();
+        if(is_null($request->get('id_empresa'))){
+            return new JsonResponse([
+                "success"   => false
+                ,"data"     => $response
+                ,"message"  => "¡No se encontró ningún grupo en esta Empresa!"
+            ],Response::HTTP_BAD_REQUEST);
         }
-        for ($i=0; $i < count($response); $i++) {
-          foreach ($response[$i] as $key => $value) {
-              $empresas[] = $value;
-          }
-        }
-        return message(true,$empresas,"¡Se cargo correctamente las sucursales!");
+        $companies = SysEmpresasModel::with(["groupsCompanies" => function($query){
+            return $query->groupBy('sys_companies_groups.group_id');
+        }])->whereIn('id',[$request->get("id_empresa")])->get();
 
-  }
-  /**
-   * Metodo para insertar los datos de la realcion de empresa sucursal
-   * @access public
-   * @param Request $request [description]
-   * @return array [Description]
-   */
-  public function store_relacion( Request $request ){
-      #se realiza una transaccion
-      $response = [];
-      $error = null;
-      DB::beginTransaction();
+        if ( count($companies) > 0){
+                $i = 0;
+                foreach ($companies as $company ){
+                    if (count($company->groupsCompanies) > 0){
+                        foreach ($company->groupsCompanies as $groups){
+                            $response[$i]['groups']  = [
+                                'id'            => $groups->id
+                                ,'descripcion'  => $company->razon_social." - ".$groups->sucursal
+                            ];
+                            $i++;
+                        }
+                    }
+                }
+        }
+          return new JsonResponse([
+              "success"   => true
+              ,"data"     => $response
+              ,"message"  => "¡Se cargo correctamente los grupos!"
+          ],Response::HTTP_OK);
+
+    }
+
+    /**
+     * @param Request $request
+     * @param SysUsersModel $users
+     * @return JsonResponse
+     */
+    public function findByUserGroups(Request $request, SysUsersModel $users )
+    {
       try {
-          SysEmpresasSucursalesModel::where( ['id_empresa' => $request->id_empresa] )->delete();
-          for ($i=0; $i < count($request->matrix ); $i++) {
-              $matrices = explode('|',$request->matrix[$i] );
-              $id_sucursal =  $matrices[0];
-              $estatus     =  ($matrices[1] === "true")? 1 : 0;
-              $data = [
-                'id_empresa'    => $request->id_empresa
-                ,'id_sucursal'  => $id_sucursal
-              ];
-              $data['estatus'] = $estatus;
-              $response[] = SysEmpresasSucursalesModel::create( $data );
+          $user = $users->find($request->get("userId"));
+          $groups     = $user->groups()->where([
+                "sys_users_pivot.roles_id"      =>  $request->get("rolId") ,
+                "sys_users_pivot.company_id"    =>  $request->get("companyId") ,
 
-          }
-        DB::commit();
-        $success = true;
-      } catch (\Exception $e) {
-          $success = false;
-          $error = $e->getMessage();
-          DB::rollback();
-      }
-      if ($success) {
-        return $this->_message_success( 200, $response , self::$message_success );
-      }
-      return $this->show_error(6, $error, self::$message_error );
+          ])->groupBy('sys_users_pivot.group_id')->get();
 
+          return new JsonResponse([
+              "success" => true ,
+              "data"    => $groups ,
+              "message" => self::$message_success
+          ],Response::HTTP_OK);
+
+      } catch ( \Exception $error ) {
+          $errors = $error->getMessage()." ".$error->getFile()." ".$error->getLine();
+          return new JsonResponse([
+              "success" => false ,
+              "data"    => $errors ,
+              "message" => self::$message_error
+          ],Response::HTTP_BAD_REQUEST);
+      }
   }
-
-
-
 
 }

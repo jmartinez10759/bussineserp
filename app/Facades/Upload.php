@@ -8,43 +8,65 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class Upload extends Facade
 {
-    public  $directorio  = "upload_file/catalogos/";
-    public  $carpeta     = "";
-    public  $datos_excel = [];
-    public  $table_model;
-  /**
-   * Metodo para subir los archivos al servidor.
-   * @param Request $request [Description]
-   * @return array [Description]
-   */
-    public function upload_file( Request $request ){
+    public  $excelData = [];
+
+    public  $_entity;
+    /**
+     * @var string
+     */
+    private $_directory;
+    /**
+     * @var string
+     */
+    private $_mainDirectory;
+
+    /**
+     * Upload constructor.
+     * @param $directory
+     */
+    public function __construct($directory )
+    {
+        $this->_directory       = (!$directory)? "upload_file/catalogs/" : $directory;
+        $this->_mainDirectory   = public_path();
+    }
+
+    /**
+     * This is method is used to file upload to the server
+     * @param Request $request [Description]
+     * @return array [Description]
+     */
+    public function uploadFile( Request $request )
+    {
       ini_set('memory_limit', '-1');
       set_time_limit(0);
       $files = $request->file;
       try {
+          $pathFile = [];
+          $updatePath = [];
         for ($i=0; $i < count( $files ) ; $i++) {
-            $archivo      	= file_get_contents($files[$i]);
-            $name_temp    	= $files[$i]->getClientOriginalName();
-            $ext      		  = strtolower($files[$i]->getClientOriginalExtension());
+            $contentFiles      	= file_get_contents($files[$i]);
+            $name_temp    	    = $files[$i]->getClientOriginalName();
+            $ext      		    = strtolower($files[$i]->getClientOriginalExtension());
             $type 			    = $files[$i]->getMimeType();
-            $tipo = explode('/', $type);
-            #$dir = dirname( getcwd() );
-            $dir  = public_path();
-            $archivo        = (isset($request->nombre))? $request->nombre.".".$tipo[1] : $name_temp;
-            #debuger($tipo);
-            #debuger($archivo);
-            $path           = $dir."/".$this->directorio;
-            $ruta_file[]    = $path.$archivo;
-            $ruta_update    = $this->directorio.$archivo;
-            File::makeDirectory($path, 0777, true, true);
-            $files[$i]->move($path,$archivo);
-        }
-        return json_to_object(message(true,$ruta_update,"Los archivos se subieron correctamente"));
-      } catch (Exception $e) {
-          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-          return json_to_object(message(false,$error,"Ocurrio Un Error al Subir el Archivo"));
-      }
+            $types              = explode('/', $type);
+            $contentFiles       = (isset($request->name))? $request->get("name").".".$types[1] : $name_temp;
 
+            $path               = $this->_mainDirectory."/".$this->_directory;
+            $pathFile[]         = $path.$contentFiles;
+            $updatePath[]       = $this->_directory.$contentFiles;
+            File::makeDirectory($path, 0777, true, true);
+            $files[$i]->move($path,$contentFiles);
+        }
+          \Log::debug($updatePath);
+        return [
+            'path' => $updatePath ,
+            'success' => true
+        ];
+      } catch ( \Exception $e) {
+          $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+          \Log::debug($error);
+          return ['success' => false ];
+      }
 
     }
   /**
@@ -56,7 +78,7 @@ class Upload extends Facade
         
         try {
           $validacion = [];
-            foreach([$this->table_model] as $key => $value){
+            foreach([$this->_entity] as $key => $value){
                 foreach($value->fillable as $keys => $values){
                     $validacion[] = $value->fillable[$keys];
                 }
@@ -72,13 +94,13 @@ class Upload extends Facade
                }
                 if( count($errors_campos) > 0){
                    unlink($request->ruta);
-                   $this->datos_excel = ['success' => false ,'result' => $errors_campos,'message' => "No se puede insertar el archivo, campos distintos"];
+                   $this->excelData = ['success' => false ,'result' => $errors_campos,'message' => "No se puede insertar el archivo, campos distintos"];
                     return;
                 }
                  $response[] = $register;   
             }
-                $this->datos_excel = ['success' => true ,'result' => $response,'message' => "Se cargo correctamente los datos"];
-            #debuger($this->datos_excel);
+                $this->excelData = ['success' => true ,'result' => $response,'message' => "Se cargo correctamente los datos"];
+            #debuger($this->$this->excelData);
             unlink($request->ruta);
             #return ['success' => true ,'result' => $response, 'message' => "Se realizo con exito el registro"];
         } catch (\Exception $e) {
@@ -95,14 +117,14 @@ class Upload extends Facade
     public function store_register(){
         
         $error = null;
-          DB::beginTransaction();
+        DB::beginTransaction();
           try {
             $data = [];
-            foreach( $this->datos_excel['result'] as $key => $value ){
+            foreach( $this->excelData['result'] as $key => $value ){
                 foreach( $value as $keys => $values ){
                     $data[$keys] = $values;
                 }
-                $response[] = $this->table_model::create($data);
+                $response[] = $this->_entity::create($data);
             }
             DB::commit();
             $success = true;
@@ -119,5 +141,6 @@ class Upload extends Facade
         
         
     }
+
 
 }

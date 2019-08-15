@@ -57,8 +57,8 @@
         public function show( Request $request ){
 
             try {
-                $response = SysContactosModel::where(['id' => $request->id])->get();
-            return $this->_message_success( 200, isset($response[0])? $response[0] : [] , self::$message_success );
+                $response = SysContactosModel::whereId( $request->id )->first();
+            return $this->_message_success( 200, $response, self::$message_success );
             } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             return $this->show_error(6, $error, self::$message_error );
@@ -66,7 +66,7 @@
 
         }
         /**
-        *Metodo para
+        *Metodo para insertar la parte de los contactos en su respectiva tabla
         *@access public
         *@param Request $request [Description]
         *@return void
@@ -76,7 +76,7 @@
             $error = null;
             DB::beginTransaction();
             try {
-
+                debuger( $request->all() );
 
             DB::commit();
             $success = true;

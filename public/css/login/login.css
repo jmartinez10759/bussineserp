@@ -4,9 +4,7 @@
 
 /*Change Backgound image here */
 html{
-	/* background: #FFF url(../../img/login/slide7.jpg) top center; */
-	/* background: #FFF url(../../img/login/inicio_session.jpg) top center; */
-	background: #FFF url(../../img/login/buro_laboral.png) top center;
+	background: #FFF url(../../img/banner-images/images_10.jpg) top center;
 	height:100%;
 }
 body{
@@ -156,7 +154,7 @@ body{
 }
 .login-links a:hover{
 	text-decoration: none;
-	color:#e13c3c;
+	color:#446cd9;
 }
 
 label.checkbox {
@@ -257,6 +255,27 @@ label.checkbox input{
 	animation-delay: .8s;
 }
 
+.glyphicon.spinning {
+	animation: spin 1s infinite linear;
+	-webkit-animation: spin2 1s infinite linear;
+}
+
+@keyframes spin {
+	from {
+		transform: scale(1) rotate(0deg);
+	}
+	to {
+		transform: scale(1) rotate(360deg);
+	}
+}
+@-webkit-keyframes spin2 {
+	from {
+		-webkit-transform: rotate(0deg);
+	}
+	to {
+		-webkit-transform: rotate(360deg);
+	}
+}
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers)
 =================================================================== */

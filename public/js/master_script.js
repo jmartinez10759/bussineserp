@@ -51,7 +51,7 @@ class MasterController {
     config['method']  = methods;
     config['url']     = url;
     config['headers'] = headers;
-     if(methods == "get" || methods == "delete"){
+     if(methods == "get" || methods == "delete" || methods == "GET" || methods == "DELETE"){
         config['params'] = fields;
      }else{ config['data'] = fields; }
     return $http(config);

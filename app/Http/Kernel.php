@@ -51,15 +51,15 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-	      'admin.only' => \App\Http\Middleware\AdminMiddleware::class,
-	      'permisos.menus' => \App\Http\Middleware\PermisosMiddleware::class,
-	      'permisos.rutas' => \App\Http\Middleware\RutaMiddleware::class,
-        'cors' => \App\Http\Middleware\CorsMiddleware::class,
+        'auth'              => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic'        => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings'          => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can'               => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'             => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle'          => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'admin.only'        => \App\Http\Middleware\AdminMiddleware::class,
+        'permisos.menus'    => \App\Http\Middleware\PermisosMiddleware::class,
+        'permisos.rutas'    => \App\Http\Middleware\RutaMiddleware::class,
+        'cors'              => \App\Http\Middleware\CorsMiddleware::class,
     ];
 }

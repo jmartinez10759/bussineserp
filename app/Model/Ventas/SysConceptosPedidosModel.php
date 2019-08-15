@@ -9,21 +9,19 @@ class SysConceptosPedidosModel extends Model
     public $table = "sys_conceptos_pedidos";
     public $fillable = [
          'id'
-        ,'id_producto'
-        ,'id_plan'
+        ,'product_id'
+        ,'plan_id'
         ,'cantidad'
         ,'precio'
         ,'total'
-      ];
-    
-    public function productos()
+    ];
+    public function products()
     {
-    	return $this->hasOne('App\Model\Administracion\Configuracion\SysProductosModel','id','id_producto');
+    	return $this->hasOne('App\Model\Administracion\Configuracion\SysProductosModel','id','product_id');
     }
-
     public function planes()
     {
-    	return $this->hasOne('App\Model\Administracion\Configuracion\SysPlanesModel','id','id_plan');
+    	return $this->hasOne('App\Model\Administracion\Configuracion\SysPlanesModel','id','plan_id');
     }
 
 

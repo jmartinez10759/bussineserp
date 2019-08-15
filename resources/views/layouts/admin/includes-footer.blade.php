@@ -89,6 +89,6 @@
 	<script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
 	<script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
 	<!-- script master vue -->
-  <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
+  <script type="text/javascript" src="{{asset('js/TitleSystem.js')}}"></script>
   <!-- script desarrollador -->
   @stack('scripts')

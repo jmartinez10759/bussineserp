@@ -7,6 +7,8 @@
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysTasaModel;
     use App\Model\Administracion\Configuracion\SysTipoFactorModel;
+    use Symfony\Component\HttpFoundation\JsonResponse;
+    use Symfony\Component\HttpFoundation\Response;
 
     class TasaController extends MasterController
     {
@@ -159,25 +161,37 @@
             return $this->show_error(6, $error, self::$message_error );
 
         }
+
         /**
-     * Metodo para consultar la tasa con la clave de tipo factor
-     * @access public
-     * @param Request $request [Description]
-     * @return void
-     */
-    public function factor_tasa( Request $request ){
-        try {
-            $where = ['id' => $request->id];
-            $tipo_factor = SysTipoFactorModel::select('clave')->where($where)->get();
-            $response = $this->_tabla_model::where( ['factor' => $tipo_factor[0]->clave] )->groupby('id')->get();
-        return $this->_message_success( 200, $response , self::$message_success );
-        } catch (\Exception $e) {
-        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-        return $this->show_error(6, $error, self::$message_error );
+         * Metodo para consultar la tasa con la clave de tipo factor
+         * @access public
+         * @param int|null $factorId
+         * @param SysTipoFactorModel $factorTypes
+         * @return JsonResponse
+         */
+        public function tasaByFactor( int $factorId = null, SysTipoFactorModel $factorTypes )
+        {
+            try {
+                $factorType = $factorTypes->find($factorId);
+                $data = SysTasaModel::whereFactor( $factorType->clave )->groupby('id')->get();
+
+                return new JsonResponse([
+                    "success" => TRUE ,
+                    "data"    => $data ,
+                    "message" => self::$message_success
+                ], Response::HTTP_OK);
+            } catch (\Exception $e) {
+                $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+
+                return new JsonResponse([
+                    "success" => FALSE ,
+                    "data"    => $error ,
+                    "message" => self::$message_error
+                ], Response::HTTP_BAD_REQUEST);
+
+            }
+
         }
-
-    }
-
 
 
 

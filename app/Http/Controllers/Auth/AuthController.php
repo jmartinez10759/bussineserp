@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-#use App\Model\MasterModel;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\MasterController;
 use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
-use App\Model\Administracion\Configuracion\SysSesionesModel;
 
 class AuthController extends MasterController
 {
-    #se crea una propiedad
     private static $_data   = [];
     private static $_tabla_model;
     public static $title_page  = "Inicio Sesion";
@@ -29,8 +24,8 @@ class AuthController extends MasterController
      * @access public
      * @return void
      */
-    public static function showLogin(){
-      #debuger(Session::get('id'));
+    public static function showLogin()
+    {
     	$data= [
     		'title_page'	=>  self::$title_page
             ,'desarrollo'   =>  self::$desarrollo
@@ -52,31 +47,26 @@ class AuthController extends MasterController
     	return View('auth.auth',$data);
 
     }
+
     /**
-     *Metodo para visuzalizar para iniciar session
-     *@access public
-     *@param Request $request [description]
-     *@return void
+     *This Method is for login in the dashboard
+     * @access public
+     * @param Request $request [description]
+     * @param SysUsersModel $users
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function authLogin( Request $request ){
-        #debuger($request->all());
-      	$where = [];
-        $values_sesion = ['_token'];
-    		foreach ($request->all() as $key => $value) {
-    			if ( !in_array($key,$values_sesion ) ) {
-    				$where[$key] = $value;
-    			}
-    		}
-		    #se realiza la consulta para verificar si existen ese candidato en la base de datos
-        return self::inicio_session( array_to_object( $where ), self::$_tabla_model );
+    public function authLogin( Request $request, SysUsersModel $users )
+    {
+        return $this->startSession( $request, $users );
     }
     /**
-     * Metodo para cerrar session
+     * This method is for finish session
      * @access public
      * @return void
      */
-    public static function logout(){
-        self::_bitacora(true);
+    public function logout()
+    {
+        $this->_binnacleCreate(new SysUsersModel,true);
     	Session::flush();
     	return redirect()->route('/');
     }

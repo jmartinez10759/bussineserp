@@ -20,7 +20,7 @@ class SysTasaModel extends Model
     ,'fecha_final_vigencia'
   ];
 
-  public function productos()
+  public function products()
   {
     return $this->belongsTo(SysProductosModel::class,'id_tasa','id');
   }

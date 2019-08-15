@@ -3,16 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use GuzzleHttp\Client;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use App\Model\Administracion\Configuracion\SysMenuModel;
 use App\Model\Administracion\Configuracion\SysUsersModel;
-use App\Model\Administracion\Configuracion\SysRolMenuModel;
 use App\Model\Administracion\Configuracion\SysSesionesModel;
-use App\Model\Administracion\Configuracion\SysAccionesModel;
-use App\Model\Administracion\Configuracion\SysUsersPermisosModel;
-use App\Model\Administracion\Configuracion\SysEmpresasModel;
+use App\Model\Administracion\Configuracion\SysPermissionMenus;
 
 class PermisosMiddleware
 {
@@ -25,56 +19,27 @@ class PermisosMiddleware
      */
     public function handle($request, Closure $next)
     {
-      #debuger(Session::all());
-      $where = [substr(parse_domain()->uri,1)];
-      $permisos_menus = [];
-      $menu = SysMenuModel::select('id')->whereIn('link', $where)->get();
-      $empresas = SysEmpresasModel::where(['id' => Session::get('id_empresa')])->get();
-      $iva = ( isset($empresas[0]->iva) )? $empresas[0]->iva : 16;
-      #debuger($iva);
-      #se realiza la consulta para obtener el permiso.
-      $where = [
-          'id_users'      => Session::get('id')
-          ,'id_rol'        => Session::get('id_rol')
-          ,'id_empresa'    => Session::get('id_empresa')
-          ,'id_sucursal'   => Session::get('id_sucursal')
-          ,'id_menu'       => isset($menu[0]->id)? $menu[0]->id : 0
-          #,'estatus'       => 1
-      ];
-      $id_permiso = SysRolMenuModel::select('id_permiso')->where( $where )->groupby('id_permiso')->get();
-      #ddebuger($id_permiso);
-      $where['id_permiso'] = isset($id_permiso[0]->id_permiso)? $id_permiso[0]->id_permiso : 5;
-      $where['estatus'] = 1;
-      $response = (SysUsersPermisosModel::select('id_accion')->where( $where )->groupby('id_accion')->get());
-      $acciones_all = SysAccionesModel::where([ 'estatus' => 1 ])->get();
-      $claves = [];
-      $i = 0;
-      $j = 0;
-      foreach ($acciones_all as $clave) {
-          $claves[] = $clave->clave_corta;
-          $permisos_menus['permisos'][$claves[$i]] = true;
-          $i++;
-      }
-      foreach ($response as $actions) {
-        $accion = SysAccionesModel::where(['id' => $actions->id_accion])->get();
-        foreach ($accion as $key => $value) {
-          if( in_array($value->clave_corta,$claves ) ){
-            $permisos_menus['permisos'][$value->clave_corta] = false;
-          }
+        $user = SysUsersModel::find(Session::get("id") );
+        if (Session::get("roles_id") != 1){
+            $webPath = substr(parse_domain()->uri,1);
+            $menus = $user->menus()->where([
+                "sys_users_menus.user_id"       => Session::get("id") ,
+                "sys_users_menus.roles_id"      => Session::get("roles_id") ,
+                "sys_users_menus.company_id"    => Session::get("company_id") ,
+                "sys_users_menus.group_id"      => Session::get("group_id") ,
+                "link"  => $webPath
+            ])->first();
+            if ($menus){
+                return $next($request);
+            }
         }
-      }
-      Session::put(['iva' => $iva]);
-      Session::put($permisos_menus);
-      #se debe crear un metodo para crear esta parte
-      $users = SysUsersModel::where(['id' => Session::get('id')])->get();
-      if( count($users) > 0 ){
-        $where = ['id' => $users[0]->id_bitacora,'id_users' => Session::get('id')];
-        $sesiones = SysSesionesModel::where($where)->get();
-        $fecha_inicio = isset($sesiones[0]->created_at)?$sesiones[0]->created_at: timestamp();
-        $data = ['time_conected' => time_fechas( $fecha_inicio ,timestamp() )];
-        SysSesionesModel::where( $where )->update($data);
-      }
+        if( !is_null($user) ){
+            $sessions = SysSesionesModel::whereIdAndIdUsers($user->id_bitacora,Session::get('id'))->first();
+            $startDate = isset($sessions->created_at)?$sessions->created_at: timestamp();
+            $data = ['time_conected' => time_fechas( $startDate ,timestamp() )];
+            SysSesionesModel::whereIdAndIdUsers( $user->id_bitacora,Session::get('id') )->update($data);
+        }
+        return $next($request);
 
-      return $next($request);
     }
 }

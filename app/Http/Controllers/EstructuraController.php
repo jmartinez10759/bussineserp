@@ -14,8 +14,8 @@ class EstructuraController extends MasterController
     private $_tabla_model;
 
     public function __construct(){
-        parent::__construct();
-        $this->_tabla_model = "";
+          parent::__construct();
+          $this->_tabla_model = "";
     }
     /**
      *Metodo para obtener la vista y cargar los datos
@@ -122,33 +122,33 @@ class EstructuraController extends MasterController
       return $this->show_error(6, $error, self::$message_error );
 
     }
-  /**
-   * Metodo para borrar el registro
-   * @access public
-   * @param Request $request [Description]
-   * @return void
-   */
-    public function destroy( Request $request ){
+    /**
+     * Metodo para borrar el registro
+     * @access public
+     * @param Request $request [Description]
+     * @return void
+     */
+      public function destroy( Request $request ){
 
-        $error = null;
-        DB::beginTransaction();
-        try {
+          $error = null;
+          DB::beginTransaction();
+          try {
 
 
-          DB::commit();
-          $success = true;
-        } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            DB::rollback();
-        }
+            DB::commit();
+            $success = true;
+          } catch (\Exception $e) {
+              $success = false;
+              $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+              DB::rollback();
+          }
 
-        if ($success) {
-          return $this->_message_success( 201, $response , self::$message_success );
-        }
-        return $this->show_error(6, $error, self::$message_error );
+          if ($success) {
+            return $this->_message_success( 201, $response , self::$message_success );
+          }
+          return $this->show_error(6, $error, self::$message_error );
 
-    }
+      }
     /**
      * Metodo subir los catalogos e insertar la informacion
      * @access public
@@ -166,6 +166,5 @@ class EstructuraController extends MasterController
          }
 
      }
-
 
 }

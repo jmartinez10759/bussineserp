@@ -6,10 +6,11 @@
     use Illuminate\Support\Facades\Session;
     use App\Http\Controllers\MasterController;
     use App\Model\Administracion\Configuracion\SysPaisModel;
+    use Symfony\Component\HttpFoundation\JsonResponse;
+    use Symfony\Component\HttpFoundation\Response;
 
     class PaisController extends MasterController
     {
-        #se crea las propiedades
         private $_tabla_model;
 
         public function __construct(){
@@ -51,25 +52,34 @@
             }
 
         }
-        /**
-        *Metodo para realizar la consulta por medio de su id
-        *@access public
-        *@param Request $request [Description]
-        *@return void
-        */
-        public function show( Request $request ){
 
-            try {
-                #$response = $this->_tabla_model::where([ 'id' => $request->id ])->get();
-                $response = $this->_tabla_model::with(['estados:id,clave,nombre,country_id'])->where([ 'id' => $request->id ])->get();
+    /**
+     * This method is used get for data information countries
+     * @access public
+     * @param int|null $id
+     * @param SysPaisModel $countries
+     * @return JsonResponse
+     */
+    public function show( int $id = null, SysPaisModel $countries )
+    {
+        try {
+            $country = $countries->with("estados")->find($id);
+            return new JsonResponse([
+                "success" => TRUE ,
+                "data"    => $country ,
+                "message" => self::$message_success
+            ], Response::HTTP_OK);
 
-            return $this->_message_success( 200, $response[0] , self::$message_success );
-            } catch (\Exception $e) {
+        } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            return $this->show_error(6, $error, self::$message_error );
-            }
-
+            return new JsonResponse([
+                "success" => FALSE ,
+                "data"    => $error ,
+                "message" => self::$message_error
+            ], Response::HTTP_BAD_REQUEST);
         }
+
+    }
         /**
         *Metodo para
         *@access public

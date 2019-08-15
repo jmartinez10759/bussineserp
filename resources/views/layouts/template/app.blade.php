@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ app()->getLocale() }}" ng-app="application" ng-controller="ApplicationController" ng-init="constructor()" ng-cloak>
 <head>
     @include('layouts.template.includes-header')
 </head>
 <!-- <body class="hold-transition skin-blue sidebar-mini fixed"> -->
-<body class="hold-transition skin-blue sidebar-mini fixed" ng-app="application">
+<body class="hold-transition skin-blue sidebar-mini fixed">
 
     <div class="wrapper">
 

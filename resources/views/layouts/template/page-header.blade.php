@@ -1,6 +1,5 @@
- <header class="main-header" ng-controller="ApplicationController as services" ng-init="constructor()" ng-cloak>
+<header class="main-header">
         <!-- Logo -->
-        <!-- <a href="{{route('list.empresas')}}" class="logo"> -->
         <a href="{{$url_previus}}" class="logo" title="Regresar a Listado de Empresas">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini">{{$empresa}}</span>
@@ -21,7 +20,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-envelope-o"></i>
                   <span class="label label-primary notify" ng-if="correos.length > 0">.</span>
-                  <span class="label label-success ">@{{ correos.length }}</span>
+                  <span class="label label-success " ng-bind="correos.length "></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header">Tu Tienes @{{ correos.length }} Mensajes </li>
@@ -51,14 +50,18 @@
                   <!-- <li class="footer"><a href="#">See All Messages</a></li> -->
                 </ul>
               </li>
+              {{--<div ng-if="notificaciones.length > 0">
+                <audio autoplay loop>
+                  <source src="audio/messenger-tono-mensaje-.mp3">
+                </audio>
+              </div>--}}
               <!-- Notifications: style can be found in dropdown.less -->
-              <!-- <li class="dropdown notifications-menu" {{ $notify }} > -->
-              <li class="dropdown notifications-menu" >
+              <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
                   <span class="label label-primary notify" ng-if="notificaciones.length > 0">.</span>
                   <span class="label label-primary " ng-if="notificaciones.length == 0">.</span>
-                  <span class="label label-warning">@{{ notificaciones.length }}</span>
+                  <span class="label label-warning" ng-bind="notificaciones.length"></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header" ng-if="notificaciones.length > 0">Tu Tienes @{{ notificaciones.length }} Notificaciones</li>
@@ -69,15 +72,12 @@
                     <ul class="menu">
 
                       <li ng-repeat="notify in notificaciones ">
-                          <a ng-click="update_notify( notify.id )" style="cursor:pointer;">
+                          <a ng-click="notifyDetails(notify)" style="cursor:pointer;">
                             <h6>
-                              <i class="fa fa-bell-o text-blue"> @{{ notify.portal }}</i>
+                              <i class="fa fa-bell-o text-blue" ng-bind="notify.title"></i>
                             </h6>
-                            <small><p class="">@{{ notify.mensaje }}</p></small>
-                            <small class="pull-right"> 
-                              <i class="fa fa-clock-o"></i> 
-                              @{{time_fechas(notify.created_at)}}
-                            </small>
+                            <small><p ng-bind="notify.message"></p></small>
+                            <small class="pull-right"><i class="fa fa-clock-o" ng-bind="timeDate(notify.created_at)"></i></small>
                           </a>
                         </li>
 
@@ -199,17 +199,21 @@
                   </li>
                   <!-- Menu Footer-->
                   <li class="user-footer">
-                    <div class="pull-left">
-                      <a href="{{ route('perfiles')}} " class="btn btn-default btn-flat">
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <a href="{{ route('perfiles')}} " class="btn btn-default btn-flat">
                           <i class="fa fa-user pull-left"></i>Perfil Usuario
                         </a>
-                    </div>
-                    <div class="pull-right">
-                      <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-default btn-flat">
-                        <i class="fa fa-sign-out pull-left"></i> Cerrar Sesión
-                      </a>
-                      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} </form>
-                      <!-- <a href="#" class="btn btn-default btn-flat">Sign out</a> -->
+                      </div>
+
+                      <div class="col-sm-6">
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-default btn-flat">
+                          <i class="fa fa-sign-out pull-left"></i>Cerrar Sesión
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} </form>
+
+                      </div>
+
                     </div>
                   </li>
                 </ul>
@@ -221,4 +225,5 @@
             </ul>
           </div>
         </nav>
-      </header>
+
+</header>

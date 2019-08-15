@@ -5,22 +5,16 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <!-- CSRF Token -->
       <meta name="csrf-token" content="{{ csrf_token() }}">
-      <!-- obtengo la ruta de mi proyecto -->
       <meta name="ruta-general" content="{{ $_SERVER['PHP_SELF'] }}">
-      <link rel="icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
-      <link rel="shortcut icon" href="{{asset('img/login/buro_laboral.ico')}}" type="image/x-icon" />
+        <link rel="icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{asset('img/company.png')}}" type="image/x-icon" />
         <title>Listado de empresas</title>
-        <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <!--css -->
         <link type="text/css" rel="stylesheet" href="{{asset('css/bootstrap.css')}}" />
-        <link type="text/css" rel="stylesheet" href="{{asset('css/sweetalert.css')}}" />
-        <link type="text/css" rel="stylesheet" href="{{asset('css/toastr.css')}}" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />
-        <link rel="stylesheet" href="{{asset('admintle/bower_components/font-awesome/css/font-awesome.min.css')}}">
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
+        <link type="text/css" rel="stylesheet" href="{{ asset('css/app.master.css')}}" />
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="{{asset("admintle/bower_components/font-awesome/css/font-awesome.min.css")}}">
         <!-- Styles -->
         <style>
           [v-cloak]{display: none}
@@ -53,7 +47,6 @@
             .title {
                 font-size: 84px;
             }
-
             .links > a {
                 color: #636b6f;
                 padding: 0 25px;
@@ -63,11 +56,9 @@
                 text-decoration: none;
                 text-transform: uppercase;
             }
-
             .m-b-md {
                 margin-bottom: 30px;
             }
-
             .drop-shadow {
                 position:relative;
                 float:left;
@@ -94,41 +85,33 @@
               -o-transform:scale(1.10);
               transform:scale(1.10);
             }
-
-
-
-            
-
         </style>
-
     </head>
-    <body>
-        <!-- <div class="flex-center position-ref full-height"> -->
+    <body ng-app="application" ng-controller="BusinessListController" ng-init="constructor()" ng-cloak>
         <div class="top-right col-sm-2">
             @if (Session::get('id'))
             <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-danger btn-lg" title="Cerrar Sesion">
               <i class="fa fa-sign-out pull-right"></i>
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} </form>
-            <!-- <a href="#" class="btn btn-default btn-flat">Sign out</a> -->
             @endif
         </div>
 
-          <div class="container " id="vue-business" v-cloak>
-               <div class="row" id="content_empresas">
+          <div class="container">
+               <div class="row" ng-show="company">
                      <br>
                      <center><h2> {{ $titulo }} </h2></center>
                      <br>
 
-                  <div class="drop-shadow col-md-12" v-for="(empresas,key) in datos" v-on:click.prevent="bussiness_sucursales( empresas.id )" title="Selecciona una Empresa" >
+                  <div class="drop-shadow col-md-12" ng-repeat="company in datos" ng-click="BussinesGroup( company.id )" title="Selecciona Una Empresa" >
                       <div class="col-md-3">
-                          <img :src="empresas.logo" width="100%" height="100%">
+                          <img ng-src="../@{{ company.logo }}" width="100%" height="100%" ng-if="company.logo">
                       </div>
                       <div class="col-md-8">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-9">
-                          <h3>@{{ empresas.razon_social }}</h3>
-                          <strong>@{{ empresas.rfc_emisor }}</strong>
+                          <h3 ng-bind="company.razon_social"></h3>
+                          <strong ng-bind="company.rfc_emisor"></strong>
                         </div>
                         <div class="col-sm-1"></div>
                       </div>
@@ -137,67 +120,48 @@
                       </div>
                       
                   </div>
+               </div>
 
-                   <div class="col-sm-offset-0 col-sm-12 table-responsive" style="display: none;">
+              <!-- Modal -->
+              <div class="modal fade" id="modal-group" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
 
-                          <table class="table table-hover " id="table_empresas">
-                              <thead style="background-color: #337ab7; color: #ffffff;">
-                                <tr>
-                                    <th>#</th>
-                                    <th>EMPRESA</th>
-                                    <th>RFC</th>
-                                    <th>RAZÓN SOCIAL</th>
-                                    <th>GIRO COMERCIAL</th>
-                                    <th></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                  <tr v-for="(empresas,key) in datos" title="Selecciona una Empresa" style="cursor:pointer" >
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.id }}</td>
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.nombre_comercial }}</td>
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.rfc_emisor }}</td>
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.razon_social }}</td>
-                                    <td v-on:click.prevent="bussiness_sucursales( empresas.id )">@{{ empresas.giro_comercial }}</td>
-                                    <td></td>
+                              <table class="table table-striped highlight table-hover table-container">
+                                  <thead style="background-color: #337ab7; color: #ffffff;">
+                                  <tr>
+                                      <th>#</th>
+                                      <th>CODIGO</th>
+                                      <th>GRUPO</th>
+                                      <th>DIRECCION</th>
+                                      <th>ESTATUS</th>
+                                      <th></th>
                                   </tr>
-                              </tbody>
-                          </table>
+                                  </thead>
+                                  <tbody>
+                                  <tr ng-repeat="groups in sucursales" title="Selecciona una Sucursal" style="cursor:pointer" >
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="groups.id"></td>
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="groups.codigo"></td>
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="groups.sucursal"></td>
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="groups.direccion"></td>
+                                      <td ng-click="beginPortal(groups.id)" ng-bind="(groups.estatus == 1)? 'Activo' :'Baja' "></td>
+                                      <td></td>
+                                  </tr>
+                                  </tbody>
+                              </table>
 
-                   </div>
-               </div>
-
-               <div class="row" id="content_sucusales" style="display:none;">
-                   <br>
-                   <center><h2>{{$titulo_sucusales}}</h2></center>
-                   <br>
-                   <div class="col-sm-offset-0 col-sm-12 table-responsive">
-
-                      <table class="table table-hover " id="table_sucursales">
-                          <thead style="background-color: #337ab7; color: #ffffff;">
-                            <tr>
-                                <th>#</th>
-                                <th>CODIGO</th>
-                                <th>SUCURSAL</th>
-                                <th>DIRECCION</th>
-                                <th>ESTATUS</th>
-                                <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                              <tr v-for="(sucursales,key) in sucursal" title="Selecciona una Sucursal" style="cursor:pointer" >
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ sucursales.id }}</td>
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ sucursales.codigo }}</td>
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ sucursales.sucursal }}</td>
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ sucursales.direccion }}</td>
-                                <td v-on:click.prevent="portal( sucursales.id )">@{{ (sucursales.estatus == 1)? "Activo" :"Baja" }}</td>
-                                <td></td>
-                              </tr>
-                          </tbody>
-                      </table>
-
-
-                   </div>
-               </div>
+                          </div>
+                          <div class="modal-footer">
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
            </div>
 
@@ -205,24 +169,42 @@
         <!-- jQuery -->
         <script type="text/javascript" src="{{asset('templates/vendors/jquery/dist/jquery.min.js')}}"></script>
         <!-- Bootstrap -->
+        <!-- pusher notifications -->
+        <script src="//js.pusher.com/4.4/pusher.min.js"></script>
+        <!-- / pusher notifications -->
         <script type="text/javascript" src="{{asset('templates/vendors/bootstrap/dist/js/bootstrap.min.js')}}"></script>
-        <script type="text/javascript" src="{{asset('js/axios.js')}}"></script>
-      	<script type="text/javascript" src="{{asset('js/toastr.js')}}"></script>
-      	<script type="text/javascript" src="{{asset('js/vue.js')}}"></script>
-      	<script type="text/javascript" src="{{asset('js/sweetalert.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/global.system.js')}}"></script>
       	<script type="text/javascript" src="{{asset('js/tools-manager.js')}}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
         <!-- angular -->
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular/angular.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-animate/angular-animate.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-chosen-localytics/dist/angular-chosen.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/sweetalert2/dist/sweetalert2.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/ngSweetAlert2/SweetAlert.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/swangular/swangular.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-toastr/dist/angular-toastr.tpls.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/dropzone/downloads/dropzone.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-dropzone/lib/angular-dropzone.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angucomplete-alt/angucomplete-alt.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/pusher-angular/lib/pusher-angular.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-smart-table/dist/smart-table.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('bower_components/angular-ui-utils/index.js')}}"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-animate.js"></script>
 
-      	<!-- script master vue -->
-        <script type="text/javascript" src="{{asset('js/master_vue.js')}}"></script>
+        <!-- script indispensables -->
+        <script type="text/javascript" src="{{asset('js/TitleSystem.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/master_script.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/ModuleController.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/FactoryController.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/NotificationsFactory.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/ServiceController.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/ApplicationController.js')}}"></script>
+        <!--/ script indispensables /-->
+        <script type="text/javascript" src="{{asset('js/angular-chosen.js')}}"></script>
         <!-- script desarrollador -->
-        <!--Se carga el script necesario de la lista de empresas-->
-        <script type="text/javascript" src="{{asset('js/administracion/configuracion/build_business.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/administracion/configuracion/buildBusinessController.js')}}"></script>
+        <script type="text/javascript" src="{{asset('js/directives/directives-master.js')}}"></script>
     </body>
 </html>

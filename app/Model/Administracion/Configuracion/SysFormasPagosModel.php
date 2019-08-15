@@ -2,6 +2,7 @@
 
 namespace App\Model\Administracion\Configuracion;
 
+use App\SysOrders;
 use Illuminate\Database\Eloquent\Model;
 
 class SysFormasPagosModel extends Model
@@ -13,8 +14,9 @@ class SysFormasPagosModel extends Model
     ,'descripcion'
   ];
 
-  	public function pedidos(){
-        return $this->belongsTo('App\Model\Ventas\SysPedidosModel','id_forma_pago','id');
+    public function orders()
+    {
+        return $this->belongsTo(SysOrders::class,'payment_form_id','id');
     }
 
 }

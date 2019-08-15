@@ -15,317 +15,243 @@ use App\Model\Administracion\Configuracion\SysUnidadesMedidasModel;
 use App\Model\Administracion\Configuracion\SysPlanesProductosModel;
 use App\Model\Administracion\Configuracion\SysClaveProdServicioModel;
 use App\Model\Administracion\Configuracion\SysCategoriasProductosModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductosController extends MasterController
 {
-    #se crea las propiedades
-    private $_tabla_model;
 
-    public function __construct(){
-        parent::__construct();
-        $this->_tabla_model = new SysProductosModel;
-    }
     /**
-    *Metodo para obtener la vista y cargar los datos
-    *@access public
-    *@param Request $request [Description]
-    *@return void
-    */
-    public function index(){
-        if( Session::get('permisos')['GET'] ){ return view('errors.error'); }
+     * ProductosController constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
+    /**
+     * This method is used load for view
+     * @access public
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index()
+    {
         $data = [
             'page_title' 	         => "Configuración"
             ,'title'  		         => "Productos"
             ,'data_table'  		     => "data_table(table)"
         ];
-
-        return self::_load_view( "administracion.configuracion.productos",$data );
+        return $this->_loadView( "administracion.configuracion.productos",$data );
     }
+
     /**
-     *Metodo para obtener los datos de manera asicronica.
-     *@access public
-     *@param Request $request [Description]
-     *@return void
+     * This Method is used get all products.
+     * @access public
+     * @return JsonResponse
      */
-    public function all( Request $request ){
-
+    public function all()
+    {
         try {
-           $response = $this->consulta_productos();
-           $data = [
-             'response'         => $response
-             ,'empresas'        => SysEmpresasModel::where(['estatus' => 1])->groupby('id')->get()
-             ,'unidad_medida'   => SysUnidadesMedidasModel::where(['estatus' => 1])->get()
-             ,'categorias'      => SysCategoriasProductosModel::where(['estatus' => 1])->get()
-             ,'servicios'       => SysClaveProdServicioModel::get()
-             ,'tipo_factor'     => SysTipoFactorModel::get()
+            $products = $this->_productsBelongCompany();
+            $data = [
+             'products'         => $products
+             ,'units'           => SysUnidadesMedidasModel::whereEstatus(TRUE)->get()
+             ,'categories'      => SysCategoriasProductosModel::whereEstatus(TRUE)->get()
+             ,'services'        => SysClaveProdServicioModel::get()
+             ,'factorType'      => SysTipoFactorModel::get()
+             ,'tasas'           => SysTasaModel::get()
            ];
-          return $this->_message_success( 200, $data , self::$message_success );
+            return new JsonResponse([
+                "success" => TRUE ,
+                "data"    => $data ,
+                "message" => self::$message_success
+            ], Response::HTTP_OK);
+
         } catch (\Exception $e) {
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            return $this->show_error(6, $error, self::$message_error );
+            return new JsonResponse([
+                "success" => FALSE ,
+                "data"    => $error ,
+                "message" => self::$message_error
+            ], Response::HTTP_BAD_REQUEST);
+
         }
 
     }
-    /**
-    *Metodo para realizar la consulta por medio de su id
-    *@access public
-    *@param Request $request [Description]
-    *@return void
-    */
-    public function show( Request $request ){
-        #debuger($request->all());
-        try {
-            $response = $this->_tabla_model::with(['servicios:id,clave','categorias','unidades','tasas','impuestos','tipoFactor'])->where(['id' => $request->id])->get();
-        return $this->_message_success( 200, $response[0] , self::$message_success );
-        } catch (\Exception $e) {
-        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-        return $this->show_error(6, $error, self::$message_error );
-        }
 
-    }
     /**
-    *Metodo para
-    *@access public
-    *@param Request $request [Description]
-    *@return void
-    */
-    public function store( Request $request){
-        #debuger($request->all());
-        $error = null;
-        DB::beginTransaction();
+     *This method is used show register of products by id
+     * @access public
+     * @param int|null $id
+     * @param SysProductosModel $products
+     * @return JsonResponse
+     */
+    public function show( int $id = null, SysProductosModel $products )
+    {
         try {
-            $registros = [];
-            foreach ($request->all() as $key => $value) {
-                if($key == "logo"){
-                  $registros[$key] = ($value);
-                }else{
-                  $registros[$key] = strtoupper($value);
-                }
-            }
-            $response = $this->_tabla_model::create( $registros );
-            $data = [
-                'id_empresa'      => Session::get('id_empresa')
-                ,'id_sucursal'    => Session::get('id_sucursal')
-                ,'id_producto'    => $response->id
-            ];
-            SysPlanesProductosModel::create($data);
-        DB::commit();
-        $success = true;
+            $product = $products->with('units','categories','companies',"groups")->find($id);
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $product
+                ,'message'  => self::$message_success
+            ], Response::HTTP_OK);
         } catch (\Exception $e) {
-            $success = false;
             $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            DB::rollback();
+            return new JsonResponse([
+                'success'   => FALSE
+                ,'data'     => $error
+                ,'message'  => self::$message_error
+            ], Response::HTTP_BAD_REQUEST);
         }
-
-        if ($success) {
-        return $this->_message_success( 201, $response , self::$message_success );
-        }
-        return $this->show_error(6, $error, self::$message_error );
-
 
     }
+
     /**
-    *Metodo para la actualizacion de los registros
-    *@access public
-    *@param Request $request [Description]
-    *@return void
-    */
-    public function update( Request $request){
-        #debuger($request->all());
-        $error = null;
-        DB::beginTransaction();
-        try {
-            $registros = [];
-            foreach ($request->all() as $key => $value) {
-                if($key == "logo"){
-                  $registros[$key] = ($value);
-                }else{
-                  $registros[$key] = strtoupper($value);
-                }
-            }
-            $this->_tabla_model::where(['id' => $request->id])->update($registros);
-            $response = $this->_tabla_model::where(['id' => $request->id])->get();
-        DB::commit();
-        $success = true;
-        } catch (\Exception $e) {
-            $success = false;
-            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-            DB::rollback();
-        }
-
-        if ($success) {
-             return $this->_message_success( 201, $response[0] , self::$message_success );
-        }
-        return $this->show_error(6, $error, self::$message_error );
-
-    }
-    /**
-    * Metodo para borrar el registro
-    * @access public
-    * @param Request $request [Description]
-    * @return void
-    */
-    public function destroy( Request $request ){
-
-        $error = null;
-        DB::beginTransaction();
-        try {
-            $response = $this->_tabla_model::where(['id' => $request->id])->delete();
-            SysPlanesProductosModel::where(['id_producto' => $request->id])->delete();
-        DB::commit();
-        $success = true;
-        } catch (\Exception $e) {
-        $success = false;
-        $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
-        DB::rollback();
-        }
-
-        if ($success) {
-        return $this->_message_success( 201, $response , self::$message_success );
-        }
-        return $this->show_error(6, $error, self::$message_error );
-
-    }
-/**
- * Metodo para borrar el registro
- * @access public
- * @param Request $request [Description]
- * @return void
- */
-    public function display_sucursales( Request $request ){
-        #debuger($request->all());
-        try {
-            #$sucursales = [];
-            $response = SysEmpresasModel::with(['sucursales' => function($query){
-                return $query->where(['sys_sucursales.estatus' => 1, 'sys_empresas_sucursales.estatus' => 1])->groupby('id')->get();
-            }])->where(['id' => $request->id_empresa])->get();
-            $sucursales = SysPlanesProductosModel::select('id_sucursal')->where($request->all())->get();
-            #se crea la tabla 
-            $registros = [];
-            foreach ($response[0]->sucursales as $respuesta) {
-                $id['id'] = $respuesta->id;
-                $icon = build_actions_icons($id, 'id_sucursal="' . $respuesta->id . '" ');
-                $registros[] = [
-                    $respuesta->codigo
-                    ,$respuesta->sucursal
-                    ,$respuesta->direccion
-                    ,($respuesta->estatus == 1)?"ACTIVO":"BAJA"
-                    ,$icon
-                ];
-            }
-
-            $titulos = [ 'Codigo','Sucursal','Direccion', 'Estatus',''];
-            $table = [
-                'titulos' 		   => $titulos
-                ,'registros' 	   => $registros
-                ,'id' 			   => "sucursales"
-                #,'class'           => "fixed_header"
-            ];
-            $data = [
-                'tabla_sucursales' => data_table($table)
-                ,'sucursales'   => $sucursales
-            ];
-            return $this->_message_success(201, $data, self::$message_success);
-        } catch (\Exception $e) {
-            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
-            return $this->show_error(6, $error, self::$message_error);
-        }
-
-    }
-    /**
-     * Metodo para insertar los permisos de los productos
+     * This method is used for register information products by companies
      * @access public
      * @param Request $request [Description]
-     * @return void
+     * @param SysProductosModel $products
+     * @return JsonResponse
      */
-    public function register_permisos(Request $request){
-        #debuger($request->all());
+    public function store( Request $request, SysProductosModel $products )
+    {
         $error = null;
         DB::beginTransaction();
         try {
-            
-            $response_producto = SysPlanesProductosModel::where(['id_empresa'   => Session::get('id_empresa') ,'id_sucursal' => Session::get('id_sucursal')] )->get();
-            if( count($response_producto) > 0){
-                SysPlanesProductosModel::where(['id_empresa'   => Session::get('id_empresa'),'id_sucursal' => Session::get('id_sucursal')])->delete();
+            $dataRegister = array_filter($request->all(), function ($key) use ($request){
+                if($key != "groupId" && $key != "companyId"){
+                    if ($request->$key == 0){
+                        $data[$key] = "0";
+                    }
+                    if ($key == "logo"){
+                        $data[$key] = $request->$key;
+                    }else{
+                        $data[$key] = (is_string($request->$key))? strtoupper($request->$key) : $request->$key;
+                    }
+                    return $data;
+                }
+            },ARRAY_FILTER_USE_KEY);
+
+            $insertProduct = $products->create($dataRegister);
+            $product = $products->find($insertProduct->id);
+            if ( isset($request->groupId ) && isset($request->companyId )){
+                $product->groups()->attach($request->get("groupId"),['company_id' => $request->get("companyId")]);
+            }else{
+                $product->groups()->attach([Session::get('group_id')],['company_id' => Session::get("company_id")]);
             }
-            SysPlanesProductosModel::where([
-                'id_producto' => $request->id_producto 
-                #,'id_empresa'  => $request->id_empresa
-            ])->delete();
-            $response = [];
-            for ($i=0; $i < count($request->matrix) ; $i++) { 
-                $matrices = explode('|', $request->matrix[$i] );
-                $id_sucursal = $matrices[0];
-                #se realiza una consulta si existe un registro.
-                $data = [
-                    'id_empresa'      => $request->id_empresa
-                    ,'id_sucursal'    => $id_sucursal
-                    ,'id_producto'    => $request->id_producto
-                ];
-                $response[] = SysPlanesProductosModel::create($data);
+
+                DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
+        }
+
+        if ($success) {
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => $product
+                ,'message'  => self::$message_success
+            ], Response::HTTP_OK);
+        }
+        return new JsonResponse([
+            'success'   => FALSE
+            ,'data'     => $error
+            ,'message'  => self::$message_error
+        ], Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * This method is used update information of products
+     * @access public
+     * @param Request $request [Description]
+     * @param SysProductosModel $products
+     * @return JsonResponse
+     */
+    public function update( Request $request, SysProductosModel $products )
+    {
+        $error = null;
+        DB::beginTransaction();
+        try {
+
+            $dataRegister = array_filter($request->all(), function ($key) use ($request){
+                if($key != "groupId" && $key != "companyId"){
+                    if ($request->$key == 0){
+                        $data[$key] = "0";
+                    }
+                    if ($key == "logo"){
+                        $data[$key] = $request->$key;
+                    }else{
+                        $data[$key] = (is_string($request->$key))? strtoupper($request->$key) : $request->$key;
+                    }
+                    return $data;
+                }
+            },ARRAY_FILTER_USE_KEY);
+
+            $product = $products->find($request->get("id"));
+            $product->update($dataRegister);
+            if ( isset($request->groupId) && $request->groupId){
+                $product->groups()->detach();
+                $product->groups()->attach($request->get("groupId"),['company_id' => $request->get("companyId")]);
             }
+
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
             $success = false;
-            $error = $e->getMessage() . " " . $e->getLine() . " " . $e->getFile();
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
             DB::rollback();
         }
 
         if ($success) {
-            return $this->_message_success(201, $response, self::$message_success);
+           return $this->show($request->get("id"), new SysProductosModel );
         }
-        return $this->show_error(6, $error, self::$message_error);
-
+        return new JsonResponse([
+            'success'   => FALSE
+            ,'data'     => $error
+            ,'message'  => self::$message_error
+        ], Response::HTTP_BAD_REQUEST);
 
     }
+
     /**
-     * Metodo para realizar la parte de consulta de productos
+     * This method is used of delete products with relationship
      * @access public
-     * @param Request $request [Description]
-     * @return void
+     * @param int|null $productId
+     * @param SysProductosModel $products
+     * @return JsonResponse
      */
-    public function consulta_productos(){
-
-        if( Session::get('id_rol') == 1 ){
-
-            $response = SysProductosModel::with(['unidades','categorias','empresas'])
-                            ->orderBy('id','desc')
-                            ->groupby('id')
-                            ->get();
-
-        }elseif( Session::get('id_rol') == 3 ){
-            $data = SysEmpresasModel::with(['productos'])
-                                    ->where(['id' => Session::get('id_empresa')])            
-                                    ->get();
-
-            $response = $data[0]->productos()
-                                ->with(['unidades','categorias','empresas'])
-                                ->orderBy('id','desc')
-                                ->groupby('id')
-                                ->get();
-
-        }else{
-
-            $data = SysUsersModel::with(['empresas'])
-                                  ->where(['id' => Session::get('id')])            
-                                  ->get();
-            $empresas = $data[0]->empresas()
-                                ->with(['productos'])
-                                ->where([ 'id' => Session::get('id_empresa') ])
-                                ->get();
-            $response = $empresas[0]->productos()
-                                    ->with(['unidades','categorias','empresas'])
-                                    ->orderBy('id','desc')
-                                    ->groupby('id')
-                                    ->get();
-
+    public function destroy( int $productId = null, SysProductosModel $products  )
+    {
+        $error = null;
+        DB::beginTransaction();
+        try {
+            $product = $products->find($productId);
+            $product->companies()->detach();
+            $product->delete();
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            $error = $e->getMessage()." ".$e->getLine()." ".$e->getFile();
+            DB::rollback();
         }
-        return $response;
+
+        if ($success) {
+            return new JsonResponse([
+                'success'   => TRUE
+                ,'data'     => []
+                ,'message'  => self::$message_success
+            ], Response::HTTP_OK);
+        }
+
+        return new JsonResponse([
+            'success'   => FALSE
+            ,'data'     => $error
+            ,'message'  => self::$message_error
+        ], Response::HTTP_BAD_REQUEST);
 
     }
-
-
 
 }

@@ -795,14 +795,16 @@ function clear_values_select( arreglo ) {
 }
 /**
  *Funcion para la carga de archivos al servidor por medio de dropzone
- *@param id [type] [description]
- *@param url [type][description]
- *@param maxfile [type][description]
- *@param type_file [type][description]
+ *@param fields
+ *@param pathUrl
+ *@param messages
+ *@param maxFile
+ *@param ids
+ *@param typeFile
  *@param methods [type][description]
  *@return void
  */
-upload_file = function (fields, path_url, messages, maxfile, ids, type_file, methods) {
+uploadFile = function (fields, pathUrl, messages, maxFile, ids, typeFile, methods) {
     var message = (messages != "") ? messages : "Dar Clic aquí o arrastrar archivo";
     jQuery('#modal_dialog').css('width', '60%');
     Dropzone.autoDiscover = false;
@@ -810,15 +812,15 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
         var jsonResponse;
         jQuery("#" + ids['div_dropzone']).dropzone({
             uploadMultiple: true,
-            url: path_url,
-            maxFiles: maxfile,
+            url: pathUrl,
+            maxFiles: maxFile,
             paramName: "file",
             timeout: 7200000, /*milliseconds*/
             maxFilesize: 256,
             //chunking : true,
             forceChunking: true,
             createImageThumbnails: true,
-            acceptedFiles: type_file,
+            acceptedFiles: typeFile,
             dictDefaultMessage: message,
             dictFallbackMessage: "No se pudo subir el archivo, favor de verificar",
             dictFileTooBig: "Archivo demasiado grande, intente cargar otro archivo",
@@ -844,7 +846,6 @@ upload_file = function (fields, path_url, messages, maxfile, ids, type_file, met
 //                        toastr.error( jsonRequest.message, '¡No se Cargo Correctamente!' );
 //                   }
                 methods(datos);
-
             },
             accept: function (file, done) {
                 if (file.name == "imagen.jpg") { done("Archivo Incorrecto"); } else { done(); }
@@ -995,55 +996,6 @@ $myLocalStorage = (function () {
         }
     };
 })();
-/*removeStorage: removes a key from localStorage and its sibling expiracy key
-    params:
-        key <string>: localStorage key to remove
-    returns:
-        <boolean> : telling if operation succeeded
- */
- function removeStorage(name) {
-    try {
-        localStorage.removeItem(name);
-        localStorage.removeItem(name + '_expiresIn');
-    } catch(e) {
-        console.log('removeStorage: Error removing key ['+ key + '] from localStorage: ' + JSON.stringify(e) );
-        return false;
-    }
-    return true;
-}
-/*getStorage: retrieves a key from localStorage previously set with setStorage().
-    params:
-        key <string> : localStorage key
-    returns:
-        <string> : value of localStorage key
-        null : in case of expired key or failure
- */
-function getStorage(key) {
-    var now = Date.now();  //epoch time, lets deal only with integer
-    // set expiration for storage
-    var expiresIn = localStorage.getItem(key+'_expiresIn');
-    if (expiresIn===undefined || expiresIn===null) { expiresIn = 0; }
-    if (expiresIn < now) {// Expired
-        removeStorage(key);
-        return null;
-    } else {
-        try {
-            var value = localStorage.getItem(key);
-            return value;
-        } catch(e) {
-            console.log('getStorage: Error reading key ['+ key + '] from localStorage: ' + JSON.stringify(e) );
-            return null;
-        }
-    }
-}
-/*setStorage: writes a key into localStorage setting a expire time
-    params:
-        key <string>     : localStorage key
-        value <string>   : localStorage value
-        expires <number> : number of seconds from now to expire the key
-    returns:
-        <boolean> : telling if operation succeeded
- */
 function setStorage(key, value, expires) {
     if (expires===undefined || expires===null) {
         expires = (24*60*60);  // default: seconds for 1 day
@@ -1163,27 +1115,6 @@ function loading( hide = false ){
     jQuery('.loader').fadeIn('slow');
 }
 /**
- *Funcion para dar formato a un numero
- *@param amount
- *@param decimals
- *@return numeber
- */
-number_format = function (amount, decimals) {
-    amount += ''; // por si pasan un numero en vez de un string
-    amount = parseFloat(amount.replace(/[^0-9\.]/g, '')); // elimino cualquier cosa que no sea numero o punto
-    decimals = decimals || 0; // por si la variable no fue fue pasada
-    // si no es un numero o es igual a cero retorno el mismo cero
-    if (isNaN(amount) || amount === 0)
-        return parseFloat(0).toFixed(decimals);
-    // si es mayor o menor que cero retorno el valor formateado como numero
-    amount = '' + amount.toFixed(decimals);
-    var amount_parts = amount.split('.'),
-        regexp = /(\d+)(\d{3})/;
-    while (regexp.test(amount_parts[0]))
-        amount_parts[0] = amount_parts[0].replace(regexp, '$1' + ',' + '$2');
-    return amount_parts.join('.');
-}
-/**
  *Funcion de Jquery donde impide utilizar letras en campos de numero
  *@param array [description]
  *@return
@@ -1281,90 +1212,6 @@ get_actual_date = function (sign, format) {
         return day + sign + month + sign + year;
     }
 
-}
-/**
- *Funcion para la validacion de numero de seguro social
- *@params {{ nss }} {{ description }}
- *@return {{ void }}
- */
-nssValido = function (nss) {
-    const re = /^(\d{2})(\d{2})(\d{2})\d{5}$/,
-        validado = nss.match(re);
-    if (!validado) // 11 dígitos y subdelegación válida?
-        return false;
-    const subDeleg = parseInt(validado[1], 10),
-        anno = new Date().getFullYear() % 100;
-    var annoAlta = parseInt(validado[2], 10),
-        annoNac = parseInt(validado[3], 10);
-    //Comparar años (excepto que no tenga año de nacimiento)
-    if (subDeleg != 97) {
-        if (annoAlta <= anno) annoAlta += 100;
-        if (annoNac <= anno) annoNac += 100;
-        if (annoNac > annoAlta)
-            return false; // Err: se dio de alta antes de nacer!
-    }
-    return luhn(nss);
-}
-/**
- *Funcion para dividir la parte del NSS
- *@param {{nss}} {{Description}}
- *@return {{void}}
- */
-luhn = function (nss) {
-    var suma = 0,
-        par = false,
-        digito;
-    for (var i = nss.length - 1; i >= 0; i--) {
-        var digito = parseInt(nss.charAt(i), 10);
-        if (par)
-            if ((digito *= 2) > 9)
-                digito -= 9;
-        par = !par;
-        suma += digito;
-    }
-    return (suma % 10) == 0;
-}
-/**
- *Funcion para validar la curp ingresada
- *{{@param}} {{curp}}
- *{{@return}} {{void}}
- */
-curpValida = function (curp) {
-    var re = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/,
-        validado = curp.match(re);
-    if (!validado) //Coincide con el formato general?
-        return false;
-    //Validar que coincida el dígito verificador
-    function digitoVerificador(curp17) {
-        //Fuente https://consultas.curp.gob.mx/CurpSP/
-        var diccionario = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
-            lngSuma = 0.0,
-            lngDigito = 0.0;
-        for (var i = 0; i < 17; i++)
-            lngSuma = lngSuma + diccionario.indexOf(curp17.charAt(i)) * (18 - i);
-        lngDigito = 10 - lngSuma % 10;
-        if (lngDigito == 10) return 0;
-        return lngDigito;
-    }
-    if (validado[2] != digitoVerificador(validado[1]))
-        return false;
-    return true; //Validado
-}
-/**
- *Funcion que se encarga de validar el email. correspondiente.
- *{{@param}} {{ email }}
- *{{@return}} {{ void }}
- */
-emailValidate = function (email) {
-    if (email) {
-        const re = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
-        var valido = email.match(re);
-        if (!valido) {
-            return false
-        }
-        return true;
-    }
-    return false;
 }
 /**
  *Se crea una funcion de autocomplete
@@ -1480,20 +1327,6 @@ autocomplete = function (inp, arr) {
     });
 
 }
-/**
- *Funcion para conveertir mayusculas y/o minusculas
- *{{ @param }} {{ @string }}
- *{{ @param }} {{ @type }}
- *{{return }}
- */
-// convert_letters = function( string, type ){
-//     if (type == "UPPER") {
-//         return string.toUpperCase();
-//     }
-//     if (type == "LOWER") {
-//         return string.toLowerCase();
-//     }
-// }
 /**
  *Funcion para verificar si existe el dato
  *{{ @param }} {{ @string }}
@@ -1667,23 +1500,6 @@ buscador_general = function ($this, identificador, table = false ) {
         
     }
 
-}
-/**
- * ABRE UN MODAL CON FANCYBOX.
- * @param identificador string [description]
- * @return void
- */
-register_modal_general = function (identificador, modal) {
-    if (modal) {
-        jQuery(identificador).modal('show');
-    } else {
-        jQuery.fancybox.open({
-            'type': 'inline',
-            'src': identificador,
-            'modal': true,
-        });
-
-    }
 }
 /**
  * Actualiza la notificacion que llegan de los portales.
