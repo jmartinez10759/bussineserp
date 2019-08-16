@@ -1,43 +1,43 @@
  <!-- jQuery 3 -->
-    <script src="{{$base_url}}admintle/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="{{asset('admintle/bower_components/jquery/dist/jquery.min.js')}}"></script>
     <!-- jQuery UI 1.11.4 -->
-    <script src="{{$base_url}}admintle/bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script src="{{asset('admintle/bower_components/jquery-ui/jquery-ui.min.js')}}"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
       $.widget.bridge('uibutton', $.ui.button);
     </script>
     <!-- Bootstrap 3.3.7 -->
-        <script src="{{$base_url}}admintle/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="{{asset('admintle/bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
     <!-- DataTables -->
-    <script src="{{$base_url}}admintle/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="{{$base_url}}admintle/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="{{asset('admintle/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('admintle/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
     <!-- it's need script for xeditable -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     <!-- it's need script for xeditable -->
     <!-- Sparkline -->
-    <script src="{{$base_url}}admintle/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+    <script src="{{asset('admintle/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js')}}"></script>
     <!-- jvectormap -->
-    <script src="{{$base_url}}admintle/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="{{$base_url}}admintle/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="{{asset('admintle/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js')}}"></script>
+    <script src="{{asset('admintle/plugins/jvectormap/jquery-jvectormap-world-mill-en.js')}}"></script>
     <!-- jQuery Knob Chart -->
-    <script src="{{$base_url}}admintle/bower_components/jquery-knob/dist/jquery.knob.min.js"></script>
+    <script src="{{asset('admintle/bower_components/jquery-knob/dist/jquery.knob.min.js')}}"></script>
     <!-- daterangepicker -->
-    <script src="{{$base_url}}admintle/bower_components/moment/min/moment.min.js"></script>
-    <script src="{{$base_url}}admintle/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="{{asset('admintle/bower_components/moment/min/moment.min.js')}}"></script>
+    <script src="{{asset('admintle/bower_components/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
     <!-- datepicker -->
-    <script src="{{$base_url}}admintle/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="{{asset('admintle/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/locales/bootstrap-datepicker.es.min.js"></script>
     <!-- datetimepicker -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.4/js/bootstrap-datetimepicker.min.js"></script>
     <!-- Bootstrap WYSIHTML5 -->
-    <script src="{{$base_url}}admintle/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="{{asset('admintle/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js')}}"></script>
     <!-- Slimscroll -->
-    <script src="{{$base_url}}admintle/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="{{asset('admintle/bower_components/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>
     <!-- FastClick -->
-    <script src="{{$base_url}}admintle/bower_components/fastclick/lib/fastclick.js"></script>
+    <script src="{{asset('admintle/bower_components/fastclick/lib/fastclick.js')}}"></script>
     <!-- AdminLTE App -->
-    <script src="{{$base_url}}admintle/dist/js/adminlte.min.js"></script>
-    <script src="{{$base_url}}admintle/dist/js/demo.js"></script>
+    <script src="{{asset('admintle/dist/js/adminlte.min.js')}}"></script>
+    <script src="{{asset('admintle/dist/js/demo.js')}}"></script>
     <!-- pusher notifications -->
     <script src="//js.pusher.com/4.4/pusher.min.js"></script>
     <!-- / pusher notifications -->
