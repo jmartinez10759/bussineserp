@@ -544,8 +544,8 @@
             $php_self = isset($_SERVER['PHP_SELF'])?$_SERVER['PHP_SELF']:false;
             $request_url = isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:false;
             $server_href = $http."://".$host.$request_url;
-            $url_navegador = (isset( $_SERVER['HTTP_REFERER'] ))? explode("/",$_SERVER['HTTP_REFERER']): [];    
-            var_export($url_navegador);die();
+            $url_navegador = (isset( $_SERVER['HTTP_REFERER'] ))? explode("/",$_SERVER['HTTP_REFERER']): [];
+            var_export($_SERVER);die();
             
             if ( $server_href ) {
                 $dominio        = explode("/", $server_href );
