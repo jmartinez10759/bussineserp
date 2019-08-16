@@ -499,12 +499,14 @@
    */
   if (!function_exists('domain')) {
         function domain(){
-            $http = $_SERVER['REQUEST_SCHEME'];
-            $host = $_SERVER['HTTP_HOST'];
-            $server_href = $http."://".$host.$_SERVER['REQUEST_URI'];
+            $http = isset($_SERVER['REQUEST_SCHEME'])? $_SERVER['REQUEST_SCHEME'] : false;
+            $host = isset($_SERVER['HTTP_HOST'])? $_SERVER['HTTP_HOST'] : false;
+            $php_self = isset($_SERVER['PHP_SELF'])?$_SERVER['PHP_SELF']:false;
+            $request_url = isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:false;
+            $server_href = $http."://".$host.$request_url;
             if ( $server_href ) {
                 $dominio        = explode("/", $server_href );
-                $request_uri    = explode("/", $_SERVER['PHP_SELF']);
+                $request_uri    = explode("/", $php_self);
                 $domain         = isset( $dominio[2] )? $dominio[2] : false;
                 $public         = (isset($dominio[4]) && $dominio[4] == "public")? $dominio[4] : false;
                 $project        = (isset($dominio[3]) ) ? $dominio[3] : false;
