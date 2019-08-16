@@ -28,7 +28,7 @@ class ServicesController extends MasterController
     	try {
     		$user = SysUsersModel::find( Session::get('id') );
 			$mails  = $user->correos()->whereEstatus_recibidosAndEstatus_vistos(1,0)->orderBy('id','desc')->get();
-            var_export(parse_domain());die();
+            
 			$menuText = substr(parse_domain()->urls, 1);
 			$permissionMenu = [];
 			$menu = $user->menus()->with('permission')->whereLink($menuText)->first();

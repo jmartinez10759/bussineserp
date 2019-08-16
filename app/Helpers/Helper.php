@@ -545,7 +545,6 @@
             $request_url = isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:false;
             $server_href = $http."://".$host.$request_url;
             $url_navegador = (isset( $_SERVER['HTTP_REFERER'] ))? explode("/",$_SERVER['HTTP_REFERER']): [];
-            var_export($_SERVER);die();
             
             if ( $server_href ) {
                 $dominio        = explode("/", $server_href );
@@ -563,7 +562,7 @@
                 $data['project']  = $project;
                 $data['public']   = $public;
                 #dd($data);
-                $parse_dominio = [$http.":",$host,$project,$public];
+                $parse_dominio = ["https:",$http.":",$host,$project,$public];
                 for ($i=0; $i < count($dominio); $i++) {
                     if( !in_array($dominio[$i],$parse_dominio) ){
                         $uri .= "/".$dominio[$i];
