@@ -499,7 +499,7 @@
    */
   if (!function_exists('domain')) {
         function domain(){
-            $http = isset($_SERVER['REQUEST_SCHEME'])? $_SERVER['REQUEST_SCHEME'] : false;
+            $http = isset($_SERVER['REQUEST_SCHEME'])? $_SERVER['REQUEST_SCHEME'] : 'http';
             $host = isset($_SERVER['HTTP_HOST'])? $_SERVER['HTTP_HOST'] : false;
             $php_self = isset($_SERVER['PHP_SELF'])?$_SERVER['PHP_SELF']:false;
             $request_url = isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:false;
@@ -539,7 +539,7 @@
             $data = [];
             $uri = "";
             $urls = "";
-            $http = isset($_SERVER['REQUEST_SCHEME'])? $_SERVER['REQUEST_SCHEME'] : false;
+            $http = isset($_SERVER['REQUEST_SCHEME'])? $_SERVER['REQUEST_SCHEME'] : 'http';
             $host = isset($_SERVER['HTTP_HOST'])? $_SERVER['HTTP_HOST'] : false;
             $php_self = isset($_SERVER['PHP_SELF'])?$_SERVER['PHP_SELF']:false;
             $request_url = isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:false;
