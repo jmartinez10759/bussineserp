@@ -545,7 +545,7 @@
             $request_url = isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:false;
             $server_href = $http."://".$host.$request_url;
             $url_navegador = (isset( $_SERVER['HTTP_REFERER'] ))? explode("/",$_SERVER['HTTP_REFERER']): [];    
-            #debuger($url_navegador);
+            var_export($url_navegador);die();
             
             if ( $server_href ) {
                 $dominio        = explode("/", $server_href );
