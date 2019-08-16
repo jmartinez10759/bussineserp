@@ -41,7 +41,7 @@ abstract class MasterController extends Controller
 	protected $tipo             = "application/json";
 	public $_http;
 	protected $_title           = "Empresa No Asignada";
-	protected $_development     = "Engly Solutions";
+	protected $_development     = "It Solutions Engly";
 	protected $_linkDevelopment = "";
 	public static $_model;
 	protected static $message_success;
