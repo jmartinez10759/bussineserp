@@ -36,10 +36,8 @@ use function foo\func;
 abstract class MasterController extends Controller
 {
 	public static $_client;
-	public $_tipo_user;
-	public static $_domain = "";
+	public static $_domain      = "";
 	protected $tipo             = "application/json";
-	public $_http;
 	protected $_title           = "Empresa No Asignada";
 	protected $_development     = "It Solutions Engly";
 	protected $_linkDevelopment = "";
