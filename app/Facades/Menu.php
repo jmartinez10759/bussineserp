@@ -20,7 +20,7 @@ class Menu extends Facade
             foreach ($data as $menus) {
 
                 if (strtoupper($menus->tipo) == "SIMPLE" && $menus->estatus == 1) {
-                    $menu .= '<li><a href="'.domain().$menus->link.'"><i class="'.$menus->icon.'"></i> '.$menus->texto.'</a></li>';
+                    $menu .= '<li><a href="'.url($menus->link).'"><i class="'.$menus->icon.'"></i> '.$menus->texto.'</a></li>';
                 }
                 if (strtoupper($menus->tipo) == "PADRE" && $menus->estatus == 1 ) {
                         $menu .= '<li><a><i class="'.$menus->icon.'"></i> '.$menus->texto.' <span class="fa fa-chevron-down"></span></a>';
@@ -47,7 +47,7 @@ class Menu extends Facade
             $submenus = "";
             foreach ($data as $submenu) {
                 if (strtoupper($submenu->tipo) == "HIJO" && $submenu->id_padre == $id_menu && $submenu->estatus == 1) {
-                    $submenus .= '<li><a href="'.domain().$submenu->link.'">'.$submenu->texto.'</a></li>';
+                    $submenus .= '<li><a href="'.url($submenu->link).'">'.$submenu->texto.'</a></li>';
                 }
             }
             return $submenus;
@@ -66,11 +66,10 @@ class Menu extends Facade
           $menu = "";
           $submenu = "";
           foreach ($data as $menus) {
-
               if (strtoupper($menus->tipo) == "SIMPLE" && $menus->estatus == 1) {
 
                     $menu .= '<li>';
-                    $menu .= '<a href="'.domain().$menus->link.'" >';
+                    $menu .= '<a href="'.url($menus->link).'" >';
                     $menu .= '<i class="'.$menus->icon.'"></i> <span>'.$menus->texto.'</span>';
                     $menu .= '<span class="pull-right-container">';
                     $menu .= '<small class="label pull-right bg-green"></small>';
@@ -109,7 +108,7 @@ class Menu extends Facade
             $submenus = "";
             foreach ($data as $submenu) {
                 if (strtoupper($submenu->tipo) == "HIJO" && $submenu->id_padre == $id_menu && $submenu->estatus == 1) {
-                    $submenus .= '<li><a href="'.domain().$submenu->link.'"><i class="fa fa-circle-o"></i>'.$submenu->texto.'</a></li>';
+                    $submenus .= '<li><a href="'.url($submenu->link).'"><i class="fa fa-circle-o"></i>'.$submenu->texto.'</a></li>';
                 }
             }
             return $submenus;
