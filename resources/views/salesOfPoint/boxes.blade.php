@@ -3,7 +3,7 @@
 @push('styles')
 @endpush
     <div ng-controller="BoxesController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
-        <div class="table-responsive">
+        <div class="table-responsive" ng-if="datos.length > 0">
             <table class="table table-striped highlight table-hover" id="datatable">
                 <thead>
                 <tr style="background-color: #337ab7; color: #ffffff;">
@@ -49,8 +49,13 @@
             <table-pagination></table-pagination>
 
         </div>
-
+        <div class="container" ng-if="datos.length < 1">
+            <h2>
+                <small>No tiene ningun dato, favor de agregar registros</small>
+            </h2>
+        </div>
         @include('salesOfPoint.boxesEdit')
+
     </div>
 
 @stop

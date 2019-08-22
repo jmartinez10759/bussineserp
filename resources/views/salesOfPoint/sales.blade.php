@@ -112,7 +112,7 @@
 
         <div ng-if="loginUser.rolesId != 3 && loginUser.rolesId != 1">
 
-            <div class="table-responsive">
+            <div class="table-responsive" ng-if="datos.length > 0">
                 <table class="table table-striped table-responsive highlight table-hover table-container" id="datatable">
                     <thead>
                     <tr style="background-color: #337ab7; color: #ffffff;">
@@ -153,6 +153,11 @@
                 </table>
                 <table-pagination></table-pagination>
 
+            </div>
+            <div class="container" ng-if="datos.length < 1">
+                <h2>
+                    <small>No tiene ningun dato, favor de agregar registros</small>
+                </h2>
             </div>
 
         </div>

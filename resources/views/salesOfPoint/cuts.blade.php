@@ -3,6 +3,7 @@
     @push('styles')
     @endpush
     <div ng-controller="CutsController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
+        
         <form class="form-horizontal">
                 <div class="form-group row">
                     <div class="col-sm-2">
@@ -33,9 +34,9 @@
 
                 </div>
 
-            </form>
+        </form>
 
-        <div class="table-responsive">
+        <div class="table-responsive" ng-if="datos.length > 0">
                 <table class="table table-striped table-responsive highlight table-hover table-container" id="datatable">
                     <thead>
                     <tr style="background-color: #337ab7; color: #ffffff;">
@@ -97,7 +98,13 @@
                 </table>
                 <table-pagination></table-pagination>
 
-            </div>
+        </div>
+
+        <div class="container" ng-if="datos.length < 1">
+            <h2>
+                <small>No tiene ningun dato, favor de agregar registros</small>
+            </h2>
+        </div>
 
         @include('salesOfPoint.cutsEdit')
     </div>
