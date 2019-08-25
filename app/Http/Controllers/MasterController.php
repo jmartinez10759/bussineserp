@@ -84,6 +84,7 @@ abstract class MasterController extends Controller
      */
     protected function _loadMenus($response = [], bool $status = false)
     {
+        $menu = new Menu();
         $menusArray = [];
         for ($j = 0; $j < count($response); $j++) {
             $menusArray[] = ($response[$j]);
@@ -91,8 +92,7 @@ abstract class MasterController extends Controller
         if ($status) {
             return $menusArray;
         }
-        #var_export($menusArray);die();
-        return Menu::build_menu_tle($menusArray);
+        return $menu->buildMenuTle($menusArray);
     }
     /**
      * This method is used view load with you permission

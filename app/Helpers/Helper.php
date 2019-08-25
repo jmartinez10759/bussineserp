@@ -493,7 +493,7 @@
         }
     }
   /**
-   *Realiza un parseo de la ruta si existe un dominio y un nombre del proyecto
+   * This function getter the domain the system
    *@access public
    *@return array
    */
@@ -510,17 +510,14 @@
                 $domain         = isset( $dominio[2] )? $dominio[2] : false;
                 $public         = (isset($dominio[4]) && $dominio[4] == "public")? $dominio[4] : false;
                 $project        = (isset($dominio[3]) ) ? $dominio[3] : false;
-                #debuger($request_uri);
                 if ( isset( $request_uri[1] ) && $request_uri[1] == 'index.php' || $request_uri[1] == 'server.php' ) {
                     return $http."://".$host."/";
                 }
                 if ( $public && $project) {
                     return $http."://".$host."/".$project."/".$public."/";
-
                 }
                 if ( !$public && $project ) {
                   return $http."://".$host."/".$project."/";
-
                 }
 
             }
@@ -529,23 +526,20 @@
 
   }
   /**
-   *Funcion que obtine el parseo de la url dominio/projecto/url
+   *Function for parser domain the project
    *@access public
    *@return array
    */
    if( !function_exists( 'parse_domain') ){
         function parse_domain(){
-
             $data = [];
-            $uri = "";
-            $urls = "";
+            $urls = $uri = "";
             $http = isset($_SERVER['REQUEST_SCHEME'])? $_SERVER['REQUEST_SCHEME'] : 'http';
             $host = isset($_SERVER['HTTP_HOST'])? $_SERVER['HTTP_HOST'] : false;
             $php_self = isset($_SERVER['PHP_SELF'])?$_SERVER['PHP_SELF']:false;
             $request_url = isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:false;
             $server_href = $http."://".$host.$request_url;
-            $url_navegador = (isset( $_SERVER['HTTP_REFERER'] ))? explode("/",$_SERVER['HTTP_REFERER']): [];
-            
+            $browserUrl = (isset( $_SERVER['HTTP_REFERER'] ))? explode("/",$_SERVER['HTTP_REFERER']): [];
             if ( $server_href ) {
                 $dominio        = explode("/", $server_href );
                 $request_uri    = explode("/", $php_self);
@@ -568,10 +562,10 @@
                         $uri .= "/".$dominio[$i];
                     }
                 }
-                if( count($url_navegador) > 0){
-                    for ($i=0; $i < count($url_navegador); $i++) {
-                        if( !in_array($url_navegador[$i],$parse_dominio) ){
-                            $urls .= "/".$url_navegador[$i];
+                if( count($browserUrl) > 0){
+                    for ($i=0; $i < count($browserUrl); $i++) {
+                        if( !in_array($browserUrl[$i],$parse_dominio) ){
+                            $urls .= "/".$browserUrl[$i];
                         }
                     }
                     
