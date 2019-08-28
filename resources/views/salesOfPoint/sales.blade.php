@@ -3,7 +3,7 @@
 @push('styles')
 @endpush
     <div ng-controller="SalesController" ng-init="constructor()" ng-cloak ng-if="permisos.GET">
-        <div ng-if="loginUser.rolesId == 3 || loginUser.rolesId == 1">
+        <div ng-if="loginUser.rolesId == 3 || loginUser.rolesId == 1 && datos.length > 0">
             <form class="form-horizontal">
                 <div class="form-group row">
                     <div class="col-sm-2">
@@ -154,12 +154,13 @@
                 <table-pagination></table-pagination>
 
             </div>
-            <div class="container" ng-if="datos.length < 1">
-                <h2>
-                    <small>No tiene ningun dato, favor de agregar registros</small>
-                </h2>
-            </div>
 
+        </div>
+
+        <div class="container" ng-if="datos.length < 1">
+            <h2>
+                <small>No tiene ningun dato, favor de agregar registros</small>
+            </h2>
         </div>
 
         @include('salesOfPoint.salesEdit')
