@@ -947,7 +947,7 @@ abstract class MasterController extends Controller
     private function _getMountToday($box)
     {
         $total   =  $box->init_mount;
-        $extract =  $box->extracts()->sum('extract');
+        $extract =  $box->extracts->sum('extract');
         foreach ($box->orders as $orders){
             $total +=  $orders->total;
         }
