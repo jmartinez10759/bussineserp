@@ -57,6 +57,7 @@ app.controller('ProductsController', ['ServiceController','FactoryController','N
                 $scope.cmbCategories = response.data.data.categories;
                 $scope.cmbFactorType = response.data.data.factorType;
                 $scope.cmbTasas      = response.data.data.tasas;
+                $scope.cmbTaxes      = {};
                 $scope.configPagePagination($scope.register);
             }
         });
