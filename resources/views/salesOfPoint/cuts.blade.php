@@ -101,9 +101,11 @@
         </div>
 
         <div class="container" ng-if="datos.length < 1">
-            <h2>
-                <small>No tiene ningun dato, favor de agregar registros</small>
-            </h2>
+            <div class="col-sm-offset-4 col-sm-12">
+                <h2>
+                    <small>No se encontro ningún registro</small>
+                </h2>
+            </div>
         </div>
 
         @include('salesOfPoint.cutsEdit')
