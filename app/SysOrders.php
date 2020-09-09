@@ -51,5 +51,10 @@ class SysOrders extends Model
         return $this->hasOne(SysUsersModel::class,'id','user_id');
     }
 
+    public function agency()
+    {
+        return $this->hasOne(Agency::class);
+    }
+
 
 }

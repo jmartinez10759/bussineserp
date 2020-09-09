@@ -264,7 +264,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ########################### MODULO DE ACCIONES ##############################.
-    
+
     Route::get( "/configuracion/actions", [
       'uses'      => 'Administracion\Configuracion\ActionsController@index'
       ,'as'       => 'configuracion.actions'
@@ -372,29 +372,29 @@ Route::group(['middleware' => ['admin.only']], function() {
     'uses'      => 'Administracion\Configuracion\EmpresasController@loadCompanies'
     ,'as'       => 'empresas.listado'
     ]);
-    
+
     ######################### MODULO DE PROVEEDORES #############################
-    
+
      Route::get('/configuracion/proveedores', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@index'
         ,'as'       => 'configuracion.proveedores'
     ]);
-    
+
     Route::get('/proveedores/all', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@all'
         ,'as'       => 'proveedores.all'
     ]);
-    
+
     Route::post('/proveedores/register', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@store'
         ,'as'       => 'proveedores.register'
     ]);
-    
+
     Route::get('/proveedores/edit', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@show'
         ,'as'       => 'proveedores.edit'
     ]);
-    
+
     Route::put('/proveedores/update', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@update'
         ,'as'       => 'proveedores.update'
@@ -409,7 +409,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProveedoresController@display_sucursales'
         ,'as'       => 'proveedores.display_sucursales'
     ]);
-    
+
     Route::post('/proveedores/register_permisos', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@register_permisos'
         ,'as'       => 'proveedores.register'
@@ -418,24 +418,24 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProveedoresController@asignar'
         ,'as'       => 'proveedores.asing_producto'
     ]);
-    
+
     Route::post('/proveedores/asing_insert', [
         'uses'      => 'Administracion\Configuracion\ProveedoresController@asignar_insert'
         ,'as'       => 'proveedores.asing_insert'
     ]);
-    
+
     ######################### MODULO DE PLANES ##################################
-    
+
     Route::get('/configuracion/planes', [
         'uses'      => 'Administracion\Configuracion\PlanesController@index'
         ,'as'       => 'configuracion.planes'
     ]);
-        
+
     Route::get('/planes/all', [
         'uses'      => 'Administracion\Configuracion\PlanesController@all'
         ,'as'       => 'planes'
     ]);
-    
+
     Route::get('planes/edit', [
         'uses'      => 'Administracion\Configuracion\PlanesController@show'
         ,'as'       => 'planes.edit'
@@ -455,39 +455,39 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\PlanesController@update'
         ,'as'       => 'planes.update'
     ]);
-    
+
     Route::get('/planes/asing_producto', [
         'uses'      => 'Administracion\Configuracion\PlanesController@asignar'
         ,'as'       => 'planes.asing_producto'
     ]);
-    
+
     Route::post('/planes/asing_insert', [
         'uses'      => 'Administracion\Configuracion\PlanesController@asignar_insert'
         ,'as'       => 'planes.asing_insert'
     ]);
-    
+
     Route::get('/planes/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\PlanesController@display_sucursales'
         ,'as'       => 'planes.display_sucursales'
     ]);
-    
+
     Route::post('/planes/register_permisos', [
         'uses'      => 'Administracion\Configuracion\PlanesController@register_permisos'
         ,'as'       => 'planes.register_permisos'
     ]);
-    
+
     ######################### MODULO DE MONEDAS ##################################
-    
+
     Route::get('/configuracion/monedas', [
         'uses'      => 'Administracion\Configuracion\MonedasController@index'
         ,'as'       => 'configuracion.monedas'
     ]);
-        
+
     Route::get('/monedas/all', [
         'uses'      => 'Administracion\Configuracion\MonedasController@all'
         ,'as'       => 'monedas.all'
     ]);
-    
+
     Route::get('monedas/edit', [
         'uses'      => 'Administracion\Configuracion\MonedasController@show'
         ,'as'       => 'monedas.edit'
@@ -507,7 +507,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\MonedasController@update'
         ,'as'       => 'monedas.update'
     ]);
-    
+
 	######################### MODULO DE SUCURSALES #############################
 
     Route::get('/configuracion/sucursales', [
@@ -577,12 +577,12 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ############################ CATALOGO DE CLIENTES ###################################
-    
+
     Route::get('/configuracion/clientes', [
         'uses'      => 'Administracion\Configuracion\ClientesController@index'
         ,'as'       => 'configuracion.clientes'
     ]);
-        
+
     Route::post('/clientes/register', [
         'uses'      => 'Administracion\Configuracion\ClientesController@store'
         ,'as'       => 'clientes.register'
@@ -592,7 +592,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ClientesController@register_permisos'
         ,'as'       => 'clientes.register'
     ]);
-    
+
     Route::get('/clientes/edit', [
         'uses'      => 'Administracion\Configuracion\ClientesController@show'
         ,'as'       => 'clientes.edit'
@@ -602,13 +602,13 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ClientesController@all'
         ,'as'       => 'clientes.all'
     ]);
-    
+
     Route::get('/clientes/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\ClientesController@display_sucursales'
         ,'as'       => 'clientes.display_sucursales'
     ]);
-    
-    
+
+
     Route::put('/clientes/update', [
         'uses'      => 'Administracion\Configuracion\ClientesController@update'
         ,'as'       => 'clientes.update'
@@ -645,22 +645,22 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ############################ CATALOGO DE ACTIVIDADES ###################################
-    
+
     Route::get('/configuracion/activities', [
         'uses'      => 'Administracion\Configuracion\ActivitiesController@index'
         ,'as'       => 'configuracion.activities'
     ]);
-        
+
     Route::post('/activities/register', [
         'uses'      => 'Administracion\Configuracion\ActivitiesController@store'
         ,'as'       => 'activities.register'
     ]);
-    
+
     Route::get('/activities/edit', [
         'uses'      => 'Administracion\Configuracion\ActivitiesController@show'
         ,'as'       => 'activities.edit'
     ]);
-        
+
     Route::put('/activities/update', [
         'uses'      => 'Administracion\Configuracion\ActivitiesController@update'
         ,'as'       => 'activities.update'
@@ -672,28 +672,28 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ############################ CATALOGO DE CONTACTOS ###################################
-    
+
     Route::get('/configuracion/contactos', [
         'uses'      => 'Administracion\Configuracion\ContactosController@index'
         ,'as'       => 'configuracion.clientes'
     ]);
-        
+
     Route::post('/contactos/register', [
         'uses'      => 'Administracion\Configuracion\ContactosController@store'
         ,'as'       => 'contactos.register'
     ]);
-    
+
     Route::get('/contactos/edit', [
         'uses'      => 'Administracion\Configuracion\ContactosController@show'
         ,'as'       => 'clientes.edit'
     ]);
-    
+
     Route::get('/contactos/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\ContactosController@display_sucursales'
         ,'as'       => 'contactos.display_sucursales'
     ]);
-    
-    
+
+
     Route::put('/contactos/update', [
         'uses'      => 'Administracion\Configuracion\ContactosController@update'
         ,'as'       => 'contactos.update'
@@ -703,9 +703,9 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ContactosController@destroy'
         ,'as'       => 'contactos.destroy'
     ]);
-        
+
 ############################ SECCION DE PRODUCTOS #######################################
-    
+
     Route::get('/configuracion/productos', [
         'uses'      => 'Administracion\Configuracion\ProductosController@index'
         ,'as'       => 'configuracion.clientes'
@@ -736,32 +736,32 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProductosController@register_permisos'
         ,'as'       => 'productos.register_permisos'
     ]);
-    
-    
+
+
 
     Route::get('/products/display_sucursales', [
         'uses'      => 'Administracion\Configuracion\ProductosController@display_sucursales'
         ,'as'       => 'productos.edit'
     ]);
-    
+
 
 ############################ SECCION DE FORMAS DE PAGO #######################################
-    
+
     Route::get('/configuracion/formaspago', [
         'uses'      => 'Administracion\Configuracion\ProductosController@index'
         ,'as'       => 'configuracion.clientes'
     ]);
-        
+
     Route::post('/formaspago/register', [
         'uses'      => 'Administracion\Configuracion\ProductosController@store'
         ,'as'       => 'clientes.register'
     ]);
-    
+
     Route::get('/formaspago/edit', [
         'uses'      => 'Administracion\Configuracion\ProductosController@show'
         ,'as'       => 'clientes.edit'
     ]);
-    
+
     Route::put('/formaspago/update', [
         'uses'      => 'Administracion\Configuracion\ProductosController@update'
         ,'as'       => 'clientes.update'
@@ -771,24 +771,24 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ProductosController@destroy'
         ,'as'       => 'clientes.destroy'
     ]);
-    
+
 ############################ SECCION DE METODO DE PAGO #######################################
-    
+
     Route::get('/configuracion/metodospago', [
         'uses'      => 'Administracion\Configuracion\ProductosController@index'
         ,'as'       => 'configuracion.clientes'
     ]);
-        
+
     Route::post('/metodospago/register', [
         'uses'      => 'Administracion\Configuracion\ProductosController@store'
         ,'as'       => 'clientes.register'
     ]);
-    
+
     Route::get('/metodospago/edit', [
         'uses'      => 'Administracion\Configuracion\ProductosController@show'
         ,'as'       => 'clientes.edit'
     ]);
-    
+
     Route::put('/metodospago/update', [
         'uses'      => 'Administracion\Configuracion\ProductosController@update'
         ,'as'       => 'clientes.update'
@@ -800,12 +800,12 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ############################ SECCION PAISES #######################################
-    
+
     Route::get('/configuracion/pais', [
         'uses'      => 'Administracion\Configuracion\PaisController@index'
         ,'as'       => 'configuracion.pais'
     ]);
-    
+
     Route::get('/pais/all', [
         'uses'      => 'Administracion\Configuracion\PaisController@all'
         ,'as'       => 'pais.all'
@@ -815,12 +815,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\PaisController@store'
         ,'as'       => 'pais.register'
     ]);
-    
+
     Route::get('/country/{id}/edit', [
         'uses'      => 'Administracion\Configuracion\PaisController@show'
         ,'as'       => 'pais.edit'
     ]);
-    
+
     Route::put('/pais/update', [
         'uses'      => 'Administracion\Configuracion\PaisController@update'
         ,'as'       => 'pais.update'
@@ -832,12 +832,12 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ############################ SECCION CODIGOS POSTALES #######################################
-    
+
     Route::get('/configuracion/codigopostal', [
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@index'
         ,'as'       => 'configuracion.codigopostal'
     ]);
-    
+
     Route::get('/codigopostal/all', [
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@all'
         ,'as'       => 'codigopostal.all'
@@ -847,7 +847,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@store'
         ,'as'       => 'codigopostal.register'
     ]);
-    
+
     Route::get('/edit/{postalCode}/code', [
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@getPostalCode'
         ,'as'       => 'edit.code'
@@ -857,7 +857,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@show_clave'
         ,'as'       => 'codigopostal.show'
     ]);
-    
+
     Route::put('/codigopostal/update', [
         'uses'      => 'Administracion\Configuracion\CodigoPostalController@update'
         ,'as'       => 'codigopostal.update'
@@ -869,12 +869,12 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ############################ SECCION SERVICIOS COMERCIALES #######################################
-    
+
     Route::get('/configuracion/servicioscomerciales', [
         'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@index'
         ,'as'       => 'configuracion.servicioscomerciales'
     ]);
-    
+
     Route::get('/servicioscomerciales/all', [
         'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@all'
         ,'as'       => 'servicioscomerciales.all'
@@ -884,12 +884,12 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@store'
         ,'as'       => 'servicioscomerciales.register'
     ]);
-    
+
     Route::get('/servicioscomerciales/edit', [
         'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@show'
         ,'as'       => 'servicioscomerciales.edit'
     ]);
-    
+
     Route::put('/servicioscomerciales/update', [
         'uses'      => 'Administracion\Configuracion\ServiciosComercialesController@update'
         ,'as'       => 'servicioscomerciales.update'
@@ -901,7 +901,7 @@ Route::group(['middleware' => ['admin.only']], function() {
     ]);
 
 ################################## SECCION DE CARGA DE ARCHIVOS #######################################
-    
+
     Route::post('/upload/catalogos', [
         'uses'      => 'Administracion\Configuracion\UploadController@upload_catalogos'
         ,'as'       => 'upload.catalogos'
@@ -1012,17 +1012,17 @@ Route::group(['middleware' => ['admin.only']], function() {
 		]);
 
 ################################## MODULO DE VENTAS PEDIDOS ################################
-            
+
         Route::get('/ventas/pedidos', [
             'uses'      => 'Ventas\PedidosController@index'
             ,'as'       => 'ventas.pedidos'
         ]);
-        
+
         Route::get('/pedidos/all', [
             'uses'      => 'Ventas\PedidosController@all'
             ,'as'       => 'pedidos.all'
         ]);
-        
+
         Route::post('/pedidos/register', [
             'uses'      => 'Ventas\PedidosController@store'
             ,'as'       => 'pedidos.register'
@@ -1059,17 +1059,17 @@ Route::group(['middleware' => ['admin.only']], function() {
         ]);
 
 ################################## MODULO DE VENTAS FACTURACIONES ##########################
-            
+
         Route::get('/ventas/facturaciones', [
             'uses'      => 'Ventas\FacturacionesController@index'
             ,'as'       => 'ventas.facturaciones'
         ]);
-        
+
         Route::get('/facturaciones/all', [
             'uses'      => 'Ventas\FacturacionesController@all'
             ,'as'       => 'facturaciones.all'
         ]);
-        
+
         Route::post('/facturaciones/register', [
             'uses'      => 'Ventas\FacturacionesController@store'
             ,'as'       => 'facturaciones.register'
@@ -1401,7 +1401,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Administracion\Configuracion\UnidadesMedidasController@destroy'
         ,'as' => 'unidadesmedidas.destroy'
     ]);
-    
+
     ################################## CATALOGO DE CUENTAS ################################
     Route::get('/configuracion/cuentas', [
         'uses' => 'Administracion\Configuracion\CuentasController@index'
@@ -1463,7 +1463,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as' => 'categoriasproductos.destroy'
     ]);
 
-##################################### MODULO DE ALMACENES######################################### 
+##################################### MODULO DE ALMACENES#########################################
     Route::get('/almacen/almacenes', [
         'uses' => 'Almacenes\AlmacenesController@index'
         ,'as' => 'Almacenes.almacenes'
@@ -1497,7 +1497,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Almacenes\AlmacenesController@display_sucursales'
         ,'as'       => 'almacenes.display_sucursales'
     ]);
-    
+
     Route::post('/almacenes/register_permisos', [
         'uses'      => 'Almacenes\AlmacenesController@register_permisos'
         ,'as'       => 'almacenes.register'
@@ -1506,13 +1506,13 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses'      => 'Almacenes\AlmacenesController@asignar'
         ,'as'       => 'almacenes.asing_producto'
     ]);
-    
+
     Route::post('/almacenes/asing_insert', [
         'uses'      => 'Almacenes\AlmacenesController@asignar_insert'
         ,'as'       => 'almacenes.asing_insert'
     ]);
 
-##################################### COTIZACIONES #########################################    
+##################################### COTIZACIONES #########################################
 
     Route::get('/ventas/cotizacion', [
         'uses' => 'Ventas\CotizacionController@index'
@@ -1553,7 +1553,7 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Ventas\CotizacionController@destroy_cotizacion_edit'
         ,'as' => 'cotizacion.destroy.edit'
     ]);
-    
+
     Route::get('/ventas/contactos', [
         'uses' => 'Ventas\CotizacionController@getbycontactos'
         ,'as' => 'ventas.contactos'
@@ -1792,6 +1792,10 @@ Route::group(['middleware' => ['admin.only']], function() {
         ,'as' => 'proyectos.destroy'
     ]);
 
+    Route::get('/sales/agency', [
+        'uses' => 'AgencyController@index'
+        ,'as' => 'agency.index'
+    ]);
 
 
 
