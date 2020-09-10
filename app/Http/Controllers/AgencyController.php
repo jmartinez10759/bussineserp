@@ -44,7 +44,7 @@ class AgencyController extends MasterController
             $data['year']   =  date("Y");
             $where = "";
             if (Session::get("roles_id") != 1){
-                $where .= " e.id = ".Session::get('company_id')." AND ss.id = ".Session::get('group_id');
+                $where .= "AND  e.id = ".Session::get('company_id')." AND ss.id = ".Session::get('group_id');
             }
             $sql = "SELECT
                     o.id ,

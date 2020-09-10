@@ -46,7 +46,6 @@ app.controller('AgencyCtrl', ['ServiceController','FactoryController','Notificat
                     },
                     weekNumbers: true,
                     eventLimit: true,
-                    //events: 'https://fullcalendar.io/demo-events.json'
                     events: $scope.datos
                 });
 
