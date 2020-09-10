@@ -1,8 +1,17 @@
 @extends('layouts.template.app')
 @section('content')
 @push('styles')
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css' rel='stylesheet' />
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <style>
+        #calendar {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+    </style>
+
 @endpush
-    <div ng-app="ng-pedidos" ng-controller="PedidosController" ng-init="constructor()" ng-cloak>
+    {{--<div ng-app="ng-pedidos" ng-controller="PedidosController" ng-init="constructor()" ng-cloak>
 
         <div class="panel-body">
             <form class="form-horizontal">
@@ -153,8 +162,44 @@
         </div>
 
         @include('ventas.pedidos_edit')
-    </div>
+    </div>--}}
+<div class="col-sm-12" ng-app="ng-agency" ng-controller="AgencyCtrl" ng-init="constructor()" ng-cloak>
+    <div id='calendar'></div>
+</div>
+
 @stop
 @push('scripts')
-    <script type="text/javascript" src="{{asset('js/ventas/build_pedidos.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/agency/build_agency.js')}}"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js'></script>
+    <script>
+        $(function() {
+
+            /*$('#calendar').fullCalendar({
+                themeSystem: 'bootstrap3',
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay,listMonth'
+                },
+                weekNumbers: true,
+                eventLimit: true, // allow "more" link when too many events
+                //events: 'https://fullcalendar.io/demo-events.json'
+                events: [
+                    {
+                        'start': '2020-10-01',
+                        'title': 'Cumpleaños Jorge'
+                    },
+                    {
+                        'start': '2020-09-09',
+                        'title': 'Cumpleaños Memo'
+                    },
+                    {
+                        'start': '2020-09-23',
+                        'title': 'Cumpleaños Lina'
+                    }
+                ]
+            });*/
+
+        });
+    </script>
 @endpush

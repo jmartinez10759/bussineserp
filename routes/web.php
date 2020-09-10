@@ -1791,10 +1791,14 @@ Route::group(['middleware' => ['admin.only']], function() {
         'uses' => 'Development\ProyectosController@destroy'
         ,'as' => 'proyectos.destroy'
     ]);
-
     Route::get('/sales/agency', [
         'uses' => 'AgencyController@index'
-        ,'as' => 'agency.index'
+        ,'as' => 'sales.agency'
+    ]);
+
+    Route::get('/agency/all', [
+        'uses' => 'AgencyController@all'
+        ,'as' => 'agency.all'
     ]);
 
 
